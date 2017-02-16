@@ -1,5 +1,20 @@
 \chapter{Constraint Satisfaction}
-In this chapter we discuss \emph{\color{blue}constraint satisfaction problems}.  Formally, we define a 
+In this chapter we discuss algorithms for solving \emph{\color{blue}constraint satisfaction problems}.
+This chapter is structured as follows:
+\begin{enumerate}
+\item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
+      concept, two examples of constraint satisfaction problems are presented.  Finally, we present
+      applications of constraint satisfaction problems.
+\item The simplest algorithm to solve a constraint satisfaction problem is via \emph{\color{blue}Backtracking Search}.
+      This is presented in Section 2.
+\item Backtracking Search can be refined to \emph{\color{blue}Non-Chronological Backtracking}, which is presented in
+      Section 3.
+\item Finally, the last section shows how constraint satisfaction problems can be solved via
+      \emph{\color{blue}local search}.
+\end{enumerate}
+
+\section{Formal Definition of Constraint Satisfaction Problems}
+Formally, we define a 
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problem} as a triple
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -9,16 +24,28 @@ where
 \begin{enumerate}
 \item $\mathtt{Vars}$ is a set of strings which serve as \emph{variables},
 \item $\mathtt{Values}$ is a set of \emph{values} for the variables in $\mathtt{Vars}$.
-\item $\mathtt{Constraints}$ is a set of mathematical formulae.  Each of these formulae is
+\item $\mathtt{Constraints}$ is a set of formulae from \emph{\color{blue}first order logic}.  Each of these formulae is
       called a \emph{\color{blue}constraint} of $\mathcal{P}$.
+
+      In order to be able to interpret these formulae, we need a $\emph{first order structure}$ $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
+      Here, $\mathcal{U}$ is the $\emph{\color{blue}universe}$ of $\mathcal{S}$ and we will assume that this
+      universe is identical to the set $\mathtt{Values}$. The second component $\mathcal{J}$ is the
+      \emph{\color{blue}interpretation} of the function symbols and predicate symbols that are used in the 
+      constraints.  In what follows we assume that this interpretation is understood from the context of the
+      constraint satisfaction problem $\mathcal{P}$.
 \end{enumerate}
-Given a constraint satisfaction problem $\mathcal{P} = \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \rangle$, 
+In the following, the abbreviation \textsc{Csp} is short for \emph{\color{blue}constraint satisfaction problem}.
+Given a \textsc{Csp}
+\\[0.2cm]
+\hspace*{1.3cm}
+ $\mathcal{P} = \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \rangle$, 
+\\[0.2cm]
 a \emph{\color{blue}variable assignment} for $\mathcal{P}$ is a function
 \\[0.2cm]
 \hspace*{1.3cm}
 $A: \mathtt{Vars} \rightarrow \mathtt{Values}$.
 \\[0.2cm]
-A variable assignment $A$ is a \emph{\color{blue}solution} of the constraint satisfaction problem $\mathcal{P}$ 
+A variable assignment $A$ is a \emph{\color{blue}solution} of the \textsc{Csp} $\mathcal{P}$ 
 if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied.
 We proceed to illustrate the definitions given so far with two examples.
 
@@ -101,7 +128,7 @@ Next, let us define the constraints.  There are three different types of constra
       $\mathtt{SameRow} := \bigl\{ \mathtt{V}_i \not= \mathtt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
       Here the condition $i < j$ ensures that, for example, we have the constraint $\mathtt{V}_2 \not= \mathtt{V}_1$
-      but not the constraint  $\mathtt{V}_1 \not= \mathtt{V}_2$, as the latter would redundant if the former is
+      but not the constraint  $\mathtt{V}_1 \not= \mathtt{V}_2$, as the latter would be redundant if the former is
       already given.
 \item We have constraints that express that no two queens positioned in different rows share the same rising
       diagonal.  To capture these constraints, we define
@@ -165,9 +192,9 @@ in \myFig{eight-queens.txt}.
 \label{fig:eight-queens.txt}
 \end{figure}
 
-\myFig{queens-csp.stlx} shows a \textsc{SetlX} program that can be used to solve the eight queens puzzle.
-The code shown in this figure is more general than the eight queens puzzle:  Given a natural number $n$, the
-function call $\mathtt{queensCSP}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
+\myFig{queens-csp.stlx} shows a \textsc{SetlX} program that can be used to create the eight queens puzzle as a
+\textsc{Csp}.  The code shown in this figure is more general than the eight queens puzzle:  Given a natural
+number $n$, the function call $\mathtt{queensCSP}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
 the eight queens problem to the problem of putting $n$ queens on a board of size $n$ times $n$.
 
 \begin{figure}[!ht]
@@ -198,9 +225,9 @@ the eight queens problem to the problem of putting $n$ queens on a board of size
 \label{fig:queens-csp.stlx}
 \end{figure}
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
-that we will be able to develop a so called \emph{\color{blue}constraint solver} that takes as input a constraint
-satisfaction problem like the one produced by the program shown in Figure \ref{fig:queens-csp.stlx} 
-and that is then capable of computing a solution.
+that we will be able to develop a so called \emph{\color{blue}constraint solver} that takes as input a \textsc{Csp}
+like the one produced by the program shown in Figure \ref{fig:queens-csp.stlx} and that is then capable of
+computing a solution. 
 
 \subsection{Applications}
 Besides the toy problems discussed so far, there are a number of industrial applications of constraint
