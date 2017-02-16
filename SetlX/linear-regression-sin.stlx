@@ -1,0 +1,49 @@
+// Run linear regression usig the features x**0, x**1, ..., x**m to aproximate
+// the function x |-> sin(x). The parameter n is the number of data points,
+linear_regression_sin := procedure(n, m) {
+    yList  := [];
+    xList  := [];
+    for (i in [1 .. n]) {
+        x := mathConst("Pi") * (i-1) / (n-1);
+        yList[i] := sin(x) + 0.01 * (random() - 0.5);
+        xList[i] := la_vector([x ** k : k in [0..m]]);
+    }
+    X := la_matrix(xList);
+    y := la_vector(yList);
+    w := la_solve(X! * X, X! * y);
+    d := X * w - y;
+    E := max([ abs(d[i][1]) : i in [1 .. n] ]);
+    return [w, E];
+};
+
+test := procedure(n, m) {
+    for (k in [13]) {
+        [w, E] := linear_regression_sin(n, k);
+        print("degree: $k$, error: $E$");
+        print("coefficients: $w$");
+        c := plot_createCanvas("Appproximation of sin(x) with a polynomial of degree $k$");
+        polynom := createPolynom(w);
+        plot_addGraph(c, polynom, "x |-> polynom", [255, 0, 0]);
+        plot_addGraph(c, "sin(x)", "x |-> sin(x)", [0, 0, 255]);
+        plot_addListGraph(c, [[-0.5, 0], [mathConst("Pi")+0.5, 0]], "x-axis", [0, 0, 0]);
+        plot_addListGraph(c, [[0, -0.5], [0, 1.5]],             "y-axis", [0, 0, 0]); 
+        plot_modScale(c, [-0.5, mathConst("Pi")+0.5], [-0.5, 1.5]);
+        get("press enter to continue");
+    }
+};
+
+// coefficients is the vector of coefficients
+createPolynom := procedure(coefficients) {
+    n := 0;
+    result := "0 ";
+    for (c in coefficients) {
+        result += "+ $c$ * x ** $n$";
+        n += 1;
+    }
+    return result;   
+};
+    
+
+// test(200, 10);
+
+test(25, 24); 

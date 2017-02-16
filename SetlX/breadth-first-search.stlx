@@ -1,0 +1,20 @@
+search := procedure(start, goal, nextStates) {
+    Frontier := { start };
+    Visited  := {}; // number of nodes expanded
+    Parent   := {};
+    while (Frontier != {}) {
+        print("$#Visited$ nodes expanded");
+        NewFrontier := {};
+        for (s in Frontier, ns in nextStates(s) | !(ns in Visited)) {
+            NewFrontier += { ns };
+            Parent[ns]  := s;
+            if (ns == goal) {
+                print("$#Visited + #Frontier + #NewFrontier$ nodes expanded");
+                return pathTo(goal, Parent);
+            }
+        }
+        Visited  += Frontier;
+        Frontier := NewFrontier;
+    }
+};
+

@@ -1,0 +1,26 @@
+search := procedure(start, goal, nextStates) {
+    Queue   := [ start ];
+    Visited := {}; 
+    Parent  := {};
+    while (Queue != []) {
+        state := Queue[1];
+        Queue := Queue[2..];
+        if (state == goal) {
+            print("$#Visited$ nodes visited");
+            return pathTo(state, Parent);
+        }
+        if (state in Visited) {
+            continue;
+        }
+        if (#Visited % 10000 == 0) {
+            print("#Visited = $#Visited$, #Queue = $#Queue$");        
+        }
+        Visited += { state };
+        newStates := nextStates(state);
+        for (ns in newStates | !(ns in Visited)) { 
+            Parent[ns] := state;
+            Queue      += [ ns ];
+        }
+    }
+};
+

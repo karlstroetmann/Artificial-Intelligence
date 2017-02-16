@@ -1,0 +1,48 @@
+// The function findMaximum computes the maximum of the function f using the
+// method of gradient ascent.  It is assumed that the function is convex and
+// therefore there is only one global maximum.
+//   f:     The function to minimize.  This function is expected to take one
+//          argument as its input.  This input is assumed to be a vector and 
+//          f returns a floating point number.
+//   fGrad: The gradient of f.  This function takes one input that is is assumed
+//          to be a vector.
+//   start: The value used to start the iteration.
+//   eps:   Precisison.  If the change of f is less than eps, then the iteration
+//          stops.
+// The function returns both the position x_max of the maximum as well as the
+// value that the function f has at this position.
+findMaximum := procedure(f, gradF, start, eps, verbose := false) {
+    x     := start;
+    f_x   := f(x);
+    alpha := 1.0;
+    cnt   := 1;  // number of iterations
+    while (true) {
+        [x_old, f_old] := [x, f_x];
+        x   += alpha * gradF(x);
+        f_x := f(x);
+        if (verbose) {
+            print("cnt = $cnt$, f($x$) = $f_x$, $f_x - f_old$");
+            print("gradient = $gradF(x)$");
+        }
+        if (f_x < f_old) {   
+            alpha *= 0.5;
+            if (verbose) {
+                print("decrementing: alpha = $alpha$");
+            }
+            [x, f_x] := [x_old, f_old];
+            continue;
+        } else {
+            alpha *= 1.2;
+            if (verbose) {
+                print("incrementing: alpha = $alpha$");
+            }
+        }
+        if (abs(f_x - f_old) <= abs(f_x) * eps) {
+            return [x, f_x, cnt];
+        }
+        cnt += 1;
+    }
+};
+
+
+

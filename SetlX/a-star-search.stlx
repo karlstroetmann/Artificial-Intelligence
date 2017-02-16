@@ -1,0 +1,32 @@
+// This procedure implements the A* search algorithm.
+aStarSearch := procedure(start, goal, nextStates, heuristic) {
+    Parent   := {};                    // back pointers, represented as dictionary
+    Distance := { [start, 0] };
+    estGoal  := heuristic(start, goal);
+    Estimate := { [start, estGoal] };  // Estimated distance
+    Frontier := { [estGoal, start] };  // priority queue
+    while (Frontier != {}) {
+        [stateEstimate, state] := fromB(Frontier);
+        if (state == goal) {
+            print("Number of states touched: $#Distance$");
+            return pathTo(state, Parent);
+        }
+        if (#Distance % 1000 == 0) {
+            print("#Distance = $#Distance$");        
+        }
+        stateDist := Distance[state];
+        for (neighbour in nextStates(state)) {
+            oldEstimate := Estimate[neighbour];
+            newEstimate := stateDist + 1 + heuristic(neighbour, goal);
+            if (oldEstimate == om || newEstimate < oldEstimate) {
+                Parent[neighbour]   := state;
+                Distance[neighbour] := stateDist + 1;
+                Estimate[neighbour] := newEstimate;
+                Frontier            += { [newEstimate, neighbour] };
+                if (oldEstimate != om) {
+                    Frontier -= { [oldEstimate, neighbour] };
+                }
+            }
+        }
+    }
+};

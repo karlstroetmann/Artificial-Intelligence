@@ -1,0 +1,49 @@
+
+
+distance := procedure(s1, s2, metric) {
+    l1    := extractWords(toLowerCase(s1));
+    l2    := extractWords(toLowerCase(s2));
+    words := { s : s in l1 + l2 };
+    f1    := [ count(s, l1) : s in words ];
+    f2    := [ count(s, l2) : s in words ];
+    print(words);
+    print(f1);
+    print(f2);
+    return metric(f1, f2);
+};
+
+extractWords := procedure(s) {
+    return [s : s in split(s, '\.|\s') | s != ""];
+};
+
+// How often does s occur in the list l?
+count := procedure(s, l) {
+    return 0 +/ [1 : x in l | x == s];
+};
+
+euclidean := procedure(x, y) {
+    n := #x;
+    return sqrt(+/ [(x[i] - y[i])**2 : i in [1 .. n]]);
+};
+
+cosine_dist := procedure(x, y) {
+    n          := #x;
+    similarity := +/ [x[i] * y[i] : i in [1 .. n]];
+    xNorm      := norm(x);
+    yNorm      := norm(y);
+    return 1.0 - similarity / (xNorm * yNorm); 
+};
+
+norm := procedure(x) {
+    n := #x;
+    return sqrt(+/ [x[i] * x[i] : i in [1 .. n]]);
+};
+
+s1 := "The quick brown fox jumps over the lazy dog.";
+s2 := "A quick brown dog outpaces a quick fox.";
+
+d1 := distance(s1, s2, euclidean);
+print("euclidean distance: $d1$");
+
+d2 := distance(s1, s2, cosine_dist);
+print("cosine distance: $d2$");

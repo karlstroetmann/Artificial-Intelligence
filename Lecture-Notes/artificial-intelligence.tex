@@ -1,0 +1,176 @@
+\documentclass{report}
+\usepackage{fleqn}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{epsfig} 
+\usepackage{a4wide}
+\usepackage{amssymb}
+\usepackage{fancyvrb}
+\usepackage{alltt}
+\usepackage{theorem}
+\usepackage[fleqn]{amsmath}
+\usepackage{stmaryrd}
+\usepackage{enumerate}
+\usepackage{color} 
+
+
+
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\hypersetup{
+	colorlinks = true, % comment this to make xdvi work
+	linkcolor  = blue,
+	citecolor  = red,
+        filecolor  = Gold,
+        urlcolor   = [rgb]{0.7, 0.0, 0.7},
+	pdfborder  = {0 0 0} 
+}
+\setlength{\mathindent}{1.3cm}
+\setlength{\textwidth}{17cm}
+\addtolength{\oddsidemargin}{-1cm}
+\addtolength{\evensidemargin}{-1cm}
+\addtolength{\topmargin}{-1cm}
+
+\usepackage{fancyhdr}
+\usepackage{lastpage} 
+
+% \renewcommand*{\familydefault}{\sfdefault}
+
+\pagestyle{fancy}
+
+\fancyfoot[C]{--- \thepage/\pageref{LastPage}\ ---}
+
+\fancypagestyle{plain}{%
+\fancyhf{}
+\fancyfoot[C]{--- \thepage/\pageref{LastPage}\ ---}
+\renewcommand{\headrulewidth}{0pt}
+}
+
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername \ \thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection. \ #1}{}}
+\fancyhead[R]{\leftmark}
+\fancyhead[L]{\rightmark}
+
+\definecolor{amethyst}{rgb}{0.2, 0.4, 0.6}
+\definecolor{orange}{rgb}{1, 0.9, 0.0}
+
+
+\newcommand{\exercise}{\vspace*{0.2cm}
+\stepcounter{exercise}
+\noindent
+\textbf{Exercise \arabic{exercise}}: }
+
+\newcommand{\exerciseStar}{\vspace*{0.2cm}
+\stepcounter{exercise}
+\noindent
+\textbf{Exercise \arabic{exercise}$^*$}: }
+
+\newcommand{\homework}{\vspace*{0.2cm}
+\stepcounter{exercise}
+\noindent
+\textbf{Homework \arabic{exercise}}: }
+
+\newcommand{\proof}{\vspace*{0.2cm}
+\noindent
+\textbf{Proof}: }
+
+\newcommand{\remark}{\vspace*{0.2cm}
+\noindent
+\textbf{Remark}: }
+
+\newcommand{\solution}{\vspace*{0.2cm}
+\noindent
+\textbf{Solution}: }
+
+\newcommand{\example}{\vspace*{0.2cm}
+\noindent
+\textbf{Example}: \ }
+
+\newcommand{\examples}{\vspace*{0.2cm}
+\noindent
+\textbf{Examples}: \ }
+
+\newcommand{\eod}{\hspace*{\fill} $\diamond$
+\vspace*{0.2cm}
+
+}
+\newcommand{\eox}{\hspace*{\fill} $\diamond$
+\vspace*{0.2cm}
+
+}
+\newcommand{\qed}{\hspace*{\fill} $\Box$
+\vspace*{0.2cm}
+
+}
+
+\newcommand{\ds}{\displaystyle}
+\newcommand{\AI}{\textsc{Ai}}
+\newcommand{\cnt}{\texttt{\#}}
+\def\pair(#1,#2){\langle #1, #2 \rangle}
+\newcommand{\myFig}[1]{Figure \ref{fig:#1} on page \pageref{fig:#1}}
+
+{\theorembodyfont{\sf}
+\newtheorem{Definition}{Definition}
+\newtheorem{Theorem}[Definition]{Theorem}
+\newtheorem{Proposition}[Definition]{Proposition}
+\newtheorem{Lemma}[Definition]{Lemma}
+\newtheorem{Corollary}[Definition]{Corollary}
+}
+
+
+\newcounter{exercise}
+
+\title{\epsfig{file=Figures/dhbw-logo.pdf, scale=1.5}\\[0.3cm] 
+      An Introduction to Artificial Intelligence \\[0.3cm]
+      --- Lecture Notes in Progress ---}
+\author{Prof.~Dr.~Karl Stroetmann}
+\date{\today \\[2.5cm]
+\noindent
+\begin{minipage}[t]{1.0\linewidth} 
+These lecture notes, their \LaTeX\ sources, and the programs discussed in these lecture notes are all available at
+\\[0.2cm]
+\hspace*{\fill}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/}{https://github.com/karlstroetmann/Artificial-Intelligence}.
+\hspace*{\fill} 
+\\[0.2cm]
+The lecture notes are subject to continuous change.  Provided the program \href{http://git-scm.com/download}{\texttt{git}}
+is installed on your computer, the repository containing the lecture notes can be cloned using the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\textcolor{amethyst}{\texttt{git clone https://github.com/karlstroetmann/Artificial-Intelligence.git}}.
+\\[0.2cm]
+Once you have cloned the repository, the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\textcolor{amethyst}{\texttt{git pull}}
+\\[0.2cm]
+can be used to load the current version of these lecture notes from 
+\href{https://github.com}{\texttt{github}}.
+\end{minipage}
+}
+
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+\include{introduction}
+\include{search}
+\include{constraints}
+\include{planning}
+\include{markov}
+\include{satisfiability}
+\include{linear-regression}
+\include{classification}
+\include{neural-networks}
+\include{retrieval}
+
+\bibliographystyle{/usr/local/texlive/2015/texmf-dist/bibtex/bst/base/plain.bst}
+
+\bibliography{./cs}
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

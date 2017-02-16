@@ -1,0 +1,27 @@
+search := procedure(start, goal, nextStates) {
+    limit := 31;  // Cheat to save time, otherwise this takes about 36 minutes!
+    while (true) {
+        print("limit = $limit$");
+        result := dfsLimited(start, goal, nextStates, [start], limit);
+        if (result != om) {
+            return result;
+        }
+        limit += 1;
+    }
+};
+
+dfsLimited := procedure(state, goal, nextStates, Path, limit) {
+    if (state == goal) {
+        return Path;
+    }
+    if (limit == 0) {
+        return;  // limit execceded
+    }
+    for (ns in nextStates(state) | !(ns in Path)) {
+        result := dfsLimited(ns, goal, nextStates, Path + [ns], limit - 1);
+        if (result != om) {
+            return result;
+        }   
+    }
+};
+

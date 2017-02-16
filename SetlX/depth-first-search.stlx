@@ -1,0 +1,23 @@
+search := procedure(start, goal, nextStates) {
+    Stack    := [ start ];
+    Visited  := {}; // set of nodes expanded
+    Parent   := {};
+    while (Stack != []) {
+        state := Stack[-1];
+        Stack := Stack[..-2];
+        if (state == goal) {
+            print("$#Visited$ nodes expanded");
+            return pathTo(state, Parent);
+        }
+        if (state in Visited) {
+            continue;
+        }
+        Visited   += { state };
+        newStates := nextStates(state);
+        for (ns in newStates | !(ns in Visited)) { 
+            Parent[ns] := state;
+            Stack      += [ns];
+        }
+    }
+};
+

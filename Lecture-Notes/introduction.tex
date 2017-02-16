@@ -1,0 +1,111 @@
+\chapter{Introduction}
+
+\section{What is Artificial Intelligence?}
+Before we start to dive into the subject of \emph{Artificial Intelligence} we have to answer the following question:
+\\[0.2cm]
+\hspace*{1.3cm}
+What is \emph{Artificial Intelligence}? 
+\\[0.2cm] 
+Historically, there have been a number of different answers to this question.  We will look at these
+different answers and discuss them.
+\begin{enumerate}
+\item \emph{Artificial Intelligence} is the study of creating machines that \underline{think} like humans.
+
+      As we have a working prototype of intelligence, namely humans, it is quite natural to try to
+      build machines that work in a way similar to humans, thereby creating artificial
+      intelligence.  As a first step in this endeavor we would have to study how humans actually
+      think and thus we would have to study the brain.  Unfortunately, as of today, no one really
+      knows how the brain works.  Although there are branches of science devoted to studying the
+      human thought processes and the human brain, namely
+      \href{https://en.wikipedia.org/wiki/Cognitive_science}{cognitive science} and 
+      \href{https://en.wikipedia.org/wiki/Computational_neuroscience}{computational neuroscience},
+      this approach has not proven to be fruitful for creating thinking machines, the reason being
+      that the current knowledge of the human thought processes is just not sufficient.  
+
+\item \emph{Artificial Intelligence} is the science of machines that \underline{act} like people.
+
+      Since we do not know how humans think,  we cannot build machines that think like people.
+      Therefore, the next best thing might be to build  machines that act and behave like humans.  
+      Actually, the \href{https://en.wikipedia.org/wiki/Turing_test}{Turing Test} is based on this
+      idea:  Turing suggested that if we want to know whether we have succeeded in building an
+      intelligent machine, we should place it at the other end of chat line.  If we cannot
+      distinguish the computer from a human, then we have succeeded at creating intelligence. 
+
+      However, with respect to the kind of Artificial Intelligence that is needed in industry, this
+      approach isn't very useful.  To illustrate the point, consider an analogy with aerodynamics:
+      In aerodynamics we try to build planes that fly fast and efficiently, not plans that flap
+      their wings like birds do, as the later approach has failed historically, e.g. 
+      \href{https://en.wikipedia.org/wiki/Daedalus#Daedalus_and_Icarus}{Daedalus and Icarus}.
+\item \emph{Artificial Intelligence} is the science of creating machines that \underline{think lo}g\underline{icall}y.
+
+      The idea with this approach is to create machines that are based on mathematical logic.  If a
+      goal is given to these machines, then these machines use logical reasoning in order to deduce
+      those actions that need to be performed in order to best achieve the given goals. Technically,
+      this approach is based on mathematical logic.  The approach had limited success:  In playing
+      games the approach was quite successful for dealing with games like checkers or chess.
+      However, the approach was mostly unsuccessful for dealing with many real world problems.
+      There were two main reasons for its failure:
+      \begin{enumerate}
+      \item In order for the logical approach to be successful, the environment has to be completely
+            described by mathematical axioms.  It has turned out that our knowledge of the real
+            world is often not sufficient to completely describe the environment via axioms.  
+      \item In real life situations we often deal with uncertainty.  Classical logic does not
+            perform well when it has to deal with  uncertainties.
+      \end{enumerate}
+\item \emph{Artificial Intelligence} is the science of creating machines that \underline{act rationall}y.
+
+      All we really want is to build machines that, given the knowledge we have, try to optimize the
+      expected results:  In our world, there is lots of uncertainty.  We cannot hope to create
+      machines that always make the decisions that turn out to be the best decisions.  What we can
+      hope is to create machines that will make decisions that turn out to be good on average.  For
+      example, suppose we try to create a program for asset management:  We cannot hope to build a
+      machine that always buys the best company share in the stock market.  Rather, our goal should
+      be to build a program that maximizes our expected profits in the long term.
+
+      It has turned out that the main tool needed for this approach is not mathematical logic but
+      rather mathematical statistics.  The shift from logic to statistics has been the most
+      important reason for the success of Artificial Intelligence in the recent years.
+\end{enumerate}
+Now that we have clarified the notion of artificial intelligence, we should set its goals.  As we
+can never achieve more than we aim for, we have every reason to be ambitious here.  For example, my
+personal vision of Artificial Intelligence goes like this: 
+Imagine 70 years from now you (not feeling too well) have a conversation with
+\href{https://en.wikipedia.org/wiki/Siri}{Siri}.  Instead of asking Siri for the
+best graveyard in the vicinity, you think about all the sins you have committed.  As Siri has
+accompanied you for your whole life, she knows about these sins better than you.  Hence,  
+the conversation with Siri works out as follows: 
+\\[0.2cm]
+\begin{tabular}[t]{ll}
+\textbf{You (with trembling voice):} & Hey Siri, does God exist?   \\[0.2cm]
+\textbf{Siri (with the voice of Darth Vader):} & Your voice seems troubled, let me think $\cdots$ \\
+After a small pause which almost drains \\
+the battery of your phone completely, \\
+Siri gets back with a soothing announcement: \\           
+                                     & You don't have to worry any more, I have fixed the problem.  \\
+                                     & He is dead now.  
+\end{tabular}
+\\[0.2cm]
+May \href{https://en.wikipedia.org/wiki/The_Force_(Star_Wars)}{The Force} be with us on achieving our goals!
+
+\section{Literature}
+The main sources of these lecture notes are the following:
+\begin{enumerate}
+\item A course on artificial intelligence that was offered on the \textsc{edX} platform.  The course
+      materials are available at  
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \href{http://ai.berkeley.edu/home.html}{http://ai.berkeley.edu/home.html}.
+\item The book
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \emph{Introduction to Artificial Intelligence}
+      \\[0.2cm]
+      written by Stuart Russel and Peter Norvig \cite{russell:2009}.
+\end{enumerate}
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

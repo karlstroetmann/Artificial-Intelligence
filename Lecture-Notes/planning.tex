@@ -1,0 +1,73 @@
+\chapter{Planning}
+
+\begin{Definition}[State Transition System]
+A deterministic \emph{state transition system} is a triple $\Sigma = \langle S, A, \gamma \rangle$ such that:
+\begin{itemize}
+\item $S$ is the set of \emph{states},
+\item $A$ is the set of \emph{actions}, and
+\item $\gamma: S \times A \rightarrow S$ is the state transition function. \eod
+\end{itemize}
+\end{Definition}
+
+\noindent
+Executing an action $a \in A$ in a state $s_1$ yields a new state $s_2 = \gamma(s_1)$.  The function
+$\gamma$ is extended to a function $\gamma^*$ that takes lists of actions as its second argument.
+This definition is given inductively.
+\begin{enumerate}
+\item $\gamma^*(s, []) := s$,
+\item $\gamma^*(s, [a] + r) := \gamma^*\bigl(\gamma(s,a), r\bigr)$.
+\end{enumerate}
+In order to simplify the notation we do not distinguish between $\gamma^*$ and $\gamma$, i.e. we
+write $\gamma(s, l)$ instead of $\gamma^*(s, l)$.
+  
+\begin{Definition}[Planning Problem]
+A \emph{planning problem} is a triple $\mathcal{P} = \langle \Sigma, s_0, g \rangle$ such that:
+\begin{enumerate}
+\item $\Sigma = \langle S, A, \gamma \rangle$ is a state transition system,
+\item $s_0 \in S$ is the \emph{initial state}, and
+\item $g \in S$ is the \emph{goal} state.
+\end{enumerate}
+\end{Definition}
+
+A search problem is more abstract than a planning problem:  In a search problem, states are
+connected in a way described by a relation $R$ that tells us whether two states are connected.  We
+can go from state $s_1$ to state $s_2$ iff $\pair(s_1, s_2) \in R$.  In a planning problem, we
+additionally have actions that tell us exactly what causes the state $s_1$ to be transformed into
+the state $s_2$.
+
+There are various ways to represent planning problems.  The three most common ones are as follows:
+\begin{enumerate}
+\item The \emph{set-theoretic} representation uses sets of propositional variables to represent a
+      state.
+\item The \emph{classical} representation is based on first order logic.
+\item The \emph{state-variable} representation represents states by specifying the values that
+      certain variables take.
+\end{enumerate}
+In this lecture, we will only have time to discuss the classical representation of the planning
+problem.  The other representations are discussed in \cite{ghallab:2004}.
+
+
+\section{The Classical Representation of a Planning Problem}
+A \emph{first-order language} $\mathcal{L}$ is triple
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{L} = \langle P, C, V \rangle$, \quad where
+\begin{enumerate}
+\item $P$ is the set of \emph{predicate symbols},
+\item $C$ is the set of \emph{constant symbols}, and
+\item $V$ is the set of \emph{variable symbols}.
+\end{enumerate}
+
+In the classical representation of a planning problem, a state is a set of \emph{ground atoms} of the
+language $\mathcal{L}$.  Here, a \emph{ground atom} is an atomic formula that does not contain
+variables.  An atomic formula $p$ is true is a state $s$ iff $p \in s$.  Goals will be represented
+by sets of literals.  A goal $g$ is \emph{satisfied} in a state $s$ iff there is a variable
+substitution $\sigma$ such that every positive literal of $g\sigma$ is in $s$, while no negative
+literal of $g\sigma$ is in $s$.  Here, we have used the so called \emph{closed world assumption}:
+If $s$ is a state, i.e.~a set of ground atoms, then every ground atom that is not an element of $s$
+is assumed to be false.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

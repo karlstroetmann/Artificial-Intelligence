@@ -1,0 +1,22 @@
+sigmoid := procedure(x) {
+    return 1.0 / (1.0 + exp(-x));
+};
+
+// This is the natural logarithm of the sigmoid function.  It takes care to prevent
+// overflow when computing exp(-x) for negative values of x.  
+logSigmoid := procedure(x) {
+    if (x > -100) {
+        return -log(1.0 + exp(-x));
+    } else {  
+        return x;
+    }
+};
+
+f := "2+logSigmoid(x+1)+logSigmoid(1-x)";
+c := plot_createCanvas(f);
+plot_addGraph(c, f, "x |-> " + f, [0, 0, 255]);
+plot_addListGraph(c, [[-5,  0.0], [5, 0.0]], "x-axis", [255, 0, 255]);
+plot_addListGraph(c, [[ 0.0, -2.0], [0.0, 2.0]], "x-axis", [255, 0, 255]);
+plot_modScale(c, [-5, 5], [-2, 2]);
+plot_exportCanvas(c, f);
+read();

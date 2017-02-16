@@ -1,0 +1,216 @@
+loadLibrary("termUtilities");
+
+// This function collects all variables occurring in the formula f.
+// To simplify things it is asssumed that f is either an equation or
+// a negated equation and that the terms occurring in this equations
+// only contain the arithmetical operators.
+collectVars := procedure(f) {
+    return varsTerm(parseTerm(f));
+};
+varsTerm := procedure(f) {
+    match (f) {
+        case v | isVariable(v): return { varName(v) };
+        case n | isNumber(n):   return {};
+        case lhs + rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs - rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs * rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs / rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs \ rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs % rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs == rhs:        return varsTerm(lhs) + varsTerm(rhs);
+        case lhs != rhs:        return varsTerm(lhs) + varsTerm(rhs);
+        default:                abort("syntax error in varsTerm($f$)");
+    }
+};
+
+// Solutions to the n-queens problem are represented as lists of the form
+//    [x1,x2, ..., xn]
+// where xi in {1, ..., n} and xi specifies, that in the ith row the queen
+// is positioned in column xi.  This representation automatically ensures
+// that there is exactly one queen per row.
+// 
+// For example, the list [1, 7, 5, 8, 2, 4, 6, 3] represents the following
+// solution to the 8-queens problem.  In the diagramm below, the rows are
+// numbered from top to button, so the topmost row is numbered 1, while the
+// row at the bottom is numbered 8.
+//
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |   Q   |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |   Q   |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |   Q   |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |   Q   |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |   Q   |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |   Q   |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |   Q   |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |   Q   |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//
+
+// This procedure prints the chessboard that iis specified by Queens. Queens is
+// a list of length n. For all i in [1..n], Queens[i] specifies the column of
+// the queen that is positioned in row i.
+printBoard := procedure(Assignment) {
+    if (Assignment == om) {
+        print("no solution found");
+        return;
+    }
+    n      := #Assignment;
+    Queens := [];
+    for (row in [1 ..n]) {
+        Queens[row] := Assignment["V$row$"];
+    }
+    print((4 * n + 1) * "-");
+    for (row in [1..n]) {
+        line := "|";
+        for (col in [1..n]) {
+            if (Queens[row] == col) {
+                line += " Q |";
+            } else {
+                line += "   |";
+            }
+        }
+        print(line);
+        print((4*n+1) * "-");
+    }
+};
+
+// Create a constraint satisfacton problem for the n queens problem.
+queensCSP := procedure(n) {
+    Variables   := { "V$i$" : i in {1..n} };
+    Values      := { 1 .. n };
+    Constraints := {};
+    for (i in [1..n], j in [1..i-1]) {
+        // no queens in the same column:
+        // Vi != Vj 
+        Constraints += { "V$i$ != V$j$" };
+        // i + Vi != j + Vj 
+        Constraints += { "$i$ + V$i$ != $j$ + V$j$" };
+        // i - Vi != j - Vj 
+        Constraints += { "$i$ - V$i$ != $j$ - V$j$" };
+    }
+    return [Variables, Values, Constraints];
+};
+
+// This is a constraints solver that is based on forward propagation and the MRV heuristic.
+solve := procedure(csp) {
+    [Vars, Vals, Constrs] := csp;
+    Domains := { [v, Vals] : v in Vars };
+    csp := [Vars, Domains, { [f, collectVars(f)] : f in Constrs }];
+    check {
+        return bt_search({}, csp);
+    }
+};
+// Given a partial assignment of variable, this procedure tries to complete
+// this assignment so that the given CSP is solved.
+bt_search := procedure(Assignment, csp) {
+    [Variables, Domains, Constraints] := csp;
+    if (#Assignment == #Variables) {
+        return Assignment;
+    }
+    var := select_unassigned_variable(Assignment, Variables, Domains);
+    for (value in Domains[var]) {
+        check {
+            NewAssignment := Assignment + { [var, value] };
+            NewDomains := propagate_constraints(NewAssignment, Variables, Domains, Constraints);
+            new_csp := [Variables, NewDomains, Constraints];
+            return bt_search(NewAssignment, new_csp);
+        }
+    }
+    backtrack;
+};
+
+propagate_constraints := procedure(Assignment, Variables, Domains, Constraints) {
+    NewDomains := Domains;
+    Assigned   := domain(Assignment);
+    for (v in Variables - Assigned) {
+        Forbidden := {};
+        for (val in Domains[v]) {
+            for ([Formula, Vars] in Constraints | v in Vars && Vars <= Assigned + { v }) {
+                NewAssignment := Assignment + { [v, val] };
+                if (!eval_constraint(NewAssignment, Vars, Formula)) {
+                    Forbidden += { val };
+                }
+            }
+        }
+        NewDomains[v] -= Forbidden;
+        if (NewDomains[v] == {}) {
+            backtrack;
+        }
+    }
+    return NewDomains;
+};
+
+select_unassigned_variable := procedure(Assignment, Variables, Domains) {
+    Unassigned  := { v : v in Variables | Assignment[v] == om };
+    DomainSizes := { #Domains[v] : v in Unassigned };
+    minSize     := min(DomainSizes);
+    return rnd({ v : v in Unassigned | #Domains[v] == minSize });
+};
+
+// Evaluate a formula under a given Assignment.
+//   Assignment: Binary relation assigning values to variables
+//   Vars:       Set of variables occurring in Formula
+//   Formula:    The formula to evaluate
+eval_constraint := procedure(Assignment, Vars, Formula) {
+    for (v in Vars) {
+        execute("$v$ := $Assignment[v]$;");
+    }
+    return eval(Formula);
+};
+
+is_consistent := procedure(var, value, Assignment, Constraints) {
+    for ([Formula, Vars] in Constraints | var in Vars) {
+        NewAssignment := Assignment + { [var, value] };
+        if (Vars <= domain(Assignment)) {
+            if (!eval_constraint(NewAssignment, Vars, Formula)) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+main := procedure() {
+    resetRandom();
+    startTotal := now();
+    numIterations := 10;
+    for (i in [1..numIterations]) {
+        for (n in [4 .. 16]) {
+            csp      := queensCSP(n);   
+            start    := now();
+            solution := solve(csp);
+            stop     := now();
+            total    := (stop - start) / 1000.0;
+            // printBoard(solution);
+            print("The computation for the $n$ queens problem took $total$ seconds.");
+        }
+    }
+    stopTotal := now();
+    all := (stopTotal - startTotal) / 1000.0;
+    print("The total computation took $all$ seconds.");
+};
+main();
+

@@ -1,0 +1,67 @@
+load("table.stlx");
+load("gradient-ascent.stlx");
+
+// This is the sigmoid function.
+sigmoid := procedure(x) {
+    return 1.0 / (1.0 + exp(-x));
+};
+
+// This is the natural logarithm of the sigmoid function.  It takes care to prevent
+// overflow when computing exp(-x) for negative values of x.  
+logSigmoid := procedure(x) {
+    if (x > -100) {
+        return -log(1.0 + exp(-x));
+    } else {  
+        return x;
+    }
+};
+
+// log-lokelihood function
+//   x: feature matrix, x[i] is the i-th input vector
+//      It is assumed that x[i][1] is 1.0 for all i.
+//   y: output vector, values are either +1 or -1
+//   w: weight vector
+ll := procedure(x, y, w) {
+    result := 0;
+    for (i in [1 .. #x]) {
+        result += logSigmoid(y[i] * (x[i] * w));
+    }
+    return result;
+};
+
+gradLL := procedure(x, y, w) {
+    result := [];
+    for (j in [1 .. #x[1]]) {
+        result[j] := 0;
+        for (i in [1 .. #x]) {
+            result[j] += y[i] * x[i][j] * sigmoid((-y[i]) * (x[i] * w));
+        }
+    }
+    return la_vector(result);
+};
+
+logisticRegressionFile := procedure(fileName, types) {
+    csv    := readTable(fileName, types);
+    data   := csv.getData();
+    number := #data;
+    dmnsn  := #data[1];    
+    yList  := [];
+    xList  := [];
+    for (i in [1 .. number]) {
+        yList[i] := data[i][1];
+        xList[i] := la_vector([1.0] + data[i][2..]);
+    }
+    x := la_matrix(xList);
+    y := la_vector([2 * y - 1 : y in yList]);
+    start := la_vector([0.0 : i in [1 .. dmnsn]]);
+    eps   := 10 ** -12;
+    f     := w |=> ll(x, y, w);
+    gradF := w |=> gradLL(x, y, w);
+    return findMaximum(f, gradF, start, eps)[1];
+};
+
+test := procedure() {
+    print(logisticRegressionFile("exam.csv", ["int", "double"]));
+};
+
+test();

@@ -1,0 +1,143 @@
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+// Die folgenden Prozeduren dienen nur dem Ausdrucken der Lösung und    //
+// zum Debuggen.
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////    
+
+// Dieses Prädikat druckt die Lösung aus.
+printPath := procedure(path) {
+    print("Solution:\n");
+    for (i in [1 .. #path - 1]) {
+        [ m1, k1, b1 ] := path[i];
+        [ m2, k2, b2 ] := path[i+1];
+        printState(m1, k1, b1);
+        printBoat(m1, k1, b1, m2, k2, b2);
+    }
+    [ m, k, b ] := path[#path];
+    printState(m, k, b);
+};
+
+
+// Die Prozedur printState(m, k, b) druckt den Zustand, bei dem
+// m Missionare, k Kannibalen und b Boote am linken Ufer sind.
+printState := procedure(m, k, b) {
+     print( fillCharsRight(m * "M", 6) + 
+            fillCharsRight(k * "K", 6) + 
+            fillCharsRight(b * "B", 3) + "    |~~~~~|    " + 
+            fillCharsLeft((3 - m) * "M", 6) + 
+            fillCharsLeft((3 - k) * "K", 6) + 
+            fillCharsLeft((1 - b) * "B", 3) 
+          );
+};
+
+// Die Prozedur printBoat(m1, k1, b1, m2, k2, b2) druckt den Zustand des
+// Bootes, wenn der Zustand sich von [m1, k1, b1] zu [m2, k2, b2] ändert.
+printBoat := procedure(m1, k1, b1, m2, k2, b2) {
+    if (b1 == 1) {
+        if (m1 < m2) {
+            print("Fehler in printBoat: negative Anzahl von Missionaren im Boot!");
+            return;
+        }
+        if (k1 < k2) {
+            print("Fehler in printBoat: negative Anzahl von Kannibalen im Boot!");
+            return;
+        }
+        print( 19 * " " + "> " + fillCharsBoth( (m1 - m2) * "M" + " " + (k1 - k2) * "K", 3 ) + " >" );
+    } else {
+        if (m1 > m2) {
+            print("Fehler in printBoat: negative Anzahl von Missionaren im Boot!");
+            return;
+        }
+        if (k1 > k2) {
+            print("Fehler in printBoat: negative Anzahl von Kannibalen im Boot!");
+            return;
+        }
+        print( 19 * " " + "< " + fillCharsBoth( (m2 - m1) * "M" + " " + (k2 - k1) * "K", 3 ) + " <" );
+    }
+};
+
+// Die Prozedur fillCharsLeft(x, n) wandelt x in einen String der Länge n um.
+// Dabei wird der String von links mit Leerzeichen aufgefüllt.
+fillCharsLeft := procedure(x, n) {
+    s := x + "";
+    m := n - #s;
+    return m * " " + s;
+};
+
+// Die Prozedur fillCharsRight(x, n) wandelt x in einen String der Länge n um.
+// Dabei wird der String von rechts mit Leerzeichen aufgefüllt.
+fillCharsRight := procedure(x, n) {
+    s := x + "";
+    m := n - #s;
+    return s + m * " ";
+};
+
+// Die Prozedur fillCharsBoth(x, n) wandelt x in einen String der Länge n um.
+// Dabei wird der String von links und rechts mit Leerzeichen aufgefüllt.
+fillCharsBoth := procedure(x, n) {
+    s  := x + "";
+    ml := (n     - #s) \ 2;
+    mr := (n + 1 - #s) \ 2;
+    return ml * " " + s + mr * " ";
+};
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+// Missionaries and Cannibals as a search problem.                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+
+// Given a state and a dictionary Parent that contains the predecessor of
+// each state, this function computes the path leading to the given state.
+pathTo := procedure(state, Parent) {
+    Path := [];
+    while (state != om) {
+        Path  += [state];
+        state := Parent[state];
+    }
+    return reverse(Path);
+};
+// A state is represented as a triple.  The triple
+//
+//         [m, i, b]
+//
+// specifies that there are
+//      * m missionaries,
+//      * i infidels, and
+//      * b boats
+// on the western shore of the river.  This implies that there are 
+// 3 - m missionaries on the eastern shore, the number of infidels is 3 - i
+// on the eastern hand shore and the number of boats is 1 - b.
+
+// problem(m, i) is true if there is a problem on the given shore.
+// m is the number of missionaries on this shore, while i is the number
+// of infidels.
+problem := [m, i] |-> m > 0 && m < i;
+// noProblemAtAll(m, i) is true if there is no problem on either side.
+noProblemAtAll := [m, i] |-> !problem(m, i) && !problem(3 - m, 3 - i);
+// Given a state s, and an action a, try to execute the action a in state s.
+// If this results in a legal state, this new state is returned.  Otherwise,
+// om is returned.
+nextStates := procedure(s) {
+    [m, i, b] := s;
+    if (b == 1) {  // The boat is on the western shore.
+        return { [m - mb, i - ib, 0]
+               : mb in {0 .. m}, ib in {0 .. i}           
+               | mb + ib in {1, 2} && noProblemAtAll(m - mb, i - ib)
+               };
+    } else {
+        return { [m + mb, i + ib, 1]
+               : mb in {0 .. 3 - m}, ib in {0 .. 3 - i}           
+               | mb + ib in {1, 2} && noProblemAtAll(m + mb, i + ib)
+               };
+    }
+};
+start := [3,3,1];
+goal  := [0,0,0];
+load("breadth-first-search.stlx");
+// load("depth-first-search.stlx");
+load("depth-first-search-recursive.stlx");
+Path := search(start, goal, nextStates);
+print("Solution of length $#Path-1$ found:");
+printPath(Path);

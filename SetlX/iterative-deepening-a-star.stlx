@@ -1,0 +1,42 @@
+// Iterative deepening A* search.
+idaStarSearch := procedure(start, goal, nextStates, heuristic) {
+    limit := heuristic(start, goal);
+    while (true) {
+        print("limit = $limit$");
+        Path := search(start, goal, nextStates, 0, limit, [start], heuristic);
+        if (isList(Path)) {
+            return Path;
+        }
+        limit := Path;
+    }
+};
+// Search for a path from state to goal.
+//   * nextStates: A function computing the states that a reachable from a given state in one step.
+//   * distance:   The length of the Path computed so far
+//   * limit:      Maximal admissable length  of a path.  If no path can be found that is less
+//                 or equal than limit, the search is aborted and the estimated minimal distance
+//                 of a path from start to goal is returned.
+//   * Path:       List of states that from a pah from start to state.
+//   * heuristic:  A function that takes two states as input and returns an optimistic estimation
+//                 of their distance.
+search := procedure(state, goal, nextStates, distance, limit, Path, heuristic) {
+    total := distance + heuristic(state, goal);
+    if (total > limit) {
+        return total;
+    }
+    if (state == goal) {
+        return Path;
+    }
+    smallest := 1.0 / 0.0;  // infinity
+    for (ns in nextStates(state) | !(ns in Path) ) {
+        result := search(ns, goal, nextStates, distance+1, limit, Path+[ns], heuristic);
+        if (isList(result)) {
+            return result;
+        }
+        if (result < smallest) {
+            smallest := result;
+        }
+    }
+    return smallest;
+};
+

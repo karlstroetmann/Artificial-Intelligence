@@ -1,0 +1,6 @@
+c := plot_createCanvas("sin(x) - x**2/2");
+plot_addGraph(c, "sin(x) - x**2/2", "x |-> sin(x) - x**2/2", [0, 0, 255]);
+plot_addListGraph(c, [[-0.5,  0.0], [1.5, 0.0]], "x-axis", [255, 0, 255]);
+plot_addListGraph(c, [[ 0.0, -0.5], [0.0, 0.5]], "x-axis", [255, 0, 255]);
+plot_modScale(c, [-0.5, 1.5], [-0.5, 0.5]);
+plot_exportCanvas(c, "sin-minus-square");

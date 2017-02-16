@@ -1,0 +1,22 @@
+search := procedure(start, goal, nextStates) {
+    return dfs(start, goal, nextStates, {}, {});
+};
+
+dfs := procedure(state, goal, nextStates, Parent, Visited) {
+    if (state == goal) {
+        return pathTo(goal, Parent);
+    }
+    if (#Visited % 1000 == 0) {
+        print("#Visited = $#Visited$");        
+    }
+    Visited   += { state };
+    newStates := nextStates(state);
+    for (ns in newStates | !(ns in Visited)) {
+        Parent[ns] := state;
+        result     := dfs(ns, goal, nextStates, Parent, Visited);
+        if (result != om) {
+            return result;
+        }   
+    }
+};
+

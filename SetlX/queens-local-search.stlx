@@ -1,0 +1,130 @@
+// Solutions to the n-queens problem are represented as lists of the form
+//    [x1,x2, ..., xn]
+// where xi in {1, ..., n} and xi specifies, that in the ith column the 
+// queen is positioned in row xi.  This representation automatically ensures
+// that there is exactly one queen per column.
+// 
+// For example, the list [1, 5, 8, 6, 3, 7, 2, 4] represents the following
+// solution to the 8-queens problem.  In the diagramm below, the rows are
+// numbered from top to button, so the topmost row is numbered 1, while the
+// row at the bottom is numbered 8.
+//
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |   Q   |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |   Q   |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |   Q   |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |   Q   |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |   Q   |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |   Q   |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |   Q   |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |   Q   |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//
+
+// This procedure prints the chessboard that iis specified by L. L is a list of
+// length n. For all i in [1..n], L[i] specifies the column of the queen that is
+// positioned in row i.
+printBoard := procedure(L) {
+    if (L == om) {
+        return;
+    }
+    n := #L;
+    print((4 * n + 1) * "-");
+    for (row in [1..n]) {
+        line := "|";
+        for (col in [1..n]) {
+            if (L[row] == col) {
+                line += " Q |";
+            } else {
+                line += "   |";
+            }
+        }
+        print(line);
+        print((4*n+1) * "-");
+    }
+};
+
+// This procedure solves the n-queens problem using local search.  The parameter 
+// n specifies the size of the board.
+solve := procedure(n) {
+    resetRandom();
+    Queens := [];
+    // randomly place n queens
+    for (row in [1 .. n]) {
+        Queens[row] := rnd({1 .. n});
+    }
+    iteration := 0;
+    while (n > 3) {  // there is no solution for n <= 3
+        // printBoard(Queens);
+        Conflicts   := { [numConflicts(Queens, row), row] : row in [1 ..n] };
+        [maxNum, _] := last(Conflicts);
+        if (maxNum == 0) {
+            print("number of iterations: $iteration$");
+            return Queens;
+        }
+        if (iteration % 10 != 0) { // avoid infinite loops
+            row := rnd({ row : [num, row] in Conflicts | num == maxNum });
+        } else {
+            row := rnd({ 1 .. n });
+        }
+        // print("$maxNum$ conflicts in row $row$");
+        Conflicts := {};
+        for (col in [1 .. n]) {
+            Board      := Queens;
+            Board[row] := col;
+            Conflicts  += { [numConflicts(Board, row), col] };
+        }
+        [minNum, _] := first(Conflicts);
+        // print("$minNum$ conflicts if queen in row $row$ is moved to colum $column$.");
+        Queens[row] := rnd({ col : [num, col] in Conflicts | num == minNum });
+        iteration += 1;
+    }
+};
+
+// Return the number of conflicts for the particular queen positioned in row.
+// Queens is a list of numbers, the value Queens[r] is the column where the
+// queen in row r is positioned.
+numConflicts := procedure(Queens, row) {
+    n      := #Queens;
+    result := 0;
+    for (r in {1 .. n} | r != row) {
+        if ( Queens[r] == Queens[row]           ||
+             r - Queens[r] == row - Queens[row] ||
+             r + Queens[r] == row + Queens[row]
+           )
+        { result += 1; }
+    }
+    return result;
+};
+
+for (n in [1000]) {
+    start    := now();
+    solution := solve(n);
+    stop     := now();
+    total    := (stop - start) / 1000.0;
+    // printBoard(solution);
+    print("The computation for the $n$ queens problem took $total$ seconds.");
+}

@@ -1,0 +1,71 @@
+// This procedure implements the A*IDA* search algorithm.
+aStarIdaStarSearch := procedure(start, goal, nextStates, heuristic, size) {
+    Parent   := {};
+    Distance := { [start, 0] };
+    est      := heuristic(start, goal);
+    Estimate := { [start, est] };  
+    Frontier := { [est, start] };
+    while (#Distance < size && Frontier != {}) {
+        if (#Distance % 1000 == 0) {
+            print("#Distance = $#Distance$");
+        }
+        [guess, state] := first(Frontier);
+        if (state == goal) {
+            print("Number of states touched: $#Distance$");
+            return pathTo(state, Parent);
+        }
+        stateDist := Distance[state];
+        Frontier  -= { [guess, state] };
+        for (neighbour in nextStates(state)) {
+            oldEstimate := Estimate[neighbour];
+            newEstimate := stateDist + 1 + heuristic(neighbour, goal);
+            if (oldEstimate == om || newEstimate < oldEstimate) {
+                Parent[neighbour]   := state;
+                Distance[neighbour] := stateDist + 1;
+                Estimate[neighbour] := newEstimate;
+                Frontier            += { [newEstimate, neighbour] };
+                if (oldEstimate != om) {
+                    Frontier -= { [oldEstimate, neighbour] };
+                }
+            }
+        }
+    }
+    [s, P] := deepeningSearch(goal, start, nextStates, heuristic, Distance);
+    return pathTo(s, Parent) + P;
+};
+
+deepeningSearch := procedure(g, s, nextStates, heuristic, Distance) {
+    limit := 0;
+    while (true) {
+        print("limit = $limit$");
+        Path := search(g, s, nextStates, 0, limit, heuristic, [g], Distance);
+        if (isList(Path)) {
+            return Path;
+        }
+        limit := Path;
+    }
+};
+
+search := procedure(g, s, nextStates, d, l, heuristic, Path, Dist) {
+    total := d + heuristic(g, s);
+    if (total > l) {
+        return total;
+    }
+    if (Dist[g] != om) {
+        return [g, Path[2..]];
+    }
+    smallest := 1.0 / 0.0;  // infinity
+    for (ns in nextStates(g) | !(ns in Path) ) {
+        result := search(ns, s, nextStates, d+1, l, heuristic, [ns]+Path, Dist);
+        if (isList(result)) {
+            return result;
+        }
+        if (result < smallest) {
+            smallest := result;
+        }
+    }
+    return smallest;
+};
+
+    
+

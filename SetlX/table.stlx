@@ -1,0 +1,47 @@
+// This data structure is intented to represent a table in a way similar to
+// tables seen in databases.
+
+class table(columnNames, types, data) {
+    mColumnNames := columnNames;
+    mTypes       := types;
+    mData        := data;
+
+  static {
+      getColumnNames := [ ] |-> mColumnNames;
+      getTypes       := [ ] |-> mTypes;
+      getData        := [ ] |-> mData;
+      getRow         := [r] |-> mData[r];
+      getLength      := []  |-> #mData;
+      
+      head := procedure(limit := 10) {
+          print(mColumnNames);
+          print(mTypes);
+          for (i in [1 .. limit]) {
+              print(mData[i]);
+          }
+      };
+  }
+}
+
+// The argument fileName is the name of a csv
+// file.  The first line of this file should be strings giving the column
+// names.  The remaining lines are the data.
+readTable := procedure(fileName, types) {
+    all := readFile(fileName);
+    columnNames := split(all[1], ',\s*');
+    data := [];
+    for (i in [2 .. #all]) {
+        row := split(all[i], ',\s*');
+        data[i-1] := [evalType(type, s) : [type, s] in types >< row];
+    }
+    return table(columnNames, types, data);
+};
+
+evalType := procedure(type, s) {
+    switch {
+        case     type == "double": return double(s);
+        case     type == "int"   : return int(s);
+        case     type == "string": return s;
+        default: abort("unknown type $type$ in evalType");
+    }
+};

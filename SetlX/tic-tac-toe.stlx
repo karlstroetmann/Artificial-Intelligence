@@ -1,0 +1,170 @@
+// This class represents the board of a Tic-Tac-Toe game.
+// The constructor creates an empty board of the given size.
+// For performance reasons, size > 3 does not work.
+class tic_tac_toe(size) {
+    // This number is the size of the board.  
+    mSize := size;  
+    // The board itself.  It is represented as a list of its rows.
+    // The entries of a row are:
+    //     (a) " ": if the field is empty
+    //     (b) "X": if the first player has marked this field
+    //     (c) "O": if the second player has marked this field
+    // The board starts out empty.
+    mBoard := [ [ " " : col in [1 .. mSize] ]: row in [1 .. mSize] ];
+
+    // return the entry at the given row and column
+    square := procedure(row, col) {
+        return mBoard[row][col];
+    };
+    // return a list of all empty squares
+    possible_moves := procedure() {
+        rng := [1 .. mSize];
+        return [ [row, col] : row in rng, col in rng | mBoard[row][col] == " " ];
+    };
+    // perform the move specified as position
+    move := procedure(position, mark) {
+        [row, col]       := position;
+        mBoard[row][col] := mark;
+    };
+    // create a human readable representation of the board
+    f_str := procedure() {
+         rng := [1 .. mSize];
+         ls  := "\n" + "-" * (4 * mSize + 1) + "\n";  // line separator
+         return   ls 
+                + join([ "| " + join([ mBoard[row][col] : col in rng ], " | ") + " |"
+                       : row in rng 
+                       ], ls)
+                + ls;
+    };
+    // If the game has been decided, return the winner. 
+    // If "X" has won, return "X", if "O" has won, return "O".
+    // If the game is drawn, return " ".
+    // If the game is still in progress, return Omega.
+    check_win := procedure() {
+        rng   := [1 .. mSize];
+        // lines is the list of all horizontal, vertical, and diagonal lines in the game
+        // we start with the rows
+        lines := [ [ mBoard[row][col] : col in rng ] : row in rng ];
+        // next, we add the columns
+        lines += [ [ mBoard[row][col] : row in rng ] : col in rng ];
+        // next, the falling diagonal
+        lines += [ [ mBoard[idx][idx] : idx in rng ] ];
+        // finally, the rising diagonal
+        lines += [ [ mBoard[idx][mSize - (idx - 1)] : idx in rng ] ];
+        // all lines are checked whether the contain 3 identical nonempty marks 
+        for (line in lines) {
+            if (#{ p : p in line } == 1 && line[1] != " ") {
+                return line[1];
+            }
+        }
+        // no winner so far, check for a draw
+        if (#possible_moves() == 0) {
+            return " ";
+        }
+        // return Omega if game still in progress
+    };
+}
+switch_player := procedure(player) {
+    R := { ["X", "O"], ["O", "X"] };
+    return R[player];
+};
+// Function to play a game of tic-tac-toe, user is either "X" or "O".
+// If user is "O", then the computer starts, else the human player starts.
+play_game := procedure(size) {
+    board  := tic_tac_toe(size);
+    player := "X";
+    print(board);
+    while (!(winner in { "X", "O", " " })) {
+        if (player == "X") {
+            [row, col] := split(read("enter move as row, col: "), " *, *");
+            move := [int(row), int(col)];
+        } else {
+            start := now();
+            move  := optimal_strategy_min(board);
+            stop  := now();
+            total := (stop - start) / 1000.0;
+            print("computers move: $move$ took $total$ seconds");
+        }
+        board.move(move, player);
+        winner := board.check_win();
+        print(board);
+        if (winner == "X") {
+            print("X wins!");
+        } else if (winner == "O") {
+            print("O wins!");
+        } else if (winner == " ") {
+            print("It's a tie!");
+        }
+        // no winner yet, continue
+        player := switch_player(player);
+    }
+};
+// the utility of a given state for the second player
+utility_max := cachedProcedure(board) {
+    winner := board.check_win();
+    switch {
+        case winner == "X": return  1;
+        case winner == "O": return -1;
+        case winner == " ": return  0;
+        // do nothing if the game is not yet decided
+    }
+    result := -1;  // assume -1 is neutral element of max
+    for (move in board.possible_moves()) {
+        result := max([result, quality_max(board, move)]);
+    }
+    return result;
+};
+// the utility of a given state for the second player
+utility_min := cachedProcedure(board) {
+    winner := board.check_win();
+    switch {
+        case winner == "X": return  1;
+        case winner == "O": return -1;
+        case winner == " ": return  0;
+        // do nothing if the game is not yet decided
+    }
+    result := 1;  // assume +1 is neutral element of min
+    for (move in board.possible_moves()) {
+        result := min([result, quality_min(board, move)]);
+    }
+    return result;
+};
+// the quality of a given move for the first player
+quality_max := procedure(board, move) {
+    board.move(move, "X");
+    return utility_min(board);
+};
+// the quality of a given move for the second player
+quality_min := procedure(board, move) {
+    board.move(move, "O");
+    return utility_max(board);
+};
+// find an optimal move for the first player
+optimal_strategy_max := procedure(board) {
+    best_value    := utility_max(board);
+    optimal_moves := {};
+    for (move in board.possible_moves()) {
+        if (best_value == quality_max(board, move)) {
+            optimal_moves += { move };
+        }
+    }
+    return rnd(optimal_moves);
+};
+// find an optimal move for second player
+optimal_strategy_min := procedure(board) {
+    best_value    := utility_min(board);
+    optimal_moves := {};
+    for (move in board.possible_moves()) {
+        if (best_value == quality_min(board, move)) {
+            optimal_moves += { move };
+        }
+    }
+    return rnd(optimal_moves);
+};
+// choose a random move
+random_strategy := procedure(board) {
+    return rnd(board.possible_moves());
+};
+
+play_game(3);
+

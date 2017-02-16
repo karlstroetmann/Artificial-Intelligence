@@ -1,0 +1,340 @@
+\chapter{Linear Regression}
+\section{Simple Linear Regression}
+Assume we have a \emph{linear hypothesis} 
+\\[0.2cm]
+\hspace*{1.3cm}
+$h_\mathbf{\theta}(x) := \theta_1 \cdot x + \theta_0$
+\\[0.2cm]
+We have $m$ observations $\langle x^{(1)}, y^{(1)}\rangle, \cdots, \langle x^{(m)}, y^{(m)}\rangle$.  Our goal is to minimize the \emph{squared error}
+\\[0.2cm]
+\hspace*{1.3cm}
+$E(\mathbf{\theta}) = \sum\limits_{i=1}^m h_\mathbf{\theta}\bigl(x^{(i)} - y^{(i)}\bigr)^2$
+\\[0.2cm]
+
+
+\section{General Linear Regression}
+In a \emph{general regression problem} we are given a list of $n$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
+where $\mathbf{x}^{(i)} \in \mathbb{R}^m$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1,\cdots,n\}$.  These pairs are called the \emph{training examples}.
+Our goal is to compute a linear function 
+\\[0.2cm]
+\hspace*{1.3cm}
+$F:\mathbb{R}^m \rightarrow \mathbb{R}$
+\\[0.2cm]  
+such that $F\bigl(\mathbf{x}^{(i)}\bigr)$ approximates  $y^{(i)}$ as much as posssible
+for all $i\in\{1,\cdots,n\}$, i.e.~we want to have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\forall i\in\{1,\cdots,n\}:F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$.
+\\[0.2cm]
+In order to make the notation $F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ more precise, we
+define the \emph{squared error} 
+\begin{equation}
+  \label{eq:squared-error-1}
+  E := \frac{1}{n} \cdot \sum\limits_{i=1}^n \Bigl(F\bigl(\mathbf{x}^{(i)}\bigr) - y^{(i)}\Bigr)^2. 
+\end{equation}
+Then, given the list of training examples $[\langle \mathbf{x}^{(1)}, y^{(1)} \rangle, \cdots, \langle
+\mathbf{x}^{n}, y^{(n)} \rangle]$, our goal is to minimize the squared error $E$.  
+In order to proceed, we need to have a model for the function $F$.  The simplest model is a linear
+model, i.e.~we assume that $F$ is given as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds F(\mathbf{x}) = \sum\limits_{i=1}^m w_i \cdot x_i + b = \mathbf{x}^T \cdot \mathbf{w} + b$ \quad where $\mathbf{w} \in \mathbb{R}^m$ and $b\in\mathbb{R}$.
+\\[0.2cm]
+Here, the expression $\mathbf{x}^T \cdot \mathbf{w}$ denotes the matrix product of the vector
+$\mathbf{x}^T$, which is viewed as a $1$-by-$m$ matrix, and the vector $\mathbf{w}$.
+At this point you might wonder why it is useful to introduce matrix notation here.  The reason is
+that this notation shortens the formula and, furthermore, is more efficient to implement since most
+programming languages used in machine learning have special library support for matrix operations.
+
+The definition of $F$ given above is the model used in
+\href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression}. 
+Here, $\mathbf{w}$ is called the \emph{weight vector} and $b$ is called the \emph{bias}.  It turns
+out that the notation can be simplified if we extend the $m$-dimensional vector $\mathbf{x}$ to an
+$m+1$-dimensional vector $\mathbf{x}'$ such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$x_j' := x_j$ \quad for all $j\in\{1,\cdots,m\}$ \quad and \quad $x_{m+1}' := 1$.
+\\[0.2cm]
+To put it in words, the vector $\mathbf{x}'$ results from the vector $\mathbf{x}$ by appending the number $1$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{x}' = \langle x_1, \cdots, x_m, 1 \rangle^T$ \quad where $\langle x_1, \cdots, x_m \rangle = \mathbf{x}^T$.
+\\[0.2cm]
+Furthermore, we define 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w}' := \langle w_1, \cdots, w_m, b \rangle^T$ \quad where $\langle w_1, \cdots, w_m \rangle = \mathbf{w}^T$.
+\\[0.2cm]
+Then we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$F(\mathbf{x}) = \mathbf{w} \cdot \mathbf{x} + b = \mathbf{w}' \cdot \mathbf{x}'$.
+\\[0.2cm]
+Hence, the bias has been incorporated into the weight vector at the cost of appending a $1$ at the
+input vector.  As we want to use this simplification, from now on we assume that the input vectors
+$\mathbf{x}^{(i)}$ have all been extended so that there last component is $1$.  Using this
+assumption,  we define the
+function $F$ as
+\\[0.2cm]
+\hspace*{1.3cm}
+$F(\mathbf{x}) := \mathbf{x}^T \cdot \mathbf{w}$.
+\\[0.2cm]
+Now equation (\ref{eq:squared-error-1}) can be rewritten as follows:
+\begin{equation}
+  \label{eq:squared-error-2}
+  E(\mathbf{w}) = \frac{1}{n} \cdot \sum\limits_{i=1}^n \Bigl(\bigl(\mathbf{x}^{(i)})^T \cdot \mathbf{w}  - y^{(i)}\Bigr)^2.
+\end{equation}
+Our aim is to rewrite the sum appearing in this equation as a scalar product of a vector with
+itself.  To this end, we first define the vector $\mathbf{y}$ as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{y} := \langle y^{(1)}, \cdots, y^{(m)} \rangle^T$.
+\\[0.2cm]
+Note that $\mathbf{y} \in \mathbb{R}^n$ since it has a component for all of the $n$ training
+examples.  Next, we define the matrix $X$ as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$X := \left(
+  \begin{array}{c}
+    \bigl(\mathbf{x}^{(1)}\bigr)^T  \\
+    \vdots                         \\
+    \bigl(\mathbf{x}^{(n)}\bigr)^T
+  \end{array}
+  \right)   
+$
+\\[0.2cm]
+Defined this way, the row vectors of the matrix $X$ are the vectors $\mathbf{x}^{(i)}$ transposed.
+Now we have the following:
+\\[0.2cm]
+\hspace*{1.3cm}
+$X \cdot \mathbf{w} - \mathbf{y} = \left(
+  \begin{array}{c}
+    \bigl(\mathbf{x}^{(1)}\bigr)^T  \\
+    \vdots                         \\
+    \bigl(\mathbf{x}^{(n)}\bigr)^T
+  \end{array}
+  \right) \cdot \mathbf{w} - \mathbf{y} = \left(
+  \begin{array}{c}
+    \bigl(\mathbf{x}^{(1)}\bigr)^T \cdot \mathbf{w} - y_1 \\
+    \vdots                         \\
+    \bigl(\mathbf{x}^{(n)}\bigr)^T \cdot \mathbf{w} - y_n
+  \end{array}
+  \right)
+$
+\\[0.2cm]
+Taking the square of the vector $X \cdot \mathbf{w} - \mathbf{y}$ we discover that
+we can rewrite equation (\ref{eq:squared-error-2}) as follows:
+\begin{equation}
+  \label{eq:squared-error-3}
+  E(\mathbf{w}) = \frac{1}{n} \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr)^T \cdot 
+                                    \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr).
+\end{equation}
+
+\section{Some Useful Gradients}
+In the last section, we have computed the squared error $E(\mathbf{w})$ using equation
+(\ref{eq:squared-error-3}).  Our goal is to minimize the $E(\mathbf{w})$ by choosing the weight
+vector $\mathbf{w}$ appropriately.  A necessary condition for $E(\mathbf{w})$ to be minimal is 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\nabla E(\mathbf{w}) = \mathbf{0}$,
+\\[0.2cm]
+i.e.~the gradient of $E(\mathbf{w})$ need to be zero.  In order to prepare for the computation of
+$\nabla E(\mathbf{w})$, we first compute the gradient of two simpler functions.
+
+\subsection{Computing the Gradient of $f(\mathbf{x}) = \mathbf{x}^T \cdot C \cdot \mathbf{x}$}
+Suppose the function $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(\mathbf{x}) := \mathbf{x}^T \cdot C \cdot \mathbf{x}$ \quad where $C \in \mathbb{R}^{n \times n}$.
+\\[0.2cm]
+If we write the matrix $C$ as $C = (c_{i,j})_{i=1,\cdots,n \atop j=1,\cdots,n}$ and the vector
+$\mathbf{x}$ as $\mathbf{x} = \langle x_1, \cdots, x_n \rangle^T$,  then $f(\mathbf{x})$ can be
+computed as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(\mathbf{x}) = \sum\limits_{i=1}^n x_i \cdot \sum\limits_{j=1}^n c_{i,j} \cdot x_j 
+                   = \sum\limits_{i=1}^n \sum\limits_{j=1}^n x_i \cdot c_{i,j} \cdot x_j
+$.
+\\[0.2cm]
+We compute the partial derivative of $f$ with respect to $x_k$ and use the product rule:
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[t]{lcl}
+\ds \frac{\partial f}{\partial x_k} & = &
+\ds \sum\limits_{i=1}^n \sum\limits_{j=1}^n \Bigl(
+    \frac{\partial x_i}{\partial x_k} \cdot c_{i,j} \cdot x_j + x_i \cdot c_{i,j} \cdot \frac{\partial x_j}{\partial x_k}
+    \Bigr) \\[0.5cm]
+& = &
+\ds \sum\limits_{i=1}^n \sum\limits_{j=1}^n \Bigl(
+    \delta_{i,k} \cdot c_{i,j} \cdot x_j + x_i \cdot c_{i,j} \cdot \delta_{j,k} \Bigr) \\[0.5cm]
+& = &
+\ds \sum\limits_{j=1}^n c_{k,j} \cdot x_j + \sum\limits_{i=1}^n x_i \cdot c_{i,k} \\[0.5cm]
+& = &
+  \bigl(C \cdot \mathbf{x}\bigr)_k + \bigl(C^T \cdot \mathbf{x}\bigr)_k
+\end{array}
+$
+\\[0.2cm]
+Hence we have shown that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \nabla f(\mathbf{x}) = (C + C^T) \cdot \mathbf{x}$.
+\\[0.2cm]
+If the matrix $C$ is symmetric, i.e.~if $C = C^T$, this simplifies to
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \nabla f(\mathbf{x}) = 2 \cdot C \cdot \mathbf{x}$.
+\\[0.2cm]
+If the function $g: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$g(\mathbf{x}) := \mathbf{b}^T \cdot A \cdot \mathbf{x}$, \quad where $\mathbf{b} \in \mathbb{R}^n$ and $A \in \mathbb{R}^{n \times n}$,
+\\[0.2cm]
+then a similar calculation shows that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \nabla g(\mathbf{x}) = A^T \cdot \mathbf{b}$.
+
+\exercise
+Prove this equation.
+
+\section{Deriving the Normal Equation}
+Next, we derive the so called \emph{normal equation} for linear regression.  To this end, we first
+expand the product in equation (\ref{eq:squared-error-3}):
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[t]{lcll}
+ E(\mathbf{w}) & = & 
+ \ds \frac{1}{n} \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr)^T \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr) 
+ \\[0.5cm]
+ & = & 
+ \ds \frac{1}{n} \cdot \bigl(\mathbf{w}^T \cdot X^T - \textbf{y}^T\bigr) \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr) 
+ & \mbox{since $(A \cdot B)^T = B^T \cdot A^T$}
+ \\[0.5cm]
+ & = & 
+ \ds \frac{1}{n} \cdot \bigl(\mathbf{w}^T \cdot X^T \cdot X \cdot \mathbf{w} 
+                             - \textbf{y}^T \cdot X \cdot \mathbf{w} 
+                             - \mathbf{w}^T \cdot X^T \cdot \mathbf{y}
+                             + \mathbf{y}^T \cdot \mathbf{y}
+                       \bigr)
+ \\[0.5cm]
+ & = & 
+ \ds \frac{1}{n} \cdot \bigl(\mathbf{w}^T \cdot X^T \cdot X \cdot \mathbf{w} 
+                             - 2 \cdot \textbf{y}^T \cdot X \cdot \mathbf{w} 
+                             + \mathbf{y}^T \cdot \mathbf{y}
+                       \bigr)
+ & \mbox{since $\mathbf{w}^T \cdot X^T \cdot \mathbf{y} = \textbf{y}^T \cdot X \cdot \mathbf{w}$}
+\end{array}
+$
+\\[0.2cm]
+The fact that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w}^T \cdot X^T \cdot \mathbf{y} = \textbf{y}^T \cdot X \cdot \mathbf{w}$
+\\[0.2cm]
+might not be immediately obvious.  This is equation is true because the result of the matrix product 
+$\mathbf{w}^T \cdot X^T \cdot \mathbf{y}$ is a real number.  Now the transpose $r^T$ of a real number $r$ is the number
+itself, i.e.~$r^T = r$ for all $r \in \mathbb{R}$.  Therefore, we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w}^T \cdot X^T \cdot \mathbf{y} = 
+\bigl(\mathbf{w}^T \cdot X^T \cdot \mathbf{y}\bigr)^T =
+\mathbf{y}^T \cdot X \cdot \mathbf{w}
+$.
+\\[0.2cm]
+Hence we have shown that
+\\[0.2cm]
+\hspace*{1.3cm}
+\begin{equation}
+  \label{eq:squared-error-4}
+  E(\mathbf{w}) = \ds \frac{1}{n} \cdot \Bigl(\mathbf{w}^T \cdot \bigl(X^T \cdot X\bigr) \cdot \mathbf{w} 
+                                             - 2 \cdot \textbf{y}^T \cdot X \cdot \mathbf{w} 
+                                             + \mathbf{y}^T \cdot \mathbf{y}
+                                        \Bigr)
+\end{equation}
+\\[0.2cm]
+holds.  The matrix $X^T \cdot X$ used in the first term is symmetric because
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl(X^T \cdot X\bigr)^T = X^T \cdot \bigl(X^T\bigr)^T = X^T \cdot X$.
+\\[0.2cm]
+Using the results from the previous section we can now compute the gradient of $E(\mathbf{w})$ with respect to
+$\mathbf{w}$.  The result is
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \nabla E(\mathbf{w}) = \frac{2}{n} \cdot \Bigl(X^T \cdot X \cdot \mathbf{w} - X^T \cdot \mathbf{y}\Bigr)$.
+\\[0.2cm]
+If the squared error $E(\mathbf{w})$ has a minimum for the weights $\mathbf{w}$, then we must have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\nabla E(\mathbf{w}) = \mathbf{0}$.
+\\[0.2cm]
+This leads to the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds\frac{2}{n} \cdot \Bigl(X^T \cdot X \cdot \mathbf{w} - X^T \cdot \mathbf{y}\Bigr) = \mathbf{0}$.
+\\[0.2cm]
+This equation can be rewritten as
+\begin{equation}
+  \label{eq:normal-equation}
+  \bigl(X^T \cdot X\bigr) \cdot \mathbf{w} = X^T \cdot \mathbf{y}.          
+\end{equation}
+This equation is called the \emph{normal equation}.
+Now, if the matrix $X^T \cdot X$ is invertible, then this equation can be rewritten as
+\\[0.2cm]
+\hspace*{1.3cm}
+\colorbox{red}{\framebox{\colorbox{yellow}{\framebox{
+$\mathbf{w} = \bigl(X^T \cdot X)^{-1} \cdot X^T \cdot \mathbf{y}$.
+}}}}
+\\[0.2cm]
+In this case, we define 
+\\[0.2cm]
+\hspace*{1.3cm}
+$X^+ := \bigl(X^T \cdot X)^{-1} \cdot X^T$.
+\\[0.2cm]
+The expression $X^+$ is called the 
+\href{https://en.wikipedia.org/wiki/Moore–Penrose_pseudoinverse}{\emph{Moore-Penrose pseudoinverse}} of the matrix $X$.
+We can understand in what sense $X^+$ is an inverse of $X$ by noting that if $X$ itself were invertible, we could solve
+the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$X \cdot \mathbf{w} = \mathbf{y}$
+\\[0.2cm]
+by defining
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w} := X^{-1} \cdot \mathbf{y}$.
+\\[0.2cm]
+In that case, the squared error would be zero.
+In general, $X$ will not be invertible for the simple reason that the matrix $X$ is an $n \times m$ matrix and hence is
+not even a square matrix if $m \not= n$.  In practical applications of linear regression the number $n$ of training
+examples is bigger than the dimension $m$ of the vectors $\mathbf{x}_i$ that make up the training examples.  Hence there
+is no hope of $X$ being invertible.  The next best thing is then to minimize the squared error.  To do this, we take the
+previous equation for the weight vector $\mathbf{w}$ and replace $X^{-1}$ with the pseudoinverse of $X$.  This gives the
+equation 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w} = \bigl(X^T \cdot X)^{-1} \cdot X^T \cdot \mathbf{y}$
+\\[0.2cm]
+derived previously.
+
+At this point you might ask whether the matrix $X^T \cdot X$ is always invertible.  The short answer is yes, provided the
+regression problem is well posed.  By this I mean that there are much more training examples than there are different
+weights.  After all, if you have only 10 training examples but want to determine a 100 different weights, then it is
+obvious that the problem is not well posed.  Now if you have enough training examples you have to be sure that the
+training examples are independent of each other.  For example, lets say you have three training examples 
+$\langle\mathbf{x}_1, y^{(1)}\rangle$, $\langle\mathbf{x}_2, y^{(2)}\rangle$, and $\langle\mathbf{x}_3, y^{(3)}\rangle$ and
+you decide that you define a fourth training example $\langle\mathbf{x_4}, y^{(4)}\rangle$ as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{x}_4 := \mathbf{x}_1 + \mathbf{x}_2 + \mathbf{x}_3$ \quad and \quad 
+$y^{(4)} := y^{(1)} + y^{(2)} + y^{(3)}$,
+\\[0.2cm]
+then you have not generated any new information and the fourth training example will not help in making the matrix 
+$X^T \cdot X$ invertible.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

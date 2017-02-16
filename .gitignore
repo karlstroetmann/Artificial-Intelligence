@@ -1,0 +1,15 @@
+*.o
+*~
+*.aux
+*.dvi
+*.log
+*.out
+*.toc
+*.class
+*.el
+*.synctex.gz
+_region_.tex
+auto/
+.dropbox
+_region_.prv
+

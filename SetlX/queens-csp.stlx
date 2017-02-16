@@ -1,0 +1,90 @@
+// Solutions to the n-queens problem are represented as lists of the form
+//    [x1,x2, ..., xn]
+// where xi in {1, ..., n} and xi specifies, that in the ith row the queen
+// is positioned in column xi.  This representation automatically ensures
+// that there is exactly one queen per row.
+// 
+// For example, the list [1, 7, 5, 8, 2, 4, 6, 3] represents the following
+// solution to the 8-queens problem.  In the diagramm below, the rows are
+// numbered from top to button, so the topmost row is numbered 1, while the
+// row at the bottom is numbered 8.
+//
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |   Q   |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |   Q   |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |   Q   |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |   Q   |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |   Q   |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |   Q   |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |   Q   |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |   Q   |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//
+
+// Create a constraint satisfacton problem for the n queens problem.
+queensCSP := procedure(n) {
+    Variables   := { "V$i$" : i in {1..n} };
+    Values      := { 1 .. n };
+    Constraints := {};
+    for (i in [1..n], j in [1..i-1]) {
+        // no queens in the same column:
+        // Vi != Vj 
+        Constraints += { "V$i$ != V$j$" };
+        // i + Vi != j + Vj 
+        Constraints += { "$i$ + V$i$ != $j$ + V$j$" };
+        // i - Vi != j - Vj 
+        Constraints += { "$i$ - V$i$ != $j$ - V$j$" };
+    }
+    return [Variables, Values, Constraints];
+};
+
+// This procedure prints the chessboard that iis specified by Queens. Queens is
+// a list of length n. For all i in [1..n], Queens[i] specifies the column of
+// the queen that is positioned in row i.
+printBoard := procedure(Assignment) {
+    if (Assignment == om) {
+        print("no solution found");
+        return;
+    }
+    n      := #Assignment;
+    Queens := [];
+    for (row in [1 ..n]) {
+        Queens[row] := Assignment["V$row$"];
+    }
+    print((4 * n + 1) * "-");
+    for (row in [1..n]) {
+        line := "|";
+        for (col in [1..n]) {
+            if (Queens[row] == col) {
+                line += " Q |";
+            } else {
+                line += "   |";
+            }
+        }
+        print(line);
+        print((4*n+1) * "-");
+    }
+};

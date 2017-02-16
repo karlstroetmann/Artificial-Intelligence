@@ -1,0 +1,51 @@
+\chapter{Boolean Satisfiability}
+
+\section{Chaff}
+
+\begin{enumerate}
+\item \emph{Implication}: Propositional variable forced to be true by the current assignment of the
+      propositional variables.
+\item \emph{Decision}: Assignment of setting a variable to either \texttt{true} or \texttt{false}.
+\item \emph{Decision Stack}: Stack of all decisions.
+\item \emph{Decision Level}: Integer tag identifying the last \emph{decision}.
+\item \emph{Decision Assignment}: Which variable is assigned next, and which value do we pick?
+\item \emph{implied clause}: A clause is implied iff all but one of the literals of the clause have
+      a value of \texttt{true} given the current variable assignment.
+\end{enumerate}
+
+\subsection{Watch Lists}
+In a typical DP \textsc{Sat} solver, $90\symbol{37}$ of the computation time is spend in Boolean
+constraint propagation.  Therefore, it is essential to get Boolean constraint propagation fast.
+ 
+In every clause, two literals are \emph{watched}.  If any of these two literals evaluates to \texttt{true}
+because of a variable assignment, we do not need to watch the clause any more, as it evaluates as 
+\texttt{true}.  If one of these variables is assigned \texttt{false}, there are two cases:
+\begin{enumerate}
+\item If all the unwatched literals in the variable have been assigned 
+      \texttt{false}, the remaining watched literal is assigned \texttt{true}.
+\item If at least one of the unwatched literals in the variable have been assigned 
+      \texttt{true}, the clause is \texttt{true} and does not need to be watched anymore.
+\item If there is an unwatched literal that is not yet assigned, we watch this literal instead of
+      the literal that evaluates as \texttt{false} now.
+\end{enumerate}
+The choice of which variables to watch is not important.  If a variable is unassigned, we do not
+need to change the watch lists.
+
+Data Structure: A map that maps propositional variables to lists of clauses.
+
+\subsection{Decaying Sum Heuristic}
+\begin{enumerate}
+\item Each literal has a counter that is initialized to $0$.
+\item When a clause is added to the database, the counter of each literal occurring in the clause
+      is incremented.
+\item Choose the unassigned variable with the highest count.
+\item Break ties randomly.
+\item Periodically, all counters are divided by a constant. (This is the decaying process.)
+\end{enumerate}
+
+\subsection{Restarts}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

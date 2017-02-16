@@ -1,0 +1,118 @@
+\chapter{Neural Networks}
+A neural network is built from \emph{neurons}.  At the abstraction level that we are looking at
+neural networks, a single neuron with $n$ inputs is defined as a pair $\langle \mathbf{w}, b\rangle$ where
+vector $\mathbf{w} \in \mathbb{R}^m$ is called the \emph{weight vector} and $b \in \mathbb{R}$ is called the \emph{bias}.  
+Conceptually, a neuron is a function $p$ that maps a vector $\mathbf{x} \in \mathbb{R}^m$ into the
+interval $[0,1]$.  This function is defined as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds p(\mathbf{x}; \mathbf{w}) := a(\mathbf{x} \cdot \mathbf{w} + b)$,
+\\[0.2cm]
+where $a$ is called the \emph{activation function}.  In our applications, we will use the sigmoid
+function as our activation function, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
+\\[0.2cm]
+The function $p$ modeling the neuron can also be written using index notation.  If
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w} = \langle w_1, \cdots, w_m \rangle^T$ 
+\\[0.2cm]
+is the weight vector and 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{x} = \langle x_1, \cdots, x_m \rangle^T$
+\\[0.2cm]
+is the input vector, then 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds p(\mathbf{x}; \mathbf{w}) = S\left(\sum\limits_{i=1}^m x_i \cdot w_i + b\right)$
+\\[0.2cm]
+if we use the sigmoid function as our activation function.  If you compare $p(\mathbf{x}; \mathbf{w})$ 
+to a similar function appearing in the last chapter, you will notice 
+that so far a neuron works just like logistic regression.  The only difference is that the bias $b$
+is now explicit.  
+
+A neural network is a layered network of neurons.  Formally, the \emph{topology} of a neural network is
+given by a number $L \in \mathbb{N}$ and a list of $[m(1), \cdots, m(L)]$ of $L$ natural numbers.  The number
+$L$ is called the number of layers and for $i \in \{2,\cdots,L\}$ the number $m(i)$ is the number of
+neurons in the $l$-th layer.  The first layer is called the input layer, the last layer (i.e.~the
+layer with index $L$) is called the output layer and the remaining layers are called 
+\emph{hidden layers}.  If there is more than one hidden layer, the neural network is called a
+\emph{deep neural network}.
+
+As the first layer is the input layer, the \emph{input dimension} is defined as
+$m(1)$.  Similarly, the \emph{output dimension} is defined as $m(L)$.
+Every node in the $l$-th layer is connected to every node in the $(l+1)$-th layer.
+The weight $w_{j,k}^{(l)}$ is the weight of the connection from the $k$-th neuron in layer $l-1$ to
+the $j$-th neuron in layer $l$.  The weights in layer $l$ are combined into the weight matrix of
+layer $W^{(l)}$ which is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds W^{(l)} := \bigl( w_{j,k}^{(l)} \bigr)$.
+\\[0.2cm]
+Note that $W^{(l)}$ is an $m(l-1) \times m(l)$ matrix, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds W^{(l)} \in \mathbb{R}^{m(l-1) \times m(l)}$.
+\\[0.2cm]
+The $j$-th neuron in layer $l$ has the bias $b_j^{(l)}$.  Then, the activation of the $j$-th neuron
+in layer $l$ is denoted as $a_j^{(l)}$ and is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds a_j^{(l)} := S\left(\sum\limits_{k=1}^{n(l-1)} w_{j,k}^{(l)}\cdot a^{(l-1)} + b_{j}^{(l)}\right)$.
+\\[0.2cm]
+The output of our neural network for an input $\mathbf{x}$ is given by the neuron in the output
+layer,  i.e.~the output vector 
+$\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{(m(L))}$ is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{o}(\mathbf{x}) = \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle$.
+\\[0.2cm]
+We assume that we have $n$ training examples 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$ \quad for $i=1,\cdots,n$ 
+\\[0.2cm]
+such that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{x}^{(i)} \in \mathbb{R}^{m(1)}$ and $\mathbf{y}^{(i)} \in \mathbb{R}^{m(L)}$
+\\[0.2cm]
+The \emph{quadratic error cost function} is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
+     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
+ \frac{1}{2 \cdot m} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
+$.
+\\[0.2cm]
+Note that the cost function is additive in the training examples $\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$.
+In order to simplify the notation we therefore define
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) := 
+ \frac{1}{2} \cdot \Bigl(\mathbf{o}\bigl(\mathbf{x}\bigr) - \mathbf{y}\Bigr)^2
+$.
+\\[0.2cm]
+Then, we have
+\\[0.2cm]
+$\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
+     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
+ \frac{1}{m} \cdot \sum\limits_{i=1}^n C_{\mathbf{x^{(i)}}, \mathbf{y^{(i)}}}\Bigr(W^{(2)}, \cdots W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) 
+$.
+\\[0.2cm]
+As the notation
+\\[0.2cm]
+\hspace*{1.3cm}
+$C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr)$
+\\[0.2cm]
+is far too heavy, we will abbreviate this term as $C$ in the following
+discussion of the backpropagation algorithm.
+
+\section{Backpropagation}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

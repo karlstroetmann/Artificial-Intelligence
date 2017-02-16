@@ -1,0 +1,182 @@
+//  planning problem := [actions, start, goal]
+//
+//      * actions: set of actions
+//      * start:   set of propositions that are initially true
+//      * goal:    set of propositions that are to be achieved
+
+//  action := [name, prec, negative, positive]
+//
+//      * name:     string
+//      * prec:     set of propositions that are preconditions
+//      * negative: set of propositions that become false
+//      * positive: set of propositions that become true
+//
+
+// planning graph := [states, actions, mutexActions, mutexPropositions]
+//
+//      * states:  list of states.  Each state is a set of propositions.
+//                 states[0] is the start state of the planning problem
+//      * actions: list of sets of actions.
+//      * mutexActions:
+//                 list of sets of pairs of actions.  If
+//                        [a, b] in mutexActions[k]
+//                 then the actions a and b cannot be executed in parallel
+//                 at level k.
+//      * mutexPropositions:
+//                 list of sets of pairs of propositions.  If
+//                        [p, q] in mutexPropositions[k]
+//                 then p and q can not be simultaneously true at level k
+
+// auxiliary procedures
+dependentActions := procedure(actions) {
+    return { [a, b] : a in actions, b in actions
+                    | a != b &&
+                      (a[3] * (b[2] + b[4]) != {} || b[3] * (a[2] + a[4]) != {})
+           };
+};
+
+maintenanceActions := procedure(actions) {
+    propositions := +/ { a[2] + a[3] + a[4] : a in actions };
+    return { [ Keep(p), { p }, {}, { p } ] : p in propositions };
+};
+
+// return string of all propositions
+propositions := procedure(propList) {
+    result := "";
+    for (p in propList) {
+        result += " " * 4 + str(p) + "\n";
+    }
+    return result;
+};
+
+// return string with names of all actions that are not maintenance actions
+realActions := procedure(actions) {
+    result := "";
+    for ([name, _, _, _] in actions | fct(name) != "Keep") {
+        result += " " * 4 + str(name) + "\n";
+    }
+    return result;
+};
+
+// return string of all pairs of mutex actions as name pairs, excluding maintenance actions
+mutexActions := procedure(pairs) {
+    result := "";
+    for ([a, b] in pairs) {
+        nameA := a[1];
+        nameB := b[1];
+        if (fct(nameA) != "Keep" && fct(nameB) != "Keep" && compare(a, b) < 0) {
+            result += " " * 4 + "$nameA$ >< $nameB$\n";
+        }
+    }
+    return result;
+};
+
+// return string of all mutex propositions
+mutexPropositions := procedure(pairs) {
+    result := "";
+    for ([p, q] in pairs | compare(p, q) < 0) {
+        result += " " * 4 + "$p$ >< $q$\n";
+    }
+    return result;
+};
+
+// Expand a given planning graph one level
+class planningGraph(actions, start, goal) {
+    mActions := actions + maintenanceActions(actions);
+    mStart   := start;
+    mGoal    := goal;
+
+    mStatesList   := [ mStart ];
+    mMutexProps   := [ {} ];  // the start state needs to be consistent,
+                              // so there are no mutex propositions in mStart
+    mActionsList  := [];
+    mMutexActions := [];
+    mDependent    := dependentActions(mActions);      
+
+    // construct the planning graph by a fixpoint iteration
+    plan := procedure() {
+        numStatesOld  := #mStart;
+        numMutexesOld := 0;  // start state has no mutually exclusive propositions
+        counter       := 0;
+        while (true) {
+            counter += 1;
+            expandActions();
+            expandMutexActions();
+            expandStates();
+            expandMutexProps();
+            numStates  := #mStatesList[-1];
+            numMutexes := #mMutexProps[-1];
+            if (mGoal <= mStatesList[-1] && mGoal**2 * mMutexProps[-1] == {}) {
+                break;  // goal reached
+            }
+            if (numStates == numStatesOld && numMutexes == numMutexesOld) {
+                break;  // fixpoint reached
+            }
+            numStatesOld  := numStates;
+            numMutexesOld := numMutexes;
+        }
+        return counter;
+    };
+    
+    // Generate the set of actions that are executable in the current state.
+    // The current state is the last state in mStatesList.  An action is
+    // executable if its preconditions are part of the last state and none of
+    // its preconditions are mutually exclusive.
+    expandActions := procedure() {
+        state   := mStatesList[-1];
+        actions := { a : a in mActions
+                       | a[2] <= state && a[2]**2 * mMutexProps[-1] == {}
+                   };
+        this.mActionsList += [ actions ];
+    };
+    expandStates := procedure() {
+        state := { p : a in mActionsList[-1], p in a[4] };
+        this.mStatesList += [ state ];
+    };
+    expandMutexActions := procedure() {
+        actions      := mActionsList[-1];
+        mutexActions := { [a, b] : a in actions, b in actions
+                                 | a != b && ([a, b] in mDependent || exclusiveActions(a, b))
+                        };
+        this.mMutexActions += [ mutexActions ];
+    };
+    expandMutexProps := procedure() {
+        state        := mStatesList[-1];
+        actions      := mActionsList[-1];
+        mutexActions := mMutexActions[-1];
+        mutexProps   := { [p, q] : p in state, q in state 
+                                 | p != q && exclusiveProps(p, q, actions, mutexActions)
+                        };
+        this.mMutexProps += [ mutexProps ];
+    };    
+    // a and b are actions, check whether they cannot occur in parallel
+    exclusiveActions := procedure(a, b) {
+        return exists(p in a[2], q in b[2] | [p, q] in mMutexProps[-1]);
+    };
+    exclusiveProps := procedure(p, q, actions, mutexActions) {
+        if ( exists(a in actions | p in a[4] && q in a[4]) ) {
+            return false;
+        }
+        return forall(a in actions, b in actions | p in a[4] && q in b[4] => [a, b] in mutexActions);
+    };
+
+    // This procedure is used mainly for debugging and for illustrating the algorithm.
+    f_str := procedure() {
+        result := "";
+        n := #mActionsList;
+        result += "Start State:\n";
+        result += propositions(mStatesList[1]);
+        for (k in [1 .. n]) {
+            result += "\nLevel = $k$:\n";
+            result += "Actions:\n";
+            result += realActions(mActionsList[k]);
+            result += "Mutex Actions:\n";
+            result += mutexActions(mMutexActions[k]);
+            result += "Propositions:\n";
+            result += propositions(mStatesList[k+1]);
+            result += "Mutex Propositions:\n";
+            result += mutexPropositions(mMutexProps[k+1]);
+        }
+        return result;
+    };
+}

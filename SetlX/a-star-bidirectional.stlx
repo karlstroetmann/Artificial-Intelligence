@@ -1,0 +1,64 @@
+// This procedure implements the A* search algorithm.
+aStarSearch := procedure(start, goal, nextStates, heuristic) {
+    ParentA    := {};
+    ParentB    := {};                    
+    DistanceA  := { [start, 0] };
+    DistanceB  := { [goal,  0] };
+    estimate   := heuristic(start, goal);
+    EstimateA  := { [start, estimate] };  
+    EstimateB  := { [goal,  estimate] };  
+    FrontierA  := { [estimate, start] };
+    FrontierB  := { [estimate, goal ] };  
+    while (FrontierA != {} && FrontierB != {}) {
+        if ((#DistanceA + #DistanceB) % 1000 == 0) {
+            print("#DistanceA + #DistanceB = $#DistanceA + #DistanceB$");
+        }
+        [guessA, stateA] := first(FrontierA);
+        stateADist       := DistanceA[stateA];
+        [guessB, stateB] := first(FrontierB);
+        stateBDist       := DistanceB[stateB];
+        if (guessA <= guessB) {
+            FrontierA -= { [guessA, stateA] };
+            for (neighbour in nextStates(stateA)) {
+                oldEstimate := EstimateA[neighbour];
+                newEstimate := stateADist + 1 + heuristic(neighbour, goal);
+                if (oldEstimate == om || newEstimate < oldEstimate) {
+                    ParentA[neighbour]   := stateA;
+                    DistanceA[neighbour] := stateADist + 1;
+                    EstimateA[neighbour] := newEstimate;
+                    FrontierA            += { [newEstimate, neighbour] };
+                    if (oldEstimate != om) {
+                        FrontierA -= { [oldEstimate, neighbour] };
+                    }
+                }
+                if (DistanceB[neighbour] != om) {
+                    print("Number of states touched: $#DistanceA + #DistanceB$");
+                    return combinePaths(neighbour, ParentA, ParentB);
+                }
+            }
+        } else {
+            FrontierB -= { [guessB, stateB] };
+            for (neighbour in nextStates(stateB)) {
+                oldEstimate := EstimateB[neighbour];
+                newEstimate := stateBDist + 1 + heuristic(start, neighbour);
+                if (oldEstimate == om || newEstimate < oldEstimate) {
+                    ParentB[neighbour]   := stateB;
+                    DistanceB[neighbour] := stateBDist + 1;
+                    EstimateB[neighbour] := newEstimate;
+                    FrontierB            += { [newEstimate, neighbour] };
+                    if (oldEstimate != om) {
+                        FrontierB -= { [oldEstimate, neighbour] };
+                    }
+                }
+                if (DistanceA[neighbour] != om) {
+                    print("Number of states touched: $#DistanceA + #DistanceB$");
+                    return combinePaths(neighbour, ParentA, ParentB);
+                }
+            }        
+        }
+    }
+};
+
+
+    
+

@@ -1,0 +1,21 @@
+\chapter{Clustering and Retrieval}
+
+
+The \emph{inverse document frequency} $\mathtt{idf}(w)$ of a word $w$ with respect to a corpus $C$ is defined as
+follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds\mathtt{idf}(w) := \ln\left(\frac{\cnt C}{1 + \mathtt{count}(w, C)}\right)$.
+\\[0.2cm]
+Here, $\cnt C$ is the number of documents that are present in the corpus $C$, while
+$\mathtt{count}(w, C)$ yields the number of documents in the corpus $C$ that contain the word $w$,
+i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{count}(w, C) := \cnt\{ d \in C \,|\, w \in d \}$.
+\\[0.2cm]
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

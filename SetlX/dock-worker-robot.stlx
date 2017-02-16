@@ -1,0 +1,45 @@
+load("graph-plan.stlx");
+
+// set of all actions Move(r, l1, l2) where the robot moves from location l1 to location l2
+moveActions := procedure(locations, robots) {
+    return {   [ Move(r, l1, l2), { At(r, l1) }, { At(r, l1) }, { At(r, l2) } ]
+             : r in robots, l1 in locations, l2 in locations
+             | l1 != l2
+           };
+};
+
+loadActions := procedure(locations, robots, containers) {
+    return { [ Load(c, r, l),
+               { At(r, l), In(c, l), Unloaded(r) },
+               { In(c, l), Unloaded(r) },
+               { Loaded(r, c) }
+             ]
+             : r in robots, l in locations, c in containers
+           };
+};
+
+unloadActions := procedure(locations, robots, containers) {
+    return { [ Unload(c, r, l),
+               { At(r, l), Loaded(r, c) },
+               { Loaded(r, c) },
+               { Unloaded(r), In(c, l) }
+             ]
+             : r in robots, l in locations, c in containers
+           };
+};
+
+allActions := procedure() {
+    locations  := { 1, 2 };
+    robots     := { "r", "q" };
+    containers := { "a", "b" };
+    return moveActions(locations, robots)              +
+           loadActions(locations, robots, containers)  +
+           unloadActions(locations, robots, containers);
+};
+start   := { At("r", 1), At("q", 2), Unloaded("r"), Unloaded("q"), In("a", 1), In("b", 2) };
+goal    := { In("a", 2), In("b", 1) };
+actions := allActions();
+
+pg := planningGraph(actions, start, goal);
+print("number of levels: $pg.plan()$");
+print(pg);

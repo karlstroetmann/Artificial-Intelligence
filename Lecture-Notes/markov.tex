@@ -1,0 +1,130 @@
+\chapter{Markov Decision Processes}
+\emph{Markov Decision Processes} are a means to deal with uncertainty when searching.
+
+\begin{Definition}[Markov Decision Process]
+  A \emph{Markov decision process} (abbreviated as \textsc{Mdp}) is a 5-tuple
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $M := \langle S, A, T, R, s_0, f \rangle$
+  \\[0.2cm]
+  where 
+  \begin{enumerate}
+  \item $S$ is the set of states.
+  \item $A$ is the set of actions.
+  \item $T$ is the transition probability.  For all states $s_1,s_2 \in S$ and every action $a \in A$,
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $T(s_1,a,s_2)$
+        \\[0.2cm]
+        is the probability that, provided the system is in state $s_1$ and action $a$ is executed,
+        the system will be in state $s_2$ afterwords.  Formally, we have
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $T:S \times A \times S \rightarrow [0,1]$.
+  \item $R$ is the reward function.  For all states $s_1,s_2 \in S$ and every action $a \in A$,
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $R(s_1,a,s_2)$
+        \\[0.2cm]
+        is the reward that the system reaps if the system starts in state $s_1$, executes the action
+        $a$ and thereby reaches the state $s_2$.  Formally, we have
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $R:S \times A \times S \rightarrow \mathbb{R}$. 
+  \item $f$ is the final state. Therefore, we have $f \in S$.  
+  \end{enumerate}
+  The goal of a Markov decision process is to reach the final state and earn the highest possible
+  reward while doing so.  Therefore, a Markov decision process formalizes search under uncertainty.
+\eox
+\end{Definition}
+
+\begin{Definition}[Policy]
+  Given a Markov decision process $\langle S, A, T, R, s_0, f \rangle$, a policy $\pi$ is a function
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\pi: S \rightarrow A$
+  \\[0.2cm]
+  that takes a state and computes an action.  A policy is optimal if it maximizes the expected
+  utility of an agent following it.
+\end{Definition}
+
+\begin{Definition}[Transition]
+  Given a Markov decision process $\langle S, A, T, R, s_0, f \rangle$, a \emph{transition} 
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\tau = \langle s_1, a, s_2 \rangle$ 
+  \\[0.2cm]
+  is a triple consisting of a state $s_1$, an action $a$, and a state $s_2$.  The interpretation of
+  this transition is that in state $s_1$ the agent executes the action $a$ and this results in the
+  agent being in state $s_2$. \eox
+\end{Definition}
+
+\section{The Bellmann Equation}
+The Bellmann equation is a fixpoint equation that determines the \emph{value of a state}, where the
+value of a state is the discounted payoff of the expected reward that is expected to be achieved
+from the given state if the agent always performs the action that maximizes his expected rewards.
+If the value of a state $s$ is denoted as $V^*(s)$, then $V^*(s)$ satisfies the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds V^*(s) = \max\limits_{a \in A} \sum\limits_{s' \in S} T(s,a,s') \cdot \bigl(R(s,a,s') + \gamma \cdot V^*(s')\bigr)$,
+\\[0.2cm]
+where $\gamma$ is the discount factor satisfying $0 < \gamma \leq 1$.  If $\gamma = 1$, then there
+is no discounting of future values.  If $\gamma < 1$, the Bellmann equation can be solved by fixed
+point iteration.  In this case, for every state $s$ we define a sequence of values
+$\bigl(V_k(s)\bigr)_{s\in S}$ as follows:
+\begin{enumerate}
+\item $\ds V_0(s) := 0$ for all $s \in S$,
+\item $\ds V_{k+1}(s) := \max\limits_{a \in A} \sum\limits_{s' \in S} T(s,a,s') \cdot \bigl(R(s,a,s') + \gamma \cdot V_k^*(s')\bigr)$ 
+      for all $s \in S$ and all $k \in \mathbb{N}$.
+\end{enumerate}
+It can be shown that the sequence $\bigl(V_k(s)\bigr)_{s\in S}$ converges provided $\gamma < 1$.
+This process is known as \emph{value iteration}.
+
+\section{Q-Value Iteration}
+Instead finding the values $V^*(s)$ of a given state $s$ we instead try to compute the value a state
+$s$ has once an action $a$ for that state has been fixed.  These values are calles Q-values and they
+are denoted as $Q(s,a)$.  The Bellmann equation for Q-values is
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds Q^*(s,a) = \sum\limits_{s' \in S} T(s,a,s') \cdot \bigl(R(s,a,s') + \gamma \cdot \max\limits_{a' \in A} Q^*(s',a')\bigr)$,
+\\[0.2cm]
+This equation can also be solved via a fixpoint iteration as follows:
+\begin{enumerate}
+\item $\ds Q_0(s,a) := 0$ for all $s \in S$ and $a \in A$,
+\item $\ds Q_{k+1}(s,a) := \sum\limits_{s' \in S} T(s,a,s') \cdot \bigl(R(s,a,s') + \gamma \cdot \max\limits_{a' \in A} Q_k^*(s',a')\bigr)$ 
+
+      for all $s \in S$, $a \in A$ and all $k \in \mathbb{N}$.
+\end{enumerate}
+
+\section{Q-Learning}
+Q-value iteration can only be used if the transition probability $T(s,a,s')$ and the reward
+$R(s,a,s')$ is given.  In Q-learning, we have an unknown Markov decision process and attempt to
+learn the optimal strategy.  In this case, we update our estimates of the Q-values via the equation 
+\\[0.2cm]
+\hspace*{1.3cm}
+$Q_{k+1}(s,a) := (1-\alpha) \cdot Q_{k}(s) + \alpha \cdot \bigl(R(s,a,s') + \gamma \cdot \max\limits_{a' \in A} Q_k^*(s',a')\bigr)$. 
+\\[0.2cm]
+Here, $s'$ is the state that has actually been reached the last time we executed the action $a$ in
+state $s$.  The variable $\alpha$ is the \emph{learning rate} and we have $0 < \alpha < 1$.  If
+$\alpha$ close to $1$, the learning rate is high and the past is unimportant.  Usually, $\alpha$ is
+decreased over time because, initially, the values of $Q_k(s,a)$ are mostly wrong but as we keep
+learning these values get better.  Ideally, the learning rate should be slowly decreased over time.
+
+\section{Approximate Q-Learning}
+Compute the Q-values via a number $m$ different features in a linear way as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$Q(s,a) = \sum\limits_{k=1}^m w_k \cdot f_k(s,a)$.
+\\[0.2cm]
+Here, the numbers $w_k$ are the weights while the functions $f_k$ are the features.  Update the
+weights using the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$w_k := w_k + \alpha \cdot  \bigl(r + \gamma \cdot \max\limits_{a'} Q(s'.a') - Q(s,a)\bigr) \cdot f_k(s, a)$.
+\\[0.2cm]
+Here, $r$ is the reward when taking the action $a$ in state $s$ and $s'$ is the resulting state.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

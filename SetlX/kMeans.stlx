@@ -1,0 +1,78 @@
+// Run the k-means algorithm until convergence.
+//   * data:      A list of data points. 
+//   * centroids: A list of the the centroids to start the computation.
+// Both the data points and the centroids are represented as vectors.
+kMeans := procedure(data, centroids, verbose := false) {
+    k      := #centroids;
+    change := true;
+    assignedClass := {};
+    numIterations := 0;
+    assignedClass := { [d, 0]: d in data };
+    for (d in data) {
+        while (change) {
+            numIterations += 1;
+            if (verbose) {
+                print("starting iteration $numIterations$");
+            }
+            change := false;
+            // Step 1: Assign the data to the nearest centroids.
+            for (d in data) {
+                label    := findNearest(d, centroids);
+                oldLabel := assignedClass[d];
+                if (label != oldLabel) {
+                    if (verbose) {
+                        print("reassigning $d$: $oldLabel$ |-> $label$");
+                    }
+                    change := true;
+                    assignedClass[d] := label;
+                }
+            }
+            // Step 2: Compute new centroids.
+            for (label in [1 .. k]) {
+                cluster := { x : x in data | assignedClass[x] == label };
+                centroids[label] := center(cluster);
+            }
+            if (verbose) {
+                print("Centroids: $centroids$\n");
+            }
+        }
+        return centroids;
+    }
+};
+// Find the centroid that is nearest to x.
+findNearest := procedure(x, centroids) {
+    bestDist := mathConst("Infinity");
+    k        := #centroids;
+    for ([l, c] in [1 .. k] >< centroids) {
+        dist_x_c := distance(x, c);
+        if (dist_x_c < bestDist) {
+            nearest  := l;
+            bestDist := dist_x_c;
+        }
+    }
+    return nearest;
+};
+// Compute the Euclidean distance between the vectors x and y.
+distance := procedure(x, y) {
+    d := x - y;
+    return sqrt(d * d);
+};
+// Compute the center of mass of a set of vectors.
+center := procedure(s) {
+    n := #s;
+    return +/ s / #s;
+};
+////////////////////////////////////////////////////////////////////////
+test := procedure() {
+    data      := [ <<-1.88  2.05>>,
+                   <<-0.71  0.42>>,
+                   << 2.41 -0.67>>,
+                   << 1.85 -3.80>>,
+                   <<-3.69 -1.33>>
+                 ];
+    centroids := [ << 2.00  2.00>>,
+                   <<-2.00 -2.00>>
+                 ];
+    centroids := kMeans(data, centroids, true);
+};
+test();

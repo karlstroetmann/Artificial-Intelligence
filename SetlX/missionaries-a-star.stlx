@@ -1,0 +1,143 @@
+// Three missionaries and three infidels have to cross a river with using
+// a boat.  The boat has only room for at most two passengers.  The
+// infidels are, in fact, hungry cannibals and will eat the missionaries
+// if there are more infidels than missionaries on either side of the
+// river. How can all safely cross the river?
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+// The following procedure are only needed to print the solution.       //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////    
+
+// Print the solution.
+printPath := procedure(path) {
+    print("Solution:\n");
+    for (i in [1 .. #path - 1]) {
+        [ m1, k1, b1 ] := path[i];
+        [ m2, k2, b2 ] := path[i+1];
+        printState(m1, k1, b1);
+        printBoat(m1, k1, b1, m2, k2, b2);
+    }
+    [ m, k, b ] := path[#path];
+    printState(m, k, b);
+};
+
+
+// Print a given state.
+printState := procedure(m, k, b) {
+     print( fillCharsRight(m * "M", 6) + 
+            fillCharsRight(k * "K", 6) + 
+            fillCharsRight(b * "B", 3) + "    |~~~~~|    " + 
+            fillCharsLeft((3 - m) * "M", 6) + 
+            fillCharsLeft((3 - k) * "K", 6) + 
+            fillCharsLeft((1 - b) * "B", 3) 
+          );
+};
+
+// Print the crossing of the boat.
+printBoat := procedure(m1, k1, b1, m2, k2, b2) {
+    if (b1 == 1) {
+        if (m1 < m2) {
+            print("Error in printBoat: Negative number of missionaries on the boat!");
+            return;
+        }
+        if (k1 < k2) {
+            print("Error in printBoat: Negative number of cannibals on the boat!");
+            return;
+        }
+        print( 19 * " " + "> " + fillCharsBoth( (m1 - m2) * "M" + " " + (k1 - k2) * "K", 3 ) + " >" );
+    } else {
+        if (m1 > m2) {
+            print("Error in printBoat: Negative number of missionaries on the boat!");
+            return;
+        }
+        if (k1 > k2) {
+            print("Error in printBoat: Negative number of cannibals on the boat!"); 
+            return;
+        }
+        print( 19 * " " + "< " + fillCharsBoth( (m2 - m1) * "M" + " " + (k2 - k1) * "K", 3 ) + " <" );
+    }
+};
+
+// Transform x into a string of length n.  The string is padded
+// with blanks from the left side.
+fillCharsLeft := procedure(x, n) {
+    s := x + "";
+    m := n - #s;
+    return m * " " + s;
+};
+
+// Transform x into a string of length n.  The string is padded
+// with blanks from the right side.
+fillCharsRight := procedure(x, n) {
+    s := x + "";
+    m := n - #s;
+    return s + m * " ";
+};
+
+// Transform x into a string of length n.  The string is padded
+// with blanks from both sides.
+fillCharsBoth := procedure(x, n) {
+    s  := x + "";
+    ml := (n     - #s) \ 2;
+    mr := (n + 1 - #s) \ 2;
+    return ml * " " + s + mr * " ";
+};
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+// The code describing the problem starts here.                         //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+
+// The different states are represented by triples of the form
+// [m, c, b], where m is the number of missionaries, c is the number of
+// cannibals and b is either 1 or 0 depending on whether the boat is on
+// the left side or not.
+
+// There is a problem if there is a side where there are more cannibals
+// than missionaries unless there are no missionaries on that side.
+problem := [m, c] |-> m > 0 && m < c || m < 3 && m > c;
+
+// In the beginning, everybody is on the left shore.
+start := [3,3,1];
+// In the end, everybody should be on the right side of the river.
+goal  := [0,0,0];
+
+// Given a state, this procedure computes all states that can be reached
+// from the given state.
+nextStates := procedure(state) {
+    [m, c, b] := state;
+    if (b == 1) {
+        return { [m-mb, c-cb, 0] : mb in {0..m}, cb in {0..c}
+                                 | mb+cb in {1,2} && !problem(m-mb, c-cb)
+               };  
+    } else {
+        return { [m+mb, c+cb, 1] : mb in {0..3-m}, cb in {0..3-c}
+                                 | mb+cb in {1,2} && !problem(m+mb, c+cb)
+               };  
+    }
+};
+
+nextCost := x |=> { [y, 1] : y in nextStates(x) };
+
+heuristic := procedure(state, goal) {
+    [m, c, b] := state;
+    return (m + c) / 2;
+};
+
+load("a-star-search.stlx");
+
+// Compute a path ..
+startTime := now();
+path      := search(start, goal, nextStates, heuristic);
+stopTime  := now();
+// and print it.
+if (path != om) {
+    print("Number of seconds: $0.001 * (stopTime - startTime)$");
+    print("number of steps:   $#path-1$");
+    printPath(path);
+} else {
+    print("No solution found!");
+}

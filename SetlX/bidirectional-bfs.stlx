@@ -1,0 +1,34 @@
+search := procedure(start, goal, nextStates) {
+    FrontierA := { start };
+    VisitedA  := {}; // set of nodes expanded starting from start
+    ParentA   := {};
+    FrontierB := { goal };
+    VisitedB  := {}; // set of nodes expanded starting from goal
+    ParentB   := {};
+    while (FrontierA != {} && FrontierB != {}) {
+        print("#VisitedA + #VisitedB = $#VisitedA + #VisitedB$");
+        VisitedA += FrontierA;
+        VisitedB += FrontierB;
+        NewFrontier := {};
+        for (s in FrontierA, ns in nextStates(s) | !(ns in VisitedA)) {
+            NewFrontier += { ns };
+            ParentA[ns] := s;
+            if (ns in VisitedB) {
+                print("$#VisitedA + #VisitedB$ nodes expanded");
+                return combinePaths(ns, ParentA, ParentB);
+            }
+        }
+        FrontierA   := NewFrontier;
+        NewFrontier := {};
+        for (s in FrontierB, ns in nextStates(s) | !(ns in VisitedB)) {
+            NewFrontier += { ns };
+            ParentB[ns] := s;
+            if (ns in VisitedA) {
+                print("$#VisitedA + #VisitedB$ nodes expanded");
+                return combinePaths(ns, ParentA, ParentB);
+            }
+        }
+        FrontierB := NewFrontier;
+    }
+};
+

@@ -1,0 +1,78 @@
+// Solutions to the n-queens problem are represented as lists of the form
+//    [x_1,x_2, ..., x_n]
+// where x_i in {1, ..., n} and x_i specifies, that in the ith column the 
+// queen is positioned in row x_i.  This representation automatically ensures
+// that there is exactly one queen per column.
+// 
+// For example, the list [1, 5, 8, 6, 3, 7, 2, 4] represents the following
+// solution to the 8-queens problem.  In the diagramm below, the rows are
+// numbered form top to button, so the topmost row is numbered 1, while the
+// row at the bottom is numbered 8.
+//
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |   Q   |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |   Q   |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |   Q   |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |   Q   |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |   Q   |       |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |   Q   |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |       |       |       |   Q   |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//     |       |       |       |       |       |       |       |       |
+//     |       |       |   Q   |       |       |       |       |       |
+//     |       |       |       |       |       |       |       |       |
+//     -----------------------------------------------------------------
+//
+// The interpretation of the parameters is as follows:
+//      l: list of those queens that have already been placed
+//      n: size of the board
+solve := procedure(l, n) { 
+    if (#l == n) {
+        return l;
+    }
+    for (x in { 1 .. n } - {i : i in l}) {
+        try {
+            testNext(l, x);
+            // if this has worked so far, try to add more queens
+            return solve(l + [x], n);
+        } catchUsr (e) {
+            if (e != "fail") {
+                throw(e);
+            }            
+        }
+    }
+    throw("fail");
+};
+
+// TestNext checks whether it is safe to add a queen in row x in the column that
+// follows those columns that are already specified in the list l of
+// queens already placed.  It is assumed that the queens already 
+// placed cannot attack each other.
+testNext := procedure(l, x) {
+    m := #l;
+    if (exists (i in {1 .. m} | i-l[i] == m+1-x || i+l[i] == m+1+x)) {
+        throw("fail");
+    }
+};
+
+print(solve([], 8));

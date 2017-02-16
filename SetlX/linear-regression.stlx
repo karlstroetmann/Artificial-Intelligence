@@ -1,0 +1,30 @@
+load("table.stlx");
+
+run_linear_regression := procedure(fileName, types) {
+    csv    := readTable(fileName, types);
+    data   := csv.getData();
+    number := #data;
+    dmnsn  := #data[1];    
+    yList  := [];
+    xList  := [];
+    for (i in [1 .. number]) {
+        yList[i] := data[i][1];
+        xList[i] := la_vector([1.0] + data[i][2..-2]);
+    }
+    X := la_matrix(xList);
+    y := la_vector(yList);
+    w := la_solve(X! * X, X! * y);
+    d := X * w - y;
+    
+    E := +/ [ abs(d[i][1]) : i in [1 .. number] ] / number;
+    return [w, E];
+};
+
+test := procedure() {
+    types := ["double", "int", "double", "double", "double", "double", "int", "string"];
+    [w, E] := run_linear_regression("cars.csv", types);
+    print("coefficients:  $w$");
+    print("average error: $E$");
+};
+
+test();

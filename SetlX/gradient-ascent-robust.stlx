@@ -1,0 +1,86 @@
+// The function findMaximum computes the maximum of the function f using the
+// method of gradient ascent.  It is assumed that the function is convex and
+// therefore there is only one global maximum.
+//   f:     The function to minimize.  This function is expected to take one
+//          argument as its input.  This input is assumed to be a vector and 
+//          f returns a floating point number.
+//   fGrad: The gradient of f.  This function takes one input that is is assumed
+//          to be a vector.
+//   start: The value used to start the iteration.
+//   eps:   Precisison.  If the change of f is less than eps, then the iteration
+//          stops.
+// The function returns both the position x_max of the maximum as well as the
+// value that the function f has at this position.
+findMaximum := procedure(f, gradF, start, eps, verbose := false) {
+    x       := start;
+    f_x     := f(x);
+    alpha   := 1.0;
+    cnt     := 1;  // number of iterations
+    cnstCnt := 0;  // number of times function value hasn't changed more than eps
+    while (true) {
+        [x_old, f_old] := [x, f_x];
+        x   += alpha * gradF(x);
+        f_x := f(x);
+        if (verbose) {
+            print("cnt = $cnt$, f($x$) = $f_x$, alpha = $alpha$");
+        }
+        if (f_x < f_old) {   
+            alpha *= 0.5;
+            if (verbose) {
+                print("decrementing: alpha = $alpha$");
+            }
+            [x, f_x] := [x_old, f_old];
+            continue;
+        } else {
+            alpha *= 1.2;
+            if (verbose) {
+                print("incrementing: alpha = $alpha$");
+            }
+        }
+        if (f_x <= f_old * (1 + eps)) {
+            cnstCnt += 1;
+            if (cnstCnt == 1) {
+                return [x, f_x, cnt];
+            }
+            x_m := 0.5 * (x_old + x);
+            f_m := f(x_m);
+            if (f_x <= f_m) {
+                x   := x_m;
+                f_x := f_m;
+            }  
+        } else {
+            cnstCnt := 0;  // start over again
+        }
+        cnt += 1;
+    }
+};
+
+easy := procedure(x) {
+    [x1, x2] := [x[1], x[2]];
+    return -((x1 - 10)**2 + 2*(x2 - 5)**2) + 1;
+};
+
+easyGrad := procedure(x) {
+    [x1, x2] := [x[1], x[2]];
+    return la_vector([ -2 * (x1 - 10), -4 * (x2 - 5) ]);
+};
+        
+rosenbrock := procedure(x) {
+    [x1, x2] := [x[1], x[2]];
+    return 1.0 - ((1 - x1)**2 + 100 * (x2 - x1**2)**2);
+};
+
+rosenbrockGrad := procedure(x) {
+    [x1, x2] := [x[1], x[2]];
+    return la_vector([2 * (1 - x1) + 400 * x1 * (x2 - x1**2), -200 * (x2 - x1**2)]);
+};
+
+test := procedure() {
+    start := la_vector([0, 0]);
+    [x, fx, cnt] := findMaximum(easy, easyGrad, start, 10**-12, true);
+    print("maximum at $x$, value $fx$, $cnt$ iterations");
+    [x, fx, cnt] := findMaximum(rosenbrock, rosenbrockGrad, start, 10**-12, false);
+    print("maximum at $x$, value $fx$, $cnt$ iterations");
+};
+
+test();

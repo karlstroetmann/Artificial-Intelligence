@@ -1,0 +1,176 @@
+// This program solves the eight-puzzle.
+
+// The function stateToString converts the current state of the puzzle to a string.
+stateToString := procedure(state) {
+    n      := #state;
+    indent := " " * 4;
+    line   := indent + "+---" * n + "+\n";
+    result := line;
+    for (row in [1 .. n]) {
+        result += indent + "|";
+        for (col in [1 .. n]) {
+            cell := state[row][col];
+            if (cell >= 10) {
+                result += cell + " ";
+            } else if (cell > 0 && cell < 10) {
+                result += " " + cell + " ";
+            } else {
+                result += "   ";
+            }
+            result += "|";
+        }
+        result += "\n";
+        result += line;
+    }
+    return result;
+};
+// Find the coordinates of the given tile in state.
+findTile := procedure(tile, state) {
+    n := #state;
+    L := [1 .. n]; 
+    for (row in L, col in L | state[row][col] == tile) {
+        return [row, col];
+    }
+};
+moveDir := procedure(state, row, col, dx, dy) {
+    state[row     ][col     ] := state[row + dx][col + dy];
+    state[row + dx][col + dy] := 0;
+    return state;
+};
+nextStates := procedure(state) {
+    n          := #state;
+    [row, col] := findTile(0, state);
+    newStates  := [];
+    directions := [ [1, 0], [-1, 0], [0, 1], [0, -1] ];
+    L          := [1 .. n];
+    for ([dx, dy] in directions) {
+        if (row + dx in L && col + dy in L) {
+            newStates += [ moveDir(state, row, col, dx, dy) ];
+        }
+    }
+    return newStates;
+};
+// Compute the manhattan distance between two states of the sliding puzzle.
+manhattan := procedure(stateA, stateB) {
+    n := #stateA;
+    L := [1 .. n];
+    result := 0;
+    for (rowA in L, colA in L | stateA[rowA][colA] != 0) {
+        [rowB, colB] := findTile(stateA[rowA][colA], stateB);
+        result += abs(rowA - rowB) + abs(colA - colB);
+    }
+    return result;
+};
+// Compute the number of misplaced tiles.
+numberMisplaced := procedure(stateA, stateB) {
+    n := #stateA;
+    L := [1 .. n];
+    result := 0;
+    for (row in L, col in L | stateA[row][col] != 0) {
+        if (stateA[row][col] != stateB[row][col]) {
+            result += 1;
+        }
+    }
+    return result;
+};
+// Given a state and a dictionary Parent that contains the predecessor of
+// each state, this function computes the path leading to the given state.
+pathTo := procedure(state, Parent) {
+    Path := [];
+    while (state != om) {
+        Path  += [state];
+        state := Parent[state];
+    }
+    return reverse(Path);
+};
+combinePaths := procedure(node, ParentA, ParentB) {
+    Path1 := pathTo(node, ParentA);
+    Path2 := pathTo(node, ParentB);
+    return Path1[..-2] + reverse(Path2);
+};
+main := procedure(params) {
+    if (params == []) {
+        print("Press a number to select the algorithm:                ");
+        print("  1: breadth first search                              ");
+        print("  2: breadth first search (queue based implementation) ");
+        print("  3: depth first search                                ");
+        print("  4: depth first search (recursive implementation)     ");
+        print("  5: iterative deepening                               ");
+        print("  6: iterative deepening (recursive implementation)    ");
+        print("  7: bidirectional breadth first search                ");
+        print("  8: A* search with Manhattan distance                 ");
+        print("  9: bidirectional A* search (Manhattan distance)      ");
+        print(" 10: solve 4x4 puzzle using bidirectional A* search    ");
+        print(" 11: solve 3x3 puzzle using IDA* search                ");
+        print(" 12: solve 4x4 puzzle using IDA* search                ");
+        print(" 13: solve 3x3 puzzle using A*IDA* search              ");
+        print(" 14: solve 4x4 puzzle using A*IDA* search              ");
+        choice := read("Enter a number from 1 to 14: ");
+    } else {
+        choice := int(params[1]);
+    }
+    match (choice) {
+        case  1: load("breadth-first-search.stlx"         );
+        case  2: load("breadth-first-search-queue.stlx"   );
+        case  3: load("depth-first-search.stlx"           );
+        case  4: load("depth-first-search-recursive.stlx" );
+        case  5: load("iterative-deepening.stlx"          );
+        case  6: load("iterative-deepening-recursive.stlx");
+        case  7: load("bidirectional-bfs.stlx"            );
+        case  8: load("a-star-search.stlx"                );
+        case  9: load("a-star-bidirectional.stlx"         );
+        case 10: load("a-star-bidirectional.stlx"         );
+        case 11: load("iterative-deepening-a-star.stlx"   );
+        case 12: load("iterative-deepening-a-star.stlx"   );
+        case 13: load("a-star-ida-star.stlx"              );
+        case 14: load("a-star-ida-star.stlx"              );
+        default: abort("invalid choice");
+    }
+    start := [ [8, 0, 6],
+               [5, 4, 7],
+               [2, 3, 1]
+             ];
+    goal := [ [0, 1, 2], 
+              [3, 4, 5], 
+              [6, 7, 8]
+            ];
+    if (choice in { 10, 12, 14 }) {
+        start := [ [  1, 2,  0,  4 ],
+                   [ 14, 7, 12, 10 ],
+                   [  3, 5,  6, 13 ],
+                   [ 15, 9,  8, 11 ]
+                 ];
+        goal  := [ [  1,  2,  3,  4 ],
+                   [  5,  6,  7,  8 ],
+                   [  9, 10, 11, 12 ],
+                   [ 13, 14, 15,  0 ]
+                 ];
+    }
+    startTime := now();
+    match (choice) {
+        case  8:  Path := aStarSearch(start, goal, nextStates, manhattan);
+        case  9:  Path := aStarSearch(start, goal, nextStates, manhattan);
+        case 10:  Path := aStarSearch(start, goal, nextStates, manhattan);
+        case 11:  Path := idaStarSearch(start, goal, nextStates, manhattan);
+        case 12:  Path := idaStarSearch(start, goal, nextStates, manhattan);
+        case 13:  Path := aStarIdaStarSearch(start, goal, nextStates, manhattan, 1000);
+        case 14:  Path := aStarIdaStarSearch(start, goal, nextStates, manhattan, 3000);
+        default: Path := search(start, goal, nextStates);
+    }
+    stopTime  := now();
+    if (Path != om) {
+        print("number of steps to solve the puzzle: $#Path-1$");
+        if (#Path < 1000) {
+            print("The solution is:\n");
+            for (state in Path) {
+                print(stateToString(state));
+            }
+        } else {
+            print("In order to save some virtual trees, the solution is not printed.");
+        } 
+    } else {
+        print("No solution found.");
+    }
+    print("Time used: $stopTime - startTime$ milliseconds.");
+};
+main(params);
