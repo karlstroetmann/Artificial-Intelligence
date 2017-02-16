@@ -1760,7 +1760,7 @@ nodes discovered by the $\mathrm{A}^*$ search that has been started from the $\m
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{The $\mathrm{A}^*-\mathrm{IDA}^*$ search algorithm, part \texttt{I}.}
+\caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{I}.}
 \label{fig:a-star-ida-star.stlx-1}
 \end{figure}
 
@@ -1819,15 +1819,16 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
       \texttt{while} loop is terminated once the dictionary $\mathtt{Distance}$ has more than $\mathtt{size}$
       entries.  If we are lucky, the $\mathrm{A}^*$ search is already able to find the $\mathrm{goal}$ and the
       algorithm terminates.
-\item Otherwise, the procedure $\mathrm{deepeningSearch}$ is called.  This procedure starts and iterative deepening
+\item Otherwise, the procedure $\mathtt{deepeningSearch}$ is called.  This procedure starts an iterative deepening
       $\mathrm{A}^*$ search from the node $\mathtt{goal}$.  This search terminates as soon as a state is found
       that has already been encountered during the $\mathrm{A}^*$ search.  The set of these nodes is given to
       the procedure $\mathtt{deepeningSearch}$ via the parameter $\mathrm{Distance}$.  The procedure
-      $\mathrm{deepeningSearch}$ returns a pair.  The first component of this pair is the state $s$.  This is
-      the state in Distance that has been reached by the $\mathrm{IDA}^*$ search.  The second component is the
-      path $P$ that leads from the node $s$ to the node $\mathrm{goal}$.  However, $P$ does not include the node $s$.
-      Hence, in order to compute a path from $\mathtt{start}$ to $\mathtt{goal}$, we still have to compute a
-      path from $\mathtt{start}$ to $s$.  This path is then combined with the path $P$ and returned.
+      $\mathtt{deepeningSearch}$ returns a pair.  The first component of this pair is the state $s$.  This is
+      the state in $\mathtt{Distance}$ that has been reached by the $\mathrm{IDA}^*$ search.  The second component is the
+      path $P$ that leads from the node $s$ to the node $\mathrm{goal}$ but that does not include the node $s$.
+      In order to compute a path from $\mathtt{start}$ to $\mathtt{goal}$, we still have to compute a
+      path from $\mathtt{start}$ to $s$.  This path is then combined with the path $P$ and the resulting path
+      is returned.
 \end{enumerate}
 
 
@@ -1874,7 +1875,7 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{The $\mathrm{A}^*-\mathrm{IDA}^*$ search algorithm, part \texttt{II}.}
+\caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{II}.}
 \label{fig:a-star-ida-star.stlx-2}
 \end{figure}
 
@@ -1883,7 +1884,25 @@ On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}
 algorithm takes about $1.4$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
 is allowed to visit at most $3\,000$ states, the algorithm takes less than $9$ seconds.  However, there is one
 caveat: $\mathrm{A}^*$-$\mathrm{IDA}^*$ search is not \emph{guaranteed} to find an optimal path, although in practise it often does. 
+\pagebreak
 
+\exercise
+Assume that you have 3 water buckets:  The first bucket can hold 12 liters of water, the second bucket can hold 8 liters,
+while the last bucket can hold 3 liters.  There are three types of action:
+\begin{enumerate}
+\item A bucket can be completely filled.
+\item A bucket can be completely emptied.
+\item The contend of one bucket can be poured into another bucket.  Then, there are two cases.
+      \begin{enumerate}[(a)]
+      \item If the second bucket has enough free space for all the water in the first bucket, 
+            then the first bucket is emptied and all the water from the first bucket is poured 
+            into the second bucket.  
+      \item However, if there is not enough space in the second bucket, then the second bucket is filled
+            completely, while the water that does not fit into the second bucket remains in the first bucket.  
+      \end{enumerate}
+\end{enumerate}
+Your goal is to measure out exactly one liter.  Write a program that computes a plan to achieve this goal.
+\eox
 
 
 %%% Local Variables:
