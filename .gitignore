@@ -7,6 +7,8 @@
 *.toc
 *.class
 *.el
+*.bbl
+*.blg
 *.synctex.gz
 _region_.tex
 auto/
