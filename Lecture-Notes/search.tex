@@ -8,8 +8,10 @@ introduce various algorithms for solving search problems.  In particular, we pre
 \item depth first search,
 \item iterative deepening,
 \item bidirectional breadth first search,
-\item $\mathrm{A}^*$-search, and
-\item bidirectional $\mathrm{A}^*$-search.
+\item $\mathrm{A}^*$ search, 
+\item bidirectional $\mathrm{A}^*$ search,
+\item iterative deepening $\mathrm{A}^*$ search, and
+\item $\mathrm{A}^*$-$\mathrm{IDA}^*$ search.
 \end{enumerate}
 
 \begin{Definition}[Search Problem]
@@ -26,7 +28,7 @@ introduce various algorithms for solving search problems.  In particular, we pre
         i.e.~we have
         \\[0.2cm]
         \hspace*{1.3cm}
-        $\texttt{nextState}:S \times A \rightarrow 2^S$.
+        $\texttt{nextState}:S \rightarrow 2^S$.
         \\[0.2cm]
         The function \texttt{nextState} gives rise to the \emph{\color{blue}transition relation} $R$, which is a
         relation on $Q$, i.e.~$R \subseteq Q \times Q$.  This relation is defined as follows:
@@ -39,7 +41,7 @@ introduce various algorithms for solving search problems.  In particular, we pre
   \item $\mathtt{start}$ is the \emph{\color{blue}start state}, hence $\mathtt{start} \in Q$. 
   \item $\mathtt{goal}$ is the \emph{\color{blue}goal state}, hence $\mathtt{goal} \in Q$.
 
-        Sometimes, instead of a single goal $g$ there is a set of goal states $G$.
+        Sometimes, instead of a single $\mathtt{goal}$ there is a set of goal states $G$.
   \end{enumerate}
   A \emph{\color{blue}path} is a list $[s_1, \cdots, s_n]$ such that $\pair(s_i, s_{i+1}) \in R$ for all $i \in
   \{1,\cdots,n-1\}$. 
@@ -51,8 +53,12 @@ introduce various algorithms for solving search problems.  In particular, we pre
   \item $s_n = \mathtt{goal}$, i.e.~the last element of the path is the goal state. 
   \end{enumerate}
   A path $p = [s_1, \cdots, s_n]$ is a \emph{\color{blue}minimal solution} to the search problem $\mathcal{P}$ iff it is a
-  solution and, furthermore, the length of $p$ is minimal among all other solutions. \eox
+  solution and, furthermore, the length of $p$ is minimal among all other solutions. \eoxs
 \end{Definition}
+
+\remark
+In the literature, a \emph{\color{blue}state} is often called a \emph{\color{blue}node}.  In these lecture
+notes, I will also refer to states as nodes.  \eoxs
 
 \example
 We illustrate the notion of a search problem with the following example, which is also known as the 
@@ -92,8 +98,8 @@ river, then the missionaries have a problem.
                    };
         }
     };
-    start := [3,3,1];
-    goal  := [0,0,0];
+    start := [3, 3, 1];
+    goal  := [0, 0, 0];
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The missionary and cannibals problem codes as a search problem.}
@@ -106,7 +112,7 @@ as a search problem.  We discuss this formalization line be line.
 \item Line 1 defines the auxiliary function \texttt{problem}.
 
       If $m$ is the number of missionaries on a given shore, while $i$ is the number of infidels on
-      that same shore, then $\textsl{problem}(m, i)$ is \texttt{true} iff there the missionaries have a problem on that
+      that same shore, then $\textsl{problem}(m, i)$ is \texttt{true} iff the missionaries have a problem on that
       shore.  
 \item Line 3 defines the auxiliary function \texttt{noProblemAtAll}.  
 
@@ -144,12 +150,12 @@ as a search problem.  We discuss this formalization line be line.
             than the number $m$ of all missionaries on the northern shore, we have the condition
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\mathtt{mb} \in \{0,\cdots,m\}$.
+            $\mathtt{mb} \in \{0,\cdots,\mathrm{m}\}$.
             \\[0.2cm]
             There is a similar condition for the number of infidels crossing:
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\mathtt{ib} \in \{0,\cdots,i\}$.
+            $\mathtt{ib} \in \{0,\cdots,\mathrm{i}\}$.
             \\[0.2cm]
             This explains line 9.
       \item Furthermore, we have to check that the number of persons crossing the river is at least 1
@@ -166,21 +172,21 @@ as a search problem.  We discuss this formalization line be line.
             \\[0.2cm]
             These two checks are performed in line 10.
       \end{enumerate}
-\item If the boat is on the southern shore instead, then missionaries and infidels will be crossing
+\item If the boat is on the southern shore instead, then the missionaries and the infidels will be crossing
       the river from the southern shore to the northern shore.  Therefore, the number of missionaries and
       infidels on the northern shore is now increased.  Hence, in this case the new state has the form
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{[m - mb, i - ib, 0]}.
       \\[0.2cm]
-      As the number of missionaries on the southern shore is $3 - m$ and the number of infidels on the
-      southern shore is $3 - m$, \texttt{mb} is now a member of the set $\{0,\cdots,3 -m\}$, while 
-      \texttt{ib} is a member of the set $\{0,\cdots,3 - i\}$.
+      As the number of missionaries on the southern shore is $3 - \mathrm{m}$ and the number of infidels on the
+      southern shore is $3 - \mathrm{i}$, $\mathtt{mb}$ is now a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while 
+      $\mathtt{ib}$ is a member of the set $\{0,\cdots,3 - \mathtt{i}\}$.
 \item Finally the start state and the goal state are defined in line 19 and line 20.
 \end{enumerate}
-The code in Figure \ref{fig:missionaries.stlx} does not define the state of the search problem.  The
-reason is that, in order to solve the problem, we do not need to define this set in order to solve
-the problem.  If we want to, we can define the set of states as follows:
+The code in Figure \ref{fig:missionaries.stlx} does not define the set of states $Q$ of the search problem.  The
+reason is that, in order to solve the problem, we do not need to define this set.  If we wanted to, we could
+define the set of states as follows: 
 \begin{verbatim}
     States := { [m,i,b] : m in {0..3}, i in {0..3}, b in {0,1} | noProblemAtAll(m, i) };
 \end{verbatim}
@@ -198,18 +204,16 @@ is a solution involving just 11 crossings of the river.
   \label{fig:missionaries.pdf}
 \end{figure}
 
-Next, we want to develop an algorithm that can solve puzzles of the kind of the missionaries and
-cannibals problem automatically.  The easiest algorithm to solve search problems is 
-\href{https://en.wikipedia.org/wiki/Breadth-first_search}{breadth first search}. 
 
 \section{The Sliding Puzzle} 
-The $3 \times 3$ sliding puzzle is played on a
+The $3 \times 3$ sliding puzzle uses a
 square board of length 3.  This board is subdivided into $3 \times 3 = 9$ squares of length 1.  Of
 these 9 squares, 8 are occupied with square tiles that are numbered from 1 to 8.  One square remains
 empty. Figure \ref{fig:8-puzzle.pdf} on page \ref{fig:8-puzzle.pdf} shows two possible states of this
 sliding puzzle.  The $4 \times 4$ \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}
 is similar to the $3 \times 3$ sliding puzzle but it is played on a square board of length 4
-instead.  The $4 \times 4$ sliding puzzle is also known as the 15 puzzle. 
+instead.  The $4 \times 4$ sliding puzzle is also known as the \emph{\color{blue}15 puzzle}, while the $3 \times 3$ puzzle is
+called the \emph{\color{blue}8 puzzle}.
 
 \begin{figure}[!ht]
 \centering
@@ -235,14 +239,14 @@ In order to get a feeling for the complexity of the sliding puzzle, you can chec
 \\[0.2cm]
 The sliding puzzle is much more complex than the missionaries and cannibals problem because the
 state space is much larger.  For the case of the $3 \times 3$ sliding puzzle, there are 9 squares
-that can be positioned in $9!$ different ways.  It turns out that only half the positions are
+that can be positioned in $9!$ different ways.  It turns out that only half of these positions are
 reachable from a given start state.  Therefore, the effective number of states for the $3 \times 3$
 sliding puzzle is
 \\[0.2cm]
 \hspace*{1.3cm}
 $9! / 2 = 181,440$.
 \\[0.2cm]
-This is already a big number, but $181440$ states can still be stored in a modern computer.  However, the
+This is already a big number, but $181,440$ states can still be stored in a modern computer.  However, the
 $4 \times 4$ sliding puzzle has
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -250,7 +254,7 @@ $16!/2 = 10,461,394,944,000$
 \\[0.2cm]
 different states reachable from a given start state.  If a state is represented as matrix containing
 16 numbers and we store every number using just 4 bits, we still need $16 \cdot 4 = 64$ bits or 8
-bytes state.  Hence we would need 
+bytes for every state.  Hence we would need a total of
 \\[0.2cm]
 \hspace*{1.3cm}
 $16! / 2 \cdots 8 = 83,691,159,552,000$
@@ -324,19 +328,37 @@ a search problem.  We discuss this program line by line.
       moved into the position $\langle\mathtt{row}, \mathtt{col}\rangle$, while the tile at position
       $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ becomes empty.
 \item Given a $\mathtt{state}$, the procedure $\mathtt{newStates}$ computes the set of all states
-      that can be reached in one step from $\mathtt{state}$.
+      that can be reached in one step from $\mathtt{state}$.  The basic idea is to find the position of the
+      empty tile and then try to move the empty tile in all possible directions.  If the empty tile is found at
+      position $[\mathtt{row}, \mathtt{col}]$ and the direction of the movement is given as $[\mathtt{dx}, \mathtt{dy}]$, then
+      in order to ensure that the empty tile can be moved to the position $[\mathtt{row}+\mathtt{dx}, \mathtt{col}+\mathtt{dy}]$,
+      we have to ensure that both
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{row}+\mathtt{dx} \in \{1,\cdots,n\}$ \quad and \quad
+      $\mathtt{col}+\mathtt{dy} \in \{1,\cdots,n\}$
+      \\[0.2cm]
+      hold, where $n$ is the size of the board.
 \end{enumerate}
-\pagebreak
+
+Next, we want to develop an algorithm that can solve puzzles of the kind described so far.  The most basic
+algorithm to solve search problems is \href{https://en.wikipedia.org/wiki/Breadth-first_search}{breadth first search}. 
+We discuss this algorithm next.
 
 \section{Breadth First Search}
-Informally, breadth first search works as follows:
+Informally, breadth first search, abbreviated as \textsc{Bfs}, works as as follows:
 \begin{enumerate}
 \item Given a search problems $\langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$,  
       we initialize a set $\mathtt{Frontier}$ to contain the state $\mathtt{start}$.
-\item As long as the set $\mathtt{Frontier}$ does not contain the state $\mathtt{goal}$, we extend this set 
-      by adding all states that can be reached in step from a state in $\mathtt{Frontier}$.
+
+      In general, $\mathtt{Frontier}$ contains those states that have just been discovered and whose successors have not
+      yet been seen.
+\item As long as the set $\mathtt{Frontier}$ does not contain the state $\mathtt{goal}$, we recompute this set 
+      by adding all states to it that can be reached in step from a state in $\mathtt{Frontier}$.
+      Then, the states that had been previously present in $\mathtt{Frontier}$ are removed.
+      These old states are then saved into a set $\mathtt{Visited}$.
 \end{enumerate}
-In order to avoid loops, an implementation of breadth also keeps track of those states that have
+In order to avoid loops, an implementation of breadth first search keeps track of those states that have
 been visited.  These states a collected in a set $\mathtt{Visited}$.  Once a state has been added to
 the set $\mathtt{Visited}$,  it will never be revisited again. 
 Furthermore, in order to keep track of the path leading to the goal, we have a dictionary
@@ -345,9 +367,7 @@ caused $s$ to be added to the set $\mathtt{Frontier}$, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $s \in \mathtt{nextStates}(\mathtt{Parent}[s])$.
-\\[0.2cm]
-Figure \ref{fig:breadth-first-search.stlx} on page \pageref{fig:breadth-first-search.stlx} shows an implementation of
-breadth first search in \textsc{SetlX}.  We discuss this implementation line by line:
+
 
 \begin{figure}[!ht]
 \centering
@@ -362,10 +382,9 @@ breadth first search in \textsc{SetlX}.  We discuss this implementation line by 
                 ]
     search := procedure(start, goal, nextStates) {
         Frontier := { start };
-        Visited  := {}; // number of nodes expanded
+        Visited  := {}; // set of nodes that have been expanded
         Parent   := {};
         while (Frontier != {}) {
-            Visited += Frontier;
             NewFrontier := {};
             for (s in Frontier, ns in nextStates(s) | !(ns in Visited)) {
                 NewFrontier += { ns };
@@ -374,6 +393,7 @@ breadth first search in \textsc{SetlX}.  We discuss this implementation line by 
                     return pathTo(goal, Parent);
                 }
             }
+            Visited  += Frontier;
             Frontier := NewFrontier;
         }
     };
@@ -382,6 +402,8 @@ breadth first search in \textsc{SetlX}.  We discuss this implementation line by 
 \caption{Breadth first search.}
 \label{fig:breadth-first-search.stlx}
 \end{figure}
+\myFig{breadth-first-search.stlx} shows an implementation of
+breadth first search in \textsc{SetlX}.  We discuss this implementation line by line:
 \begin{enumerate}
 \item $\mathtt{Frontier}$ is the set of all those states that have been encountered but whose
       neighbours have not yet been explored.  Initially, it contains the state $\mathtt{start}$.
@@ -432,7 +454,7 @@ If we try breadth first search to solve the missionaries and cannibals problem, 
 the solution shown in Figure \ref{fig:missionaries.solution}.  15 nodes had to be expanded to find
 this solution.  To keep this in perspective, we note that Figure \ref{fig:missionaries.pdf} shows
 that the entire state space contains 16 states.  Therefore, with the exception of one state, we have
-inspected all the states.  This is typical behaviour for breadth first search.
+inspected all the states.  This is a typical behaviour for breadth first search.
 
 \begin{figure}[!ht]
 \centering
@@ -516,7 +538,7 @@ that the solution of the $3 \times 3$ sliding puzzle needs about 94 seconds, whi
             if (state in Visited) {
                 continue;
             }
-            Visited += { state };
+            Visited   += { state };
             newStates := nextStates(state);
             for (ns in newStates | !(ns in Visited)) { 
                 Parent[ns] := state;
@@ -634,7 +656,7 @@ breadth first search.
 \begin{enumerate}
 \item Breadth first search is \emph{\color{blue}complete}:  If there is a solution to the given
       search problem, then breadth first search is going to find it.
-\item The solution founnd by breadth first search is \emph{\color{blue}optimal}, i.e.~it is the
+\item The solution found by breadth first search is \emph{\color{blue}optimal}, i.e.~it is the
       shortest possible solution.
 \end{enumerate}
 \proof
@@ -647,7 +669,7 @@ this case, $\mathtt{Frontier}$ only contains the state $\mathtt{start}$.  In the
 assume the claim is true after $n$ iterations.  Then, in the next iteration all states that can be
 reached in one step from a state in $\mathtt{Frontier}$ are added to the new $\mathtt{Frontier}$,
 provided there is no shorter path to these states.  There is a shorter path to these states if these
-states are already a member of the set $\mathtt{Visited}$.  hence, the claim is true after $n+1$
+states are already a member of the set $\mathtt{Visited}$.  Hence, the claim is true after $n+1$
 iterations also.
 
 Now, if there is a path form $\mathtt{start}$ to $\mathtt{goal}$, there must also be a shortest
@@ -659,12 +681,8 @@ The fact that breadth first search is both complete and the path returned is opt
 satisfying.  However, breadth first search still has a big downside that makes it unusable for
 many problems:  If the \texttt{goal} is far from the $\mathtt{start}$, breadth first search will use
 a lot of memory because it will store a large part of the state space in the set
-$\mathtt{Visited}$.  In many cases, the state space is so big that this is not possible.
-\vspace*{\fill}
-\pagebreak
-
-\vspace*{\fill}
-\pagebreak
+$\mathtt{Visited}$.  In many cases, the state space is so big that this is not possible.  For example, it is
+impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzle.
 
 \section{Depth First Search}
 To overcome the memory limitations of breadth first search, the
@@ -687,9 +705,9 @@ $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the who
                   xrightmargin  = 0.8cm,
                 ]
     search := procedure(start, goal, nextStates) {
-        Stack    := [ start ];
-        Visited  := {}; // number of nodes expanded
-        Parent   := {};
+        Stack   := [ start ];
+        Visited := {}; // number of nodes expanded
+        Parent  := {};
         while (Stack != []) {
             state := Stack[-1];
             Stack := Stack[..-2];
@@ -719,17 +737,16 @@ shortest path from $\mathtt{start}$ to $\mathtt{goal}$ has 31 steps, the solutio
 first search is highly redundant.  If this redundancy is not an issue, depth first search is good
 choice as it is very easy to implement.  For example, this is the case if we just want to know
 whether there is a path leading from $\mathtt{start}$ to $\mathtt{goal}$.  However, if we are
-interested in the path itself, then depth first search is simply not an option.
+interested in computing the shortest path, then depth first search is not an option.
 
 \subsection{A Recursive Implementation of Depth First Search}
 Sometimes, the depth first search algorithm is presented as a recursive algorithm, since this leads
 to an implementation that is slightly shorter and more easy to understand.  While this program works
-just fine for small problems like the missionaries and cannibals problem, it does not work at all
+just fine for small problems like the missionaries and cannibals problem, it does not work so well
 for a problem of the size of the $3 \times 3$ sliding puzzle.  The reason is that each recursive
-invocation of the function $\mathtt{dfs}$ needs to copy the parameters onto the stack.  However, the
-parameters $\mathtt{Parent}$ and $\mathtt{Visited}$ grow linearly with the length of the path that
-is explored.  We have already seen that the solution path that is found by depth first search has a
-length of more than $9000$.  The resulting overhead is prohibitive.
+invocation of the function $\mathtt{dfs}$ needs to copy the parameters onto the stack.  As the number of
+recursive calls is the same as the length of the path that is found and as this path is very long, 
+the resulting overhead is prohibitive.
 
 \begin{figure}[!ht]
 \centering
@@ -745,7 +762,7 @@ length of more than $9000$.  The resulting overhead is prohibitive.
     search := procedure(start, goal, nextStates) {
         return dfs(start, goal, nextStates, {}, {});
     };
-    dfs := procedure(state, goal, nextStates, Parent, Visited) {
+    dfs := procedure(state, goal, nextStates, rw Parent, rw Visited) {
         if (state == goal) {
             return pathTo(goal, Parent);
         }
@@ -880,7 +897,7 @@ minutes and visits $103,324$ states.  There are two reasons for this:
       to 31.  Essentially, all the computations done with a limit less the $31$ are essentially wasted.
 \item When performing  the computation for the limit of $30$, all states that have a distance form start that
       is less than or equal to $30$ have to be visited.  This amounts to visiting $181,438$ states, because there
-      are only two states that have a distance of $31$ from $\mathtt{start}$.  Hence, the nearly the entire
+      are only two states that have a distance of $31$ from $\mathtt{start}$.  Hence, nearly the entire
       state space is visited.
 \end{enumerate}
 
@@ -945,7 +962,7 @@ shows a recursive implementation of iterative deepening.  This implementation ha
 \item Similarly, there is no longer a need to keep the dictionary $\mathtt{Distance}$.
 \end{enumerate}
 Unfortunately, the running time of the recursive implementation of iterative deepening is still considerably
-bigger than the running time of the stack base implementation:  On my computer, the recursive implementation
+bigger than the running time of the stack based implementation:  On my computer, the recursive implementation
 takes about 36 minutes!
 
 \section{Bidirectional Breadth First Search}
@@ -1884,7 +1901,6 @@ On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}
 algorithm takes about $1.4$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
 is allowed to visit at most $3\,000$ states, the algorithm takes less than $9$ seconds.  However, there is one
 caveat: $\mathrm{A}^*$-$\mathrm{IDA}^*$ search is not \emph{guaranteed} to find an optimal path, although in practise it often does. 
-\pagebreak
 
 \exercise
 Assume that you have 3 water buckets:  The first bucket can hold 12 liters of water, the second bucket can hold 8 liters,

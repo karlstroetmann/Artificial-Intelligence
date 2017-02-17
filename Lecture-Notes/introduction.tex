@@ -1,12 +1,14 @@
 \chapter{Introduction}
 
 \section{What is Artificial Intelligence?}
-Before we start to dive into the subject of \emph{Artificial Intelligence} we have to answer the following question:
+Before we start to dive into the subject of
+\href{https://en.wikipedia.org/wiki/Artificial_intelligence}{Artificial Intelligence} we have to answer the
+following question:  
 \\[0.2cm]
 \hspace*{1.3cm}
 What is \emph{Artificial Intelligence}? 
 \\[0.2cm] 
-Historically, there have been a number of different answers to this question.  We will look at these
+Historically, there have been a number of different answers to this question \cite{russell:2009}.  We will look at these
 different answers and discuss them.
 \begin{enumerate}
 \item \emph{Artificial Intelligence} is the study of creating machines that \underline{think} like humans.
@@ -38,7 +40,8 @@ different answers and discuss them.
       \href{https://en.wikipedia.org/wiki/Daedalus#Daedalus_and_Icarus}{Daedalus and Icarus}.
 \item \emph{Artificial Intelligence} is the science of creating machines that \underline{think lo}g\underline{icall}y.
 
-      The idea with this approach is to create machines that are based on mathematical logic.  If a
+      The idea with this approach is to create machines that are based on 
+      \href{https://en.wikipedia.org/wiki/Mathematical_logic}{mathematical logic}.  If a
       goal is given to these machines, then these machines use logical reasoning in order to deduce
       those actions that need to be performed in order to best achieve the given goals. Technically,
       this approach is based on mathematical logic.  The approach had limited success:  In playing
@@ -46,16 +49,18 @@ different answers and discuss them.
       However, the approach was mostly unsuccessful for dealing with many real world problems.
       There were two main reasons for its failure:
       \begin{enumerate}
-      \item In order for the logical approach to be successful, the environment has to be completely
+      \item In order for the logical approach to be successful, the environment has to be
+            \emph{\color{blue}completely} 
             described by mathematical axioms.  It has turned out that our knowledge of the real
             world is often not sufficient to completely describe the environment via axioms.  
-      \item In real life situations we often deal with uncertainty.  Classical logic does not
+      \item In real life situations we often deal with \emph{\color{blue}uncertainty}.  Classical logic does not
             perform well when it has to deal with  uncertainties.
       \end{enumerate}
 \item \emph{Artificial Intelligence} is the science of creating machines that \underline{act rationall}y.
 
-      All we really want is to build machines that, given the knowledge we have, try to optimize the
-      expected results:  In our world, there is lots of uncertainty.  We cannot hope to create
+      All we really want is to build machines that, given the knowledge we have, try to 
+      \emph{\color{blue}optimize the expected results}:  In our world, there is lots of uncertainty.  We cannot
+      hope to create 
       machines that always make the decisions that turn out to be the best decisions.  What we can
       hope is to create machines that will make decisions that turn out to be good on average.  For
       example, suppose we try to create a program for asset management:  We cannot hope to build a
@@ -63,8 +68,11 @@ different answers and discuss them.
       be to build a program that maximizes our expected profits in the long term.
 
       It has turned out that the main tool needed for this approach is not mathematical logic but
-      rather mathematical statistics.  The shift from logic to statistics has been the most
-      important reason for the success of Artificial Intelligence in the recent years.
+      rather \href{https://en.wikipedia.org/wiki/Numerical_analysis}{numerical analysis} and
+      \href{https://en.wikipedia.org/wiki/Mathematical_statistics}{mathematical statistics}.  The shift 
+      from logic to numerical analysis and statistics has been the most important reason for the success of
+      Artificial Intelligence in the recent years.  Another important factor is the 
+      \emph{\color{blue}enhanced performance of modern hardware}. 
 \end{enumerate}
 Now that we have clarified the notion of artificial intelligence, we should set its goals.  As we
 can never achieve more than we aim for, we have every reason to be ambitious here.  For example, my
@@ -101,8 +109,18 @@ The main sources of these lecture notes are the following:
       \emph{Introduction to Artificial Intelligence}
       \\[0.2cm]
       written by Stuart Russel and Peter Norvig \cite{russell:2009}.
+\item A course on artificial that is offered on \href{https://www.udacity.com}{Udacity}.  The title of the
+      course is
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \href{https://www.udacity.com/course/intro-to-artificial-intelligence--cs271}{Intro to Artificial Intelligence}
+      \\[0.2cm]
+      and the course is given by \href{https://en.wikipedia.org/wiki/Peter_Norvig}{Peter Norvig}, who is
+      director of research at Google and \href{https://en.wikipedia.org/wiki/Sebastian_Thrun}{Sebastian Thrun},
+      who is the chairman of \href{https://www.udacity.com}{Udacity}.
 \end{enumerate}
-
+The programs presented in these lecture notes have been tested with version 2.6 of 
+\href{https://randoom.org/Software/SetlX}{\textsc{SetlX}}.
 
 
 %%% Local Variables:

@@ -1,7 +1,7 @@
 search := procedure(start, goal, nextStates) {
-    Stack    := [ start ];
-    Visited  := {}; // set of nodes expanded
-    Parent   := {};
+    Stack   := [ start ];
+    Visited := {}; // set of nodes expanded
+    Parent  := {};
     while (Stack != []) {
         state := Stack[-1];
         Stack := Stack[..-2];
