@@ -966,10 +966,10 @@ bigger than the running time of the stack based implementation:  On my computer,
 takes about 36 minutes!
 
 \section{Bidirectional Breadth First Search}
-The way breadth first search works it first visits all states that have a distance of 1 from start, then all
+Breadth first sear first visits all states that have a distance of 1 from start, then all
 states that have a distance of 2, then of 3 and so on until finally the goal is found.  If the shortest path
 from $\mathtt{start}$ to $\mathtt{goal}$ is $d$, then all states that have a distance of at most $d$ will be
-generated.  In many search problems, the number of states grows exponentially with the distance. i.e.~there is
+visited.  In many search problems, the number of states grows exponentially with the distance. i.e.~there is
 a \emph{\color{blue}branching factor} $b$ such that the set of all states that have a distance of at most $d$
 from $\mathtt{start}$ is roughly
 \\[0.2cm]
@@ -980,31 +980,31 @@ At least this is true in the beginning of the search.  As the size of
 the memory that is needed is the most constraining factor when searching, it is important to cut down this
 size.  On simple idea is to start searching both from the node $\mathtt{start}$ and the node $\mathtt{goal}$
 simultaneously.  The justification is that we can hope that the path starting form $\mathtt{start}$ and the
-path starting from $\mathtt{goal}$ will meet in the middle and hence will both have a size of approximately
+path starting from $\mathtt{goal}$ will meet in the middle and hence they will both have a size of approximately
 $d/2$.  If this is the case, only
 \\[0.2cm]
 \hspace*{1.3cm}
-$2 \cdot b^{d/2}$ 
+$\ds 2 \cdot \frac{b^{d/2} - 1}{b - 1}$ 
 \\[0.2cm]
 nodes need to be explored and even for modest values of $b$ this number is much smaller than 
 \\[0.2cm]
 \hspace*{1.3cm}
-$b^{d+1}$
+$\ds\frac{b^{d+1} - 1}{b - 1}$
 \\[0.2cm]
 which is the number of nodes expanded in breadth first search.  For example, assume that the branching factor
 $b = 2$ and that the length of the shortest path leading from $\mathtt{start}$ to $\mathtt{goal}$
 is $40$.  Then we need to explore
 \\[0.2cm]
 \hspace*{1.3cm}
-$2^{40} = 1,099,511,627,776$
+$2^{40} - 1 = 1,099,511,627,775$
 \\[0.2cm]
 in breadth first search, while we only have to explore 
 \\[0.2cm]
 \hspace*{1.3cm}
-$2^{40/2} = 1,048,576$
+$2^{40/2} - 1 = 1,048,575$
 \\[0.2cm]
 with bidirectional depth first search.  While it is certainly feasible to keep a million states in memory,
-keeping a trillion states in memory is impossible on most average devices.
+keeping a trillion states in memory is impossible on most devices.
 
 
 \begin{figure}[!ht]
@@ -1055,7 +1055,7 @@ keeping a trillion states in memory is impossible on most average devices.
 \end{figure}
 
 Figure \ref{fig:bidirectional-bfs.stlx} on page \pageref{fig:bidirectional-bfs.stlx} shows the implementation
-of bidirectional breadth first search.  Essentially, we have to keep to copy the breadth first program shown in
+of bidirectional breadth first search.  Essentially, we have to copy the breadth first program shown in
 Figure \ref{fig:breadth-first-search.stlx}. Let us discuss the details of the implementation.
 \begin{enumerate}
 \item The variable $\mathtt{FrontierA}$ is the frontier that starts from the state $\mathtt{start}$, while
@@ -1080,7 +1080,7 @@ Figure \ref{fig:breadth-first-search.stlx}. Let us discuss the details of the im
 \end{enumerate}
 On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in less than a
 second!  However, bidirectional breadth first search is still not able to solve the $4 \times 4$ sliding puzzle
-since the portion of the search space that needs to be computed is still too big.
+since the portion of the search space that needs to be computed is just too big to fit into memory.
 
 \begin{figure}[!ht]
 \centering
@@ -1135,7 +1135,7 @@ computes the true distance of a state $s$ to the goal, then we must have
 \hspace*{1.3cm}
 $h(s) \leq d(s)$ \quad for all $s \in Q$.
 \\[0.2cm]
-Hence, the heuristic is admissible iff it is optimistic:  An admissible heuristic must never overestimate the
+Hence, the heuristic is admissible iff it is \emph{\color{blue}optimistic}:  An admissible heuristic must never overestimate the
 distance to the goal, but it is free to underestimate this distance.
 
 Finally, the  heuristic $h$ is called \emph{\color{blue}consistent} iff we have
@@ -1191,7 +1191,7 @@ This claim is shown by induction on $k$.
              $
              \begin{array}{lcll}
                h(s_{k+1}) & \leq & 1 + h(s_k) & \mbox{because $h$ is consistent} \\[0.2cm]
-                         & \leq & 1 + k      & \mbox{because $h(s_k) \leq k$ by i.h.}
+                         & \leq & 1 + k      & \mbox{because $h(s_k) \leq k$ by induction hypotheses}
              \end{array}
              $
              \\[0.2cm]
@@ -1236,8 +1236,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       \hspace*{1.3cm}
       $d_1\bigl(\langle x_1, y_1\rangle, \langle x_2, y_2\rangle\bigr) := |x_1 - x_2| + |y_1 - y_2|$.
       \\[0.2cm]
-      If we associate coordinates
-      \href{https://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Cartesian coordinates} with
+      If we associate \href{https://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Cartesian coordinates} with
       the tiles of the sliding puzzle such that the tile in the upper left corner has coordinates
       $\pair(1, 1)$ and the coordinates of the tile in the lower right corner is $\pair(3, 3)$, then
       the Manhattan distance of two positions measures how many steps it takes to move a tile from
@@ -1338,7 +1337,7 @@ estimate of the distance from $s$ to $\mathtt{goal}$.  The details of the $\math
         Parent   := {};                    // back pointers, represented as dictionary
         Distance := { [start, 0] };
         estGoal  := heuristic(start, goal);
-        Estimate := { [start, estGoal] };  // Estimated distance
+        Estimate := { [start, estGoal] };  // estimated distances
         Frontier := { [estGoal, start] };  // priority queue
         while (Frontier != {}) {
             [stateEstimate, state] := fromB(Frontier);
@@ -1371,10 +1370,10 @@ The function \texttt{aStarSearch} takes 4 parameters:
 \begin{enumerate}
 \item \texttt{start} is a state.  This state represents the start state of the search problem.
 \item \texttt{goal} is the goal state.  
-\item \texttt{next} is a function that takes a state as a parameter.  For a state $s$,
+\item \texttt{nextStates} is a function that takes a state as a parameter.  For a state $s$,
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{next}(s)$
+      $\mathtt{nextStates}(s)$
       \\[0.2cm]
       computes the set of all those states that can be reached from $s$ in a single step.
 \item \texttt{heuristic} is a function that takes two parameters.  
@@ -1396,8 +1395,8 @@ algorithm.
       \\[0.2cm]
       Once the goal has been found, this dictionary is used to compute the path from $\mathtt{start}$ to
       $\mathtt{goal}$. 
-\item $\mathtt{Distance}$ is a dictionary that remembers for every state $s$ that is encountered during the
-      search the length of the shortest path from $\mathtt{start}$ to $s$.
+\item $\mathtt{Distance}$ is a dictionary.  For every state $s$ that is encountered during the
+      search,  this dictionary records the length of the shortest path from $\mathtt{start}$ to $s$.
 \item $\mathtt{Estimate}$ is a dictionary.  For every state $s$ encountered in the search, $\mathtt{Estimate}[s]$
       is an estimate of the length that a path from $\mathtt{start}$ to $\mathtt{goal}$ would have if it would
       pass through the state $s$.  This estimate is calculated using the equation
@@ -1406,7 +1405,7 @@ algorithm.
       $\mathtt{Estimate}[s] = \mathtt{Distance}[s] + \mathtt{heuristic}(s, \mathtt{goal})$.
       \\[0.2cm]
       Instead of recalculating this sum every time we need it, we store it in the dictionary
-      $\mathtt{Estimate}$.
+      $\mathtt{Estimate}$.  This increases the efficiency of the algorithm.
 \item $\mathtt{Frontier}$ is a \href{https://en.wikipedia.org/wiki/Priority_queue}{priority queue}.
       The elements of $\mathtt{Frontier}$ are pairs of the form
       \\[0.2cm]
@@ -1429,14 +1428,15 @@ does only terminate if either a solution is found or the priority queue $\mathtt
       \\[0.2cm]
       from $\mathtt{Frontier}$ that has the lowest value of $\mathtt{stateEstimate}$, but also removes this
       pair from the priority queue.
-\item Now if this $\mathtt{state}$ is the $\mathtt{goal}$ a solution has been found and is returned.
-\item Otherwise, we check the length of path leading from $\mathtt{start}$ to state.  This length is stored in 
+\item Now if this $\mathtt{state}$ is the $\mathtt{goal}$ a solution has been found.  Hence, in this case the solution is returned 
+      and the function $\mathtt{aStarSearch}$ terminates.
+\item Otherwise, we check the length of the path leading from $\mathtt{start}$ to state.  This length is stored in 
       \texttt{stateDist}.  Effectively, this is the distance between $\mathtt{start}$ and $\mathtt{state}$.
 \item Next, we have a loop that iterates over all neighbours of $\mathtt{state}$.
       \begin{enumerate}
       \item For every $\mathtt{neighbour}$ we check the estimated length of a solution passing through
             $\mathtt{neighbour}$ and store this length in $\mathtt{oldEstimate}$.   Note that
-            $\mathtt{oldEstimate}$ is undefined, i.e.~$\mathtt{om}$ if we haven't yet encountered the node
+            $\mathtt{oldEstimate}$ is undefined, i.e.~it has the value $\mathtt{om}$, if we haven't yet encountered the node
             $\mathtt{neighbour}$ in our search.
       \item If a solution would go from $\mathtt{start}$ to $\mathtt{state}$ and from there proceed to
             $\mathtt{neighbour}$, the estimated length of this solution would be
@@ -1451,12 +1451,17 @@ does only terminate if either a solution is found or the priority queue $\mathtt
             $\mathtt{oldEstimate}$.  Note that we have to take care of the fact that there might be no valid
             $\mathtt{oldEstimate}$.
 
-            In case the new solution seems better than the old solution, we have to update
+            In case the new solution seems to be better than the old solution, we have to update
             the $\mathtt{Parent}$ dictionary, the $\mathtt{Distance}$ dictionary, and the $\mathtt{Estimate}$
-            dictionary.  Furthermore we have to update the priority queue $\mathtt{Frontier}$.
+            dictionary.  Furthermore, we have to update the priority queue $\mathtt{Frontier}$.
+            Here, we have to take care to remove the previous entry for the state
+            $\mathtt{neighbour}$ if it exists, which is the case if $\mathtt{oldEstimate}$ is not $\mathtt{om}$.
       \end{enumerate}
 \end{enumerate}
 It can be shown that the $\mathrm{A}^*$ search algorithm is complete and that the computed solution is optimal.
+The $\mathrm{A}^*$ algorithm has been discovered by Hart, Nilsson, and Raphael and was first published in
+1968 \cite{hart:1968}.  However, there was subtle bug in the first publication which was corrected
+in 1972 \cite{hart:1972}.
 
 When we run $\mathrm{A}^*$ on the $3 \times 3$ sliding puzzle, it takes about 17 seconds to solve the instance
 shown in \myFig{8-puzzle.pdf}.  If we just look at the time, this seems to be disappointing.  However, the good
@@ -1539,7 +1544,7 @@ Hence, we will not discuss the details any further.
 When we run bidirectional $\mathrm{A}^*$ search for the $3 \times 3$ sliding puzzle shown in
 \myFig{8-puzzle.pdf}, the program takes 2 second but only uses $2,963$ states.  Therefore, I have tried 
 to solve the $4 \times 4$ sliding puzzle shown in \myFig{start-goal.stlx} using
-bidirectional $\mathrm{A}^*$ search.  A solution of $44$ steps was found in $65$ seconds.
+bidirectional $\mathrm{A}^*$ search.  A solution of $44$ steps was found in less than $58$ seconds.
 Only $20,624$ states had to be processed to compute this solution!  None of the other algorithms presented so
 far was able to compute the solution.
 
