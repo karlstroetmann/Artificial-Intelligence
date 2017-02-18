@@ -346,7 +346,7 @@ algorithm to solve search problems is \href{https://en.wikipedia.org/wiki/Breadt
 We discuss this algorithm next.
 
 \section{Breadth First Search}
-Informally, breadth first search, abbreviated as \textsc{Bfs}, works as as follows:
+Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows:
 \begin{enumerate}
 \item Given a search problems $\langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$,  
       we initialize a set $\mathtt{Frontier}$ to contain the state $\mathtt{start}$.
@@ -1439,7 +1439,7 @@ does only terminate if either a solution is found or the priority queue $\mathtt
             $\mathtt{oldEstimate}$ is undefined, i.e.~$\mathtt{om}$ if we haven't yet encountered the node
             $\mathtt{neighbour}$ in our search.
       \item If a solution would go from $\mathtt{start}$ to $\mathtt{state}$ and from there proceed to
-            $\mathtt{neighbour}$, the the estimated length of this solution would be
+            $\mathtt{neighbour}$, the estimated length of this solution would be
             \\[0.2cm]
             \hspace*{1.3cm}
             $\mathtt{stateDist} + 1 + \mathtt{heuristic}(\mathtt{neighbour}, \mathtt{goal})$.
@@ -1697,7 +1697,7 @@ We proceed to describe the implementation of the function \texttt{search}.
       be increased to have at least a value of $\mathtt{total}$.
 \item If we are lucky and have found the $\mathtt{goal}$, the $\mathtt{Path}$ is returned.
 \item Otherwise, we iterate over all nodes reachable from $\mathtt{state}$ that have not already been visited
-      by $\mathtt{Path}$.  If $\mathtt{ns}$ is a a node of this kind, we extend the $\mathtt{Path}$ so that
+      by $\mathtt{Path}$.  If $\mathtt{ns}$ is a node of this kind, we extend the $\mathtt{Path}$ so that
       this node is visited next.  The resulting path is 
       \\[0.2cm]
       \hspace*{1.3cm}

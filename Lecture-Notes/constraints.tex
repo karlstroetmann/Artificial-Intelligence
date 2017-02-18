@@ -315,7 +315,7 @@ local search works as follows:
 arbitrary constraint satisfaction problem, the program solves the $n$ queens problem.  We proceed to discuss
 this program line by line.
 \begin{enumerate}
-\item The procedure $\mathtt{solve}$ takes one parameter $\mathtt{n}$, hich is the size of the chess board.  If
+\item The procedure $\mathtt{solve}$ takes one parameter $\mathtt{n}$, which is the size of the chess board.  If
       the computation is successful, $\mathtt{solve(n)}$ returns a list of length $\mathtt{n}$.  Lets call this
       list $\mathtt{Queens}$. For every row $\mathtt{r} \in \{1, \cdots, \mathtt{n}\}$, the value $\mathtt{Queens[r]}$ specifies that the queen 
       that resides in row $\mathtt{r}$ is positioned in column $\mathtt{Queens[r]}$.
@@ -333,7 +333,7 @@ this program line by line.
       $\mathtt{n}$ queens problem.
 \item Otherwise, we compute those rows that exhibit the maximal number of conflicts.  From these rows
       we select one $\mathtt{row}$ arbitrarily.
-\item The reason for enclsing the assignment to $\mathtt{row}$ in an \texttt{if} statement is explained later. 
+\item The reason for enclosing the assignment to $\mathtt{row}$ in an \texttt{if} statement is explained later. 
       On a first reading of  this program,  this \texttt{if} statement should be ignored.
 \item Now that we have identified the $\mathtt{row}$ where the number of conflicts is biggest, we need to
       reassign $\mathtt{Queens[row]}$.  Of course, when reassigning this variable, we would like to have fewer
