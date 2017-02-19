@@ -54,15 +54,13 @@ search := procedure(g, s, nextStates, d, l, heuristic, Path, Dist) {
     if (Dist[g] != om) {
         return [g, Path[2..]];
     }
-    smallest := 1.0 / 0.0;  // infinity
+    smallest := mathConst("Infinity");
     for (ns in nextStates(g) | !(ns in Path) ) {
         result := search(ns, s, nextStates, d+1, l, heuristic, [ns]+Path, Dist);
         if (isList(result)) {
             return result;
         }
-        if (result < smallest) {
-            smallest := result;
-        }
+        smallest := min([smallest, result]);
     }
     return smallest;
 };

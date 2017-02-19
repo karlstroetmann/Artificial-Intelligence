@@ -1611,16 +1611,14 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
         if (state == goal) {
             return Path;
         }
-        smallest := 1.0 / 0.0;  // infinity
+        smallest := mathConst("Infinity");  
         for (ns in nextStates(state) | !(ns in Path) ) {
             result := search(ns, goal, nextStates, distance + 1, limit, 
                              Path + [ ns ], heuristic);
             if (isList(result)) {
                 return result;
             }
-            if (result < smallest) {
-                smallest := result;
-            }
+            smallest := min([result, smallest]);
         }
         return smallest;
     };
@@ -1642,9 +1640,10 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
             \hspace*{1.3cm}
             $\texttt{heuristic}(s_1, s_2)$ 
             \\[0.2cm]
-            computes an estimate of the distance between $s_1$ and $s_2$.
+            computes an estimate of the distance between $s_1$ and $s_2$.  It is assumed that this
+            estimate is optimistic.  
      \end{enumerate}
-\item The function \texttt{idaStarSearch} initialises $\mathtt{limit}$ to be an estimate of the distance
+\item The function \texttt{idaStarSearch} initializes $\mathtt{limit}$ to be an estimate of the distance
       between $\mathtt{start}$ and $\mathtt{goal}$.  As we assume that the function $\mathtt{heuristic}$ is
       optimistic, we know that there is no path from $\mathtt{start}$ to $\mathtt{goal}$ that is shorter than
       $\mathtt{limit}$.  Hence, we start our search by assuming that we might find a path that has a length of 
@@ -1655,7 +1654,7 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
       Now there are two cases:
       \begin{enumerate}
       \item $\mathtt{search}$ does find a path.  In this case, this path is returned in the variable
-            $\mathrm{Path}$ and this variable is a list.  This list is returned as the solution to the search
+            $\mathtt{Path}$ and this variable is a list.  This list is returned as the solution to the search
             problem.
       \item $\mathtt{search}$ is not able to find a path within the given $\mathtt{limit}$.  In this case,
             $\mathrm{search}$ will not return a path but instead it will return a number.  This number will
@@ -1728,16 +1727,16 @@ algorithm takes about $2.6$ seconds to solve the puzzle.  For the $4 \times 4$ s
 takes about $518$ seconds.  Although this is more than the time needed by bidirectional $\mathrm{A}^*$ search,
 the good news is that the $\mathrm{IDA}^*$ algorithm does not need much memory since basically only the path
 discovered so far is stored in memory.  Hence, $\mathrm{IDA}^*$ is a viable alternative if the available memory
-does is not sufficient for the bidirectional $\mathrm{A}^*$ algorithm.
+is not sufficient to support the bidirectional $\mathrm{A}^*$ algorithm.
 
 \section{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ Search Algorithm}
 So far, from all of the algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
 bidirectional $\mathrm{A}^*$ search is only feasible if sufficient memory is available.   While
-$\mathrm{IDA}^*$ does take longer, its memory consumption is much lower than the memory consumption of
+$\mathrm{IDA}^*$ requires more time, its memory consumption is much lower than the memory consumption of
 bidirectional $\mathrm{A}^*$.  Hence, it is natural to try to combine these two algorithms.  Concretely, the
-idea is to run an $\mathrm{A}^*$ search from the $\mathrm{start}$ node until memory is more or less
-exhausted.  Then, we start $\mathrm{IDA}^*$ form the $\mathrm{goal}$ node and search until we find any of the
-nodes discovered by the $\mathrm{A}^*$ search that has been started from the $\mathrm{start}$ node.
+idea is to run an $\mathrm{A}^*$ search from the $\mathtt{start}$ node until memory is more or less
+exhausted.  Then, we start $\mathrm{IDA}^*$ from the $\mathtt{goal}$ node and search until we find any of the
+nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\mathtt{start}$ node.
 
 \begin{figure}[!ht]
 \centering
@@ -1802,8 +1801,8 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
             explore before the algorithm switches over to $\mathrm{IDA}^*$ search.
       \end{enumerate}
 \item The basic idea behind the $\mathrm{A}^*$-$\mathrm{IDA}^*$ algorithm is to first use $\mathrm{A}^*$ search
-      to find a path from $\mathrm{start}$ to $\mathtt{goal}$.  If this is successfully done without visiting
-      more than $\mathrm{size}$ nodes, the algorithm terminates and returns the path that has been found.  
+      to find a path from $\mathtt{start}$ to $\mathtt{goal}$.  If this is successfully done without visiting
+      more than $\mathtt{size}$ nodes, the algorithm terminates and returns the path that has been found.  
       Otherwise, the algorithm switches over to an $\mathrm{IDA}^*$ search that starts from $\mathtt{goal}$ and
       tries to connect goal to any of the nodes that have been encountered during the $\mathrm{A}^*$ search.
       To this end, the procedure $\mathtt{aStarIdaStarSearch}$ maintains the following variables.
@@ -1839,7 +1838,7 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
       \end{enumerate}
 \item The $\mathrm{A}^*$ search runs exactly as discussed previously.  The only difference is that the
       \texttt{while} loop is terminated once the dictionary $\mathtt{Distance}$ has more than $\mathtt{size}$
-      entries.  If we are lucky, the $\mathrm{A}^*$ search is already able to find the $\mathrm{goal}$ and the
+      entries.  If we are lucky, the $\mathrm{A}^*$ search is already able to find the $\mathtt{goal}$ and the
       algorithm terminates.
 \item Otherwise, the procedure $\mathtt{deepeningSearch}$ is called.  This procedure starts an iterative deepening
       $\mathrm{A}^*$ search from the node $\mathtt{goal}$.  This search terminates as soon as a state is found
@@ -1847,7 +1846,7 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
       the procedure $\mathtt{deepeningSearch}$ via the parameter $\mathrm{Distance}$.  The procedure
       $\mathtt{deepeningSearch}$ returns a pair.  The first component of this pair is the state $s$.  This is
       the state in $\mathtt{Distance}$ that has been reached by the $\mathrm{IDA}^*$ search.  The second component is the
-      path $P$ that leads from the node $s$ to the node $\mathrm{goal}$ but that does not include the node $s$.
+      path $P$ that leads from the node $s$ to the node $\mathtt{goal}$ but that does not include the node $s$.
       In order to compute a path from $\mathtt{start}$ to $\mathtt{goal}$, we still have to compute a
       path from $\mathtt{start}$ to $s$.  This path is then combined with the path $P$ and the resulting path
       is returned.
@@ -1883,15 +1882,13 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
         if (Dist[g] != om) {
             return [g, Path[2..]];
         }
-        smallest := 1.0 / 0.0;  // infinity
+        smallest := mathConst("Infinity");
         for (ns in nextStates(g) | !(ns in Path)) {
             result := search(ns, s, nextStates, d+1, l, heuristic, [ns]+Path, Dist);
             if (isList(result)) {
                 return result;
             }
-            if (result < smallest) {
-                smallest := result;
-            }
+            smallest := min([smallest, result]);
         }
         return smallest;
     };
@@ -1906,6 +1903,7 @@ On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}
 algorithm takes about $1.4$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
 is allowed to visit at most $3\,000$ states, the algorithm takes less than $9$ seconds.  However, there is one
 caveat: $\mathrm{A}^*$-$\mathrm{IDA}^*$ search is not \emph{guaranteed} to find an optimal path, although in practise it often does. 
+\pagebreak
 
 \exercise
 Assume that you have 3 water buckets:  The first bucket can hold 12 liters of water, the second bucket can hold 8 liters,
