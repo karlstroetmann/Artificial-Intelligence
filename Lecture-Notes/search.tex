@@ -510,8 +510,8 @@ first search is often implemented using a
 Figure \ref{fig:breadth-first-search-queue.stlx} on page
 \pageref{fig:breadth-first-search-queue.stlx} shows an implementation of breadth first search that
 uses a queue to store the set \texttt{Frontier}.  However, when we run this version, it turns out
-that the solution of the $3 \times 3$ sliding puzzle needs about 94 seconds, which is more than
-10 times slower than our set based implementation that has been presented in Figure
+that the solution of the $3 \times 3$ sliding puzzle needs about 58 seconds, which is a lot
+slower than our set based implementation that has been presented in Figure
 \ref{fig:breadth-first-search.stlx}.
 
 \begin{figure}[!ht]
@@ -535,12 +535,9 @@ that the solution of the $3 \times 3$ sliding puzzle needs about 94 seconds, whi
             if (state == goal) {
                 return pathTo(state, Parent);
             }
-            if (state in Visited) {
-                continue;
-            }
             Visited   += { state };
             newStates := nextStates(state);
-            for (ns in newStates | !(ns in Visited)) { 
+            for (ns in newStates | !(ns in Visited) && Parent[ns] == om) { 
                 Parent[ns] := state;
                 Queue      += [ ns ];
             }
