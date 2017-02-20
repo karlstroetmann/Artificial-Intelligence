@@ -28,13 +28,13 @@ introduce various algorithms for solving search problems.  In particular, we pre
         i.e.~we have
         \\[0.2cm]
         \hspace*{1.3cm}
-        $\texttt{nextState}:S \rightarrow 2^S$.
+        $\texttt{nextStates}:Q \rightarrow 2^Q$.
         \\[0.2cm]
-        The function \texttt{nextState} gives rise to the \emph{\color{blue}transition relation} $R$, which is a
+        The function $\mathtt{nextStates}$ gives rise to the \emph{\color{blue}transition relation} $R$, which is a
         relation on $Q$, i.e.~$R \subseteq Q \times Q$.  This relation is defined as follows:
         \\[0.2cm]
         \hspace*{1.3cm}
-        $R := \bigl\{ \pair(s_1, s_2) \in Q \times Q \mid s_2 \in \mathtt{nextState}(s_1) \bigr\}$.
+        $R := \bigl\{ \pair(s_1, s_2) \in Q \times Q \mid s_2 \in \mathtt{nextStates}(s_1) \bigr\}$.
         \\[0.2cm]
         If either $\pair(s_1, s_2) \in R$ or $\pair(s_2, s_1) \in R$, then  $s_1$ and $s_2$ are
         called \emph{\color{blue}neighboring states}.
