@@ -3,7 +3,7 @@ In this chapter we discuss algorithms for solving \emph{\color{blue}constraint s
 This chapter is structured as follows:
 \begin{enumerate}
 \item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
-      concept, two examples of constraint satisfaction problems are presented.  Finally, we present
+      concept, two examples of constraint satisfaction problems are presented.  After that, we discuss
       applications of constraint satisfaction problems.
 \item The simplest algorithm to solve a constraint satisfaction problem is via \emph{\color{blue}Backtracking Search}.
       This is presented in Section 2.
@@ -154,43 +154,33 @@ $\mathcal{P} := \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \ra
 If we define the assignment $A$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
-$A(1) := 7,\; A(2) := 4,\; A(3) := 2,\; A(4) := 8,\; A(5) := 6,\; A(6) := 1,\; A(7) := 3,\; A(8) := 5,$
+$A(1) := 4,\; A(2) := 8,\; A(3) := 1,\; A(4) := 2,\; A(5) := 6,\; A(6) := 2,\; A(7) := 7,\; A(8) := 5$,
 \\[0.2cm]
 then it is easy to see that this assignment is a solution of the eight queens problem.  This solution is shown
 in \myFig{eight-queens.txt}.
 
+
 \begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  labelposition = bottomline,
-                  numbers       = none,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-                    ---------------------------------
-                    |   |   |   |   |   |   | Q |   |
-                    ---------------------------------
-                    |   |   |   | Q |   |   |   |   |
-                    ---------------------------------
-                    |   | Q |   |   |   |   |   |   |
-                    ---------------------------------
-                    |   |   |   |   |   |   |   | Q |
-                    ---------------------------------
-                    |   |   |   |   |   | Q |   |   |
-                    ---------------------------------
-                    | Q |   |   |   |   |   |   |   |
-                    ---------------------------------
-                    |   |   | Q |   |   |   |   |   |
-                    ---------------------------------
-                    |   |   |   |   | Q |   |   |   |
-                    ---------------------------------
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{A solution of the \emph{eight queens problem}.}
-\label{fig:eight-queens.txt}
+  \centering
+\hspace*{0.0cm}
+\vbox{\offinterlineskip
+   \hrule height1pt
+   \hbox{\vrule width1pt\bigchess
+         \vbox{\hbox{0Z0L0Z0Z}
+               \hbox{Z0Z0Z0ZQ}
+               \hbox{QZ0Z0Z0Z}
+               \hbox{Z0L0Z0Z0}
+               \hbox{0Z0Z0L0Z}
+               \hbox{ZQZ0Z0Z0}
+               \hbox{0Z0Z0ZQZ}
+               \hbox{Z0Z0L0Z0}}%
+         \vrule width1pt}
+   \hrule height1pt}
+
+  \caption{Eine L\"{o}sung des 8-Damen-Problems.}
+  \label{fig:eight-queens.txt}
 \end{figure}
+
 
 \myFig{queens-csp.stlx} shows a \textsc{SetlX} program that can be used to create the eight queens puzzle as a
 \textsc{Csp}.  The code shown in this figure is more general than the eight queens puzzle:  Given a natural
@@ -212,7 +202,7 @@ the eight queens problem to the problem of putting $n$ queens on a board of size
         Variables   := { "V$i$" : i in {1..n} };
         Values      := { 1 .. n };
         Constraints := {};
-        for (i in [1..n], j in [1..i-1]) {
+        for (i in [2..n], j in [1..i-1]) {
             Constraints += { "V$i$ != V$j$" };
             Constraints += { "$i$ + V$i$ != $j$ + V$j$" };
             Constraints += { "$i$ - V$i$ != $j$ - V$j$" };
@@ -224,6 +214,7 @@ the eight queens problem to the problem of putting $n$ queens on a board of size
 \caption{\textsc{SetlX} code to create the CSP representing the eight-queens puzzle.}
 \label{fig:queens-csp.stlx}
 \end{figure}
+
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
 that we will be able to develop a so called \emph{\color{blue}constraint solver} that takes as input a \textsc{Csp}
 like the one produced by the program shown in Figure \ref{fig:queens-csp.stlx} and that is then capable of
@@ -237,8 +228,86 @@ A simple example of a scheduling problem is the problem of generating a time tab
 various teachers, each of which can teach some subjects but not others.  Furthermore, there are a number of
 classes that must be taught in different subjects.  The problem is then to assign teachers to classes and to
 create a time table.
+\pagebreak
 
 \section{Backtracking Search}
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    solve := procedure(csp) {
+        [Vars, Vals, Constrs] := csp;
+        csp := [Vars, Vals, { [f, collectVars(f)] : f in Constrs }];
+        check {
+            return bt_search({}, csp);
+        }
+    };
+    bt_search := procedure(Assignment, csp) {
+        [Variables, Values, Constraints] := csp;
+        if (#Assignment == #Variables) {
+            return Assignment;
+        }
+        var := select_unassigned_variable(Assignment, Variables);
+        for (value in Values) {
+            check {
+                if (is_consistent(var, value, Assignment, Constraints)) {
+                    return bt_search(Assignment + { [var, value] }, csp);
+                }
+            }
+        }
+        backtrack;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A backtracking \textsc{Csp} solver.}
+\label{fig:csp-backtrack-solver.stlx-1}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    select_unassigned_variable := procedure(Assignment, Variables) {
+        return rnd({ v : v in Variables | Assignment[v] == om });
+    };
+    eval_constraint := procedure(Assignment, Vars, Formula) {
+        for (v in Vars) {
+            execute("$v$ := $Assignment[v]$;");
+        }
+        return eval(Formula);
+    };
+    is_consistent := procedure(var, value, Assignment, Constraints) {
+        for ([Formula, Vars] in Constraints | var in Vars) {
+            NewAssignment := Assignment + { [var, value] };
+            if (Vars <= domain(NewAssignment)) {
+                if (!eval_constraint(NewAssignment, Vars, Formula)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Auxiliary procedures for the \textsc{Csp} solver shown in Figure \ref{fig:csp-backtrack-solver.stlx-1}}
+\label{fig:csp-backtrack-solver.stlx-2}
+\end{figure}
+
+
 \section{Non-Chronological Backtracking}
 \section{Local Search}
 There is another approach to solve constraint satisfaction problems.  This approach is known as
