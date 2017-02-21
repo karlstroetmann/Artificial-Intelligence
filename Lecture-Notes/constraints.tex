@@ -7,7 +7,7 @@ This chapter is structured as follows:
       applications of constraint satisfaction problems.
 \item The simplest algorithm to solve a constraint satisfaction problem is via \emph{\color{blue}Backtracking Search}.
       This is presented in Section 2.
-\item Backtracking Search can be refined to \emph{\color{blue}Non-Chronological Backtracking}, which is presented in
+\item Backtracking Search can be refined by using \emph{\color{blue}constraint propagation}, which is presented in
       Section 3.
 \item Finally, the last section shows how constraint satisfaction problems can be solved via
       \emph{\color{blue}local search}.
@@ -47,6 +47,18 @@ $A: \mathtt{Vars} \rightarrow \mathtt{Values}$.
 \\[0.2cm]
 A variable assignment $A$ is a \emph{\color{blue}solution} of the \textsc{Csp} $\mathcal{P}$ 
 if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied.
+Finally, a \emph{partial variable assignment} $B$ for $\mathcal{P}$ is a function
+\\[0.2cm]
+\hspace*{1.3cm}
+$B: \mathtt{Vars} \rightarrow \mathtt{Values} \cup \{ \Omega \}$.
+\\[0.2cm]
+Hence, a partial variable assignment does not assign values to all variables.  Instead, it assigns values only
+to a subset of the set $\mathtt{Vars}$.  The \emph{\color{blue}domain} $\mathtt{dom}(B)$ of a partial variable assignment $B$ is the
+set of those variables that are assigned a value different from $\Omega$, i.e.~we define
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{dom}(B) := \bigl\{ x \in \mathtt{Vars} \mid B(x) \not= \Omega \bigr\}$.
+\\[0.2cm]
 We proceed to illustrate the definitions given so far with two examples.
 
 
@@ -177,9 +189,46 @@ in \myFig{eight-queens.txt}.
          \vrule width1pt}
    \hrule height1pt}
 
-  \caption{Eine L\"{o}sung des 8-Damen-Problems.}
+  \caption{A solution of the eight queens problem.}
   \label{fig:eight-queens.txt}
 \end{figure}
+Later, when we implement procedures to solve  \textsc{Csp}s, we will represent variable assignments and partial
+variable assignments as binary relations.  For example, $A$ would then be represented as the relation
+\\[0.2cm]
+\hspace*{1.3cm}
+$A = \bigl\{ \pair(\mathrm{V}_1,4), \pair(\mathrm{V}_2,8), \pair(\mathrm{V}_3,1), \pair(\mathrm{V}_4,2), 
+             \pair(\mathrm{V}_5,6), \pair(\mathrm{V}_6,2), \pair(\mathrm{V}_7,7), \pair(\mathrm{V}_8,5) 
+     \bigr\}$.
+\\[0.2cm]
+If we define 
+\\[0.2cm]
+\hspace*{1.3cm}
+$B := \bigl\{ \pair(\mathrm{V}_1,4), \pair(\mathrm{V}_2,8), \pair(\mathrm{V}_3,1) \bigr\}$,
+\\[0.2cm]
+then $B$ is a partial assignment and $\mathtt{dom}(B) = \{ \mathrm{V}_1, \mathrm{V}_2, \mathrm{V}_3 \}$.  This
+partial assignment is shown in \myFig{eight-queens-partial.txt}.
+
+\begin{figure}[!ht]
+  \centering
+\hspace*{0.0cm}
+\vbox{\offinterlineskip
+   \hrule height1pt
+   \hbox{\vrule width1pt\bigchess
+         \vbox{\hbox{0Z0L0Z0Z}
+               \hbox{Z0Z0Z0ZQ}
+               \hbox{QZ0Z0Z0Z}
+               \hbox{Z0Z0Z0Z0}
+               \hbox{0Z0Z0Z0Z}
+               \hbox{Z0Z0Z0Z0}
+               \hbox{0Z0Z0Z0Z}
+               \hbox{Z0Z0Z0Z0}}%
+         \vrule width1pt}
+   \hrule height1pt}
+
+  \caption{The partial assignment $\bigl\{ \pair(\mathrm{V}_1,4), \pair(\mathrm{V}_2,8), \pair(\mathrm{V}_3,1) \bigr\}$.}
+  \label{fig:eight-queens-partial.txt}
+\end{figure}
+
 
 
 \myFig{queens-csp.stlx} shows a \textsc{SetlX} program that can be used to create the eight queens puzzle as a
@@ -228,9 +277,13 @@ A simple example of a scheduling problem is the problem of generating a time tab
 various teachers, each of which can teach some subjects but not others.  Furthermore, there are a number of
 classes that must be taught in different subjects.  The problem is then to assign teachers to classes and to
 create a time table.
-\pagebreak
+
 
 \section{Backtracking Search}
+One simple approach to solve a \textsc{Csp} is via \emph{\color{blue}backtracking}.
+\myFig{csp-backtrack-solver.stlx-1} shows a simple \textsc{Csp} solver that employs backtracking.  We discuss
+this program next.
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -269,6 +322,66 @@ create a time table.
 \caption{A backtracking \textsc{Csp} solver.}
 \label{fig:csp-backtrack-solver.stlx-1}
 \end{figure}
+The procedure $\mathtt{solve}$ takes a constraint satisfaction problem $\mathtt{csp}$ as input and tries to
+find a solution.  
+\begin{enumerate}
+\item First, the $\mathtt{csp}$ is split into its components.
+\item Next, for every constraint $\mathtt{f}$ of the given $\mathtt{csp}$, we compute the set of variables that
+      are used in $\mathtt{f}$.  These variables are then stored together with the constraint $\mathtt{f}$ and
+      the correspondingly modified data structure is stored in $\mathtt{csp}$ and is called an
+      \emph{\color{blue}augmented \textsc{Csp}}.
+
+      The reason to compute and store these variables is efficiency: When we later check whether a constraint $\mathtt{f}$
+      is satisfied for a partial variable assignment $B$, we only need to check the constraint $\mathtt{f}$ iff all
+      of its variables are members of the domain of $B$.
+\item Next, we call the procedure $\mathtt{bt\_search}$ to compute a solution of $\mathtt{csp}$.
+      This procedure is enclosed in a \texttt{check}-block.  Conceptually, this \texttt{check}-block is the
+      same as if we had enclosed the call to $\mathtt{bt\_search}$ in a \texttt{try}-\texttt{catch}-block as
+      shown below:
+\begin{verbatim}
+      try {
+          return bt_search({}, csp);
+      } catch(e) {}
+\end{verbatim}
+     The point is that the procedure $\mathtt{bt\_search}$ either returns a solution or, if it is not able to
+     find a solution, it throws a special kind of exception, a so called \emph{\color{blue}backtrack exception}.
+     The \texttt{check}-block ensures that this exception is silently discarded.  It is just a syntactical
+     convenience that is more concise than using \texttt{try} and \texttt{catch}.
+\end{enumerate}
+Next, we discuss the procedure $\mathtt{bt\_search}$.  This procedure gets a partial assignment
+$\mathtt{Assignment}$ as input together with an augmented $\mathtt{csp}$.  This partial assignment is
+\emph{\color{blue}consistent} with $\mathtt{csp}$:  If $\mathtt{f}$ is a constraint of $\mathtt{csp}$ such that
+all the variables occurring in $\mathtt{f}$ are members of $\mathtt{dom}(\mathtt{Assignment})$, then evaluating
+$\mathtt{f}$ using $\mathtt{Assignment}$ yields $\mathtt{true}$.  Initially, this partial assignment is empty
+and hence trivially consistent.  The idea is to extend this partial assignment until it is a complete
+assignment that satisfies all constraints of the given $\mathtt{csp}$.
+\begin{enumerate}
+\item First, the augmented $\mathtt{csp}$ is split into its components.
+\item Next, if $\mathtt{Assignment}$ is already a complete variable assignment, it is a solution of
+      $\mathtt{csp}$ and this solution is returned.  Since $\mathtt{Assignment}$ is represented as a binary
+      relation, $\mathtt{Assignment}$ is complete if its size is the same as the size of $\mathtt{Variables}$.
+\item Otherwise, we have to extend the partial $\mathtt{Assignment}$.  In order to do so, we first have to
+      select a variable $\mathtt{var}$ that has not yet been assigned a value.  This is done using the
+      auxiliary procedure $\mathtt{select\_unassigned\_variable}$ that is shown in
+      \myFig{csp-backtrack-solver.stlx-2} and will be discussed later.
+\item Next, it is tried to assign a $\mathtt{value}$ to the selected variable $\mathtt{var}$.  It is checked
+      whether this assignment would be consistent using the procedure $\mathtt{is\_consistent}$.
+      If the partial assignment turns out to be consistent, the partial $\mathtt{assignment}$
+      is extended to the new partial assignment
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Assignment + { [var, value] }}.
+      \\[0.2cm]
+      Then, the procedure $\mathtt{bt\_search}$ is called recursively to complete this new partial assignment.
+      If this is successful, the resulting assignment is a solution that is returned.  Otherwise,
+      the recursive call of $\mathtt{bt\_search}$ will instead raise an exception.  This exception is muted 
+      by the \texttt{check}-block that surrounds the call to $\mathtt{bt\_search}$.  In that case, the
+      \texttt{for}-loop generates a new possible $\mathtt{value}$ that can be assigned to the variable
+      $\mathtt{var}$.  If all possible values have been tried and none was successful, the \texttt{for}-loop
+      ends and the \texttt{backtrack}-statement is executed.  Effectively, this statement raises an exception
+      that is caught by one of \texttt{check}-blocks.
+\end{enumerate}
+
 
 \begin{figure}[!ht]
 \centering
@@ -284,17 +397,17 @@ create a time table.
     select_unassigned_variable := procedure(Assignment, Variables) {
         return rnd({ v : v in Variables | Assignment[v] == om });
     };
-    eval_constraint := procedure(Assignment, Vars, Formula) {
+    eval_constraint := procedure(Assignment, Formula, Vars) {
         for (v in Vars) {
             execute("$v$ := $Assignment[v]$;");
         }
         return eval(Formula);
     };
     is_consistent := procedure(var, value, Assignment, Constraints) {
-        for ([Formula, Vars] in Constraints | var in Vars) {
-            NewAssignment := Assignment + { [var, value] };
-            if (Vars <= domain(NewAssignment)) {
-                if (!eval_constraint(NewAssignment, Vars, Formula)) {
+       NewAssignment := Assignment + { [var, value] };
+       for ([Formula, Vars] in Constraints | var in Vars) {
+             if (Vars <= domain(NewAssignment)) {
+                if (!eval_constraint(NewAssignment, Formula, Vars)) {
                     return false;
                 }
             }
@@ -307,8 +420,178 @@ create a time table.
 \label{fig:csp-backtrack-solver.stlx-2}
 \end{figure}
 
+We still need to discuss the implementation of the auxiliary procedures shown in \myFig{csp-backtrack-solver.stlx-2}. 
+\begin{enumerate}
+\item The procedure $\mathtt{select\_unassigned\_variable}$ takes a partial $\mathtt{Assignment}$ and the set
+      of all $\mathtt{Variables}$.  It randomly selects a variable $\mathtt{v}$ such that 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{v} \not\in \mathtt{dom}(\mathtt{Assignment})$
+      \\[0.2cm]
+      which is the case if $\mathtt{Assignment}[v] = \Omega$.
 
-\section{Non-Chronological Backtracking}
+      It is certainly possible to be more clever here.  We will later show that it is beneficial to select a
+      variable that is a \emph{\color{blue}most constrained variable}, i.e.~a variable such that the number of
+      values that can be assigned to this variable while still having a consistent assignment is minimal.
+\item The procedure $\mathtt{eval\_constraint}$ takes a partial $\mathtt{Assignment}$, a $\mathtt{Formula}$
+      that is supposed to be a constraint, and the set of variables $\mathtt{Vars}$ that occur in
+      $\mathtt{Formula}$.  Its purpose is to evaluate $\mathtt{Formula}$ using the $\mathtt{Assignment}$.  In
+      order for this to be possible we have to assume that
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{var}(\mathtt{Formula)} \subseteq \mathtt{dom}(\mathtt{Assignment})$,
+      \\[0.2cm]
+      i.e.~all variables occurring in $\mathtt{Formula}$ have a value assigned in $\mathtt{Assignment}$.
+
+      The $\mathtt{Formula}$ is evaluated by first assigning the value prescribed in $\mathtt{Assignment}$ to
+      all variables $\mathtt{v}$ occurring in $\mathtt{Vars}$.  Once these assignments have been executed in
+      the \texttt{for}-loop, the $\mathtt{Formula}$ can be evaluated using the procedure $\mathtt{eval}$, which
+      is one of the predefined procedures in \textsc{SetlX}.
+\item The procedure $\mathtt{is\_consistent}$ takes a variable $\mathtt{var}$, a $\mathtt{value}$, a partial 
+      $\mathtt{Assignment}$ and a set of $\mathtt{Constraints}$.  It is assumed that $\mathtt{Assignment}$ is
+      \emph{\color{blue}partially consistent} with respect to the set $\mathtt{Constraints}$, i.e.~for every formula $\mathtt{f}$
+      occurring in $\mathtt{Constraints}$ such that $\mathtt{vars}(\mathtt{f}) \subseteq \mathtt{dom}(\mathtt{Assignment})$
+      the formula $\mathtt{f}$ evaluates to $\mathtt{true}$ using $\mathtt{Assignment}$.  The purpose of
+      $\mathtt{is\_consistent}$ is to check, whether the extended assignment
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{NewAssignment} \;\mathtt{:=}\;\mathtt{Assignment} \cup \{ \pair(\mathtt{var}, \mathtt{value}) \}$
+      \\[0.2cm]
+      that assigns $\mathtt{value}$ to the variable $\mathtt{var}$ is still partially consistent with $\mathtt{Constraints}$. 
+      To this end, the \texttt{for}-loop iterates over all $\mathtt{Formula}$ in $\mathtt{Constraints}$. 
+      However, we only have to check those $\mathtt{Formula}$ that contain the variable $\mathtt{var}$ and,
+      furthermore, have all their variables occurring in $\mathtt{dom}(\mathtt{NewAssignment})$.  The reasoning
+      is as follows:
+      \begin{enumerate}
+      \item If $\mathtt{var}$ does not occur in $\mathtt{Formula}$, then adding $\mathtt{var}$ to
+            $\mathtt{Assignment}$ cannot change the result of evaluating $\mathtt{Formula}$ and as
+            $\mathtt{Assignment}$ is assumed to be partially consistent with respect to $\mathtt{Formula}$, 
+            $\mathtt{NewAssignment}$ is also partially consistent with respect to $\mathtt{Formula}$.
+      \item If $\mathtt{dom}(\mathtt{NewAssignment}) \not\subseteq \mathtt{Vars}$, then $\mathtt{Formula}$ can not be evaluated anyway.
+      \end{enumerate}
+      Now if any of the $\mathtt{Formula}$ evaluates to $\mathtt{false}$, then $\mathtt{NewAssignment}$ is not
+      partially consistent and we can immediately return $\mathtt{false}$.  Otherwise, $\mathtt{true}$ is returned.
+\end{enumerate}  
+
+\section{Constraint Propagation}
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    solve := procedure(csp) {
+        [Vars, Values, Constrs] := csp;
+        csp := [{ [v, Values] : v in Vars }, { [f, collectVars(f)] : f in Constrs }];
+        check {
+            return bt_search({}, csp);
+        }
+    };
+    bt_search := procedure(Assignment, csp) {
+        [Values, Constraints] := csp;
+        if (#Assignment == #Values) {
+            return Assignment;
+        }
+        x := most_constrained_variable(Assignment, Values);
+        for (val in Values[x]) {
+            check {
+                if (is_consistent(x, val, Assignment, Constraints)) {
+                    NewVals := propagate(x, val, Assignment, Constraints, Values);
+                    csp     := [NewVals, Constraints];
+                    return bt_search(Assignment + { [x, val] }, csp);
+                }
+            }
+        }
+        backtrack;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{}
+\label{fig:csp-constraint-propagation.stlx-1}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    most_constrained_variable := procedure(Assignment, Values) {
+        Unassigned := { [x, U] : [x, U] in Values | Assignment[x] == om };
+        minSize    := min({ #U : [x, U] in Unassigned });
+        return rnd({ x : [x, U] in Unassigned | #U == minSize });
+    };
+    propagate := procedure(x, v, Assignment, Constraints, Values) {
+        NewAssignment := Assignment + { [x, v] };
+        Values[x]     := { v };
+            for ([Formula, Vars] in Constraints | x in Vars) {
+            y := arb(Vars - { x });  // Assume binary constraints!!!
+            if (!(y in domain(NewAssignment))) {
+                NewValues := Values[y];
+                for (w in Values[y]) {
+                    A2 := NewAssignment + { [y, w] };
+                    if (!eval_constraint(A2, Formula, Vars)) {
+                        NewValues -= { w };
+                    }
+                }
+                if (NewValues == {}) { backtrack; }
+                Values[y] := NewValues;
+            }
+        }
+        return Values;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Constraint Propagation.}
+\label{fig:csp-constraint-propagation.stlx-2}
+\end{figure}
+
+\exercise
+There are many different versions of the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  
+The version below is taken from \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{Wikipedia}}.  The
+puzzle reads as follows:
+\begin{enumerate}
+\item There are five houses.
+\item The Englishman lives in the red house.
+\item The Spaniard owns the dog.
+\item Coffee is drunk in the green house.
+\item The Ukrainian drinks tea.
+\item The green house is immediately to the right of the ivory house.
+\item The Old Gold smoker owns snails.
+\item Kools are smoked in the yellow house.
+\item Milk is drunk in the middle house.
+\item The Norwegian lives in the first house.
+\item The man who smokes Chesterfields lives in the house next to the man with the fox.
+\item Kools are smoked in the house next to the house where the horse is kept.
+\item The Lucky Strike smoker drinks orange juice.
+\item The Japanese smokes Parliaments.
+\item The Norwegian lives next to the blue house.
+\item Who drinks water? 
+\item Who owns the zebra?
+\end{enumerate}
+In order to solve the puzzle, we also have to know the following facts:
+\begin{enumerate}
+\item Each of the five houses is painted in a {\color{blue}different} color.
+\item The inhabitants of the five houses are of {\color{blue}different} nationalities,
+\item they own {\color{blue}different} pets, 
+\item they drink {\color{blue}different} beverages, and 
+\item they smoke {\color{blue}different} brands of cigarettes. 
+\end{enumerate}
+Formulate the zebra puzzle as a constraint satisfaction problem and solve the puzzle using the program
+discussed in this section.
+\eoxs
+
+
 \section{Local Search}
 There is another approach to solve constraint satisfaction problems.  This approach is known as
 \emph{\color{blue}local search}.  The basic idea is simple: Given as constraint satisfaction problem 
