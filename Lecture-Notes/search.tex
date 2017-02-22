@@ -868,9 +868,9 @@ We continue to discuss the details of this program.
       is a path of length $2$ from the state $s$ to the state $\mathtt{goal}$.  If we would then discard
       further exploration of $s$ on the grounds that we have explored all its neighbours, we would then not be
       able to find the path of length $5$ that connects $\mathtt{start}$ with $\mathtt{goal}$!
-\item Next, the first $\mathtt{state}$ is removed from the stack.  If this $\mathtt{state}$ happens to be the
+\item Next, the $\mathtt{state}$ on top of the stack is removed from the stack.  If this $\mathtt{state}$ happens to be the
       $\mathtt{goal}$, a path has been found and is returned.
-\item Otherwise, we check the distance $\mathtt{ds}$ of $\mathtt{state}$.  If this distance is as big as the
+\item Otherwise, we check the distance $\mathtt{ds}$ of $\mathtt{state}$.  If this distance is greater than or equal to the
       $\mathtt{limit}$, then $\mathtt{state}$ can be discarded as we have already checked that it is not the goal.
 \item Otherwise, the neighbours of $\mathtt{state}$ are computed.  For every neighbour $\mathtt{ns}$ of
       $\mathtt{state}$, we look up its distance $\mathtt{dns}$ from $\mathtt{start}$.
@@ -900,7 +900,7 @@ minutes and visits $103,324$ states.  There are two reasons for this:
 
 \exercise 
 If there is no solution, the implementation of iterative deepening that is shown in Figure
-\ref{fig:iterative-deepening.stlx} does not terminate.  The reason is that the function $\mathtt{dfs}$ does not
+\ref{fig:iterative-deepening.stlx} does not terminate.  The reason is that the function $\mathtt{depthLimitedSearch}$ does not
 distinguish whether it fails to find a solution because the depth limit is reached or because the $\mathtt{Stack}$ is
 exhausted.  Improve the implementation so that it will always terminate provided the state space is finite.
 
