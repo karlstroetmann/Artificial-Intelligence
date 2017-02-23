@@ -5,12 +5,16 @@ This chapter is structured as follows:
 \item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
       concept, two examples of constraint satisfaction problems are presented.  After that, we discuss
       applications of constraint satisfaction problems.
-\item The simplest algorithm to solve a constraint satisfaction problem is via \emph{\color{blue}Backtracking Search}.
-      This is presented in Section 2.
-\item Backtracking Search can be refined by using \emph{\color{blue}constraint propagation}, which is presented in
-      Section 3.
-\item Finally, the last section shows how constraint satisfaction problems can be solved via
-      \emph{\color{blue}local search}.
+\item The simplest algorithm to solve a constraint satisfaction problem is via \emph{\color{blue}brute force search}.
+      The idea behind brute force search is to test all possible variable assignments.
+\item In most cases, the number of variable assignments is too big to be enumerated completely.
+      \emph{\color{blue}Backtracking search} improves on brute force search by mixing the generation
+      of assignments with the testing of the constraints.  In most cases, this approach can
+      drastically improve the performance of the search algorithm.
+\item Backtracking search can be refined by using \emph{\color{blue}constraint propagation} and by
+      using the \emph{\color{blue}most restricted variable} heuristic.
+\item Finally, \emph{\color{blue}local search} is a completely different approach to solve
+      constraint satisfaction problems.
 \end{enumerate}
 
 \section{Formal Definition of Constraint Satisfaction Problems}
@@ -278,6 +282,157 @@ various teachers, each of which can teach some subjects but not others.  Further
 classes that must be taught in different subjects.  The problem is then to assign teachers to classes and to
 create a time table.
 
+\section{Brute Force Search}
+The most straightforward algorithm to solve a \textsc{Csp} is to test all possible combinations of assigning
+values to variables.  If there are $n$ different values that can be assigned to $k$ variables, this amounts to 
+checking $n^k$ different assignments.  For example, for the eight queens problem there are 8 variables and
+8 possible values leading to 
+\\[0.2cm]
+\hspace*{1.3cm}
+$8^8 = 16,777,216$
+\\[0.2cm]
+different assignments that need to be tested.  Given the clock speed of modern computers, checking a million
+assignments per second is plausible.  Hence, this approach would be able to solve the eight queens problem in
+about 15 minutes.  The approach of testing all possible combinations is known as \emph{\color{blue}brute force search}.
+An implementation is shown in \myFig{csp-brute-force.stlx}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    solve := procedure(csp) {
+        [Variables, Values, Constraints] := csp;
+        return brute_force_search({}, Variables, Values, Constraints);
+    };
+    brute_force_search := procedure(Assignment, Variables, Values, Constraints) {
+        if (Variables == {}) {
+            if (check_all_constraints(Assignment, Constraints)) {
+                return Assignment;
+            }
+            return;
+        }
+        var := from(Variables);
+        for (value in Values) {
+            NewAss := Assignment + { [var, value] };
+            result := brute_force_search(NewAss, Variables, Values, Constraints);
+            if (result != om) {
+                return result;
+            }
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Solving a \textsc{Csp} via brute force search.}
+\label{fig:csp-brute-force.stlx}
+\end{figure}
+
+The procedure $\mathtt{solve}$ gets a constraint satisfaction problem $\mathtt{cps}$ as its input.  
+This $\mathtt{csp}$ is given a triple.  The sole purpose of $\mathtt{search}$ is to extract the components
+of this triple and then calls the procedure $\mathtt{brute\_force\_search}$ with the corresponding arguments.
+
+The function $\mathtt{brute\_force\_search}$ takes four arguments.
+\begin{enumerate}
+\item $\mathtt{Assignment}$ is a partial assignment of values to variables.
+      Initially, this assignment will be empty.  Every recursive call of
+      $\mathtt{brute\_force\_search}$ adds the assignment of one variable to the given assignment.
+\item $\mathtt{Variables}$ is the set of variables of the \textsc{Csp} that is to be solved.
+      This set contains only those variables that have not yet been assigned a value.
+\item $\mathtt{Values}$ is the set of values of this \textsc{Csp}.
+\item $\mathtt{Constraints}$ is the corresponding set of constraints.
+\end{enumerate}
+The implementation of $\mathtt{brute\_force\_search}$ works as follows:
+\begin{enumerate}
+\item If all variables have been assigned a value, the set $\mathtt{Variables}$ will be empty.
+      Then we test whether all constraints are satisfied.  This is done using the auxiliary
+      procedure $\mathtt{check\_all\_constraints}$ that is shown in \myFig{csp-brute-force.stlx-2}.
+      If the current $\mathtt{Assignment}$ does indeed satisfy all constraints, it is a solution and
+      is returned.
+
+      If, instead, some constraint is not satisfied, then the procedure returns the undefined value $\Omega$.
+\item If the assignment is not yet complete, we pick a variable $\mathtt{var}$ from the set of
+      $\mathtt{Variables}$ that still have no value assigned.  Then, for every possible
+      $\mathtt{value}$ in the set $\mathtt{Values}$, we augment the current partial
+      $\mathtt{Assignment}$ to the new assignment
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Assignment + \{ [var, value] \}}.
+      \\[0.2cm]
+      Then, the algorithm recursively tries to find a solution for this new partial assignment.
+      If this recursive call succeeds, the solution is returned.  Otherwise, the next
+      $\mathtt{value}$ is tried.
+\end{enumerate}
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = last,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    check_all_constraints := procedure(Assignment, Constraints) {
+        for (f in Constraints) {
+            Vars := collectVars(f);
+            if (!eval_constraint(Assignment, f, Vars)) {
+                return false;
+            }
+        }
+        return true;
+    };       
+    eval_constraint := procedure(Assignment, Formula, Vars) {
+        for (v in Vars) {
+            execute("$v$ := $Assignment[v]$;");
+        }
+        return eval(Formula);
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Auxiliary procedures for brute force search.}
+\label{fig:csp-brute-force.stlx-2}
+\end{figure}
+
+The function $\mathtt{check\_all\_constraints}$ takes a complete variable $\mathtt{Assignment}$ as
+its first input.  The second input is the set of $\mathtt{Constraints}$.  For all constraints
+$\mathtt{f}$, it computes the set of variables $\mathtt{Vars}$ occurring in $\mathtt{f}$.  Then the
+constraint $\mathtt{f}$ is evaluated.  If the evaluation of any of the constraints returns
+$\mathtt{false}$, the function returns $\mathtt{false}$.  Otherwise, $\mathtt{true}$ is returned.
+
+The procedure $\mathtt{eval\_constraint}$ takes a partial $\mathtt{Assignment}$, a $\mathtt{Formula}$
+that is supposed to be a constraint, and the set of variables $\mathtt{Vars}$ that occur in
+$\mathtt{Formula}$.  Its purpose is to evaluate $\mathtt{Formula}$ using the $\mathtt{Assignment}$.  In
+order for this to be possible we have to assume that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{var}(\mathtt{Formula)} \subseteq \mathtt{dom}(\mathtt{Assignment})$,
+\\[0.2cm]
+i.e.~all variables occurring in $\mathtt{Formula}$ have a value assigned in $\mathtt{Assignment}$.
+
+The $\mathtt{Formula}$ is evaluated by first assigning the value prescribed in $\mathtt{Assignment}$ to
+all variables $\mathtt{v}$ occurring in $\mathtt{Vars}$.  Once these assignments have been executed in
+the \texttt{for}-loop, the $\mathtt{Formula}$ can be evaluated using the procedure $\mathtt{eval}$, which
+is one of the predefined procedures in \textsc{SetlX}.
+
+When I tested this brute force search with the eight queens problem, it took about 510 seconds to
+compute a solution.  In contrast, the seven queens problem only took 45 seconds.  As we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds\frac{8^8}{7^7} \approx 20.3$ \quad \and \quad $\ds\frac{510}{45} \approx 11.3$
+\\[0.2cm]
+this shows that the computation time does indeed grow with the number of possible assignments that
+have to be checked.  However, the correspondence is not exact.  The reason is that we stop our
+search as soon as a solution is found.  If we are lucky and the given \textsc{Csp} is easy to solve, this
+might happen when we have checked only a small portion of the space of possible assignments.
 
 \section{Backtracking Search}
 One simple approach to solve a \textsc{Csp} is via \emph{\color{blue}backtracking}.
@@ -370,7 +525,7 @@ assignment that satisfies all constraints of the given $\mathtt{csp}$.
       is extended to the new partial assignment
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Assignment + { [var, value] }}.
+      \texttt{Assignment + \{ [var, value] \}}.
       \\[0.2cm]
       Then, the procedure $\mathtt{bt\_search}$ is called recursively to complete this new partial assignment.
       If this is successful, the resulting assignment is a solution that is returned.  Otherwise,
@@ -396,12 +551,6 @@ assignment that satisfies all constraints of the given $\mathtt{csp}$.
                 ]
     select_unassigned_variable := procedure(Assignment, Variables) {
         return rnd({ v : v in Variables | Assignment[v] == om });
-    };
-    eval_constraint := procedure(Assignment, Formula, Vars) {
-        for (v in Vars) {
-            execute("$v$ := $Assignment[v]$;");
-        }
-        return eval(Formula);
     };
     is_consistent := procedure(var, value, Assignment, Constraints) {
        NewAssignment := Assignment + { [var, value] };
@@ -433,20 +582,6 @@ We still need to discuss the implementation of the auxiliary procedures shown in
       It is certainly possible to be more clever here.  We will later show that it is beneficial to select a
       variable that is a \emph{\color{blue}most constrained variable}, i.e.~a variable such that the number of
       values that can be assigned to this variable while still having a consistent assignment is minimal.
-\item The procedure $\mathtt{eval\_constraint}$ takes a partial $\mathtt{Assignment}$, a $\mathtt{Formula}$
-      that is supposed to be a constraint, and the set of variables $\mathtt{Vars}$ that occur in
-      $\mathtt{Formula}$.  Its purpose is to evaluate $\mathtt{Formula}$ using the $\mathtt{Assignment}$.  In
-      order for this to be possible we have to assume that
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\mathtt{var}(\mathtt{Formula)} \subseteq \mathtt{dom}(\mathtt{Assignment})$,
-      \\[0.2cm]
-      i.e.~all variables occurring in $\mathtt{Formula}$ have a value assigned in $\mathtt{Assignment}$.
-
-      The $\mathtt{Formula}$ is evaluated by first assigning the value prescribed in $\mathtt{Assignment}$ to
-      all variables $\mathtt{v}$ occurring in $\mathtt{Vars}$.  Once these assignments have been executed in
-      the \texttt{for}-loop, the $\mathtt{Formula}$ can be evaluated using the procedure $\mathtt{eval}$, which
-      is one of the predefined procedures in \textsc{SetlX}.
 \item The procedure $\mathtt{is\_consistent}$ takes a variable $\mathtt{var}$, a $\mathtt{value}$, a partial 
       $\mathtt{Assignment}$ and a set of $\mathtt{Constraints}$.  It is assumed that $\mathtt{Assignment}$ is
       \emph{\color{blue}partially consistent} with respect to the set $\mathtt{Constraints}$, i.e.~for every formula $\mathtt{f}$
