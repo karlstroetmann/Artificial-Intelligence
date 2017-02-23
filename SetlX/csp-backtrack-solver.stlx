@@ -92,7 +92,7 @@ main := procedure() {
     startTotal := now();
     numIterations := 10;
     for (i in [1..numIterations]) {
-        lower := 4;
+        lower := 16;
         upper := 16;
         for (n in [lower .. upper]) {
             csp      := queensCSP(n);   

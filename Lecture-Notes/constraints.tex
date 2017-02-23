@@ -474,6 +474,12 @@ We still need to discuss the implementation of the auxiliary procedures shown in
 \end{enumerate}  
 
 \section{Constraint Propagation}
+Once we choose a value for a variable, this choice influences the values that are still available for other variables.
+For example, suppose we place the queen in row 1 in the second column, then no other queen can be placed in
+that column.   Additionally, the queen in row 2 can then not be placed in any of the first three columns.
+It turns out that elaborating this idea can enhance the performance of backtracking search considerably.
+\myFig{csp-constraint-propagation.stlx-1} shows an implementation of \emph{\color{blue}constraint propagation}.
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -486,15 +492,17 @@ We still need to discuss the implementation of the auxiliary procedures shown in
                   xrightmargin  = 0.8cm,
                 ]
     solve := procedure(csp) {
-        [Vars, Values, Constrs] := csp;
-        csp := [{ [v, Values] : v in Vars }, { [f, collectVars(f)] : f in Constrs }];
+        [Variables, Values, Constrs] := csp;
+        ValuesPerVar         := { [v, Values] : v in Variables };
+        AnnotatedConstraints := { [f, collectVars(f)] : f in Constrs };
+        csp                  := [Variables, ValuesPerVar, AnnotatedConstraints];
         check {
             return bt_search({}, csp);
         }
     };
     bt_search := procedure(Assignment, csp) {
-        [Values, Constraints] := csp;
-        if (#Assignment == #Values) {
+        [Variables, Values, Constraints] := csp;
+        if (#Assignment == #Variables) {
             return Assignment;
         }
         x := most_constrained_variable(Assignment, Values);
@@ -502,7 +510,7 @@ We still need to discuss the implementation of the auxiliary procedures shown in
             check {
                 if (is_consistent(x, val, Assignment, Constraints)) {
                     NewVals := propagate(x, val, Assignment, Constraints, Values);
-                    csp     := [NewVals, Constraints];
+                    csp     := [Variables, NewVals, Constraints];
                     return bt_search(Assignment + { [x, val] }, csp);
                 }
             }
@@ -514,6 +522,52 @@ We still need to discuss the implementation of the auxiliary procedures shown in
 \caption{}
 \label{fig:csp-constraint-propagation.stlx-1}
 \end{figure}
+
+In order to implement constraint propagation, it is necessary to administer the values that can be used
+to instantiate the different variables separately, i.e.~for every variable $\mathtt{v}$ we need to know which
+values are admissible for $\mathtt{v}$.  To this end, we need a dictionary that contains the set of possible
+values for every variable $\mathtt{v}$.  Initially, this dictionary assigns the set $\mathtt{Values}$ to
+every variable.  These sets will shrink once we start to assign values to variables.
+\begin{enumerate}
+\item The procedure $\mathtt{solve}$ receives a $\mathtt{csp}$.  This $\mathtt{csp}$ is first split into its
+      components.
+\item The first task of $\mathtt{solve}$ is to create the dictionary $\mathtt{ValuesPerVar}$.  
+      Given a variable $\mathtt{v}$, this dictionary assigns the set of values that can be used to instantiate this
+      variable.  Initially, this set is the same for all variables and is equal to $\mathtt{Values}$.
+\item Next, for every constraint $\mathtt{f}$, the dictionary $\mathtt{AnnotatedConstraints}$ attaches the
+      variables occurring in a constraint $\mathtt{f}$ to $\mathtt{f}$.
+\item These two dictionaries are then combined with the set of $\mathtt{Variables}$ into a triple that is used
+      as the argument to the call of $\mathtt{bt\_search}$.
+\end{enumerate}
+The procedure $\mathtt{bt\_search}$ is called with a partial $\mathtt{Assignment}$ that is guaranteed to be
+consistent and a $\mathtt{csp}$.  It tries to complete $\mathtt{Assignment}$ and thereby computes a solution to the $\mathtt{csp}$.
+\begin{enumerate}
+\item First, it decomposes the $\mathtt{csp}$ into its components:
+      \begin{enumerate}
+      \item $\mathtt{Values}$ is a dictionary assigning to every variable $\mathtt{v}$ the set of values 
+            that can be used to instantiate $\mathtt{v}$.  On recursive invocations of $\mathtt{bt\_search}$
+            these sets will shrink.
+      \item $\mathtt{Constraints}$ is a dictionary that assigns to every constraint $\mathtt{f}$ the set of
+            variables occurring in $\mathtt{f}$.
+      \end{enumerate}
+\item If the partial $\mathtt{Assignment}$ is already complete, i.e.~if it assigns a value to every variable, 
+      then a solution to the given $\mathtt{csp}$ has been found and this solution is returned.
+\item Otherwise, we choose a variable $\mathtt{x}$ such that the number of values that can still be used to
+      instantiate $\mathtt{x}$ is minimal.  This variable is computed using the procedure
+      $\mathtt{most\_constrained\_variable}$ that is shown in \myFig{csp-constraint-propagation.stlx-2}.
+\item Next, all values that are still available for $\mathtt{x}$ are tried.  Note that since
+      $\mathtt{Values[x]}$ is, in general, smaller than the set of all values of the $\mathtt{csp}$,
+      the \texttt{for}-loop in this version of backtracking search is more efficient than the version discussed
+      in the previous section. 
+\item If is is consistent to assign $\mathtt{val}$ to the variable $\mathtt{x}$, we propagate the consequences
+      of this assignment using the procedure $\mathtt{propagate}$ shown in
+      \myFig{csp-constraint-propagation.stlx-2}.
+      This procedure updates the values that are still allowed for the variables of the $\mathtt{csp}$ once the
+      value $\mathtt{val}$ has been assigned to the variable $\mathtt{x}$.
+\item Finally, the partial variable $\mathtt{Assignment}$ is updated to include the assignment of 
+      $\mathtt{val}$ to $\mathtt{x}$ and the recursive call to $\mathtt{bt\_search}$ tries to complete this new
+      assignment. 
+\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -534,7 +588,7 @@ We still need to discuss the implementation of the auxiliary procedures shown in
     propagate := procedure(x, v, Assignment, Constraints, Values) {
         NewAssignment := Assignment + { [x, v] };
         Values[x]     := { v };
-            for ([Formula, Vars] in Constraints | x in Vars) {
+        for ([Formula, Vars] in Constraints | x in Vars) {
             y := arb(Vars - { x });  // Assume binary constraints!!!
             if (!(y in domain(NewAssignment))) {
                 NewValues := Values[y];
@@ -555,6 +609,62 @@ We still need to discuss the implementation of the auxiliary procedures shown in
 \caption{Constraint Propagation.}
 \label{fig:csp-constraint-propagation.stlx-2}
 \end{figure}
+\myFig{csp-constraint-propagation.stlx-2} show the implementation of the procedures $\mathtt{most\_constrained\_variable}$
+and $\mathtt{propagate}$.  The procedure $\mathtt{most\_constrained\_variable}$ takes a partial
+$\mathtt{Assignment}$ and a dictionary $\mathtt{Values}$ returning the set of allowed values for all variables as input.
+\begin{enumerate}
+\item First, this procedure computes the set of $\mathtt{Unassigned}$ variables.  For every variable $\mathtt{x}$ that
+      has not yet been assigned a value in $\mathtt{Assignment}$ this set contains the pair 
+      $[\mathtt{x}, \mathtt{U}]$, where $\mathtt{U}$ is the set of allowable values for the variable  $\mathtt{x}$.
+\item Next, it computes from all unassigned variables $\mathtt{x}$ the number of values $\mathtt{\#U}$ 
+      that can be assigned to $\mathtt{x}$.  From these numbers, the minimum is computed and stored in $\mathtt{minSize}$.  
+\item Finally, the set of variables that are maximally constrained is computed.  These are all those variables
+      $\mathtt{x}$ such that $\mathtt{Values[x]}$ has size $\mathtt{minSize}$.  From these variables, a random
+      variable is returned.
+\end{enumerate}
+The function $\mathtt{propagate}$ takes the following inputs:
+\begin{enumerate}[(a)]
+\item $\mathtt{x}$ is a variable.
+\item $\mathtt{v}$ is a value that is assigned to the variable $\mathtt{x}$.
+\item $\mathtt{Assignment}$ is a partial assignment that contains only assignments for variables that are
+      different from $\mathtt{x}$.
+\item $\mathtt{Constraints}$ is a set of annotated constraints, i.e.~this set contains pairs of the form 
+      $\mathtt{[Formula, Vars]}$, where $\mathtt{Formula}$ is a constraint and $\mathtt{Vars}$ is the set of
+      variables occurring in $\mathtt{Formula}$.
+\item $\mathtt{Values}$ is a dictionary assigning sets of values to the different variables.
+\end{enumerate}
+The function $\mathtt{propagate}$ updates the dictionary $\mathtt{Values}$ by taking into account the
+consequences of assigning the value $\mathtt{v}$ to the variable $\mathtt{x}$.
+\begin{enumerate}
+\item The partial $\mathtt{Assignment}$ is updated to $\mathtt{NewAssignment}$, where $\mathtt{NewAssignment}$
+      maps $\mathtt{x}$ to $\mathtt{v}$.
+\item As $\mathtt{x}$ now has the value of $\mathtt{v}$, the corresponding entry in the dictionary
+      $\mathtt{Values}$ is changed accordingly. 
+\item Next, $\mathtt{propagate}$ iterates over all $\mathtt{Constraints}$ such that $\mathtt{x}$ occurs in 
+      $\mathtt{Formula}$.
+\item The implementation of $\mathtt{propagate}$ shown in \myFig{csp-constraint-propagation.stlx-2} assumes
+      that all constraints are \emph{\color{blue}binary constraints}, i.e.~if $\mathtt{Formula}$ is a
+      constraint, then $\mathtt{Formula}$ contains exactly two different variables.
+      As one of these variables is $\mathtt{x}$, the other variable is called $\mathtt{y}$.
+\item If the variable $\mathtt{y}$ has already been assigned a value, then there is nothing to do because
+      we already know that the assignment $\mathtt{NewAssignment}$ is consistent.  This is ensured by the
+      previous call to the function $\mathtt{is\_consistent}$ in the body of the procedure $\mathtt{bt\_search}$.
+
+      However, if $\mathtt{y}$ is still unassigned, it is necessary to update $\mathtt{Values}[y]$.
+\item To this end, all values $\mathtt{w}$ in $\mathtt{Values[y]}$ are tested.  
+      If it turns out that assigning the value $\mathtt{w}$ to the variable $\mathtt{y}$ violates the
+      constraint $\mathtt{Formula}$, then $\mathtt{Values[y]}$ must not contain the value $\mathtt{w}$ 
+      and, accordingly, this value is removed from $\mathtt{Values[y]}$.
+\item If it turns out that $\mathtt{Values[y]}$ has been reduced to the empty set, then this means that the
+      partial assignment $\mathtt{NewAssignment}$ can not be completed.  Hence, the search has to
+      $\mathtt{backtrack}$.
+\end{enumerate}
+I have tested the program described in this section using the $n$ queens puzzle. 
+I have found that the time needed to solve ten
+instances of 16 queens problem went down from 72 seconds to just 5 seconds.  The procedure is even able to
+solve the 32 queens problem, taking about 4 seconds on average, while the version of backtracking search that
+does not use constraint propagation took more than 3 minutes on average.
+
 
 \exercise
 There are many different versions of the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  
@@ -588,7 +698,8 @@ In order to solve the puzzle, we also have to know the following facts:
 \item they smoke {\color{blue}different} brands of cigarettes. 
 \end{enumerate}
 Formulate the zebra puzzle as a constraint satisfaction problem and solve the puzzle using the program
-discussed in this section.
+discussed in this section.  You should also try to solve the puzzle using the program given in the previous
+section.  Compare the results.
 \eoxs
 
 
