@@ -1,0 +1,99 @@
+loadLibrary("termUtilities");
+load("queens-csp.stlx");
+
+// This function collects all variables occurring in the formula f.
+// To simplify things it is asssumed that f is either an equation or
+// a negated equation and that the terms occurring in this equations
+// only contain the arithmetical operators.
+collectVars := procedure(f) {
+    return varsTerm(parseTerm(f));
+};
+varsTerm := procedure(f) {
+    match (f) {
+        case v | isVariable(v): return { varName(v) };
+        case n | isNumber(n):   return {};
+        case lhs + rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs - rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs * rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs / rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs \ rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs % rhs:         return varsTerm(lhs) + varsTerm(rhs);
+        case lhs == rhs:        return varsTerm(lhs) + varsTerm(rhs);
+        case lhs != rhs:        return varsTerm(lhs) + varsTerm(rhs);
+        case !formula:          return varsTerm(formula);
+        case lhs && rhs:        return varsTerm(lhs) + varsTerm(rhs);
+        case lhs || rhs:        return varsTerm(lhs) + varsTerm(rhs);
+        case lhs => rhs:        return varsTerm(lhs) + varsTerm(rhs);
+        case lhs <==> rhs:      return varsTerm(lhs) + varsTerm(rhs);
+        case lhs <!=> rhs:      return varsTerm(lhs) + varsTerm(rhs);
+        default:                abort("syntax error in varsTerm($f$)");
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+// This is a very basic constraints solver that is based on backtracking.
+solve := procedure(csp) {
+    [Variables, Values, Constraints] := csp;
+    return brute_force_search({}, Variables, Values, Constraints);
+};
+// Given a partial assignment of variable, this procedure tries to complete
+// this assignment so that the given CSP is solved.
+brute_force_search := procedure(Assignment, Variables, Values, Constraints) {
+    if (Variables == {}) {
+        if (check_all_constraints(Assignment, Constraints)) {
+            return Assignment;
+        }
+        return;
+    }
+    var := from(Variables);
+    for (value in Values) {
+        NewAss := Assignment + { [var, value] };
+        result := brute_force_search(NewAss, Variables, Values, Constraints);
+        if (result != om) {
+            return result;
+        }
+    }
+};
+check_all_constraints := procedure(Assignment, Constraints) {
+    for (f in Constraints) {
+        Vars := collectVars(f);
+        if (!eval_constraint(Assignment, f, Vars)) {
+            return false;
+        }
+    }
+    return true;
+};       
+// Evaluate a formula under a given Assignment.
+//   Assignment: Binary relation assigning values to variables
+//   Vars:       Set of variables occurring in Formula
+//   Formula:    The formula to evaluate
+eval_constraint := procedure(Assignment, Formula, Vars) {
+    for (v in Vars) {
+        execute("$v$ := $Assignment[v]$;");
+    }
+    return eval(Formula);
+};
+main := procedure() {
+    resetRandom();
+    startTotal := now();
+    numIterations := 10;
+    for (i in [1..numIterations]) {
+        lower := 4;
+        upper := 8;
+        for (n in [lower .. upper]) {
+            csp      := queensCSP(n);   
+            start    := now();
+            solution := solve(csp);
+            stop     := now();
+            total    := (stop - start) / 1000.0;
+            // printBoard(solution);
+            print("The computation for the $n$ queens problem took $total$ seconds.");
+        }
+    }
+    stopTotal := now();
+    all := (stopTotal - startTotal) / 1000.0;
+    print("The total computation took $all$ seconds.");
+};
+main();
+
