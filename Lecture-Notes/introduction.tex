@@ -22,7 +22,7 @@ different answers and discuss them.
       \href{https://en.wikipedia.org/wiki/Cognitive_science}{cognitive science} and 
       \href{https://en.wikipedia.org/wiki/Computational_neuroscience}{computational neuroscience},
       this approach has not proven to be fruitful for creating thinking machines, the reason being
-      that the current knowledge of the human thought processes is just not sufficient.  
+      that the current understanding of the human thought processes is just not sufficient.  
 
 \item \emph{Artificial Intelligence} is the science of machines that \underline{act} like people.
 
@@ -35,7 +35,7 @@ different answers and discuss them.
 
       However, with respect to the kind of Artificial Intelligence that is needed in industry, this
       approach isn't very useful.  To illustrate the point, consider an analogy with aerodynamics:
-      In aerodynamics we try to build planes that fly fast and efficiently, not plans that flap
+      In aerodynamics we try to build planes that fly fast and efficiently, not planes that flap
       their wings like birds do, as the later approach has failed historically, e.g. 
       \href{https://en.wikipedia.org/wiki/Daedalus#Daedalus_and_Icarus}{Daedalus and Icarus}.
 \item \emph{Artificial Intelligence} is the science of creating machines that \underline{think lo}g\underline{icall}y.
@@ -43,8 +43,8 @@ different answers and discuss them.
       The idea with this approach is to create machines that are based on 
       \href{https://en.wikipedia.org/wiki/Mathematical_logic}{mathematical logic}.  If a
       goal is given to these machines, then these machines use logical reasoning in order to deduce
-      those actions that need to be performed in order to best achieve the given goals. Technically,
-      this approach is based on mathematical logic.  The approach had limited success:  In playing
+      those actions that need to be performed in order to best achieve the given goals. 
+      Unfortunately, this approach had only limited success:  In playing
       games the approach was quite successful for dealing with games like checkers or chess.
       However, the approach was mostly unsuccessful for dealing with many real world problems.
       There were two main reasons for its failure:
@@ -53,6 +53,23 @@ different answers and discuss them.
             \emph{\color{blue}completely} 
             described by mathematical axioms.  It has turned out that our knowledge of the real
             world is often not sufficient to completely describe the environment via axioms.  
+      \item Even if we have complete knowledge, it of turns out that describing every possible case via logic
+            formulae is just unwieldy.  Consider the following formula:
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $\forall x:\bigl( \mathtt{bird}(x) \rightarrow \mathtt{flies}(x) \bigr)$
+            \\[0.2cm]
+            The problem with this formula is that although it is often correct, there are a number of counter
+            examples:
+            \begin{enumerate}
+            \item Penguins, Emus, and ostriches don't fly.
+
+                  However, if we put a penguin into a plane, it turns out the penguin will fly.
+            \item Birds that are two you do not fly.
+            \item Birds with clapped wings do not fly.
+            \item $\cdots$
+            \end{enumerate}
+            Trying to model all eventualities with logic has turned out to be too unwieldy to be practical.
       \item In real life situations we often deal with \emph{\color{blue}uncertainty}.  Classical logic does not
             perform well when it has to deal with  uncertainties.
       \end{enumerate}
@@ -61,7 +78,7 @@ different answers and discuss them.
       All we really want is to build machines that, given the knowledge we have, try to 
       \emph{\color{blue}optimize the expected results}:  In our world, there is lots of uncertainty.  We cannot
       hope to create 
-      machines that always make the decisions that turn out to be the best decisions.  What we can
+      machines that always make the decisions that turn out to be optimal.  What we can
       hope is to create machines that will make decisions that turn out to be good on average.  For
       example, suppose we try to create a program for asset management:  We cannot hope to build a
       machine that always buys the best company share in the stock market.  Rather, our goal should
@@ -75,7 +92,7 @@ different answers and discuss them.
       \emph{\color{blue}enhanced performance of modern hardware}. 
 \end{enumerate}
 Now that we have clarified the notion of artificial intelligence, we should set its goals.  As we
-can never achieve more than we aim for, we have every reason to be ambitious here.  For example, my
+can never achieve more than what we aim for, we have every reason to be ambitious here.  For example, my
 personal vision of Artificial Intelligence goes like this: 
 Imagine 70 years from now you (not feeling too well) have a conversation with
 \href{https://en.wikipedia.org/wiki/Siri}{Siri}.  Instead of asking Siri for the
@@ -94,6 +111,7 @@ Siri gets back with a soothing announcement: \\
 \end{tabular}
 \\[0.2cm]
 May \href{https://en.wikipedia.org/wiki/The_Force_(Star_Wars)}{The Force} be with us on achieving our goals!
+\pagebreak
 
 \section{Literature}
 The main sources of these lecture notes are the following:
