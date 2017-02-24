@@ -1,16 +1,14 @@
 search := procedure(start, goal, nextStates) {
-    return dfs(start, goal, nextStates, {});
+    return dfs(start, goal, nextStates, [start]);
 };
 
-dfs := procedure(state, goal, nextStates, rw Parent) {
+dfs := procedure(state, goal, nextStates, Path) {
     if (state == goal) {
-        print("#Parent = $#Parent$");        
-        return pathTo(goal, Parent);
+        return Path;
     }
     newStates := nextStates(state);
-    for (ns in newStates | ns != start && Parent[ns] == om) {
-        Parent[ns] := state;
-        result     := dfs(ns, goal, nextStates, Parent);
+    for (ns in newStates | !(ns in Path)) {
+        result     := dfs(ns, goal, nextStates, Path + [ns]);
         if (result != om) {
             return result;
         }   
