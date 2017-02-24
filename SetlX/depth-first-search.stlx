@@ -6,15 +6,18 @@ search := procedure(start, goal, nextStates) {
         state := Stack[-1];
         Stack := Stack[..-2];
         if (state == goal) {
-            print("$#Visited$ nodes expanded");
+            print("$#Visited$ nodes visited");
             return pathTo(state, Parent);
         }
         if (state in Visited) {
             continue;
         }
+        if (#Visited % 10000 == 0) {
+            print("$#Visited$ nodes visited");
+        }
         Visited   += { state };
         newStates := nextStates(state);
-        for (ns in newStates | !(ns in Visited)) { 
+        for (ns in newStates | !(ns in Visited) && Parent[ns] == om) { 
             Parent[ns] := state;
             Stack      += [ns];
         }

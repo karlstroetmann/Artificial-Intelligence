@@ -1,19 +1,16 @@
 search := procedure(start, goal, nextStates) {
-    return dfs(start, goal, nextStates, {}, {});
+    return dfs(start, goal, nextStates, {});
 };
 
-dfs := procedure(state, goal, nextStates, rw Parent, rw Visited) {
+dfs := procedure(state, goal, nextStates, rw Parent) {
     if (state == goal) {
+        print("#Parent = $#Parent$");        
         return pathTo(goal, Parent);
     }
-    if (#Visited % 1000 == 0) {
-        print("#Visited = $#Visited$");        
-    }
-    Visited   += { state };
     newStates := nextStates(state);
-    for (ns in newStates | !(ns in Visited)) {
+    for (ns in newStates | Parent[ns] == om) {
         Parent[ns] := state;
-        result     := dfs(ns, goal, nextStates, Parent, Visited);
+        result     := dfs(ns, goal, nextStates, Parent);
         if (result != om) {
             return result;
         }   

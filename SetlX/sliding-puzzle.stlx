@@ -40,12 +40,12 @@ moveDir := procedure(state, row, col, dx, dy) {
 nextStates := procedure(state) {
     n          := #state;
     [row, col] := findTile(0, state);
-    newStates  := [];
+    newStates  := {};
     directions := [ [1, 0], [-1, 0], [0, 1], [0, -1] ];
     L          := [1 .. n];
     for ([dx, dy] in directions) {
         if (row + dx in L && col + dy in L) {
-            newStates += [ moveDir(state, row, col, dx, dy) ];
+            newStates += { moveDir(state, row, col, dx, dy) };
         }
     }
     return newStates;
