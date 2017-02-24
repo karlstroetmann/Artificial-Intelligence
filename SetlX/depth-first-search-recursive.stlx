@@ -8,7 +8,7 @@ dfs := procedure(state, goal, nextStates, rw Parent) {
         return pathTo(goal, Parent);
     }
     newStates := nextStates(state);
-    for (ns in newStates | Parent[ns] == om) {
+    for (ns in newStates | ns != start && Parent[ns] == om) {
         Parent[ns] := state;
         result     := dfs(ns, goal, nextStates, Parent);
         if (result != om) {

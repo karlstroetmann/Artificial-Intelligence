@@ -1,25 +1,20 @@
 search := procedure(start, goal, nextStates) {
-    Stack   := [ start ];
-    Visited := {}; // set of nodes expanded
-    Parent  := {};
+    Stack  := [ start ];
+    Parent := {};
     while (Stack != []) {
         state := Stack[-1];
         Stack := Stack[..-2];
         if (state == goal) {
-            print("$#Visited$ nodes visited");
+            print("$#Parent$ nodes visited");
             return pathTo(state, Parent);
         }
-        if (state in Visited) {
-            continue;
-        }
-        if (#Visited % 10000 == 0) {
-            print("$#Visited$ nodes visited");
-        }
-        Visited   += { state };
         newStates := nextStates(state);
-        for (ns in newStates | !(ns in Visited) && Parent[ns] == om) { 
+        for (ns in newStates | ns != start && Parent[ns] == om) { 
             Parent[ns] := state;
             Stack      += [ns];
+            if (#Parent % 10000 == 0) {
+                print("$#Parent$ nodes reached");
+            }
         }
     }
 };
