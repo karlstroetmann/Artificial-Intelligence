@@ -1,0 +1,19 @@
+search := procedure(start, goal, nextStates) {
+    Stack  := [ [[start], {state}] ];
+    while (Stack != []) {
+        [Path, PathSet] := Stack[-1];
+        Stack           := Stack[..-2];
+        state           := Path[-1];
+        if (#Stack % 100 == 0) {
+            print("#Stack = $#Stack$, #Path = $#Path$");
+        }
+        if (state == goal) {
+            return Path;
+        }
+        newStates := nextStates(state);
+        for (ns in newStates | !(ns in PathSet)) { 
+            Stack += [ [Path + [ns], PathSet] ];
+        }
+    }
+};
+
