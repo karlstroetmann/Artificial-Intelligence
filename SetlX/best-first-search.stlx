@@ -1,0 +1,18 @@
+bestFirstSearch := procedure(start, goal, nextStates, heuristic) {
+    PrioQueue := { [0, [start]] };
+    while (PrioQueue != {}) {
+        [_, Path] := fromB(PrioQueue);
+        state     := Path[-1];
+        if (state == goal) {
+            return Path;
+        }
+        if (#PrioQueue % 100 == 0) {
+            print("#PrioQueue = $#PrioQueue$, estimated distance = $heuristic(state, goal)$");
+        }
+        newStates := nextStates(state);
+        for (ns in newStates | !(ns in Path)) {
+            PrioQueue += { [heuristic(ns, goal), Path + [ns]] };
+        }
+    }
+};
+

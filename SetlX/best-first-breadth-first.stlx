@@ -1,0 +1,41 @@
+bestFirstBestFirst := procedure(start, goal, nextStates, heuristic, limit) {
+    PrioQueue := { [0, [start]] };
+    while (PrioQueue != {}) {
+        [_, Path] := fromB(PrioQueue);
+        state     := Path[-1];
+        if (#PrioQueue % 100 == 0) {
+            print("#PrioQueue = $#PrioQueue$, estimated distance = $heuristic(state, goal)$");
+        }
+        newStates := nextStates(state);
+        for (ns in newStates | !(ns in Path)) {
+            estimate  := heuristic(ns, goal);
+            if (estimate <= limit) {
+                print(stateToString(ns));
+                return breadthFirstSearch(ns, goal, nextStates, Path);
+            }
+            PrioQueue += { [heuristic(ns, goal), Path + [ns] ] };
+        }
+    }
+};
+breadthFirstSearch := procedure(start, goal, nextStates, Path) {
+    Frontier := { start };
+    Visited  := {}; // number of nodes expanded
+    Parent   := {};
+    counter  := 0;
+    while (Frontier != {}) {
+        counter += 1;
+        NewFrontier := {};
+        for (s in Frontier, ns in nextStates(s) | !(ns in Visited) && !(ns in Frontier)) {
+            NewFrontier += { ns };
+            Parent[ns]  := s;
+            if (ns == goal) {
+                print("$#Visited + #Frontier + #NewFrontier$ nodes expanded");
+                print("#Path = $#Path$");
+                return Path + pathTo(goal, Parent);
+            }
+        }
+        Visited  += Frontier;
+        Frontier := NewFrontier;
+        print("$#Visited$ nodes expanded, counter = $counter$");
+    }
+};
