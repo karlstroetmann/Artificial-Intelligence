@@ -2,42 +2,28 @@ search := procedure(start, goal, nextStates) {
     limit := 1;
     while (true) {
         print("limit = $limit$");
-        path := depthLimitedSearch(start, goal, nextStates, limit);
-        if (path != om) {
-            return path;
+        Path := depthLimitedSearch(start, goal, nextStates, limit);
+        if (Path != om) {
+            return Path;
         }
         limit += 1;
     }
 };
-
 depthLimitedSearch := procedure(start, goal, nextStates, limit) {
-    Stack    := [ start ];
-    Distance := { [start, 0] };  // What is the distance to start?
-    Parent   := {};
+    Stack := [ [start] ];
     while (Stack != []) {
-        state := Stack[-1];
+        Path  := Stack[-1];
         Stack := Stack[..-2];
+        state := Path[-1];
         if (state == goal) {
-            print(Distance[state]);
-            print("$#Distance$ nodes expanded");
-            return pathTo(state, Parent);
+            return Path;
         }
-        ds := Distance[state];            // ds:  distance state 
-        if (ds >= limit) {
+        if (#Path >= limit) {
             continue;
         }
-        for (ns in nextStates(state)) {   // ns:  new state
-            dns := Distance[ns];          // dns: distance new state
-            if (dns != om && dns <= ds + 1) {
-                continue;
-            } 
-            Distance[ns] := ds + 1;
-            Parent[ns]   := state;
-            if (!(ns in Stack)) {
-                Stack += [ns];
-            }
+        for (ns in nextStates(state) | !(ns in Path)) {  
+            Stack += [ Path + [ns] ];
         }
     }
-    print("$#Distance$ nodes expanded");
 };
 

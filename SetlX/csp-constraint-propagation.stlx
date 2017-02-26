@@ -34,8 +34,10 @@ varsTerm := procedure(f) {
 
 // This is a very basic constraints solver that is based on backtracking.
 solve := procedure(csp) {
-    [Vars, Vals, Constrs] := csp;
-    csp := [Vars, Vals, { [f, collectVars(f)] : f in Constrs }];
+    [Variables, Values, Constrs] := csp;
+    ValuesPerVar         := { [v, Values] : v in Variables };
+    AnnotatedConstraints := { [f, collectVars(f)] : f in Constrs };
+    csp                  := [Variables, ValuesPerVar, AnnotatedConstraints];
     check {
         return bt_search({}, csp);
     }
@@ -47,11 +49,13 @@ bt_search := procedure(Assignment, csp) {
     if (#Assignment == #Variables) {
         return Assignment;
     }
-    var := select_unassigned_variable(Assignment, Variables);
-    for (value in Values) {
+    x := most_constrained_variable(Assignment, Values);
+    for (val in Values[x]) {
         check {
-            if (is_consistent(var, value, Assignment, Constraints)) {
-                return bt_search(Assignment + { [var, value] }, csp);
+            if (is_consistent(x, val, Assignment, Constraints)) {
+                NewVals := propagate(x, val, Assignment, Constraints, Values);
+                csp     := [Variables, NewVals, Constraints];
+                return bt_search(Assignment + { [x, val] }, csp);
             }
         }
     }
@@ -59,8 +63,29 @@ bt_search := procedure(Assignment, csp) {
 };
 // Given the current Assignment, select a variable that has not yet been
 // assigned a value.
-select_unassigned_variable := procedure(Assignment, Variables) {
-    return rnd({ v : v in Variables | Assignment[v] == om });
+most_constrained_variable := procedure(Assignment, Values) {
+    Unassigned := { [x, U] : [x, U] in Values | Assignment[x] == om };
+    minSize    := min({ #U : [x, U] in Unassigned });
+    return rnd({ x : [x, U] in Unassigned | #U == minSize });
+};
+propagate := procedure(x, v, Assignment, Constraints, Values) {
+    NewAssignment := Assignment + { [x, v] };
+    Values[x]     := { v };
+    for ([Formula, Vars] in Constraints | x in Vars) {
+        y := arb(Vars - { x });  // Assume binary constraints!!!
+        if (!(y in domain(NewAssignment))) {
+            NewValues := Values[y];
+            for (w in Values[y]) {
+                A2 := NewAssignment + { [y, w] };
+                if (!eval_constraint(A2, Formula, Vars)) {
+                    NewValues -= { w };
+                }
+            }
+            if (NewValues == {}) { backtrack; }
+            Values[y] := NewValues;
+        }
+    }
+    return Values;
 };
 // Evaluate a formula under a given Assignment.
 //   Assignment: Binary relation assigning values to variables
@@ -92,8 +117,8 @@ main := procedure() {
     startTotal := now();
     numIterations := 10;
     for (i in [1..numIterations]) {
-        lower := 16;
-        upper := 16;
+        lower := 32;
+        upper := 32;
         for (n in [lower .. upper]) {
             csp      := queensCSP(n);   
             start    := now();

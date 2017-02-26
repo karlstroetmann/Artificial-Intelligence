@@ -680,14 +680,16 @@ many problems:  If the \texttt{goal} is far from the $\mathtt{start}$, breadth f
 a lot of memory because it will store a large part of the state space in the set
 $\mathtt{Visited}$.  In many cases, the state space is so big that this is not possible.  For example, it is
 impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzle.
+\pagebreak
+
 
 \section{Depth First Search}
 To overcome the memory limitations of breadth first search, the
 \href{https://en.wikipedia.org/wiki/Depth-first_search}{depth first search} algorithm has been
 developed.  The basic idea is to replace the queue of Figure
 \ref{fig:breadth-first-search-queue.stlx} by a stack.  The resulting algorithm is shown in Figure
-\ref{fig:depth-first-search.stlx} on page \pageref{fig:depth-first-search.stlx}.  The basic idea is
-to search a path up to its end before trying an alternative.  This way, we might be able to find a
+\ref{fig:depth-first-search.stlx} on page \pageref{fig:depth-first-search.stlx}.  Basically, in this
+implementation, a path is searched to its end before trying an alternative.  This way, we might be able to find a
 $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the whole state space.  
 
 \begin{figure}[!ht]
@@ -702,21 +704,16 @@ $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the who
                   xrightmargin  = 0.8cm,
                 ]
     search := procedure(start, goal, nextStates) {
-        Stack   := [ start ];
-        Visited := {}; // number of nodes expanded
-        Parent  := {};
+        Stack  := [ start ];
+        Parent := {};
         while (Stack != []) {
             state := Stack[-1];
             Stack := Stack[..-2];
             if (state == goal) {
                 return pathTo(state, Parent);
             }
-            if (state in Visited) {
-                continue;
-            }
-            Visited   += { state };
             newStates := nextStates(state);
-            for (ns in newStates | !(ns in Visited)) { 
+            for (ns in newStates | ns != start && Parent[ns] == om) { 
                 Parent[ns] := state;
                 Stack      += [ns];
             }
@@ -727,23 +724,29 @@ $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the who
 \caption{The depth first search algorithm.}
 \label{fig:depth-first-search.stlx}
 \end{figure}
-When we test this idea with the $3 \times 3$ sliding puzzle, the solution is found in less than 2
-seconds.  This is more than four times faster than breadth first search.  Furthermore, only 9569
-states were explored.  However, the solution that is found has a length of 9355 steps!  As the
+Actually, it is not necessary to understand the details of the implementation shown in
+\myFig{depth-first-search.stlx}.  The reason is that the recursive implementation of depth first
+search that is presented in the following subsection is superior to the implementation shown in
+\myFig{depth-first-search.stlx}.
+When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes about 96 seconds to find a solution.  
+The solution that is found has a length of $41,553$ steps.  As the
 shortest path from $\mathtt{start}$ to $\mathtt{goal}$ has 31 steps, the solution found by depth
-first search is highly redundant.  If this redundancy is not an issue, depth first search is good
-choice as it is very easy to implement.  For example, this is the case if we just want to know
-whether there is a path leading from $\mathtt{start}$ to $\mathtt{goal}$.  However, if we are
-interested in computing the shortest path, then depth first search is not an option.
+first search is very far from optimal.  All this is rather disappointing news.  The only good news
+is that there is no longer a need to keep the set $\mathtt{Visited}$ around.  However, we still have
+to maintain the set $\mathtt{Parent}$.  If we were more ambitious, we could eliminate the use of
+this dictionary also, but the resulting implementation would be rather unwieldy.  Fortunately, we will be
+able to get rid of the set $\mathtt{Parent}$ with next to no effort when we develop a recursive
+implementation of depth first search in the following subsection.
 
-\subsection{A Recursive Implementation of Depth First Search}
-Sometimes, the depth first search algorithm is presented as a recursive algorithm, since this leads
-to an implementation that is slightly shorter and more easy to understand.  While this program works
-just fine for small problems like the missionaries and cannibals problem, it does not work so well
-for a problem of the size of the $3 \times 3$ sliding puzzle.  The reason is that each recursive
-invocation of the function $\mathtt{dfs}$ needs to copy the parameters onto the stack.  As the number of
-recursive calls is the same as the length of the path that is found and as this path is very long, 
-the resulting overhead is prohibitive.
+\subsection{Getting Rid of the $\mathtt{Parent}$ Dictionary}
+It can be argued that the implementation of depth first search discussed previously is not really
+depth first search because it uses the dictionary $\mathtt{Parent}$.  As states are only added to
+$\mathtt{Parent}$ and never removed, at the end of the search this dictionary will contain all
+states that have been visited.  This defeats the most important advantage of depth first search
+which is the fact that it should only store the current path that is investigated.  Therefore,
+it has been suggested (for example compare Russel and Norvig \cite{russell:2009}) that instead of
+storing single states, the stack should store the full paths leading to these states.  This leads to
+the implementation shown in \myFig{depth-first-search-path.stlx}. 
 
 \begin{figure}[!ht]
 \centering
@@ -757,17 +760,77 @@ the resulting overhead is prohibitive.
                   xrightmargin  = 0.8cm,
                 ]
     search := procedure(start, goal, nextStates) {
-        return dfs(start, goal, nextStates, {}, {});
-    };
-    dfs := procedure(state, goal, nextStates, rw Parent, rw Visited) {
-        if (state == goal) {
-            return pathTo(goal, Parent);
+        Stack  := [ [start] ];
+        while (Stack != []) {
+            Path  := Stack[-1];
+            Stack := Stack[..-2];
+            state := Path[-1];
+            if (state == goal) {
+                return Path;
+            }
+            newStates := nextStates(state);
+            for (ns in newStates | !(ns in Path)) { 
+                Stack += [ Path + [ns] ];
+            }
         }
-        Visited   += { state };
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{An path-based implementation of depth first search.}
+\label{fig:depth-first-search-path.stlx}
+\end{figure}
+
+Unfortunately, it  turns out that the paths get very long and hence need a lot of memory to be
+stored and this fact defeats the main idea of this implementation.  As a result, the procedure
+$\mathtt{search}$ that is given in \myFig{depth-first-search-path.stlx} is not able to solve the
+instance of the  $3 \times 3$ sliding puzzle that was shown in \myFig{8-puzzle.pdf}.
+
+\exercise
+Assume that a single state can be stored using 8 bytes.  Furthermore, assume that the top of the
+stack in the procedure $\mathtt{search}$ contains a list of length $n$.  How many bytes are 
+\underline{at least} needed to store all the states that are put on the stack?  
+How big is this memory if $n = 10,000$?
+\vspace*{0.2cm}
+
+\noindent
+\begin{enumerate}[(a)]
+\item \textbf{Note} that the question only asks for the memory needed to store the states.  The memory
+      needed to store the stack itself and the various lists on the stack comes on top of the memory
+      needed to store the states.  However,
+      to answer this exercise correctly, you should ignore this type of memory.
+\item If we only know that the path on top of the stack has a length of $n$, then this fact does not
+      tell us the actual size of the stack.  However, it does provide a lower bound on the size of
+      the stack and a lower bound is all that is needed.
+      \eoxs
+\end{enumerate}
+
+\subsection{A Recursive Implementation of Depth First Search}
+Sometimes, the depth first search algorithm is presented as a recursive algorithm, since this leads
+to an implementation that is slightly shorter and more easy to understand.  What is more, we no
+longer need the dictionary $\mathtt{Parent}$ to record the parent of each node.  The resulting
+implementation is shown in \myFig{depth-first-search-recursive.stlx}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    search := procedure(start, goal, nextStates) {
+        return dfs(start, goal, nextStates, [start]);
+    };    
+    dfs := procedure(state, goal, nextStates, Path) {
+        if (state == goal) {
+            return Path;
+        }
         newStates := nextStates(state);
-        for (ns in newStates | !(ns in Visited)) {
-            Parent[ns] := state;
-            result     := dfs(ns, goal, nextStates, Parent, Visited);
+        for (ns in newStates | !(ns in Path)) {
+            result     := dfs(ns, goal, nextStates, Path + [ns]);
             if (result != om) {
                 return result;
             }   
@@ -778,17 +841,59 @@ the resulting overhead is prohibitive.
 \caption{A recursive implementation of depth first search.}
 \label{fig:depth-first-search-recursive.stlx}
 \end{figure}
+The only purpose of the procedure \texttt{search} is to call the procedure $\mathtt{dfs}$, which needs one
+additional argument.  This argument is called $\mathtt{Path}$.  The idea is that $\mathtt{Path}$ is
+a path leading from the state $\mathtt{start}$ to the current $\mathtt{state}$ that is the first
+argument of the procedure $\mathtt{dfs}$.  Of course, on the first invocation of $\mathtt{dfs}$, the
+parameter $\mathtt{state}$ is equal to $\mathtt{start}$ and therefore $\mathtt{Path}$ is initialized
+as the list containing only $\mathtt{start}$.
+
+The implementation of $\mathtt{dfs}$ works as follows:
+\begin{enumerate}
+\item If $\mathtt{state}$ is equal to $\mathtt{goal}$, our search is successful. Since by assumption
+      the list $\mathtt{Path}$ is a path connecting $\mathtt{start}$ and $\mathtt{state}$ and we
+      have checked that $\mathtt{state}$ is equal to $\mathtt{goal}$, we can return $\mathtt{Path}$ as our solution.
+\item Otherwise, $\mathtt{newStates}$ is the set of states that are reachable from $\mathtt{state}$
+      in one step.  Any of the states $\mathtt{ns}$ in this set could be the next state on a path
+      that leads to $\mathtt{goal}$.  Therefore, we try recursively to reach $\mathtt{goal}$ from
+      every state $\mathtt{ns}$.  Note that we have to change $\mathtt{Path}$ to the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Path + [ns]}
+      \\[0.2cm]
+      when we call the procedure $\mathtt{dfs}$ recursively.  This way, we retain the invariant of
+      $\mathtt{dfs}$ that the list $\mathtt{Path}$ is a path connecting $\mathtt{start}$ with $\mathtt{state}$.
+\item We still have to avoid running in circles.  In the recursive version of depth first search, 
+      this is achieved by checking that the state $\mathtt{ns}$ is not already a member of the list $\mathtt{Path}$.  In the
+      non-recursive version of depth first search, we had used the set $\mathtt{Parent}$ instead.
+      The current implementation no longer has a need for the dictionary $\mathtt{Parent}$.  This is very 
+      fortunate since it reduces the memory requirements of depth first search considerably.
+\item If one of the recursive calls of $\mathtt{dfs}$ returns a list, this list is a solution to our
+      search problem and hence it is returned.  However, if instead the undefined value
+      $\mathtt{om}$ is returned, the \texttt{for} loop needs to carry on and test the other
+      successors of $\mathtt{state}$.
+\item Note that the recursive invocation of $\mathtt{dfs}$ returns $\mathtt{om}$ if the end of the
+      \texttt{for} loop is reached and no solution has been returned so far.  The reason is that there is
+      no \texttt{return} statement at the end of the procedure $\mathtt{dfs}$.  Hence, if the last
+      line of the procedure $\mathtt{dfs}$ is reached, $\mathtt{om}$ is returned by default.
+\end{enumerate}
+
+For the $3 \times 3$ puzzle, it takes about 2 seconds to compute the solution.  In this case, the length of
+the solution is still 3653 steps, which is unsatisfying.  The good news is that this program does not
+need much memory.  The only variable that uses considerable memory is the variable $\mathtt{Path}$.
+If we can somehow keep the list $\mathtt{Path}$ short, then the recursive version of depth first search uses only a
+tiny fraction of the memory needed by breadth first search.
 
 \section{Iterative Deepening}
-The fact that depth first search took just 2 seconds to find a solution is very impressive.  The questions is
-whether it might be possible to force depth first search to find the shortest solution.  The answer to this
-question leads to an algorithm that is known as
+The fact that the recursive version of depth first search took just 2 seconds to find a solution is
+very impressive.  The questions is whether it might be possible to force depth first search to find
+the shortest solution.  The answer to this question leads to an algorithm that is known as
 \href{https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search}{iterative deepening}.  The main
 idea behind iterative deepening is to run depth first with a \emph{\color{blue}depth limit} $d$.  This limit
 enforces that a solution has at most a length of $d$.  If no solution is found at a depth of $d$, the new depth
 $d+1$ can be tried next and the process can be continued until a solution is found.  The program shown in
 Figure \ref{fig:iterative-deepening.stlx} on page \pageref{fig:iterative-deepening.stlx} implements this strategy.
-We continue to discuss the details of this program.
+We proceed to discuss the details of this program.
 
 \begin{figure}[!ht]
 \centering
@@ -804,37 +909,21 @@ We continue to discuss the details of this program.
     search := procedure(start, goal, nextStates) {
         limit := 1;
         while (true) {
-            path := depthLimitedSearch(start, goal, nextStates, limit);
-            if (path != om) {
-                return path;
-            }
+            Path := depthLimitedSearch(start, goal, nextStates, limit);
+            if (Path != om) { return Path; }
             limit += 1;
         }
-    };    
+    };
     depthLimitedSearch := procedure(start, goal, nextStates, limit) {
-        Stack    := [ start ];
-        Distance := { [start, 0] };  // What is the distance to start?
-        Parent   := {};
+        Stack := [ [start] ];
         while (Stack != []) {
-            state := Stack[-1];
+            Path  := Stack[-1];
             Stack := Stack[..-2];
-            if (state == goal) {
-                return pathTo(state, Parent);
-            }
-            ds := Distance[state];            // ds:  distance state 
-            if (ds >= limit) {
-                continue;
-            }
-            for (ns in nextStates(state)) {   // ns:  new state
-                dns := Distance[ns];          // dns: distance new state
-                if (dns != om && dns <= ds + 1) {
-                    continue;
-                }
-                Distance[ns] := ds + 1;
-                Parent[ns]   := state;
-                if (!(ns in Stack)) {
-                    Stack += [ns];
-                }
+            state := Path[-1];
+            if (state == goal)  { return Path; }
+            if (#Path >= limit) { continue;    }
+            for (ns in nextStates(state) | !(ns in Path)) {  
+                Stack += [ Path + [ns] ];
             }
         }
     };
@@ -847,69 +936,84 @@ We continue to discuss the details of this program.
 \begin{enumerate}
 \item The procedure $\mathtt{search}$ initializes the variable $\mathtt{limit}$ to 1 and tries to find a solution
       to the search problem that has a length that is less than or equal to $\mathtt{limit}$.  If a solution is
-      found, it is returned.  Otherwise, the variable $\mathtt{limit}$ is incremented by one and a new depth
-      first search is started.  This process continues until either a solution is found or the sun rises in the
-      west. 
+      found, it is returned.  Otherwise, the variable $\mathtt{limit}$ is incremented by one and a
+      new instance of depth first search is started.  This process continues until either 
+      \begin{itemize}
+      \item a solution is found \qquad or 
+      \item the sun rises in the west. 
+      \end{itemize}
 \item The procedure $\mathtt{depthLimitedSearch}$ implements depth first search but takes care to compute only
       those paths that have a length of at most $\mathtt{limit}$.  The implementation shown in Figure
-      \ref{fig:iterative-deepening.stlx} is stack based.
-\item The stack is initialized to contain the state $\mathtt{start}$.
-\item For every state that is encountered in our search, we need to keep track of the distance of this state to
-      the state $\mathtt{start}$.  This distance is stored in the dictionary $\mathtt{Distance}$.  Initially,
-      only the distance of the node $\mathtt{start}$ is known.  Of course, this node has a distance of $0$ to
-      the node $\mathtt{start}$.
-\item In contrast to the implementation of depth first search shown in Figure \ref{fig:depth-first-search.stlx}
-      on page \pageref{fig:depth-first-search.stlx}, we do \underline{not} keep track of the nodes that have
-      been visited.  Hence, there is no need for the variable $\mathtt{Visited}$.  The reason is that the depth
-      limit already ensures that the function $\mathtt{dfs}$ does not loop.  Furthermore, it actually might be necessary to
-      revisit a given state:  Suppose that there is a state $s$ and the current estimation of the distance of
-      $s$ from $\mathtt{start}$ is $5$.  Assume further that we now revisit the state $s$ on a path that would have
-      a length of only $3$.  Finally, assume that we are using a depth $\mathtt{limit}$ of $6$ and that there
-      is a path of length $2$ from the state $s$ to the state $\mathtt{goal}$.  If we would then discard
-      further exploration of $s$ on the grounds that we have explored all its neighbours, we would then not be
-      able to find the path of length $5$ that connects $\mathtt{start}$ with $\mathtt{goal}$!
-\item Next, the $\mathtt{state}$ on top of the stack is removed from the stack.  If this $\mathtt{state}$ happens to be the
-      $\mathtt{goal}$, a path has been found and is returned.
-\item Otherwise, we check the distance $\mathtt{ds}$ of $\mathtt{state}$.  If this distance is greater than or equal to the
-      $\mathtt{limit}$, then $\mathtt{state}$ can be discarded as we have already checked that it is not the goal.
-\item Otherwise, the neighbours of $\mathtt{state}$ are computed.  For every neighbour $\mathtt{ns}$ of
-      $\mathtt{state}$, we look up its distance $\mathtt{dns}$ from $\mathtt{start}$.
-      Now there are two cases.
-      \begin{enumerate}
-      \item If $\mathtt{dns}$ is less than or equal to $\mathtt{ds} + 1$, then 
-            there is no point in pursuing a path from $\mathtt{start}$ to $\mathtt{ns}$ that leads through
-            $\mathtt{state}$, as this path would have a length that is at least as long as the path from
-            $\mathtt{start}$ to $\mathtt{ns}$ that has already been found.
-      \item If $\mathtt{dns}$ is either undefined or bigger than $\mathtt{ds} + 1$, then
-            we have to update the distance of $\mathtt{ns}$.  Furthermore, if the state $\mathtt{ns}$ is not
-            already present on the stack, we have to push it onto $\mathtt{Stack}$.
-      \end{enumerate}
-      As in the original implementation of the depth first algorithm, this is process is iterated until the
-      stack is exhausted.
+      \ref{fig:iterative-deepening.stlx} is stack based.  In this implementation,
+      the stack contains paths leading from $\mathtt{start}$ to the state at the end of a given
+      path.  Hence it is similar to the implementation of depth first search shown in
+      \myFig{depth-first-search.stlx}. 
+\item The stack is initialized to contain the path $\mathtt{[start]}$.
+\item In the \texttt{while}-loop, the first thing that happens is that the $\mathtt{Path}$ on top of
+      the stack is removed from the stack.  The state at the end of this $\mathtt{Path}$ is called $\mathtt{state}$.
+      If this $\mathtt{state}$ happens to be the $\mathtt{goal}$, a solution to the search problem
+      has been found and this solution is returned.
+\item Otherwise, we check the length of $\mathtt{Path}$.  If this length is greater than or equal to the
+      $\mathtt{limit}$, the $\mathtt{Path}$ can be discarded as we have already checked that it
+      does not end in the $\mathtt{goal}$.
+\item Otherwise, the neighbours of $\mathtt{state}$ are computed.  For every neighbour $\mathtt{ns}$
+      of $\mathtt{state}$ that has not yet been encountered in $\mathtt{Path}$, we extend
+      $\mathtt{Path}$ to a new list that ends in $\mathtt{ns}$.
+\item This process is iterated until the $\mathtt{Stack}$ is exhausted.
 \end{enumerate}
-When we run this program to solve the $3 \times 3$ sliding puzzle, the algorithm takes a little less than 5
-minutes and visits $103,324$ states.  There are two reasons for this:
+The nice thing about the program presented in this section is the fact that it does not use much
+memory.  The reason is that the stack can never have a size that is longer than $\mathtt{limit}$ and
+therefore the overall memory that is needed can be bounded by $\mathcal{O}(\mathtt{limit}^2)$.
+However, when we run this program to solve the $3 \times 3$ sliding puzzle, the algorithm takes
+about 42 minutes.  There are two reasons for this:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
       to 31.  Essentially, all the computations done with a limit less the $31$ are essentially wasted.
-\item When performing  the computation for the limit of $30$, all states that have a distance form start that
-      is less than or equal to $30$ have to be visited.  This amounts to visiting $181,438$ states, because there
-      are only two states that have a distance of $31$ from $\mathtt{start}$.  Hence, nearly the entire
-      state space is visited.
+\item Given a state $s$ that is reachable from the $\mathtt{start}$, there often is a huge number of
+      different paths that lead from start to $s$.  The version of iterative deepening presented in
+      this section tries all of these paths and hence needs a large amount of time.
 \end{enumerate}
+
+\exercise
+Assume the set of states $Q$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$Q := \bigl\{ \pair(a, b) \mid a \in \mathbb{N} \wedge b \in \mathbb{N} \bigr\}$.
+\\[0.2cm]
+Furthermore, the states $\mathtt{start}$ and $\mathtt{goal}$ are defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,n)$ where $n \in \mathbb{N}$.
+\\[0.2cm]
+Next, the function $\mathtt{nextStates}$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}$.
+\\[0.2cm]
+Finally, the search problem $\mathcal{P}$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{P} := \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \rangle$.
+\\[0.2cm]
+Given a natural number $n$, compute the number of different solutions of this search problem and prove
+your claim.
+\eoxs
 
 \exercise 
 If there is no solution, the implementation of iterative deepening that is shown in Figure
 \ref{fig:iterative-deepening.stlx} does not terminate.  The reason is that the function $\mathtt{depthLimitedSearch}$ does not
-distinguish whether it fails to find a solution because the depth limit is reached or because the $\mathtt{Stack}$ is
-exhausted.  Improve the implementation so that it will always terminate provided the state space is finite.
+distinguish between the following two reasons for failure:
+\begin{enumerate}
+\item It can fail to find a solution because the depth limit is reached.
+\item It can also fail it has tried all paths without hitting the depth limit but the $\mathtt{Stack}$ is exhausted.  
+\end{enumerate}
+Improve the implementation of iterative deepening so that it will always terminate eventually, provided the
+state space is finite. 
+\eoxs
 
 \subsection{A Recursive Implementation of Iterative Deepening}
 If we implement iterative deepening recursively, then we know that the call stack is bounded by the length of
-the shortest solution.  As the excessive length of the stack was the main culprit for the weak performance of
-our recursive implementation of depth first search, we can hope that a recursive implementation of iterative
-deepening is less disappointing than our recursive implementation of depth first has been.
-Figure \ref{fig:iterative-deepening-recursive.stlx} on page \pageref{fig:iterative-deepening-recursive.stlx}
+the shortest solution.  \myFig{iterative-deepening-recursive.stlx}  
 shows a recursive implementation of iterative deepening.  This implementation has several nice features:
 
 
@@ -958,9 +1062,8 @@ shows a recursive implementation of iterative deepening.  This implementation ha
       incrementally in the argument $\mathtt{Path}$ of the procedure $\mathtt{dfsLimited}$.
 \item Similarly, there is no longer a need to keep the dictionary $\mathtt{Distance}$.
 \end{enumerate}
-Unfortunately, the running time of the recursive implementation of iterative deepening is still considerably
-bigger than the running time of the stack based implementation:  On my computer, the recursive implementation
-takes about 36 minutes!
+Unfortunately, the running time of the recursive implementation of iterative deepening is still
+quite big:  On my computer, the recursive implementation takes about 36 minutes.
 
 \section{Bidirectional Breadth First Search}
 Breadth first sear first visits all states that have a distance of 1 from start, then all
