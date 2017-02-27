@@ -968,7 +968,7 @@ However, when we run this program to solve the $3 \times 3$ sliding puzzle, the 
 about 42 minutes.  There are two reasons for this:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
-      to 31.  Essentially, all the computations done with a limit less the $31$ are essentially wasted.
+      to 31.  Essentially, all the computations done with a limit less than $31$ are essentially wasted.
 \item Given a state $s$ that is reachable from the $\mathtt{start}$, there often is a huge number of
       different paths that lead from start to $s$.  The version of iterative deepening presented in
       this section tries all of these paths and hence needs a large amount of time.
