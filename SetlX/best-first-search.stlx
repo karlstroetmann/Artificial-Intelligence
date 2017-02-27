@@ -1,5 +1,5 @@
 bestFirstSearch := procedure(start, goal, nextStates, heuristic) {
-    PrioQueue := { [0, [start]] };
+    PrioQueue := { [heuristic(start, goal), [start]] };
     while (PrioQueue != {}) {
         [_, Path] := fromB(PrioQueue);
         state     := Path[-1];

@@ -1239,7 +1239,7 @@ distance to the goal, but it is free to underestimate this distance.
 Finally, the  heuristic $h$ is called \emph{\color{blue}consistent} iff we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s_2 \in \mathtt{neighbours}(s_1)$.  \eod
+$h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s_2 \in \mathtt{nextStates}(s_1)$.  \eod
 \end{Definition}
 
 Let us explain the idea behind the notion of consistency.  First, if we are already at the goal, the heuristic

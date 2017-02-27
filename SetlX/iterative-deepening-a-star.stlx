@@ -10,15 +10,6 @@ idaStarSearch := procedure(start, goal, nextStates, heuristic) {
         limit := Path;
     }
 };
-// Search for a path from state to goal.
-//   * nextStates: A function computing the states that a reachable from a given state in one step.
-//   * distance:   The length of the Path computed so far
-//   * limit:      Maximal admissable length  of a path.  If no path can be found that is less
-//                 or equal than limit, the search is aborted and the estimated minimal distance
-//                 of a path from start to goal is returned.
-//   * Path:       List of states from start to state.
-//   * heuristic:  A function that takes two states as input and returns an optimistic estimation
-//                 of their distance.
 search := procedure(state, goal, nextStates, distance, limit, Path, heuristic) {
     total := distance + heuristic(state, goal);
     if (total > limit) {
