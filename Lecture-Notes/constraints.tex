@@ -614,6 +614,8 @@ For example, suppose we place the queen in row 1 in the second column, then no o
 that column.   Additionally, the queen in row 2 can then not be placed in any of the first three columns.
 It turns out that elaborating this idea can enhance the performance of backtracking search considerably.
 \myFig{csp-constraint-propagation.stlx-1} shows an implementation of \emph{\color{blue}constraint propagation}.
+This implementation is also able to handle \emph{\color{blue}unary constraints}, i.e.~constraints that contain
+only a single variable.
 
 \begin{figure}[!ht]
 \centering
@@ -628,12 +630,29 @@ It turns out that elaborating this idea can enhance the performance of backtrack
                 ]
     solve := procedure(csp) {
         [Variables, Values, Constrs] := csp;
-        ValuesPerVar         := { [v, Values] : v in Variables };
-        AnnotatedConstraints := { [f, collectVars(f)] : f in Constrs };
-        csp                  := [Variables, ValuesPerVar, AnnotatedConstraints];
-        check {
-            return bt_search({}, csp);
+        Annotated     := { [f, collectVars(f)] : f in Constrs };
+        UnaryConstrs  := { [f, V] : [f, V] in Annotated | #V == 1 };
+        BinaryConstrs := { [f, V] : [f, V] in Annotated | #V == 2 };
+        msg := "Constraints should be either unary or binary!";
+        assert(UnaryConstrs + BinaryConstrs == Annotated, msg); 
+        ValuesPerVar := { [v, Values] : v in Variables };
+        for ([f, V] in UnaryConstrs) {
+            var               := arb(V);
+            ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
         }
+        check {
+            return bt_search({}, [Variables, ValuesPerVar, BinaryConstrs]);
+        }
+    };
+    solve_unary := procedure(constraint, variable, Values) {
+        LegalValues := {};
+        for (value in Values) {
+            Assignment := { [variable, value] };
+            if (eval_constraint(Assignment, constraint, { variable })) {
+                LegalValues += { value };
+            }
+        }
+        return LegalValues;
     };
     bt_search := procedure(Assignment, csp) {
         [Variables, Values, Constraints] := csp;

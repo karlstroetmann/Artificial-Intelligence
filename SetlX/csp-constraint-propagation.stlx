@@ -35,12 +35,12 @@ varsTerm := procedure(f) {
 // This is a very basic constraints solver that is based on backtracking.
 solve := procedure(csp) {
     [Variables, Values, Constrs] := csp;
+    ValuesPerVar  := { [v, Values] : v in Variables };
     Annotated     := { [f, collectVars(f)] : f in Constrs };
     UnaryConstrs  := { [f, V] : [f, V] in Annotated | #V == 1 };
     BinaryConstrs := { [f, V] : [f, V] in Annotated | #V == 2 };
     msg := "Constraints should be either unary or binary!";
     assert(UnaryConstrs + BinaryConstrs == Annotated, msg); 
-    ValuesPerVar := { [v, Values] : v in Variables };
     for ([f, V] in UnaryConstrs) {
         var               := arb(V);
         ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
