@@ -35,13 +35,33 @@ varsTerm := procedure(f) {
 // This is a very basic constraints solver that is based on backtracking.
 solve := procedure(csp) {
     [Variables, Values, Constrs] := csp;
-    ValuesPerVar         := { [v, Values] : v in Variables };
-    AnnotatedConstraints := { [f, collectVars(f)] : f in Constrs };
-    csp                  := [Variables, ValuesPerVar, AnnotatedConstraints];
+    Annotated     := { [f, collectVars(f)] : f in Constrs };
+    UnaryConstrs  := { [f, V] : [f, V] in Annotated | #V == 1 };
+    BinaryConstrs := { [f, V] : [f, V] in Annotated | #V == 2 };
+    msg := "Constraints should be either unary or binary!";
+    assert(UnaryConstrs + BinaryConstrs == Annotated, msg); 
+    ValuesPerVar := { [v, Values] : v in Variables };
+    for ([f, V] in UnaryConstrs) {
+        var               := arb(V);
+        ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
+    }
     check {
-        return bt_search({}, csp);
+        return bt_search({}, [Variables, ValuesPerVar, BinaryConstrs]);
     }
 };
+// Given a constraint containing only variable, find the values that satisfy
+// this constraint.
+solve_unary := procedure(constraint, variable, Values) {
+    LegalValues := {};
+    for (value in Values) {
+        Assignment := { [variable, value] };
+        if (eval_constraint(Assignment, constraint, { variable })) {
+            LegalValues += { value };
+        }
+    }
+    return LegalValues;
+};
+
 // Given a partial assignment of variable, this procedure tries to complete
 // this assignment so that the given CSP is solved.
 bt_search := procedure(Assignment, csp) {
@@ -115,17 +135,17 @@ is_consistent := procedure(var, value, Assignment, Constraints) {
 main := procedure() {
     resetRandom();
     startTotal := now();
-    numIterations := 10;
+    numIterations := 1;
     for (i in [1..numIterations]) {
-        lower := 32;
-        upper := 32;
+        lower :=  4;
+        upper := 16;
         for (n in [lower .. upper]) {
             csp      := queensCSP(n);   
             start    := now();
             solution := solve(csp);
             stop     := now();
             total    := (stop - start) / 1000.0;
-            // printBoard(solution);
+            printBoard(solution);
             print("The computation for the $n$ queens problem took $total$ seconds.");
         }
     }

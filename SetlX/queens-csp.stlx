@@ -58,6 +58,7 @@ queensCSP := procedure(n) {
         // i - Vi != j - Vj 
         Constraints += { "$i$ - V$i$ != $j$ - V$j$" };
     }
+    Constraints += { "V1 == 1" };
     return [Variables, Values, Constraints];
 };
 
