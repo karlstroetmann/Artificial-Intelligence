@@ -630,12 +630,12 @@ only a single variable.
                 ]
     solve := procedure(csp) {
         [Variables, Values, Constrs] := csp;
+        ValuesPerVar  := { [v, Values] : v in Variables };
         Annotated     := { [f, collectVars(f)] : f in Constrs };
         UnaryConstrs  := { [f, V] : [f, V] in Annotated | #V == 1 };
         BinaryConstrs := { [f, V] : [f, V] in Annotated | #V == 2 };
         msg := "Constraints should be either unary or binary!";
         assert(UnaryConstrs + BinaryConstrs == Annotated, msg); 
-        ValuesPerVar := { [v, Values] : v in Variables };
         for ([f, V] in UnaryConstrs) {
             var               := arb(V);
             ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
@@ -644,6 +644,48 @@ only a single variable.
             return bt_search({}, [Variables, ValuesPerVar, BinaryConstrs]);
         }
     };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Constraint Propagation.}
+\label{fig:csp-constraint-propagation.stlx-1}
+\end{figure}
+
+In order to implement constraint propagation, it is necessary to administer the values that can be used
+to instantiate the different variables separately, i.e.~for every variable $\mathtt{v}$ we need to know which
+values are admissible for $\mathtt{v}$.  To this end, we need a dictionary that contains the set of possible
+values for every variable $\mathtt{v}$.  Initially, this dictionary assigns the set $\mathtt{Values}$ to
+every variable.  Next, we take care of the unary constraints and shrink these sets accordingly.  Then we solve
+the binary constraints and shrink these sets even more once we assign values to variables.
+\begin{enumerate}
+\item The procedure $\mathtt{solve}$ receives a $\mathtt{csp}$.  This $\mathtt{csp}$ is first split into its three components.
+\item The first task of $\mathtt{solve}$ is to create the dictionary $\mathtt{ValuesPerVar}$.  
+      Given a variable $\mathtt{v}$, this dictionary assigns the set of values that can be used to instantiate this
+      variable.  Initially, this set is the same for all variables and is equal to $\mathtt{Values}$.
+\item Next, for every constraint $\mathtt{f}$, the dictionary $\mathtt{Annotated}$ attaches the
+      variables occurring in a constraint $\mathtt{f}$ to $\mathtt{f}$.
+\item In order to solve the unary constraints we first have to find them.
+      The set $\mathtt{UnaryConstrs}$ contains all those pairs $[\mathtt{f}, \mathtt{V}]$ from the set of
+      annotated constraints $\mathtt{Annotated}$ such that the set of variables $\mathtt{V}$ contains just a
+      single variable. 
+\item Similarly, the set $\mathtt{BinaryConstrs}$ contains those constraints that involve two variables.
+\item We assume that the set of constraints $\mathtt{Annotated}$ only contains unary and binary constraints.
+\item In order to solve the unary constraints, we iterate over all unary constraints and shrink the set of
+      values associated with the variable occurring in the constraint accordingly.
+\item Then, the dictionaries $\mathtt{VariablesPerVar}$ and $\mathtt{BinaryConstrs}$ are combined with the set
+      of $\mathtt{Variables}$ into a triple that is used as the argument to the call of $\mathtt{bt\_search}$.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
     solve_unary := procedure(constraint, variable, Values) {
         LegalValues := {};
         for (value in Values) {
@@ -654,6 +696,36 @@ only a single variable.
         }
         return LegalValues;
     };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Implementation of $\mathtt{solve\_unary}$.}
+\label{fig:csp-constraint-propagation.stlx:solve_unary}
+\end{figure}
+
+The function $\mathtt{solve\_unary}$ shown in \myFig{csp-constraint-propagation.stlx:solve_unary} takes a unary
+$\mathtt{constraint}$, a $\mathtt{variable}$ and the set of $\mathtt{Values}$ that can be assigned to this
+$\mathtt{variable}$.  It returns the subset of values that satisfy the given $\mathtt{constraint}$.
+\begin{enumerate}
+\item To achieve its goal, $\mathtt{solve\_unary}$ iterates over all possible $\mathtt{Values}$.  
+\item Next, for every $\mathtt{value}$ in the set $\mathtt{Values}$, an $\mathtt{Assignment}$ is created that assign
+      the $\mathtt{value}$ to this $\mathtt{variable}$.
+\item Then the $\mathtt{constraint}$ is evaluated with this $\mathtt{Assignment}$.
+\item If the $\mathtt{constraint}$ is satisfied under this $\mathtt{Assignment}$, the $\mathtt{value}$ is added to the set
+      $\mathtt{LegalValues}$, which is the set of values which satisfy the unary $\mathtt{constraint}$.
+\item Finally, the set of $\mathtt{LegalValues}$ is returned.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
     bt_search := procedure(Assignment, csp) {
         [Variables, Values, Constraints] := csp;
         if (#Assignment == #Variables) {
@@ -673,27 +745,12 @@ only a single variable.
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{}
-\label{fig:csp-constraint-propagation.stlx-1}
+\caption{Implementation of $\mathtt{bt\_search}$.}
+\label{fig:csp-constraint-propagation.stlx:bt_search}
 \end{figure}
 
-In order to implement constraint propagation, it is necessary to administer the values that can be used
-to instantiate the different variables separately, i.e.~for every variable $\mathtt{v}$ we need to know which
-values are admissible for $\mathtt{v}$.  To this end, we need a dictionary that contains the set of possible
-values for every variable $\mathtt{v}$.  Initially, this dictionary assigns the set $\mathtt{Values}$ to
-every variable.  These sets will shrink once we start to assign values to variables.
-\begin{enumerate}
-\item The procedure $\mathtt{solve}$ receives a $\mathtt{csp}$.  This $\mathtt{csp}$ is first split into its
-      components.
-\item The first task of $\mathtt{solve}$ is to create the dictionary $\mathtt{ValuesPerVar}$.  
-      Given a variable $\mathtt{v}$, this dictionary assigns the set of values that can be used to instantiate this
-      variable.  Initially, this set is the same for all variables and is equal to $\mathtt{Values}$.
-\item Next, for every constraint $\mathtt{f}$, the dictionary $\mathtt{AnnotatedConstraints}$ attaches the
-      variables occurring in a constraint $\mathtt{f}$ to $\mathtt{f}$.
-\item These two dictionaries are then combined with the set of $\mathtt{Variables}$ into a triple that is used
-      as the argument to the call of $\mathtt{bt\_search}$.
-\end{enumerate}
-The procedure $\mathtt{bt\_search}$ is called with a partial $\mathtt{Assignment}$ that is guaranteed to be
+The procedure $\mathtt{bt\_search}$ shown in \myFig{csp-constraint-propagation.stlx:bt_search} is called with a
+partial $\mathtt{Assignment}$ that is guaranteed to be 
 consistent and a $\mathtt{csp}$.  It tries to complete $\mathtt{Assignment}$ and thereby computes a solution to the $\mathtt{csp}$.
 \begin{enumerate}
 \item First, it decomposes the $\mathtt{csp}$ into its components:
