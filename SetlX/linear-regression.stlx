@@ -16,7 +16,7 @@ run_linear_regression := procedure(fileName, types) {
     w := la_solve(X! * X, X! * y);
     d := X * w - y;
     
-    E := +/ [ abs(d[i][1]) : i in [1 .. number] ] / number;
+    E := +/ [ abs(d[i]) : i in [1 .. number] ] / number;
     return [w, E];
 };
 
