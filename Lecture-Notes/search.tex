@@ -2109,7 +2109,72 @@ while the last bucket can hold 3 liters.  There are three types of action:
 \end{enumerate}
 Your goal is to measure out exactly one liter.  Write a program that computes a plan to achieve this goal.
 \eox
+\pagebreak
 
+\exercise
+The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the philosopher
+\href{https://en.wikipedia.org/wiki/Laozi}{Lao-Tzu} once said: 
+\\[0.2cm]
+\hspace*{1.3cm}
+\textsl{``A journey of a thousand miles begins but with a single step''}.
+\\[0.2cm]
+This proverb is the foundation of \emph{\color{blue}taoistic search}.  The idea is, instead of trying to reach
+the goal directly, we rather define some intermediate states which are easier to reach but that are nearer to
+the goal.  To make this idea more precise, consider the following instance of the 15-puzzle, where the states 
+$\mathtt{Start}$ and $\mathtt{Goal}$ are given as follows:
+\begin{verbatim}
+       Start :=  +---+---+---+---+    Goal :=  +---+---+---+---+
+                 |14 |15 | 8 |12 |             | 1 | 2 | 3 | 4 |
+                 +---+---+---+---+             +---+---+---+---+
+                 |10 |11 | 9 |13 |             | 5 | 6 | 7 | 8 |
+                 +---+---+---+---+             +---+---+---+---+
+                 | 2 | 6 | 5 | 1 |             | 9 |10 |11 |12 |
+                 +---+---+---+---+             +---+---+---+---+
+                 | 3 | 7 | 4 |   |             |13 |14 |15 |   |
+                 +---+---+---+---+             +---+---+---+---+
+\end{verbatim}
+This is one of the hardest instances of the fifteen puzzle.  In order to solve the puzzle, we could try to
+first move the tile numbered with a $1$ into the upper left corner.  The resulting state would have the
+following form:
+\begin{verbatim}
+                 +---+---+---+---+
+                 | 1 | * | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+\end{verbatim}
+Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do not care about the actual
+character in the state, for we only want to ensure that the upper left contains a $1$.  Once we have reached a
+state specified by the pattern given above, we could the proceed to reach a state that is described by the
+following pattern:
+\begin{verbatim}
+                 +---+---+---+---+
+                 | 1 | 2 | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+\end{verbatim}
+I have prepared a framework for taoistic search.  The file
+\\[0.2cm]
+\hspace*{-0.8cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
+\\[0.2cm]
+contains a framework for the sliding puzzle where some functions are left unimplemented.  The file
+\\[0.2cm]
+\hspace*{-0.8cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}}
+\\[0.2cm]
+is also required.  It contains an adapted form of $\mathrm{A}^*$ search.  More Details will be given in the
+lecture.  Your task is to implement the missing functions in the file \texttt{sliding-puzzle-frame.stlx}.
+\eox
 
 %%% Local Variables:
 %%% mode: latex
