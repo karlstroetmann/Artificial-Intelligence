@@ -786,10 +786,30 @@ $\mathtt{search}$ that is given in \myFig{depth-first-search-path.stlx} is not a
 instance of the  $3 \times 3$ sliding puzzle that was shown in \myFig{8-puzzle.pdf}.
 
 \exercise
-Assume that a single state can be stored using 8 bytes.  Furthermore, assume that the top of the
-stack in the procedure $\mathtt{search}$ contains a list of length $n$.  How many bytes are 
-\underline{at least} needed to store all the states that are put on the stack?  
-How big is this memory if $n = 10,000$?
+Assume the set of states $Q$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$Q := \bigl\{ \pair(a, b) \mid a \in \mathbb{N} \wedge b \in \mathbb{N} \bigr\}$.
+\\[0.2cm]
+Furthermore, the states $\mathtt{start}$ and $\mathtt{goal}$ are defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,0)$ where $n \in \mathbb{N}$.
+\\[0.2cm]
+Next, the function $\mathtt{nextStates}$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}$.
+\\[0.2cm]
+Finally, the search problem $\mathcal{P}$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{P} := \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \rangle$.
+\\[0.2cm]
+Assume that states can be stored using 8 bytes.  Furthermore, assume that we use the algorithm given in
+\myFig{depth-first-search-path.stlx} to solve the search problem $\mathcal{P}$.
+How many bytes do we need to store all the states on the stack in the moment that the $\mathtt{goal}$
+is reached? How big is this number if $n = 10,000$?
 \vspace*{0.2cm}
 
 \noindent
@@ -798,10 +818,17 @@ How big is this memory if $n = 10,000$?
       needed to store the stack itself and the various lists on the stack comes on top of the memory
       needed to store the states.  However,
       to answer this exercise correctly, you should ignore this type of memory.
-\item If we only know that the path on top of the stack has a length of $n$, then this fact does not
-      tell us the actual size of the stack.  However, it does provide a lower bound on the size of
-      the stack and a lower bound is all that is needed.
-      \eoxs
+\item In order to understand how the stack evolves, we need to know that in \textsc{SetlX} sets are ordered
+      ascendigly.  Furthermore, pairs are ordered lexicographically in \textsc{SetlX}, i.e. we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\pair(x_1, y_1) < \pair(x_2, y_2) \quad\Longleftrightarrow\quad x_1 < x_2 \vee (x_1 = x_2 \wedge y_1 < y_2)$.
+      \\[0.2cm]
+      Hence, when we have a state $\pair(a, b)$, the set $\mathtt{nextStates}\bigl(\pair(a, b)\bigr)$ is
+      ordered as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\bigl\{\pair(a,b+1)\bigr\}, \pair(a+1,b) \bigr\}$. \eoxs
 \end{enumerate}
 
 \subsection{A Recursive Implementation of Depth First Search}
@@ -1210,6 +1237,7 @@ which of these neighbours might be more promising than the other neighbours.  If
 problem, she usually will develop a feeling that certain states are more favourable than other states because
 they seem to be closer to the solution.  In order to formalise this procedure, we next define the notion of a 
 \emph{\color{blue}heuristic}.
+\pagebreak
 
 \begin{Definition}[Heuristic]
 Given a search problem
@@ -2112,7 +2140,7 @@ Your goal is to measure out exactly one liter.  Write a program that computes a 
 \pagebreak
 
 \exercise
-The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the philosopher
+The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher
 \href{https://en.wikipedia.org/wiki/Laozi}{Lao-Tzu} once said: 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -2120,8 +2148,8 @@ The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the philosop
 \\[0.2cm]
 This proverb is the foundation of \emph{\color{blue}taoistic search}.  The idea is, instead of trying to reach
 the goal directly, we rather define some intermediate states which are easier to reach but that are nearer to
-the goal.  To make this idea more precise, consider the following instance of the 15-puzzle, where the states 
-$\mathtt{Start}$ and $\mathtt{Goal}$ are given as follows:
+the goal that the start state.  To make this idea more precise, consider the following instance of the
+15-puzzle, where the states $\mathtt{Start}$ and $\mathtt{Goal}$ are given as follows:
 \begin{verbatim}
        Start :=  +---+---+---+---+    Goal :=  +---+---+---+---+
                  |14 |15 | 8 |12 |             | 1 | 2 | 3 | 4 |
@@ -2148,7 +2176,7 @@ following form:
                  +---+---+---+---+
 \end{verbatim}
 Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do not care about the actual
-character in the state, for we only want to ensure that the upper left contains a $1$.  Once we have reached a
+character in the state, for we only want to ensure that the upper left corner contains a $1$.  Once we have reached a
 state specified by the pattern given above, we could the proceed to reach a state that is described by the
 following pattern:
 \begin{verbatim}
@@ -2162,6 +2190,7 @@ following pattern:
                  | * | * | * | * |
                  +---+---+---+---+
 \end{verbatim}
+This way, slowly but surely we will reach the goal.
 I have prepared a framework for taoistic search.  The file
 \\[0.2cm]
 \hspace*{-0.8cm}

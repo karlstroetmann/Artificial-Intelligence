@@ -96,12 +96,12 @@ main := procedure() {
                [  9, 10, 11, 12 ],
                [ 13, 14, 15,  0 ]
              ];
-    startTime  := now();
-    TileList   := [1, 2, 3, 4, 5, 9, 13, 6, 7, 8, 10, 14, 11, 12, 15];
-    PaternList := create_intermediate(Goal, TileList);
-    State      := Start;
-    Solution   := [];
-    for (Pattern in PaternList) {
+    startTime   := now();
+    TileList    := [1, 2, 3, 4, 5, 9, 13, 6, 7, 8, 10, 14, 11, 12, 15];
+    PatternList := create_intermediate(Goal, TileList);
+    State       := Start;
+    Solution    := [];
+    for (Pattern in PatternList) {
         print("Trying to reach the following pattern:");
         print(stateToString(Pattern));
         [State, Path] := aStarSearch(State, Pattern, nextStates, manhattan);
