@@ -1,17 +1,17 @@
 // This data structure is intented to represent a table in a way similar to
-// tables seen in databases.
-
-class table(columnNames, types, data) {
+// tables seen in databases.  The parameter types is a list of the data
+// types of the columns.  Currently, only the data types "int", "double, and
+// "string" are supported.
+class Table(columnNames, types, data) {
     mColumnNames := columnNames;
     mTypes       := types;
     mData        := data;
-
   static {
       getColumnNames := [ ] |-> mColumnNames;
       getTypes       := [ ] |-> mTypes;
       getData        := [ ] |-> mData;
       getRow         := [r] |-> mData[r];
-      getLength      := []  |-> #mData;
+      getLength      := [ ] |-> #mData;
       
       head := procedure(limit := 10) {
           print(mColumnNames);
@@ -23,18 +23,17 @@ class table(columnNames, types, data) {
   }
 }
 
-// The argument fileName is the name of a csv
-// file.  The first line of this file should be strings giving the column
-// names.  The remaining lines are the data.
+// The argument fileName is the name of a csv file.  The first line of this file
+// should be strings specifying the column0 names.  The remaining lines are the data.
 readTable := procedure(fileName, types) {
-    all := readFile(fileName);
-    columnNames := split(all[1], ',\s*');
-    data := [];
-    for (i in [2 .. #all]) {
-        row := split(all[i], ',\s*');
+    allData     := readFile(fileName);  // list of lines
+    columnNames := split(allData[1], ',\s*');
+    data        := [];
+    for (i in [2 .. #allData]) {
+        row       := split(allData[i], ',\s*');
         data[i-1] := [evalType(type, s) : [type, s] in types >< row];
     }
-    return table(columnNames, types, data);
+    return Table(columnNames, types, data);
 };
 
 evalType := procedure(type, s) {
