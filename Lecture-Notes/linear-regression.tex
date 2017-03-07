@@ -797,6 +797,16 @@ $y^{(4)} := y^{(1)} + y^{(2)} + y^{(3)}$,
 then you have not generated any new information and the fourth training example will not help in making the matrix 
 $X^T \cdot X$ invertible.
 
+\subsection{Testing the Statistical Significance}
+
+\begin{equation}
+  \label{eq:F-statistic}
+  F = \frac{\mathtt{TSS} - \mathtt{RSS}}{\mathtt{RSS}} \cdot \frac{m - p - 1}{p}
+\end{equation}
+The $\mathtt{F}$-statistic is distributed according to the
+\href{https://en.wikipedia.org/wiki/F-distribution}{Fisher-Snedecor-distribution} with $p$ degrees of freedom
+in the nominator and $m - p - 1$ degrees of freedom in the denominator. 
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "artificial-intelligence"
