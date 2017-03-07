@@ -1,0 +1,48 @@
+load("table.stlx");
+
+// Find the index of name in List.
+find_index := procedure(name, List) {
+    index := 0;
+    for (s in List) {
+        index += 1;
+        if (s == name) {
+            return index;
+        }
+    }
+    assert(false, "$name$ not found in $List$");
+};
+simple_linear_regression := procedure(fileName, types, name) {
+    csv  := readTable(fileName, types);
+    data := csv.getData();
+    m    := #data;
+    idx  := find_index(name, csv.getColumnNames());
+    Y    := [];
+    X    := [];
+    L    := [1 .. m];
+    for (i in L) {
+        Y[i] := 1 / data[i][1];
+        X[i] := data[i][idx];
+    }
+    xMean  := +/ X / m;
+    yMean  := +/ Y / m;
+    theta1 := (+/ [(X[i]-xMean)*(Y[i]-yMean) : i in L]) / (+/ [(X[i]-xMean)**2 : i in L]);
+    theta0 := yMean - theta1 * xMean;
+    TSS    := +/ [(Y[i] - yMean) ** 2 : i in L];
+    RSS    := +/ [(theta0 + theta1 * X[i] - Y[i]) ** 2 : i in L];
+    R2     := 1 - RSS / TSS;
+    XSS    := +/ [(X[i] - xMean) ** 2 : i in L];
+    t      := abs(theta1) * sqrt((m-2) / RSS * XSS);
+    p      := 1 - stat_studentCDF(t, m-2);
+    print(t, p);
+    return [R2, p];
+};
+
+test := procedure() {
+    types := ["double", "int", "double", "double", "double", "double", "int", "string"];
+    for (varName in ["displacement", "cyl", "hp", "weight", "acc", "year"]) {
+        [R2, p] := simple_linear_regression("cars.csv", types, varName);
+        print("The explained variance for $varName$ vs fuel consumption is $R2$, p value: $p$."); 
+    }
+};
+
+test();
