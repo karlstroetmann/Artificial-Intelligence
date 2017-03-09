@@ -1947,7 +1947,8 @@ is not sufficient to support the bidirectional $\mathrm{A}^*$ algorithm.
 So far, from all of the algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
 bidirectional $\mathrm{A}^*$ search is only feasible if sufficient memory is available.   While
 $\mathrm{IDA}^*$ requires more time, its memory consumption is much lower than the memory consumption of
-bidirectional $\mathrm{A}^*$.  Hence, it is natural to try to combine these two algorithms.  Concretely, the
+bidirectional $\mathrm{A}^*$.  Hence, it is natural to try to combine the $\mathrm{A}^*$ algorithm and the
+$\mathrm{IDA}^*$ algorithm.  Concretely, the
 idea is to run an $\mathrm{A}^*$ search from the $\mathtt{start}$ node until memory is more or less
 exhausted.  Then, we start $\mathrm{IDA}^*$ from the $\mathtt{goal}$ node and search until we find any of the
 nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\mathtt{start}$ node.
@@ -2058,11 +2059,11 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
       $\mathrm{A}^*$ search from the node $\mathtt{goal}$.  This search terminates as soon as a state is found
       that has already been encountered during the $\mathrm{A}^*$ search.  The set of these nodes is given to
       the procedure $\mathtt{deepeningSearch}$ via the parameter $\mathrm{Distance}$.  The procedure
-      $\mathtt{deepeningSearch}$ returns a pair.  The first component of this pair is the state $s$.  This is
+      $\mathtt{deepeningSearch}$ returns a pair.  The first component of this pair is the state $\mathtt{s}$.  This is
       the state in $\mathtt{Distance}$ that has been reached by the $\mathrm{IDA}^*$ search.  The second component is the
-      path $P$ that leads from the node $s$ to the node $\mathtt{goal}$ but that does not include the node $s$.
+      path $\mathtt{P}$ that leads from the node $\mathtt{s}$ to the node $\mathtt{goal}$ but that does not include the node $\mathtt{s}$.
       In order to compute a path from $\mathtt{start}$ to $\mathtt{goal}$, we still have to compute a
-      path from $\mathtt{start}$ to $s$.  This path is then combined with the path $P$ and the resulting path
+      path from $\mathtt{start}$ to $s$.  This path is then combined with the path $\mathtt{P}$ and the resulting path
       is returned.
 \end{enumerate}
 
@@ -2141,7 +2142,7 @@ Your goal is to measure out exactly one liter.  Write a program that computes a 
 
 \exercise
 The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher
-\href{https://en.wikipedia.org/wiki/Laozi}{Lao-Tzu} once said: 
+\href{https://en.wikipedia.org/wiki/Laozi}{Laozi} once said: 
 \\[0.2cm]
 \hspace*{1.3cm}
 \textsl{``A journey of a thousand miles begins but with a single step''}.

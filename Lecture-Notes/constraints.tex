@@ -7,7 +7,7 @@ This chapter is structured as follows:
       applications of constraint satisfaction problems.
 \item The simplest algorithm to solve a constraint satisfaction problem is via \emph{\color{blue}brute force search}.
       The idea behind brute force search is to test all possible variable assignments.
-\item In most cases, the number of variable assignments is too big to be enumerated completely.
+\item In most cases, the search space is too big to be enumerated completely.
       \emph{\color{blue}Backtracking search} improves on brute force search by mixing the generation
       of assignments with the testing of the constraints.  In most cases, this approach can
       drastically improve the performance of the search algorithm.
@@ -26,12 +26,12 @@ $\mathcal{P} := \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \ra
 \\[0.2cm]
 where
 \begin{enumerate}
-\item $\mathtt{Vars}$ is a set of strings which serve as \emph{variables},
-\item $\mathtt{Values}$ is a set of \emph{values} for the variables in $\mathtt{Vars}$.
-\item $\mathtt{Constraints}$ is a set of formulae from \emph{\color{blue}first order logic}.  Each of these formulae is
+\item $\mathtt{Vars}$ is a set of strings which serve as \emph{\color{blue}variables},
+\item $\mathtt{Values}$ is a set of \emph{\color{blue}values} that can be assigned to the variables in $\mathtt{Vars}$.
+\item $\mathtt{Constraints}$ is a set of formul\ae\ from \emph{\color{blue}first order logic}.  Each of these formul\ae\ is
       called a \emph{\color{blue}constraint} of $\mathcal{P}$.
 
-      In order to be able to interpret these formulae, we need a $\emph{first order structure}$ $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
+      In order to be able to interpret these formul\ae, we need a \emph{\color{blue}first order structure} $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
       Here, $\mathcal{U}$ is the $\emph{\color{blue}universe}$ of $\mathcal{S}$ and we will assume that this
       universe is identical to the set $\mathtt{Values}$. The second component $\mathcal{J}$ is the
       \emph{\color{blue}interpretation} of the function symbols and predicate symbols that are used in the 
@@ -51,7 +51,7 @@ $A: \mathtt{Vars} \rightarrow \mathtt{Values}$.
 \\[0.2cm]
 A variable assignment $A$ is a \emph{\color{blue}solution} of the \textsc{Csp} $\mathcal{P}$ 
 if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied.
-Finally, a \emph{partial variable assignment} $B$ for $\mathcal{P}$ is a function
+Finally, a \emph{\color{blue}partial variable assignment} $B$ for $\mathcal{P}$ is a function
 \\[0.2cm]
 \hspace*{1.3cm}
 $B: \mathtt{Vars} \rightarrow \mathtt{Values} \cup \{ \Omega \}$.
