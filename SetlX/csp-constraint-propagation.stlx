@@ -26,7 +26,7 @@ varsTerm := procedure(f) {
         case lhs => rhs:        return varsTerm(lhs) + varsTerm(rhs);
         case lhs <==> rhs:      return varsTerm(lhs) + varsTerm(rhs);
         case lhs <!=> rhs:      return varsTerm(lhs) + varsTerm(rhs);
-        default:                abort("syntax error in varsTerm($f$)");
+        default:                return +/ [ varsTerm(t) : t in args(f) ];
     }
 };
 
@@ -135,17 +135,17 @@ is_consistent := procedure(var, value, Assignment, Constraints) {
 main := procedure() {
     resetRandom();
     startTotal := now();
-    numIterations := 1;
+    numIterations := 10;
     for (i in [1..numIterations]) {
-        lower :=  4;
-        upper := 16;
+        lower := 8;
+        upper := 32;
         for (n in [lower .. upper]) {
             csp      := queensCSP(n);   
             start    := now();
             solution := solve(csp);
             stop     := now();
             total    := (stop - start) / 1000.0;
-            printBoard(solution);
+            // printBoard(solution);
             print("The computation for the $n$ queens problem took $total$ seconds.");
         }
     }
