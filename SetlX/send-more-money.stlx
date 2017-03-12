@@ -1,0 +1,42 @@
+//    S E N D
+//  + M O R E
+//  ---------
+//  M O N E Y
+
+createCSP := procedure() {
+    Variables   := { "S", "E", "N", "D", "M", "O", "R", "Y", "C1", "C2", "C3" };
+    Values      := { 0 .. 9 };
+    Constraints := allDifferent({ "S", "E", "N", "D", "M", "O", "R", "Y" });
+    Constraints += { "(D + E) % 10 == Y", "(D + E) \\ 10 == C1",
+                     "(N + R + C1) % 10 == E", "(N + R + C1) \\ 10 == C2",
+                     "(E + O + C2) % 10 == N", "(E + O + C2) \\ 10 == C3",
+                     "(S + M + C3) % 10 == O", "(S + M + C3) \\ 10 == M"
+                   };
+    Constraints += { "S != 0", "M != 0" };
+    // Adding the constraints below is like cheating.
+    // Constraints += { "C1 < 2", "C2 < 2", "C3 < 2" };  
+    return [Variables, Values, Constraints];
+};
+allDifferent := procedure(Vars) {
+    return { "$x$ != $y$" : x in Vars, y in Vars | x != y };
+};
+
+printSolution := procedure(A) {
+    if (A == om) {
+        print("no solution found");
+        return;
+    }
+    for (v in { "S", "E", "N", "D", "M", "O", "R", "Y" }) {
+        print("$v$ = $A[v]$");
+    }
+    print("The solution of\n");
+    print("    S E N D");
+    print("  + M O R E");
+    print("  ---------");
+    print("  M O N E Y");
+    print("\nis as follows\n");
+    print("    $A[\"S\"]$ $A[\"E\"]$ $A[\"N\"]$ $A[\"D\"]$");
+    print("  + $A[\"M\"]$ $A[\"O\"]$ $A[\"R\"]$ $A[\"E\"]$");
+    print("  ==========");
+    print("  $A[\"M\"]$ $A[\"O\"]$ $A[\"N\"]$ $A[\"E\"]$ $A[\"E\"]$");
+};
