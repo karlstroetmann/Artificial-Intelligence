@@ -95,12 +95,12 @@ main := procedure() {
         lower := 4;
         upper := 16;
         for (n in [lower .. upper]) {
-            csp      := queensCSP(n);   
+            csp      := createCSP(n);   
             start    := now();
             solution := solve(csp);
             stop     := now();
             total    := (stop - start) / 1000.0;
-            // printBoard(solution);
+            printSolution(solution);
             print("The computation for the $n$ queens problem took $total$ seconds.");
         }
     }

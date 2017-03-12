@@ -45,7 +45,7 @@
 //
 
 // Create a constraint satisfacton problem for the n queens problem.
-queensCSP := procedure(n) {
+createCSP := procedure(n) {
     Variables   := { "V$i$" : i in {1..n} };
     Values      := { 1 .. n };
     Constraints := {};
@@ -58,14 +58,13 @@ queensCSP := procedure(n) {
         // i - Vi != j - Vj 
         Constraints += { "$i$ - V$i$ != $j$ - V$j$" };
     }
-    Constraints += { "V1 == 1" };
     return [Variables, Values, Constraints];
 };
 
 // This procedure prints the chessboard that iis specified by Queens. Queens is
 // a list of length n. For all i in [1..n], Queens[i] specifies the column of
 // the queen that is positioned in row i.
-printBoard := procedure(Assignment) {
+printSolution := procedure(Assignment) {
     if (Assignment == om) {
         print("no solution found");
         return;
