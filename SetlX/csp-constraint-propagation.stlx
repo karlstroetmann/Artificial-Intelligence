@@ -1,6 +1,6 @@
 loadLibrary("termUtilities");
-// load("queens-csp.stlx");
-load("send-more-money.stlx");
+load("queens-csp.stlx");
+// load("send-more-money.stlx");
 
 // This function collects all variables occurring in the formula f.
 // To simplify things it is asssumed that f is either an equation or
@@ -99,7 +99,7 @@ propagate := procedure(x, v, Assignment, Constraints, Values) {
         y := arb(Vars - { x });  
         if (!(y in domain(NewAssignment))) {
             NewValues := Values[y];
-            for (w in Values[y]) {
+            for (w in NewValues) {
                 A2 := NewAssignment + { [y, w] };
                 if (!eval_constraint(A2, Formula, Vars)) {
                     NewValues -= { w };
@@ -139,7 +139,7 @@ is_consistent := procedure(var, value, Assignment, Constraints) {
 main := procedure() {
     resetRandom();
     startTotal := now();
-    numIterations := 10;
+    numIterations := 1;
     for (i in [1..numIterations]) {
         lower := 8;
         upper := 32;
@@ -168,5 +168,5 @@ mainMoney := procedure() {
     print("The computation took $total$ seconds.");
 };
 
-// main();
-mainMoney();
+main();
+// mainMoney();
