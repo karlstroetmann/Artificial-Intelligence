@@ -149,7 +149,7 @@ main := procedure() {
             solution := solve(csp);
             stop     := now();
             total    := (stop - start) / 1000.0;
-            printSolution(solution);
+            // printSolution(solution);
             print("The computation for the $n$ queens problem took $total$ seconds.");
         }
     }

@@ -26,7 +26,7 @@ varsTerm := procedure(f) {
         case lhs => rhs:        return varsTerm(lhs) + varsTerm(rhs);
         case lhs <==> rhs:      return varsTerm(lhs) + varsTerm(rhs);
         case lhs <!=> rhs:      return varsTerm(lhs) + varsTerm(rhs);
-        default:                return +/ [ varsTerm(t) : t in args(f) ];
+        default:                abort("syntax error in varsTerm($f$)");
     }
 };
 
@@ -64,10 +64,6 @@ check_all_constraints := procedure(Assignment, Constraints) {
     }
     return true;
 };       
-// Evaluate a formula under a given Assignment.
-//   Assignment: Binary relation assigning values to variables
-//   Vars:       Set of variables occurring in Formula
-//   Formula:    The formula to evaluate
 eval_constraint := procedure(Assignment, Formula, Vars) {
     for (v in Vars) {
         execute("$v$ := $Assignment[v]$;");
@@ -75,7 +71,6 @@ eval_constraint := procedure(Assignment, Formula, Vars) {
     return eval(Formula);
 };
 main := procedure() {
-    resetRandom();
     startTotal := now();
     numIterations := 1;
     for (i in [1..numIterations]) {

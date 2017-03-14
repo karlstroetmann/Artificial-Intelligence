@@ -33,7 +33,6 @@ aStarIdaStarSearch := procedure(start, goal, nextStates, heuristic, size) {
     [s, P] := deepeningSearch(goal, start, nextStates, heuristic, Distance);
     return pathTo(s, Parent) + P;
 };
-
 deepeningSearch := procedure(g, s, nextStates, heuristic, Distance) {
     limit := 0;
     while (true) {
@@ -45,7 +44,6 @@ deepeningSearch := procedure(g, s, nextStates, heuristic, Distance) {
         limit := Path;
     }
 };
-
 search := procedure(g, s, nextStates, d, l, heuristic, Path, Dist) {
     total := d + heuristic(g, s);
     if (total > l) {

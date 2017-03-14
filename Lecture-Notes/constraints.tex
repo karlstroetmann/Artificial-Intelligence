@@ -13,6 +13,8 @@ This chapter is structured as follows:
       drastically improve the performance of the search algorithm.
 \item Backtracking search can be refined by using \emph{\color{blue}constraint propagation} and by
       using the \emph{\color{blue}most restricted variable} heuristic.
+\item Furthermore, checking the \emph{\color{blue}consistency} of the values assigned to different variables
+      can reduce the size of the search space considerably. 
 \item Finally, \emph{\color{blue}local search} is a completely different approach to solve
       constraint satisfaction problems.
 \end{enumerate}
@@ -96,7 +98,7 @@ problem can be formalized as a constraint satisfaction problem.  To this end we 
 \item $\mathtt{Vars} := \{ \mathrm{WA}, \mathrm{NT}, \mathrm{SA}, \mathrm{Q}, \mathrm{NSW}, \mathrm{V}, \mathrm{T} \}$,
 \item $\mathtt{Values} := \{ \mathtt{red}, \mathtt{green}, \mathtt{blue} \}$,
 \item $\mathtt{Constraints} := 
-         \bigl\{ \mathrm{WT} \not= \mathrm{NT}, \mathrm{WT} \not= \mathrm{SA},
+         \bigl\{ \mathrm{WA} \not= \mathrm{NT}, \mathrm{WA} \not= \mathrm{SA},
                  \mathrm{NT} \not= \mathrm{SA}, \mathrm{NT} \not= \mathrm{Q},
                  \mathrm{SA} \not= \mathrm{Q}, \mathrm{SA} \not= \mathrm{NSW}, \mathrm{SA} \not= \mathrm{V}, 
                  \mathrm{V} \not = \mathrm{T}
@@ -913,6 +915,321 @@ discussed in this section.  You should also try to solve the puzzle using the pr
 section.  Compare the results.
 \eoxs
 
+\section{Consistency Checking}
+So far, the constraints in the constraints satisfaction problems discussed are either \emph{\color{blue}unary constraints} 
+or \emph{\color{blue}binary constraints}:  A \emph{\color{blue}unary} constraint is a constraint $\mathtt{f}$
+such that the formula $\mathtt{f}$ contains only one variable, while a \emph{\color{blue}binary} constraint
+contains two variables.  If we have a constraint satisfaction problem that involves also constraints that
+mention more than two variables, then the constraint propagation shown in the previous section does not apply.
+For example, consider the \href{https://en.wikipedia.org/wiki/Verbal_arithmetic}{cryptarithmetic puzzle} shown
+in \myFig{send-more-money.pdf}.  The idea is that the letters 
+``$\mathtt{S}$'', ``$\mathtt{E}$'', ``$\mathtt{N}$'', ``$\mathtt{D}$'', ``$\mathtt{M}$'', ``$\mathtt{O}$'', ``$\mathtt{R}$'', ``$\mathtt{Y}$'' 
+are interpreted as variables ranging over the set of decimal digits, i.e.~these variables can take values in
+the set $\{0,1,2,3,4,5,6,7,8,9\}$.  Then, the string ``$\mathtt{SEND}$'' is interpreted as a decimal number,
+i.e.~it is interpreted as the number
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{S} \cdot 10^3 + \mathtt{E} \cdot 10^2 + \mathtt{N} \cdot 10^1 + \mathtt{D} \cdot 10^0$.
+\\[0.2cm]
+The strings ``$\mathtt{MORE}$ and ``$\mathtt{MONEY}$'' are interpreted similarly. To make the problem
+interesting, the assumption is that different variables have different values.  Furthermore, the
+decimals at the beginning of a number should be different from $0$.
+
+
+\begin{figure}[!ht]
+\centering
+\framebox{\epsfig{file=Figures/send-more-money.pdf, scale=0.4}}
+
+\caption{A cryptarithmetic puzzle}
+\label{fig:send-more-money.pdf}
+\end{figure}
+
+
+\noindent
+A na\"ive approach to solve this problem would be to code it as a constraint satisfaction problem that has,
+among others,  the
+following constraint:
+\\[0.2cm]
+\hspace*{1.3cm}
+$   (\mathtt{S} \cdot 10^3 + \mathtt{E} \cdot 10^2 + \mathtt{N} \cdot 10 + \mathtt{D}) 
+  + (\mathtt{M} \cdot 10^3 + \mathtt{O} \cdot 10^2 + \mathtt{R} \cdot 10 + \mathtt{E})
+  = \mathtt{M} \cdot 10^4 + \mathtt{O} \cdot 10^3 + \mathtt{N} \cdot 10^2 + \mathtt{E} \cdot 10 + \mathtt{Y}
+$.
+\\[0.2cm]
+ The problem with this constraint is that it involves far too many variables.  As this constraint can only be
+ checked when all the variables have values assigned to them, the backtracking search would essentially
+ boil down to a mere brute force search.  In order to do better, we have to perform the addition in Figure
+ \ref{fig:send-more-money.pdf} column by column, just as it is taught in elementary school.
+ \myFig{send-more-money.stlx} shows how this can be implemented in \textsc{SetlX}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    createCSP := procedure() {
+        Variables   := { "S", "E", "N", "D", "M", "O", "R", "Y", "C1", "C2", "C3" };
+        Values      := { 0 .. 9 };
+        Constraints := allDifferent({ "S", "E", "N", "D", "M", "O", "R", "Y" });
+        Constraints += { "(D + E) % 10 == Y", "(D + E) \\ 10 == C1",
+                         "(N + R + C1) % 10 == E", "(N + R + C1) \\ 10 == C2",
+                         "(E + O + C2) % 10 == N", "(E + O + C2) \\ 10 == C3",
+                         "(S + M + C3) % 10 == O", "(S + M + C3) \\ 10 == M"
+                       };
+        Constraints += { "S != 0", "M != 0" };
+        return [Variables, Values, Constraints];
+    };
+    allDifferent := procedure(Vars) {
+        return { "$x$ != $y$" : x in Vars, y in Vars | x != y };
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Formulating ``$\mathtt{SEND} + \mathtt{MORE} = \mathtt{MONEY}$'' as a \textsc{Csp}.}
+\label{fig:send-more-money.stlx}
+\end{figure}
+
+Notice that we have introduced three additional variables ``$\mathtt{C1}$'', ``$\mathtt{C2}$'', ``$\mathtt{C3}$''. 
+These variables serve as the \href{https://en.wikipedia.org/wiki/Carry_(arithmetic)}{carry digits}.  For
+example, ``$\mathtt{C1}$'' is the carry digit that we get when we do the addition of the last places of the two
+numbers, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{D} + \mathtt{E} = \mathtt{C1} \cdot 10 + \mathtt{Y}$.
+\\[0.2cm]
+This equation still contains four variables.  We can reduce it to two equations that each involve only three
+variables as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$(\mathtt{D} + \mathtt{E})\; \texttt{\symbol{37}}\; 10 = \mathtt{Y}$ \quad and \quad
+$(\mathtt{D} + \mathtt{E}) \;\mathtt{\symbol{92}}\; 10 = \mathtt{C1}$.
+\\[0.2cm]
+Here, the symbol ``$\mathtt{\symbol{92}}$'' denotes 
+\href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, e.g.~we have $7 \mathtt{\symbol{92}} 3 = 2$.
+If we try to solve the cryptarithmetic puzzle as coded in \myFig{send-more-money.stlx} using the
+constraint solver developed in the previous section, we will be disappointed.  The reason is that most
+constraints involve three variables and therefore the constraint propagation developed in the previous section
+is of no help.  However, we can solve the problem in a few seconds if we add the following constraints for the
+variables ``$\mathtt{C1}$'', ``$\mathtt{C2}$'', ``$\mathtt{C3}$'':
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{"C1 < 2", "C2 < 2", "C3 < 2"}.
+\\[0.2cm]
+Although these constraints are certainly true, the problem with this approach is that we would prefer if our
+constraint solver would be able to figure out these constraints by itself.  After all, since $\mathtt{D}$ and
+$\mathtt{E}$ are both less than $10$, there sum is obviously less than $20$ and hence the carry $\mathtt{C1}$
+has to be less than $2$.  This line of reasoning is known as \emph{\color{blue}consistency maintenance}:
+Assume that the formula $f$ is a constraint and the set of variables occurring in $f$ has the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{Var}(f) = \{ x \} + R$ \quad where $x \not\in R$,
+\\[0.2cm]
+i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R$ is the set of all variables occurring
+in $f$ that are different from $x$.  Furthermore, assume that we have a dictionary $\mathtt{AllowableValues}$ such that
+for every variable $y$, the dictionary entry $\mathtt{AllowableValues}[y]$ is the set of values that can be substituted
+for the variable $y$.  Now  \emph{\color{blue}a value $v$ is consistent for $x$ with respect to the constraint $f$} 
+iff the partial assignment $\{ \pair(x, v) \}$ can be extended to an assignment $A$ satisfying the constraint $f$,
+i.e.~for every variable $y \in R$ we have to find a value $w \in \mathtt{AllowableValues}[y]$ such that the resulting
+assignment $A$ satisfies the equations
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{evaluate}(f, A) = \mathtt{true}$.
+\\[0.2cm]
+Here, the function $\mathtt{evaluate}$ takes a formula $f$ and an assignment $A$ and evaluates $f$ using the
+assignment $A$.  Now, \emph{\color{blue}consistency maintenance} works as follows.
+\begin{enumerate}
+\item The dictionary $\mathtt{AllowableValues}$ is initialized as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{AllowableValues}[x] := \mathtt{Values}$ \quad for all $x \in \mathtt{Variables}$,
+      \\[0.2cm]
+      i.e.~initially every variable $x$ can take any value from the set of $\mathtt{Values}$.
+\item Next, the set $\mathtt{UncheckedVariables}$ is initialized to the set of all $\mathtt{Variables}$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{UncheckedVariables} := \mathtt{Variables}$.
+\item As long as the set $\mathtt{UncheckedVariables}$ is not empty, we remove one variable $x$ from this set:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $x := \mathtt{from}(\mathtt{UncheckedVariables})$
+\item We iterate over all constraints $f$ such that $x$ occurs in $f$.  
+      \begin{enumerate}
+      \item For every value $v \in \mathtt{AllowableValues}[x]$ we check whether $v$ is consistent with $f$.
+      \item If $v$ is not consistent with $f$, then $v$ is removed from $\mathtt{AllowableValues}[x]$.
+            Furthermore, if $R$ is the set of all variables occurring in $f$ that are different from $x$, 
+            then this set $R$ is added to the set of $\mathtt{UncheckedVariables}$.
+      \end{enumerate}
+\item Once $\mathtt{UncheckedVariables}$ is empty, the algorithm terminates.  Otherwise, we jump back to step 3
+      and remove the next variable from the set $\mathtt{UncheckedVariables}$.
+\end{enumerate}
+The algorithm terminates as every iteration removes either a variable from the set
+$\mathtt{UncheckedVariables}$ or it removes a value from one of the sets $\mathtt{AllowableValues}[y]$ for some
+variable $y$.  Now the set $\mathtt{UncheckedVariables}$ can grow during the algorithm, but the sets 
+$\mathtt{AllowableValues}[y]$ can never grow.  However, every time the set $\mathtt{UncheckedVariables}$ grows,
+the set $\mathtt{AllowableValues}[x]$ shrinks.
+As the sets $\mathtt{AllowableValues}[y]$ are finite for all variables $y$, the set
+$\mathtt{UncheckedVariables}$ can only grow a finite number of times. 
+Once the set $\mathtt{UncheckedVariables}$ does not grow any more, every iteration of the algorithm removes one
+variable from this set and hence the algorithm terminates eventually.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connected) {
+        UncheckedVars := domain(Var2Formulas);
+        while (UncheckedVars != {}) {
+            variable    := from(UncheckedVars);
+            Constraints := Var2Formulas[variable];
+            Values      := ValuesPerVar[variable];
+            RemovedVals := {};
+            for (f in Constraints) {
+                OtherVars := Annotated[f] - { variable };
+                for (value in Values) {
+                    if(!existsValue(variable, value, f, OtherVars, ValuesPerVar)) {
+                        RemovedVals   += { value };
+                        UncheckedVars += Connected[variable];
+                    }
+                }
+            }
+            Remaining := Values - RemovedVals;
+            if (Remaining == {}) { backtrack; }
+            ValuesPerVar[variable] := Remaining;
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Consistency maintenance in \textsc{SetlX}.}
+\label{fig:csp-consistency.stlx:enforceConsistency}
+\end{figure}
+
+\noindent
+\myFig{csp-consistency.stlx:enforceConsistency} shows how consistency maintenance can be implemented in \textsc{SetlX}.
+The procedure $\mathtt{enforceConsistency}$ takes four arguments.
+\begin{enumerate}[(a)]
+\item $\mathtt{ValuesPerVar}$ is a dictionary associating the set of possible values with each variable.
+\item $\mathtt{Var2Formulas}$ is a dictionary.  For every variable $v$, $\mathtt{Var2Formulas}[v]$ is
+      the set of those constraints $f$ such that $v$ occurs in $f$.
+\item $\mathtt{Annotated}$ is the set of annnotated constraints, i.e. this set contains
+      pairs of the form $\pair(f, V)$ where $f$ is a constraint and $V$ is the set of all variables occurring
+      in $f$.  This last argument is needed only for efficiency: In order to avoid computing the set $V$ of
+      variables occurring in a constraint $f$ every time the constraint $f$ is encountered, we compute these
+      sets at the beginning of our computation and store them in the dictionary $\mathtt{Annnotated}$.
+\item $\mathtt{Connected}$ is a dictionary that takes a variable $x$ and returns the set $V$ of all variables
+      that are related to $x$ via a common constraint $f$, i.e.~we have $y \in \mathtt{Connected}[x]$
+      if there exists a constraint $f$ such that both $x$ and $y$ occur in $f$ and, furthermore, $x \not= y$.
+\end{enumerate}
+The procedure $\mathtt{enforceConsistency}$ modifies the dictionary $\mathtt{ValuesPerVar}$ so that once the
+procedure has terminated, for every variable $x$ the set
+$\mathtt{ValuesPerVar}[x]$ is consistent with the constraints for $x$.  The implementation works as follows:
+\begin{enumerate}
+\item Initially, all variables need to be checked for consistency.  Therefore, $\mathtt{UncheckedVars}$
+      is defined to be the set of all variables that occur in any of the constraints.
+\item The \texttt{while}-loop iterates as long as there are still variables $x$ left in $\mathtt{UncheckedVars}$
+      such that the consistency of $\mathtt{ValuesPerVar}[x]$ has not been established.
+\item Next, a $\mathtt{variable}$ is selected and removed from $\mathtt{UncheckedVars}$. 
+\item $\mathtt{Constraints}$ is the set of all constraints $f$ such that this $\mathtt{variable}$ occurs in $f$.
+\item $\mathtt{Values}$ is the set of those values that can be assigned to $\mathtt{variable}$.
+\item $\mathtt{RemovedVals}$ is the subset of those values that are found to be inconsistent with some constraint.
+\item We iterate over all constraints $\mathtt{f} \in \mathtt{Constraints}$.
+\item $\mathtt{OtherVars}$ is the set of variables occurring in $\mathtt{f}$ that are different from 
+      the chosen $\mathtt{variable}$.
+\item We iterate over all $\mathtt{value} \in \mathtt{Values}$ that can be substituted for $\mathtt{variable}$
+      and check whether $\mathtt{value}$ is consistent with $\mathtt{f}$.   To this end, we need to find values
+      that can be assigned to the variables in the set $\mathtt{OtherVars}$ such that $\mathtt{f}$ evaluates as
+      $\mathtt{true}$.  This is checked using the function $\mathtt{existsValue}$.
+\item If we do not find such values, then $\mathtt{value}$ is inconsistent for
+      $\mathtt{variable}$ w.r.t.~$\mathtt{f}$ and needs to be removed from the set 
+      $\mathtt{ValuesPerVar}[\mathtt{variable}]$.  Furthermore, all variables that are connected to
+      $\mathtt{variables}$ have to be added to the set $\mathtt{UncheckedVars}$.  The reason is that once a
+      value is removed for $\mathtt{variable}$, the value assigned to another variable $y$ occurring in a
+      constraint that mentions both $\mathtt{variable}$ and $y$ might now become inconsistent.
+\item If there are no consistent values for $\mathtt{variable}$ left, we have to backtrack.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
+        AllVars := { var } + Vars;
+        for (A in createAllAssignments(Vars, ValuesPerVar)) {
+            if (eval_constraint(A + { [var, val] }, f, AllVars)) {
+                return true;
+            }
+        }
+        return false;    
+    };
+    createAllAssignments := procedure(Vars, ValuesPerVar) {
+        if (Vars == {}) {
+            return { {} };  // set containing empty assignment
+        }
+        var         := from(Vars);
+        Values      := ValuesPerVar[var];
+        Assignments := createAllAssignments(Vars, ValuesPerVar);
+        return { { [var, val] } + A : val in Values, A in Assignments };
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The implementation of $\mathtt{existsValue}$.}
+\label{fig:csp-consistency.stlx:existsValue}
+\end{figure}
+
+\noindent
+\myFig{csp-consistency.stlx:existsValue} shows the implementation of the function $\mathtt{existsValue}$ that
+is used in the implementation of $\mathtt{enforceConsistency}$.  This procedure is called with five arguments.
+\begin{enumerate}[(a)]
+\item $\mathtt{var}$ is variable.
+\item $\mathtt{val}$ is a value that is to be assigned to $\mathtt{var}$.
+\item $\mathtt{f}$ is a constraint such that $\mathtt{var}$ occurs in $\mathtt{f}$
+\item $\mathtt{Vars}$ is the set of all those other variables occurring in $\mathtt{f}$, i.e.~the set of those
+      variables that occur in $\mathtt{f}$ but that are different from $\mathtt{var}$. 
+\item $\mathtt{ValuesPerVar}$  is a dictionary associating the set of possible values with each variable.
+\end{enumerate}
+The procedure checks whether the partial assignment $\{ \pair(\mathtt{var}, \mathtt{val}) \}$ can be
+extended so that the constraint $\mathtt{f}$ is satisfied.  To this end it needs to create the set of all
+possible assignments.  This set is generated using the function $\mathtt{createAllAssignments}$.  This function
+gets a set of variables $\mathtt{Vars}$ and a dictionary that assigns to every variable $\mathtt{var}$ in
+$\mathtt{Vars}$ the set of values that might be assigned to $\mathtt{var}$.
+\begin{enumerate}
+\item If the set of variables $\mathtt{Vars}$ is empty, the empty set can serve as a dictionary that 
+      assigns a value to every variable in $\mathtt{Vars}$.
+\item Otherwise, we remove a variable $\mathtt{var}$ from $\mathtt{Vars}$ and get the set of $\mathtt{Values}$
+      that can be assigned to $\mathtt{var}$.  
+\item Recursively, we create the set of all $\mathtt{Assignments}$ that associate values with the remaining 
+      variables.
+\item Finally, the set of all possible assignments is the set of all combinations of assigning a value 
+      $\mathtt{val} \in \mathtt{Values}$ to $\mathtt{var}$ and assigning the remaining variables according to 
+      an assignment $\mathtt{A} \in \mathtt{Assignments}$.
+\end{enumerate}
+On one hand, consistency checking creates a lot of overhead.\footnote{
+  To be fair, the implementation shown in this section is far from optimal.  In particular, by remembering which
+  combinations of variables and values work for a given formula, the overhead can be reduced greatly.  I have
+  refrained from implementing this optimization because I did not want the code to get too complex.
+}
+Therefore, it might actually slow down the
+solution of some constraint satisfaction problems that are easy to solve using just backtracking and
+propagation.  On the other hand, many difficult constraint satisfaction problems can not be solved
+without consistency checking.
 
 \section{Local Search}
 There is another approach to solve constraint satisfaction problems.  This approach is known as
@@ -920,23 +1237,24 @@ There is another approach to solve constraint satisfaction problems.  This appro
 $\mathcal{C}$ of the form 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{C} := \langle V, C, D \rangle$,
+$\mathcal{P} := \langle \mathtt{Variables}, \mathtt{Values}, \mathtt{Constraints} \rangle$,
 \\[0.2cm] 
 local search works as follows:
 \begin{enumerate}
-\item Initialize the values of the variables in $V$ randomly.  
-\item If all constraints are satisfied, return the solution.
-\item For every variable $x \in V$, count the number of \underline{unsatisfied} constraints that involve the
+\item Initialize the values of the variables in $\mathtt{Variables}$ randomly.  
+\item If all $\mathtt{Constraints}$ are satisfied, return the solution.
+\item For every  $x \in \mathtt{Variables}$, count the number of \underline{unsatisfied} constraints that involve the
       variable $x$. 
-\item Set $\mathtt{maxNum}$ to be the biggest number of unsatisfied constraints for a single variable.
+\item Set $\mathtt{maxNum}$ to be the maximum of these numbers, i.e.~$\mathtt{maxNum}$ is maximal number of
+      unsatisfied constraints for any variable.
 \item Compute the set $\mathtt{maxVars}$ of those variables that have $\mathtt{maxNum}$ unsatisfied constraints.
 \item Randomly choose a variable $x$ from the set $\mathtt{maxVars}$.
-\item Find a value $d \in D$ such that by assigning $d$ to the variable $x$, the number of unsatisfied constraints is
-      minimized.  
+\item Find a value $d \in \mathtt{Values}$ such that by assigning $d$ to the variable $x$, the number of
+      unsatisfied constraints for the variable $x$ is minimized.  
 
       If there is more than one value $d$ with this property, choose the value $d$ randomly from those values
       that minimize the number of unsatisfied constraints.
-\item Goto step 2 and repeat until a solution is found.
+\item Goto step 2 and repeat until either a solution is found or the sun rises in the west.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -1068,7 +1386,17 @@ that a queen can be attacked by another queen.
 \end{enumerate}
 Using the program discussed in this section, the n queens problem can be solved for a $\mathtt{n} = 1000$ in
 30 minutes.  As the memory requirements for local search are small, even much higher problem sizes can be
-tackled if sufficient time is available.
+tackled if sufficient time is available.  Hence, it seems that local search is much better than the algorithms
+discussed previously.  However, we have to note that local search is \emph{\color{blue}incomplete}:  If a
+constraint satisfaction problem $\mathcal{P}$ has no solution, then local search loops forever.  Therefore, in
+practise a dual approach is used to solve a constraint satisfaction problem.  The constraint solver starts two
+threads: The first search does local search, the second thread tries to solve the problem via some refinement
+of backtracking.  the first thread that terminates wins.  The resulting algorithm is complete and, for a
+solvable problem, will have similar performance as local search.  If the problem is unsolvable, this will
+\emph{\color{blue}eventually} be discovered by backtracking.  Note, however, that the constraint satisfaction
+problem is NP-complete.  Hence, it is unlikely that there is an efficient algorithm that works always.
+However, many practically occurring constraint satisfaction problems can be solved today in a reasonably short
+time. 
 
 %%% Local Variables:
 %%% mode: latex

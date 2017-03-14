@@ -120,7 +120,7 @@ numConflicts := procedure(Queens, row) {
     return result;
 };
 
-for (n in [1000]) {
+for (n in [8..1000]) {
     start    := now();
     solution := solve(n);
     stop     := now();
