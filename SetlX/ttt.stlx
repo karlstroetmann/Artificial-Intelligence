@@ -1,0 +1,95 @@
+players := procedure() {
+    return { "X", "O" };
+};
+startState := procedure(n) {
+    L := [1 .. n];
+    return [ [ " " : col in L] : row in L];
+};
+nextStates := procedure(State, player) {
+    n      := #State;
+    L      := [1 .. n];
+    Empty  := find_empty(State);
+    Result := {};
+    for ([row, col] in Empty) {
+        NextState           := State;
+        NextState[row][col] := player;
+        Result              += { NextState };
+    }
+    return Result;
+};
+find_empty := procedure(State) {
+    n := #State;
+    L := [1 .. n];
+    return { [row, col] : row in L, col in L | State[row][col] == " " };
+};
+all_lines := procedure(State) {
+    n := #State;
+    L := [1 .. n];
+    // Lines is the set of all horizontal, vertical, and diagonal lines in the game
+    // we start with the rows
+    Lines := { { State[row][col] : col in L } : row in L };
+    // we add the columns
+    Lines += { { State[row][col] : row in L } : col in L };
+    // the falling diagonal
+    Lines += { { State[idx][idx] : idx in L } };
+    // finally, the rising diagonal
+    Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
+    return Lines;
+};
+utility := procedure(State, player) {
+    Lines := all_lines(State);
+    // all lines are checked whether they contain 3 identical nonempty marks 
+    for (line in Lines) {
+        if (#{ x : x in line } == 1 && line != { " " }) {
+            if (line == { player }) {
+                return  1;
+            } else {
+                return -1;
+            }
+        }
+    }
+    // no winner so far, check for a draw
+    if (find_empty(State) == {}) {  // no empty squares
+        return 0;  // game drawn
+    }
+};
+finished := procedure(State) {
+    player := "X";
+    if (utility(State, player) != om) { return true; } else { return false; }
+};
+// for pretty printing
+boardToString := procedure(State) {
+    n     := #State;
+    L     := [1 .. n];
+    ls    := "\n" + "-" * (4 * n + 1) + "\n";  // line separator
+    board := join(["| " + join([State[r][c]: c in L]," | ") + " |": r in L], ls);
+    return ls + board + ls;
+};
+
+load("game.stlx");
+
+play_game := procedure(n) {
+    resetRandom();
+    State := startState(n);
+    while (!finished(State)) {
+        print(boardToString(State));
+        [row, col] := split(read("Your turn, enter move as row, col: "), " *, *");
+        [row, col] := [int(row), int(col)];
+        State[row][col] := "X";
+        print(boardToString(State));
+        if (finished(State)) {
+            msg := "The game is finished. ";
+            if (value(State, "X") == 1) {
+                print(msg + "You have won!");
+            } else if (value(State, "X") == -1) {
+                print(msg + "You lost!");
+            } else {
+                print(msg + "Its a draw.");
+            }
+            return;
+        }
+        State := best_move(State, "O");
+    }
+};
+play_game(3);
+

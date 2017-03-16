@@ -1,0 +1,13 @@
+value := cachedProcedure(State, player) {
+    if (finished(State)) {
+        return utility(State, player);
+    }
+    other := arb(players() - { player });
+    return max({ -value(s, other) : s in nextStates(State, player) });
+};
+best_move := procedure(State, player) {
+    AllStates := nextStates(State, player);
+    other     := arb(players() - { player });
+    bestValue := max({ -value(s, other) : s in AllStates });
+    return rnd({ s : s in AllStates | -value(s, other) == bestValue });
+};

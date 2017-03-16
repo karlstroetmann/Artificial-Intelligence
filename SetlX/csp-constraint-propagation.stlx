@@ -139,7 +139,7 @@ is_consistent := procedure(var, value, Assignment, Constraints) {
 main := procedure() {
     resetRandom();
     startTotal := now();
-    numIterations := 1;
+    numIterations := 10;
     for (i in [1..numIterations]) {
         lower := 8;
         upper := 32;
@@ -164,7 +164,7 @@ mainMoney := procedure() {
     solution := solve(csp);
     stop     := now();
     total    := (stop - start) / 1000.0;
-    printSolution(solution);
+    // printSolution(solution);
     print("The computation took $total$ seconds.");
 };
 

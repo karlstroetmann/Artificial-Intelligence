@@ -12,7 +12,7 @@
 \usepackage{stmaryrd}
 \usepackage{enumerate}
 \usepackage{color} 
-
+\usepackage{xfrac}
 
 
 \usepackage{hyperref}
@@ -57,6 +57,8 @@
 \newfont{\chess}{chess20}
 \newfont{\bigchess}{chess30}
 \newcommand{\chf}{\baselineskip20pt\lineskip0pt\chess}
+
+\newcommand{\blue}[1]{\emph{\color{blue}#1}}
 
 \newcommand{\exercise}{\vspace*{0.2cm}
 \stepcounter{exercise}
@@ -168,6 +170,7 @@ can be used to load the current version of these lecture notes from
 \include{introduction}
 \include{search}
 \include{constraints}
+\include{game-playing}
 % \include{planning}
 % \include{markov}
 % \include{satisfiability}

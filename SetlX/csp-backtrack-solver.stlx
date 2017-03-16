@@ -92,15 +92,15 @@ main := procedure() {
     startTotal := now();
     numIterations := 1;
     for (i in [1..numIterations]) {
-        lower := 4;
-        upper := 16;
+        lower := 8;
+        upper := 32;
         for (n in [lower .. upper]) {
             csp      := createCSP(n);   
             start    := now();
             solution := solve(csp);
             stop     := now();
             total    := (stop - start) / 1000.0;
-            printSolution(solution);
+            // printSolution(solution);
             print("The computation for the $n$ queens problem took $total$ seconds.");
         }
     }
