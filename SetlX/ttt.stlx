@@ -67,29 +67,66 @@ boardToString := procedure(State) {
 };
 
 load("game.stlx");
+// load("game-limit.stlx");
 
 play_game := procedure(n) {
     resetRandom();
     State := startState(n);
+    print(boardToString(State));
     while (!finished(State)) {
-        print(boardToString(State));
         [row, col] := split(read("Your turn, enter move as row, col: "), " *, *");
         [row, col] := [int(row), int(col)];
         State[row][col] := "X";
         print(boardToString(State));
-        if (finished(State)) {
-            msg := "The game is finished. ";
-            if (value(State, "X") == 1) {
-                print(msg + "You have won!");
-            } else if (value(State, "X") == -1) {
-                print(msg + "You lost!");
-            } else {
-                print(msg + "Its a draw.");
-            }
-            return;
-        }
+        if (final_msg(State)) { return; }
         State := best_move(State, "O");
+        print(boardToString(State));
+        if (final_msg(State)) { return; }
     }
 };
-play_game(4);
-
+final_msg := procedure(State) {
+    if (finished(State)) {
+        msg := "The game is finished. ";
+        if (value(State, "X") == 1) {
+            print(msg + "You have won!");
+        } else if (value(State, "X") == -1) {
+            print(msg + "You lost!");
+        } else {
+            print(msg + "It's a draw.");
+        }
+        return true;
+    }
+    return false;
+};
+play_game_limit := procedure(n) {
+    resetRandom();
+    State := startState(n);
+    print(boardToString(State));
+    while (!finished(State)) {
+        [row, col] := split(read("Your turn, enter move as row, col: "), " *, *");
+        [row, col] := [int(row), int(col)];
+        State[row][col] := "X";
+        print(boardToString(State));
+        if (final_msg0(State)) { return; }
+        limit := 4;
+        State := best_move(State, "O", limit);
+        print(boardToString(State));
+        if (final_msg0(State)) { return; }
+    }
+};
+final_msg0 := procedure(State) {
+    if (finished(State)) {
+        msg := "The game is finished. ";
+        if (value(State, "X", 0) == 1) {
+            print(msg + "You have won!");
+        } else if (value(State, "X", 0) == -1) {
+            print(msg + "You lost!");
+        } else {
+            print(msg + "It's a draw.");
+        }
+        return true;
+    }
+    return false;
+};
+play_game(3);
+// play_game_limit(4);
