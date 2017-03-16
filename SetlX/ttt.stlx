@@ -91,5 +91,5 @@ play_game := procedure(n) {
         State := best_move(State, "O");
     }
 };
-play_game(3);
+play_game(4);
 
