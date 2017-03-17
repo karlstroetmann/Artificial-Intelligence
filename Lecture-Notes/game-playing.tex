@@ -1,0 +1,182 @@
+\chapter{Playing Games}
+One major success for the field of artificial intelligence happened in 1997 when the chess-playing computer
+\href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue} was able to beat the World Chess
+Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
+While \emph{\color{blue}Deep Blue} was based on special hardware, today according to the
+\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} 
+top performing chess programs like \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} have an 
+\href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3392.  To compare, according to 
+\href{https://ratings.fide.com/top.phtml?list=men}{Fide}, the current 
+World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
+just 2838.  Hence, he wouldn't stand a chance to win a game against Stockfish.  More recently, the computer program
+\href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} was able to beat
+\href{https://en.wikipedia.org/wiki/Lee_Sedol}{Lee Sedol}, who is considered to be the second best 
+\href{https://en.wikipedia.org/wiki/Go_(game)}{go} player in the world.  Besides go and chess, there are many
+other games where today the performance of a computer exceeds the performance of human players.  To name just
+one more example, at the beginning of 2017 the program \href{https://en.wikipedia.org/wiki/Libratus}{Libratus} was able to 
+\href{https://www.engadget.com/2017/01/31/libratus-the-poker-playing-ai-destroyed-its-four-human-rivals/}{beat}
+four professional poker players resoundingly.
+
+In this chapter we want to investigate how a computer can play a game.  To this end we define a
+\blue{game} $\mathcal{G}$ as a six-tuple
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{G} = \langle \mathtt{States}, s_0, \mathtt{Players}, \mathtt{nextStates}, \mathtt{finished},\mathtt{utility} \rangle$
+\\[0.2cm]
+where the components are interpreted as follows:
+\begin{enumerate}
+\item $\mathtt{States}$ is the set of all possible \emph{\color{blue}states} of the game.
+\item $s_0 \in \mathtt{startState}$ is the \emph{\color{blue}start state}.
+\item $\mathtt{Players}$ is  the set of \blue{players} of the game.
+\item $\mathtt{nextStates}$ is a function that takes a state and a player $p$ and returns the set of
+      states that can be reached if $p$ has to make a move in the game.  Hence, the signature of
+      $\mathtt{nextStates}$ is given as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{nextStates}: \mathtt{State} \times \mathtt{Player} \rightarrow 2^{\mathtt{States}}$.
+\item $\mathtt{finished}$ is a function that takes a state $s$ and decides whether the games is finished.
+      Therefore
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{finished}: \mathtt{States} \rightarrow \mathbb{B}$.
+      \\[0.2cm]
+      Here, $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} := \{ \mathtt{true}, \mathtt{false} \}$.
+  
+      Using the function $\mathtt{finished}$, we define the set $\mathtt{TerminalStates}$ as the set of those
+      states such that the game has finished,  i.e.~we define
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{TerminalStates} := \{ s \in \mathtt{States} \mid \mathtt{finished}(s) \}$.
+\item $\mathtt{utility}$ is a function that takes a state $s \in \mathtt{TerminalStates}$ and a player $p$.  If returns
+      the \blue{value} that the game has for player $p$.  In all of our examples, this value will be an element
+      from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that player $s$ has lost the game,
+      if the value is $+1$ the player $p$ has won the game and if this value is $0$ then the game is drawn.
+      Hence the signature of $\mathtt{utility}$ is
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{utility}: \mathtt{TerminalStates} \times \mathtt{Players} \rightarrow \{ -1, 0, +1\}$.
+\end{enumerate}
+
+\exercise
+The definition given above does not capture all types of games.  In particular, the definition only captures 
+\blue{deterministic games}:  A game is called \blue{deterministic} iff there is no randomness
+involved.  Games like chess and go are certainly deterministic.  However, other games like 
+\href{https://en.wikipedia.org/wiki/Dice_chess}{dice chess} involve randomness.  In dice chess a pair of dice is
+rolled at the beginning of each turn.  The outcome of this roll determines which pieces may be moved.
+Extend the definition of a
+game so that also a games like \blue{dice chess} be modelled.  
+\eox
+
+In this chapter we will only consider so called \blue{two person zero sum games}.  This means that the set $\mathtt{Players}$
+has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{Players} = \{ \mathrm{A}, \mathrm{B} \}$,
+\\[0.2cm]
+then the game is called a \blue{zero sum game} iff we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\forall s \in \mathtt{TerminalStates}:\mathtt{utility}(s, \mathtt{A}) + \mathtt{utility}(s, \mathtt{B}) = 0$,
+\\[0.2cm]
+i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\mathtt{B}$ and vice versa.
+Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{go} and 
+\href{https://en.wikipedia.org/wiki/Chess}{chess} are two person zero sum games.
+
+\example
+The game \href{https://en.wikipedia.org/wiki/Tic-tac-toe}{tic-tac-toe} is played on a square board of size 
+$3 \times 3$.  On every turn, player $\mathrm{A}$ puts an ``\texttt{X}'' on one of the free squares of the board, while
+player $\mathrm{B}$ puts an $\mathtt{O}$ onto a free square.  If player $\mathrm{A}$ has three \texttt{X}s in a
+row, column, or diagonal, he has won the game.  Similarly, if player $\mathrm{B}$ has three \texttt{O}s in a
+row, column, or diagonal, player $\mathrm{B}$ is the winner.  Otherwise, the game is drawn.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    players := procedure() { return { "X", "O" }; };
+    startState := procedure(n) {
+        L := [1 .. n];
+        return [ [ " " : col in L] : row in L];
+    };
+    nextStates := procedure(State, player) {
+        n      := #State;
+        L      := [1 .. n];
+        Empty  := find_empty(State);
+        Result := {};
+        for ([row, col] in Empty) {
+            NextState           := State;
+            NextState[row][col] := player;
+            Result              += { NextState };
+        }
+        return Result;
+    };
+    find_empty := procedure(State) {
+        n := #State;
+        L := [1 .. n];
+        return { [row, col] : row in L, col in L | State[row][col] == " " };
+    };
+    all_lines := procedure(State) {
+        n := #State;
+        L := [1 .. n];
+        Lines := { { State[row][col] : col in L } : row in L };
+        Lines += { { State[row][col] : row in L } : col in L };
+        Lines += { { State[idx][idx] : idx in L } };
+        Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
+        return Lines;
+    };
+    utility := procedure(State, player) {
+        Lines := all_lines(State);
+        for (line in Lines) {
+            if (#{ x : x in line } == 1 && line != { " " }) {
+                if (line == { player }) { return  1; } else { return -1; }
+            }
+        }
+        if (find_empty(State) == {}) { return 0; }
+    };
+    finished := procedure(State) {
+        player := "X";
+        if (utility(State, player) != om) { return true; } else { return false; }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A \textsc{SetlX} description of tic-tac-toe.}
+\label{fig:ttt.stlx}
+\end{figure}
+ 
+\myFig{ttt.stlx} shows a \textsc{SetlX} implementation of tic-tac-toe.
+\begin{enumerate}
+\item The function $\mathtt{players}$ returns the set $\mathtt{Players}$.  Traditionally, the players in
+      tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.
+\item The function $\mathtt{startState}$ returns the start state, which is an empty board.
+      States are represented as list of lists.  The entries in these lists are the characters 
+      ``\texttt{X}'', ``\texttt{O}'', and ``\texttt{ }''.
+      As the  $\mathtt{StartState}$ is the empty board, it is represented as as follows:
+      \begin{Verbatim}
+      [ [" ", " ", " "], 
+        [" ", " ", " "], 
+        [" ", " ", " "]
+      ].     
+      \end{Verbatim}
+      The function $\mathtt{startState}$ receives one optional argument $\mathtt{n}$.
+      By default $\mathtt{n}$ is equal to $3$.  This argument specifies the size of the board.
+      Although traditionally tic-tac-toe is played on a $3 \times 3$ board, it can also 
+      be played on a bigger board.
+\item The function $\mathtt{nextStates}$ takes a $\mathtt{State}$ and a $\mathtt{player}$ and computes the set
+      of states that can be reached if $\mathtt{player}$ is to move next.
+\end{enumerate}
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:

@@ -1,4 +1,4 @@
-value := cachedProcedure(State, player, limit) {
+value := cachedProcedure(State, player, limit := 0) {
     if (finished(State)) {
         return utility(State, player);
     }
@@ -14,3 +14,21 @@ best_move := procedure(State, player, limit) {
     bestValue := max({ -value(s, other, limit) : s in AllStates });
     return rnd({ s : s in AllStates | -value(s, other, limit) == bestValue });
 };
+play_game := procedure(n, limit) {
+    resetRandom();
+    State := startState(n);
+    print(stateToString(State));
+    while (!finished(State)) {
+        start := now();
+        State := best_move(State, "O", limit);
+        stop  := now();
+        print("My move");
+        print(stateToString(State));
+        print("computation took $(stop - start) * 0.001$ seconds");
+        if (final_msg(State)) { return; }
+        State := getMove(State);
+        print(stateToString(State));
+        if (final_msg(State)) { return; }
+    }
+};
+

@@ -11,3 +11,20 @@ best_move := procedure(State, player) {
     bestValue := max({ -value(s, other) : s in AllStates });
     return rnd({ s : s in AllStates | -value(s, other) == bestValue });
 };
+play_game := procedure(n) {
+    resetRandom();
+    State := startState(n);
+    print(stateToString(State));
+    while (!finished(State)) {
+        start := now();
+        State := best_move(State, "O");
+        stop  := now();
+        print("My move");
+        print(stateToString(State));
+        print("computation took $(stop - start) * 0.001$ seconds");
+        if (final_msg(State)) { return; }
+        State := getMove(State);
+        print(stateToString(State));
+        if (final_msg(State)) { return; }
+    }
+};

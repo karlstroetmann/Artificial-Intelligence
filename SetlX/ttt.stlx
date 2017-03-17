@@ -1,7 +1,11 @@
+// load("game.stlx");
+// load("game-alpha-beta.stlx");
+load("game-limit.stlx");
+
 players := procedure() {
     return { "X", "O" };
 };
-startState := procedure(n) {
+startState := procedure(n := 3) {
     L := [1 .. n];
     return [ [ " " : col in L] : row in L];
 };
@@ -58,7 +62,7 @@ finished := procedure(State) {
     if (utility(State, player) != om) { return true; } else { return false; }
 };
 // for pretty printing
-boardToString := procedure(State) {
+stateToString := procedure(State) {
     n     := #State;
     L     := [1 .. n];
     ls    := "\n" + "-" * (4 * n + 1) + "\n";  // line separator
@@ -66,23 +70,11 @@ boardToString := procedure(State) {
     return ls + board + ls;
 };
 
-load("game.stlx");
-// load("game-limit.stlx");
-
-play_game := procedure(n) {
-    resetRandom();
-    State := startState(n);
-    print(boardToString(State));
-    while (!finished(State)) {
-        [row, col] := split(read("Your turn, enter move as row, col: "), " *, *");
-        [row, col] := [int(row), int(col)];
-        State[row][col] := "X";
-        print(boardToString(State));
-        if (final_msg(State)) { return; }
-        State := best_move(State, "O");
-        print(boardToString(State));
-        if (final_msg(State)) { return; }
-    }
+getMove := procedure(State) {
+    [row, col] := split(read("Your turn, enter move as row, col: "), " *, *");
+    [row, col] := [int(row), int(col)];
+    State[row][col] := "X";
+    return State;
 };
 final_msg := procedure(State) {
     if (finished(State)) {
@@ -98,35 +90,6 @@ final_msg := procedure(State) {
     }
     return false;
 };
-play_game_limit := procedure(n) {
-    resetRandom();
-    State := startState(n);
-    print(boardToString(State));
-    while (!finished(State)) {
-        [row, col] := split(read("Your turn, enter move as row, col: "), " *, *");
-        [row, col] := [int(row), int(col)];
-        State[row][col] := "X";
-        print(boardToString(State));
-        if (final_msg0(State)) { return; }
-        limit := 4;
-        State := best_move(State, "O", limit);
-        print(boardToString(State));
-        if (final_msg0(State)) { return; }
-    }
-};
-final_msg0 := procedure(State) {
-    if (finished(State)) {
-        msg := "The game is finished. ";
-        if (value(State, "X", 0) == 1) {
-            print(msg + "You have won!");
-        } else if (value(State, "X", 0) == -1) {
-            print(msg + "You lost!");
-        } else {
-            print(msg + "It's a draw.");
-        }
-        return true;
-    }
-    return false;
-};
-play_game(3);
-// play_game_limit(4);
+
+// play_game(3);
+play_game(4, 4);

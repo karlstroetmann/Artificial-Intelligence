@@ -86,7 +86,7 @@ enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connec
         if (Remaining == {}) { backtrack; }
         ValuesPerVar[variable] := Remaining;
     }
-    printValues(ValuesPerVar);
+    // printValues(ValuesPerVar);
 };
 // This procedure takes a variable v, a value, a constraint f, the set Vars of those
 // variables in f that are different from v and a dictionary associating values
@@ -152,7 +152,6 @@ bt_search := procedure(Assignment, csp, Connected) {
         check {
             if (is_consistent(x, val, Assignment, Constraints)) {
                 NewVals := propagate(x, val, Assignment, Constraints, Values);
-                print("$x$ |-> $val$");
                 enforceConsistency(Values, Var2Formulas, Constraints, Connected);
                 csp     := [Variables, NewVals, Constraints, Var2Formulas];
                 return bt_search(Assignment + { [x, val] }, csp, Connected);
