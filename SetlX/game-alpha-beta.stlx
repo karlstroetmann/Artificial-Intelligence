@@ -1,9 +1,19 @@
-value := cachedProcedure(State, player) {
+// alpha: best  value this  player can enforce
+// beta:  least value other player can guarantee
+value := cachedProcedure(State, player, alpha := -1, beta := 1) {
     if (finished(State)) {
         return utility(State, player);
     }
-    other := arb(players() - { player });
-    return max({ -value(s, other) : s in nextStates(State, player) });
+    other  := arb(players() - { player });
+    maxVal := -1;
+    for (s in nextStates(State, player)) {
+        val := -value(s, other, beta, alpha);
+        if (val >= beta) {
+            return val + 1/2; 
+        }
+        maxVal := max({val, maxVal});
+    }
+    return maxVal;
 };
 best_move := procedure(State, player) {
     AllStates := nextStates(State, player);

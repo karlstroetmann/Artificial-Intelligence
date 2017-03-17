@@ -91,5 +91,5 @@ final_msg := procedure(State) {
     return false;
 };
 
-// play_game(3);
-play_game(4, 4);
+play_game(4);
+
