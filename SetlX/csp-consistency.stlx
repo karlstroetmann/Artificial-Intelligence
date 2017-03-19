@@ -1,6 +1,6 @@
 loadLibrary("termUtilities");
-load("queens-csp.stlx");
-// load("send-more-money.stlx");
+// load("queens-csp.stlx");
+load("send-more-money.stlx");
 
 // This function collects all variables occurring in the formula f.
 // To simplify things it is assumed that f is either an equation or
@@ -152,7 +152,6 @@ bt_search := procedure(Assignment, csp, Connected) {
         check {
             if (is_consistent(x, val, Assignment, Constraints)) {
                 NewVals := propagate(x, val, Assignment, Constraints, Values);
-                enforceConsistency(NewVals, Var2Formulas, Constraints, Connected);
                 csp := [Variables, NewVals, Constraints, Var2Formulas];
                 return bt_search(Assignment + { [x, val] }, csp, Connected);
             }
@@ -255,5 +254,5 @@ mainMoney := procedure() {
     print("The computation took $total$ seconds.");
 };
 
-main();
-// mainMoney();
+// main();
+mainMoney();
