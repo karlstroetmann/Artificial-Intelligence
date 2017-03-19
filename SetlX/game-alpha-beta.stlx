@@ -1,39 +1,34 @@
 // alpha: best  value this  player can enforce
 // beta:  least value other player can guarantee
-value := cachedProcedure(State, player, alpha := -1, beta := 1) {
-    if (finished(State)) {
-        return utility(State, player);
-    }
+best_move := cachedProcedure(State, player, alpha := -1, beta := 1) {
     other  := arb(players() - { player });
     maxVal := -1;
-    for (s in nextStates(State, player)) {
-        val := -value(s, other, -beta, -alpha);
+    for (ns in nextStates(State, player)) {
+        [val, _] := best_move(s, other, -beta, -alpha);
+        val      := -val;
         if (val == 1) {
-            return 1;
+            return [1, ns];
         }
         if (val >= beta) {
-            return val + 1/2; 
+            return [val, ns]; 
         }
-        maxVal := max({val, maxVal});
-        alpha  := max({alpha, val});
+        if (val >= maxVal) {
+            maxVal := val;
+            best   := ns;
+            alpha  := max({alpha, val});
+        }
     }
-    return maxVal;
-};
-best_move := procedure(State, player) {
-    AllStates := nextStates(State, player);
-    other     := arb(players() - { player });
-    bestValue := max({ -value(s, other) : s in AllStates });
-    return rnd({ s : s in AllStates | -value(s, other) == bestValue });
+    return [maxVal, best];
 };
 play_game := procedure(n) {
     resetRandom();
     State := startState(n);
     print(stateToString(State));
     while (!finished(State)) {
-        start := now();
-        State := best_move(State, "O");
-        stop  := now();
-        print("My move:");
+        start        := now();
+        [val, State] := best_move(State, "O");
+        stop         := now();
+        print("For me, the game has the value $val$.  My move:");
         print(stateToString(State));
         print("computation took $(stop - start) * 0.001$ seconds");
         if (final_msg(State)) { return; }
