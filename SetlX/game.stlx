@@ -15,7 +15,7 @@ play_game := procedure(n) {
     resetRandom();
     State := startState(n);
     print(stateToString(State));
-    while (!finished(State)) {
+    while (true) {
         start := now();
         State := best_move(State, "O");
         stop  := now();

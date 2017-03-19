@@ -1,6 +1,6 @@
 // load("game.stlx");
-// load("game-alpha-beta.stlx");
-load("game-limit.stlx");
+load("game-alpha-beta.stlx");
+// load("game-limit.stlx");
 
 players := procedure() {
     return { "X", "O" };
@@ -10,8 +10,6 @@ startState := procedure(n := 3) {
     return [ [ " " : col in L] : row in L];
 };
 nextStates := procedure(State, player) {
-    n      := #State;
-    L      := [1 .. n];
     Empty  := find_empty(State);
     Result := {};
     for ([row, col] in Empty) {
@@ -25,20 +23,6 @@ find_empty := procedure(State) {
     n := #State;
     L := [1 .. n];
     return { [row, col] : row in L, col in L | State[row][col] == " " };
-};
-all_lines := procedure(State) {
-    n := #State;
-    L := [1 .. n];
-    // Lines is the set of all horizontal, vertical, and diagonal lines in the game
-    // we start with the rows
-    Lines := { { State[row][col] : col in L } : row in L };
-    // we add the columns
-    Lines += { { State[row][col] : row in L } : col in L };
-    // the falling diagonal
-    Lines += { { State[idx][idx] : idx in L } };
-    // finally, the rising diagonal
-    Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
-    return Lines;
 };
 utility := procedure(State, player) {
     Lines := all_lines(State);
@@ -55,7 +39,21 @@ utility := procedure(State, player) {
     // no winner so far, check for a draw
     if (find_empty(State) == {}) {  // no empty squares
         return 0;  // game drawn
-    }
+    } // else return om
+};
+all_lines := procedure(State) {
+    n := #State;
+    L := [1 .. n];
+    // Lines is the set of all horizontal, vertical, and diagonal lines in the game
+    // we start with the rows
+    Lines := { { State[row][col] : col in L } : row in L };
+    // we add the columns
+    Lines += { { State[row][col] : row in L } : col in L };
+    // the falling diagonal
+    Lines += { { State[idx][idx] : idx in L } };
+    // finally, the rising diagonal
+    Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
+    return Lines;
 };
 finished := procedure(State) {
     player := "X";

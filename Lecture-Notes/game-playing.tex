@@ -106,9 +106,7 @@ row, column, or diagonal, player $\mathrm{B}$ is the winner.  Otherwise, the gam
         return [ [ " " : col in L] : row in L];
     };
     nextStates := procedure(State, player) {
-        n      := #State;
-        L      := [1 .. n];
-        Empty  := find_empty(State);
+         Empty  := find_empty(State);
         Result := {};
         for ([row, col] in Empty) {
             NextState           := State;
@@ -122,15 +120,6 @@ row, column, or diagonal, player $\mathrm{B}$ is the winner.  Otherwise, the gam
         L := [1 .. n];
         return { [row, col] : row in L, col in L | State[row][col] == " " };
     };
-    all_lines := procedure(State) {
-        n := #State;
-        L := [1 .. n];
-        Lines := { { State[row][col] : col in L } : row in L };
-        Lines += { { State[row][col] : row in L } : col in L };
-        Lines += { { State[idx][idx] : idx in L } };
-        Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
-        return Lines;
-    };
     utility := procedure(State, player) {
         Lines := all_lines(State);
         for (line in Lines) {
@@ -139,6 +128,15 @@ row, column, or diagonal, player $\mathrm{B}$ is the winner.  Otherwise, the gam
             }
         }
         if (find_empty(State) == {}) { return 0; }
+    };
+    all_lines := procedure(State) {
+        n := #State;
+        L := [1 .. n];
+        Lines := { { State[row][col] : col in L } : row in L };
+        Lines += { { State[row][col] : row in L } : col in L };
+        Lines += { { State[idx][idx] : idx in L } };
+        Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
+        return Lines;
     };
     finished := procedure(State) {
         player := "X";
@@ -170,10 +168,241 @@ row, column, or diagonal, player $\mathrm{B}$ is the winner.  Otherwise, the gam
       be played on a bigger board.
 \item The function $\mathtt{nextStates}$ takes a $\mathtt{State}$ and a $\mathtt{player}$ and computes the set
       of states that can be reached from $\mathtt{State}$ if $\mathtt{player}$ is to move next.
+      To this end, it first computes the set of \blue{empty} positions.  Every position is represented as pair of the
+      form $[\mathtt{row}, \mathtt{col}]$ where $\mathtt{row}$ specifies the row and $\mathtt{col}$ specifies
+      the column of the position.  A position is \blue{empty} iff
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $[\mathtt{row}, \mathtt{col}] = \texttt{\symbol{34}\;\;\symbol{34}}$.
+      \\[0.2cm]
+      The computation of the empty position has been sourced out to the function $\mathtt{find\_empty}$.
+      The function $\mathtt{nextStates}$ then iterates over the set of empty positions. For every 
+      empty position $[\mathtt{row}, \mathtt{col}]$ it creates a new state $\mathtt{NextState}$ that results
+      from the current $\mathtt{State}$ by putting the mark of $\mathtt{player}$ in this position.  
+      The resulting states are collected in the set $\mathtt{Result}$ and returned.
+\item The function $\mathtt{find\_empty}$ takes a $\mathtt{State}$ and returns the set of empty positions.
+\item The function $\mathtt{utility}$ takes a $\mathtt{State}$ and a $\mathtt{player}$.  If the game is 
+      finished in the given $\mathtt{State}$, it returns the value that this $\mathtt{State}$ has for the
+      current $\mathtt{player}$.  If the game is not yet decided, $\Omega$ is returned instead.
+ 
+      In order to achieve its goal, the procedure first computes the set of all \blue{lines}.
+      Given a $\mathtt{State}$, a \blue{line} is a set of those markers that either form a horizontal,
+      vertical, or diagonal line in $\mathtt{State}$, e.g.~the set 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\{ \mathtt{State}[1,1], \mathtt{State}[2,2], \mathtt{State}[3,3] \}$
+      \\[0.2cm]
+      is the set of entries in a diagonal line.  The game is decided if all entries in this set are either
+      ``$\mathtt{X}$'' or ``$\mathtt{O}$''.  In this case, the set has exactly one element which is different
+      from the blank.  If this element is the same as $\mathtt{player}$, then the game is won by
+      $\mathtt{player}$, otherwise it is lost.
+
+      If there are no empty squares left, then the game is a draw.
+\item The auxiliary procedure $\mathtt{all\_lines}$ takes a $\mathtt{State}$ and computes the sets of all
+      \blue{lines}. 
+\item The procedure $\mathtt{finished}$ takes a $\mathtt{State}$ and checks whether the game is finished.
+      To this end it computes the $\mathtt{utility}$ of the state for the player ``$\mathtt{X}$''.  
+      If this $\mathtt{utility}$ is different from $\Omega$, the game is finished.  Note that it makes no
+      difference whether we take the utility of the state for the player ``$\mathtt{X}$'' or for the player
+      ``$\mathtt{O}$'' since if the game is finished for  ``$\mathtt{X}$'' it is also finished for
+      ``$\mathtt{O}$'' and vice versa.
 \end{enumerate}
 
+\section{The Minimax Algorithm}
+Having defined the notion of a game, our next task is to come up with an algorithm that can play a game.  The
+easiest algorithm that works is the \href{https://en.wikipedia.org/wiki/Minimax}{minimax algorithm}.  This
+algorithm is based on the notion of the \blue{value} of a state.  To this end, we define a function
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{value}: \mathtt{States} \times \mathtt{player} \rightarrow \{-1, 0, +1\}$
+\\[0.2cm]
+that takes a state $s$ and a player $p$ and returns the value that $s$ has if both the player $p$ and his
+opponent play perfectly.  The easiest way to define this function is via recursion.  The base case is simple:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{finished}(s) \rightarrow \mathtt{value}(s, p) = \mathtt{utility}(s, p)$.
+\\[0.2cm]
+If the game is not yet finished, assume that $o$ is the opponent of $p$.  Then we define
+\\[0.2cm]
+\hspace*{1.3cm}
+$\neg \mathtt{finished}(s) \rightarrow 
+ \mathtt{value}(s, p) = \max\bigl(\bigl\{
+                     -\mathtt{value}(s, o) \mid n \in \mathtt{nextStates}(s, p)
+                     \bigr\}\bigr)
+$.
+\\[0.2cm]
+The reason is that if the game is not finished yet, the player $p$ has to evaluate all possible moves.  
+Then the player will choose the best move.  In order to do so, the player computes the set
+$\mathtt{nextStates}(s, p)$ of all states that can be reached in one move from the state $s$.
+Now if $n$ is a state that results from player $p$ making a move, the other player $o$ has to make his move in
+the state $n$.  As we are investigation zero sum games, we have $\mathtt{value}(n, p) = -\mathtt{value}(n, o)$.
+\myFig{game.stlx} shows an implementation of this strategy.
 
 
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    value := cachedProcedure(State, player) {
+        if (finished(State)) {
+            return utility(State, player);
+        }
+        other := arb(players() - { player });
+        return max({ -value(s, other) : s in nextStates(State, player) });
+    };
+    best_move := procedure(State, player) {
+        AllStates := nextStates(State, player);
+        other     := arb(players() - { player });
+        bestValue := max({ -value(s, other) : s in AllStates });
+        return rnd({ s : s in AllStates | -value(s, other) == bestValue });
+    };
+    play_game := procedure(n) {
+        State := startState(n);
+        print(stateToString(State));
+        while (true) {
+            State := best_move(State, "O");
+            print("My move:");
+            print(stateToString(State));
+            if (final_msg(State)) { return; }
+            State := getMove(State);
+            print(stateToString(State));
+            if (final_msg(State)) { return; }
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The Minimax algorithm.}
+\label{fig:game.stlx}
+\end{figure}
+\begin{enumerate}
+\item The implementation of the function $\mathtt{value}$ follows the reasoning outlined above.
+      However, note that we have implemented $\mathtt{value}$ as a $\mathtt{cachedProcedure}$, i.e.~as a
+      procedure that memorizes its results.  Hence, when it is called a second time with the same arguments, it
+      does not recompute the value but rather the value is looked up.  To understand why this is important,
+      let us consider how many states would be explored in the case of tic-tac-toe if we would not use
+      \href{https://en.wikipedia.org/wiki/Memoization}{memoization}.  In this case, we have 9 moves for player
+      ``\texttt{O}'' from the start state, then 8 moves for player ``\texttt{X}'', then again 7 moves for
+      player ``\texttt{X}''.  If we disregard the fact that some games are decided after fewer than 9 moves,
+      the function $\mathtt{value}$ needs to consider 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $9 \cdot 8 \cdot 7 \cdot {\dots} \cdot 2 \cdot 1 = 9! = 362880$
+      \\[0.2cm]
+      moves.  However, if we count the number of possibilities of putting 5 ``\texttt{O}''s and 4
+      ``\texttt{X}''s on a $3 \times 3$ board, we see that there are only
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = 126$
+      \\[0.2cm]
+      possibilities, i.e.~there are a factor of $5! \cdot 4! = 2880$ less states to evaluate!
+\item The function $\mathtt{best\_move}$ takes a $\mathtt{State}$ and a $\mathtt{player}$ and returns a state $s$
+      that is optimal for the $\mathtt{player}$ and such that $s$ can be reached in one step from
+      $\mathtt{State}$.  
+      \begin{enumerate}[(a)]
+      \item To this end, it first computes the set $\mathtt{AllStates}$ of all states that can be reached 
+            from the given $\mathtt{State}$ in one step if $\mathtt{player}$ is to move next.
+      \item Since there are only two players, $\mathtt{other}$ is the opponent of $\mathtt{player}$.
+      \item $\mathtt{bestValue}$ is the best value that $\mathtt{player}$ can achieve.
+      \item The function returns randomly one of those states $\mathtt{s} \in \mathtt{AllStates}$ such that 
+            the value of $s$ is maximal, i.e.~is equal to $\mathtt{bestValue}$.
+      \end{enumerate}
+\item The function $\mathtt{play\_game}$ is used to play a game.
+      \begin{enumerate}
+      \item Since we would prefer to have 
+      \item Initially, $\mathtt{State}$ is the $\mathtt{startState}$.
+      \item As long as the game is not finished, the procedure keeps running.
+      \item We assume that the computer is player ``\texttt{O}'' and that the computer goes first.
+            Hence, the function $\mathtt{best\_move}$ is used to compute the state that results from the best
+            move of player ``\texttt{O}''.
+      \item After that, it is checked whether the game is finished.
+      \item If the game is not  yet finished, the human is asked to make its move via the function
+            $\mathtt{getMove}$ that takes a $\mathtt{State}$, displays it, and asks the user to enter a move.
+            The state resulting from this move is then returned and displayed.
+      \item Next, we have to check whether the game has finished.
+      \item The \texttt{while}-loop keeps iterating until the game is decided.
+      \end{enumerate}
+\end{enumerate}
+
+\section{$\alpha$-$\beta$-Pruning}
+The minimax algorithm can be improved by if the function $\mathtt{value}$ gets two additional parameters,
+$\alpha$ and $\beta$.  The idea is that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{valueAlphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta})$
+\\[0.2cm]
+still computes the value of $\mathtt{State}$ as long as this value is strictly between $\alpha$ and $\beta$,
+i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$v = \mathtt{value}(\mathtt{State}, \mathtt{player}) \wedge \alpha < v \wedge v < \beta \rightarrow
+ \mathtt{valueAlphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta}) = v
+$
+\\[0.2cm]
+However, if $v \leq \alpha$  the value returned by 
+$\mathtt{valueAlphaBeta}$ is less than $\alpha$, while if $v \geq \beta$ it will be bigger than $\beta$.  The
+idea is that if $v$ is outside the interval $[\alpha,  \beta]$, then we essentially do not care about the exact
+value that is returned and, therefore, are able to shortcircuit the evaluation of the given $\mathtt{State}$.
+This can result in significant speed improvements.  \myFig{game-alpha-beta.stlx} shows an implementation of the
+function $\mathtt{valueAlphaBeta}$ that works along this line of thinking.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    valueAlphaBeta := cachedProcedure(State, player, alpha := -1, beta := 1) {
+        if (finished(State)) {
+            return utility(State, player);
+        }
+        other  := arb(players() - { player });
+        maxVal := -1;
+        for (s in nextStates(State, player)) {
+            val := -value(s, other, -beta, -alpha);
+            if (val >= beta) {
+                return val + 1/2; 
+            }
+            maxVal := max({val, maxVal});
+        }
+        return maxVal;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{$\alpha$-$\beta$-Pruning.}
+\label{fig:game-alpha-beta.stlx}
+\end{figure}
+
+\begin{enumerate}
+\item If $\mathtt{State}$ is a terminal state, the function returns the $\mathtt{utility}$ of the given
+      $\mathtt{State}$ with respect to $\mathtt{player}$.
+\item Otherwise, we iterate over all successor states $\mathtt{s} \in \mathtt{nextStates}(\mathtt{State},
+  \mathtt{player})$.
+\item As we want to find the successor state with the highest value, we initialize $\mathtt{maxVal}$ to $-1$
+      since this is the lowest value that is possible and therefore $-1$ we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\max(v, -1) = v$ \quad for all values $v$ that can occur.
+\item We have to recursively evaluate the state $\mathtt{s}$ for the $\mathtt{other}$ player.
+      Since the value of a state for the $\mathtt{other}$ player is the negative of the value for
+      $\mathtt{player}$, we have to exchange the roles of $\alpha$ and $\beta$.
+\item As the specification of $\mathtt{valueAlphaBeta}$ ask us to compute the value of $\mathtt{State}$ only in
+      case it is less than $\beta$, once we find a successor state $s$ that 
+      If we find a value that is at least $\beta$ we can stop the evaluation
+
+\end{enumerate}
 
 
 %%% Local Variables:
