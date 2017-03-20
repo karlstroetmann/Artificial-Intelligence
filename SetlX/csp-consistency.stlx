@@ -37,14 +37,14 @@ varsTerm := procedure(f) {
 // propagation, and maintaining arc-consistency.
 solve := procedure(csp) {
     [Variables, Values, Constrs] := csp;
-    ValuesPerVar := { [v, Values] : v in Variables };
+    ValuesPerVar := { [x, Values] : x in Variables };
     Annotated    := { [f, collectVars(f)] : f in Constrs };
     UnaryConstrs := { [f, V] : [f, V] in Annotated | #V == 1 };
     OtherConstrs := { [f, V] : [f, V] in Annotated | #V >= 2 };
     Connected    := {};
-    for (v in Variables) {
-        Vars := +/ { V : [f, V] in Annotated | v in V } - { v };
-        Connected +={ [v, Vars] };
+    for (x in Variables) {
+        Vars := +/ { V : [f, V] in Annotated | x in V } - { x };
+        Connected +={ [x, Vars] };
     }
     check {
         for ([f, V] in UnaryConstrs) {
@@ -57,7 +57,7 @@ solve := procedure(csp) {
         return bt_search({}, csp, Connected);
     }
 };
-// This procedure takes three arguments:
+// This procedure takes four arguments:
 //   * ValuesPerVar is a dictionary associating the set of possible values with
 //     each variable.
 //   * Var2Formulas is a dictionary.  For every variable v, Var2Formulas[v] is
@@ -65,6 +65,8 @@ solve := procedure(csp) {
 //   * Annotated is the set of annnotated constraints, i.e. this set contains
 //     pairs of the form [f, Vars] where f is a constraint and Vars is the
 //     set of variables occurring in f.
+//   * Connected is a dictionary.  For every variable x, Connected[x] is the
+//     set of variables that occur together with x.
 // It modifies the Dictionary ValuesPerVar.
 enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connected) {
     UncheckedVars := domain(Var2Formulas);
@@ -86,7 +88,6 @@ enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connec
         if (Remaining == {}) { backtrack; }
         ValuesPerVar[variable] := Remaining;
     }
-    // printValues(ValuesPerVar);
 };
 // This procedure takes a variable v, a value, a constraint f, the set Vars of those
 // variables in f that are different from v and a dictionary associating values
@@ -116,11 +117,11 @@ createAllAssignments := procedure(Vars, ValuesPerVar) {
 // such that v occurs in f.
 variables2Formulas := procedure(Constraints) {
     Dictionary := {};
-    for ([f, Vars] in Constraints, v in Vars) {
-        if (Dictionary[v] == om) {
-            Dictionary[v] := { f };
+    for ([f, Vars] in Constraints, x in Vars) {
+        if (Dictionary[x] == om) {
+            Dictionary[x] := { f };
         } else {
-            Dictionary[v] += { f };
+            Dictionary[x] += { f };
         }
     }
     return Dictionary;

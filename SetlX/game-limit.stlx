@@ -1,26 +1,37 @@
-value := cachedProcedure(State, player, limit := 0) {
+value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
     if (finished(State)) {
         return utility(State, player);
     }
-    if (limit == 0) { return 0; }
+    if (limit == 0) {
+        return 0;
+    }
     other := arb(players() - { player });
-    return max({ -value(s, other, limit - 1) : s in nextStates(State, player) });
+    val   := -1;
+    for (ns in nextStates(State, player)) {
+        val := max({ val, -value(ns, other, limit - 1, -beta, -alpha) });
+        if (val >= beta) {
+            return val;
+        }
+        alpha := max({ val, alpha });
+    }
+    return val;
 };
-best_move := procedure(State, player, limit) {
-    AllStates := nextStates(State, player);
-    other     := arb(players() - { player });
-    bestValue := max({ -value(s, other, limit) : s in AllStates });
-    print(bestValue);
-    return rnd({ s : s in AllStates | -value(s, other, limit) == bestValue });
+best_move := procedure(State, player, limit := 5) {
+    bestVal := value(State, player, limit);
+    NS      := nextStates(State, player);
+    other   := arb(players() - { player });
+    return [bestVal, rnd({ns : ns in NS | -value(ns,other,limit) == bestVal})];
 };
-play_game := procedure(n, limit := 4) {
+play_game := procedure(n) {
     State := startState(n);
     print(stateToString(State));
     while (!finished(State)) {
-        start := now();
-        State := best_move(State, "O", limit);
-        stop  := now();
-        print("My move:");
+        start        := now();
+        [val, State] := best_move(State, "O", 7);
+        stop         := now();
+        print(cacheStats(value));
+        clearCache(value);
+        print("For me, the game has the value $val$.  My move:");
         print(stateToString(State));
         print("computation took $(stop - start) * 0.001$ seconds");
         if (final_msg(State)) { return; }
@@ -29,4 +40,3 @@ play_game := procedure(n, limit := 4) {
         if (final_msg(State)) { return; }
     }
 };
-

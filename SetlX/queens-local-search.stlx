@@ -90,7 +90,6 @@ solve := procedure(n) {
         } else {
             row := rnd({ 1 .. n });
         }
-        // print("$maxNum$ conflicts in row $row$");
         Conflicts := {};
         for (col in [1 .. n]) {
             Board      := Queens;

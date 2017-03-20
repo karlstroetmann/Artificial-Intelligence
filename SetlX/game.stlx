@@ -6,20 +6,22 @@ value := cachedProcedure(State, player) {
     return max({ -value(s, other) : s in nextStates(State, player) });
 };
 best_move := procedure(State, player) {
-    AllStates := nextStates(State, player);
-    other     := arb(players() - { player });
-    bestValue := max({ -value(s, other) : s in AllStates });
-    return rnd({ s : s in AllStates | -value(s, other) == bestValue });
+    bestVal := value(State, player);
+    NS      := nextStates(State, player);
+    other   := arb(players() - { player });
+    return [bestVal, rnd({ns : ns in NS | -value(ns,other) == bestVal})];
 };
 play_game := procedure(n) {
     resetRandom();
     State := startState(n);
     print(stateToString(State));
     while (true) {
-        start := now();
-        State := best_move(State, "O");
-        stop  := now();
-        print("My move:");
+        start        := now();
+        [val, State] := best_move(State, "O");
+        stop         := now();
+        print(cacheStats(value));
+        clearCache(value);
+        print("For me, the game has the value $val$. My move:");
         print(stateToString(State));
         print("computation took $(stop - start) * 0.001$ seconds");
         if (final_msg(State)) { return; }

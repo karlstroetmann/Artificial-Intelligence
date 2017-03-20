@@ -77,9 +77,9 @@ getMove := procedure(State) {
 final_msg := procedure(State) {
     if (finished(State)) {
         msg := "The game is finished. ";
-        if (value(State, "X") == 1) {
+        if (utility(State, "X") == 1) {
             print(msg + "You have won!");
-        } else if (value(State, "X") == -1) {
+        } else if (utility(State, "X") == -1) {
             print(msg + "You lost!");
         } else {
             print(msg + "It's a draw.");

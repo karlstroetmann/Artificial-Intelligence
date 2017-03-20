@@ -331,7 +331,7 @@ the state $n$.  As we are investigation zero sum games, we have $\mathtt{value}(
 \end{enumerate}
 
 \section{$\alpha$-$\beta$-Pruning}
-The minimax algorithm can be improved by if the function $\mathtt{value}$ gets two additional parameters,
+The minimax algorithm can be improved if the function $\mathtt{value}$ gets two additional parameters,
 $\alpha$ and $\beta$.  The idea is that
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -400,7 +400,7 @@ function $\mathtt{valueAlphaBeta}$ that works along this line of thinking.
       $\mathtt{player}$, we have to exchange the roles of $\alpha$ and $\beta$.
 \item As the specification of $\mathtt{valueAlphaBeta}$ ask us to compute the value of $\mathtt{State}$ only in
       case it is less than $\beta$, once we find a successor state $s$ that 
-      If we find a value that is at least $\beta$ we can stop the evaluation
+      If we find a value that is at least $\beta$ we can stop the evaluation.
 
 \end{enumerate}
 
