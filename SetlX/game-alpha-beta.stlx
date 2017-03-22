@@ -3,13 +3,12 @@ value := cachedProcedure(State, player, alpha := -1, beta := 1) {
         return utility(State, player);
     }
     other := arb(players() - { player });
-    val   := -1;
+    val   := alpha;
     for (ns in nextStates(State, player)) {
-        val := max({ val, -value(ns, other, -beta, -alpha) });
+        val := max({ val, -value(ns, other, -beta, -val) });
         if (val >= beta) {
             return val;
         }
-        alpha := max({ val, alpha });
     }
     return val;
 };

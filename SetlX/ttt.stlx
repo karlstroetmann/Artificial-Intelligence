@@ -27,9 +27,9 @@ find_empty := procedure(State) {
 utility := procedure(State, player) {
     Lines := all_lines(State);
     // all lines are checked whether they contain 3 identical nonempty marks 
-    for (line in Lines) {
-        if (#{ x : x in line } == 1 && line != { " " }) {
-            if (line == { player }) {
+    for (Line in Lines) {
+        if (#Line == 1 && Line != { " " }) {
+            if (Line == { player }) {
                 return  1;
             } else {
                 return -1;
@@ -56,8 +56,7 @@ all_lines := procedure(State) {
     return Lines;
 };
 finished := procedure(State) {
-    player := "X";
-    if (utility(State, player) != om) { return true; } else { return false; }
+    if (utility(State, "X") != om) { return true; } else { return false; }
 };
 // for pretty printing
 stateToString := procedure(State) {

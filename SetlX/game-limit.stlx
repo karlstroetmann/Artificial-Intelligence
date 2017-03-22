@@ -22,7 +22,7 @@ best_move := procedure(State, player, limit := 5) {
     other   := arb(players() - { player });
     return [bestVal, rnd({ns : ns in NS | -value(ns,other,limit) == bestVal})];
 };
-play_game := procedure(n) {
+play_game := procedure(n := 3) {
     State := startState(n);
     print(stateToString(State));
     while (!finished(State)) {

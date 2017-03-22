@@ -1,0 +1,111 @@
+value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
+    if (finished(State)) {
+        return utility(State, player);
+    }
+    if (limit == 0) {
+        return 0;
+    }
+    other := arb(players() - { player });
+    val   := alpha;
+    for (ns in nextStates(State, player)) {
+        val := max({ val, -value(ns, other, limit - 1, -beta, -val) });
+        if (val >= beta) {
+            return val;
+        }
+    }
+    return val;
+};
+best_move := procedure(State, player, limit := 5) {
+    bestVal := value(State, player, limit);
+    NS      := nextStates(State, player);
+    other   := arb(players() - { player });
+    return [bestVal, rnd({ns : ns in NS | -value(ns,other,limit) == bestVal})];
+};
+play_game := procedure() {
+    State := startState();
+    print(stateToString(State));
+    while (!finished(State)) {
+        start        := now();
+        [val, State] := best_move(State, "O", 6);
+        stop         := now();
+        print(cacheStats(value));
+        clearCache(value);
+        print("For me, the game has the value $val$.  My move:");
+        print(stateToString(State));
+        print("computation took $(stop - start) * 0.001$ seconds");
+        if (final_msg(State)) { return; }
+        State := getMove(State);
+        print(stateToString(State));
+        if (final_msg(State)) { return; }
+    }
+};
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Game specific code is below.                                               //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+players := procedure() {
+    return { "X", "O" };
+};
+startState := procedure() {
+    Line   := [ " " : col in [1 .. 7] ];
+    return [ Line : row in [1 .. 6] ];
+};
+nextStates := procedure(State, player) {
+    // Your code here!
+};
+find_empty := procedure(State, col) {
+    // Your code here!
+};
+utility := procedure(State, player) {
+    // Your code here!
+};
+all_lines := cachedProcedure() {
+    // Your code here!
+};
+last_line_filled := procedure(State) {
+    // Your code here!
+};
+finished := procedure(State) {
+    player := "X";
+    if (utility(State, player) != om) { return true; } else { return false; }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+// for pretty printing
+stateToString := procedure(State) {
+    ls     := "\n" + "-" * (4 * 7 + 1) + "\n";  // line separator
+    Board  := ls;
+    for (row in [6, 5 .. 1]) {
+        Line  := [State[row][col]: col in [1 .. 7]];
+        Board += "| " + join(Line, " | ") + " |";
+        Board += ls;
+    }
+    return Board;
+};
+getMove := procedure(State) {
+    col := read("Your turn, enter move as a single number specifiying the column: ");
+    col := int(col);
+    row := find_empty(State, col);
+    assert(row <= 6, "illegal move, game aborted");
+    State[row][col] := "X";
+    return State;
+};
+final_msg := procedure(State) {
+    if (finished(State)) {
+        msg := "The game is finished. ";
+        if (utility(State, "X") == 1) {
+            print(msg + "You have won!");
+        } else if (utility(State, "X") == -1) {
+            print(msg + "You lost!");
+        } else {
+            print(msg + "It's a draw.");
+        }
+        return true;
+    }
+    return false;
+};
+
+play_game();
