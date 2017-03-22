@@ -469,6 +469,80 @@ We proceed to discuss the implementation of the function $\mathtt{alphaBeta}$.
       This shortcut can result in significant savings of computation time.
 \end{enumerate}
 
+\section{Depth Limited Search}
+In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
+$\mathtt{States}$ is so big that we do not stand a chance to explore this set completely.  In those cases, the
+idea is to add a parameter $\mathtt{limit}$ to the procedure $\mathtt{value}$.  On every recursive invocation
+of the function $\mathtt{value}$, the function $\mathtt{limit}$ is decreased.  Once the limit reaches $0$,
+instead of invoking the function $\mathtt{value}$ again recursively, instead we try to estimate the value of
+the given $\mathtt{State}$ using a heuristic function.  This leads to the code shown in \myFig{game-limit.stlx}.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
+        if (finished(State)) {
+            return utility(State, player);
+        }
+        if (limit == 0) { return heuristic(State, player); }
+        other := arb(players() - { player });
+        val   := alpha;
+        for (ns in nextStates(State, player)) {
+            val := max({ val, -value(ns, other, limit - 1, -beta, -val) });
+            if (val >= beta) {
+                return val;
+            }
+        }
+        return val;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Depth-limited $\alpha$-$\beta$-pruning.}
+\label{fig:game-limit.stlx}
+\end{figure}
+For a game like tic-tac-toe it is difficult to come up with a decent heuristic.  A very crude approach would be
+to define:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{heuristic := [State, player] |-> 0;}
+\\[0.2cm]
+This heuristic would simply estimate the value of all states to be $0$.  As this heuristic is only called after
+it has been tested that the game has not yet been decided, this approach is not unreasonable.  For a more
+complex game like chess, the heuristic could instead be a weighted count of all pieces.  Concretely, the
+algorithm for estimating the value of a state would work as follows:
+\begin{enumerate}
+\item Initially, the variable $\mathtt{sum}$ is set to $0$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{sum := 0;}
+\item We would count the number of white rooks $\mathtt{Rook}_{\mathrm{white}}$ and black rooks $\mathtt{Rook}_{\mathrm{black}}$,
+      subtract these numbers from each other and multiply the difference by $5$.  
+      The resulting number would be added to $\mathtt{sum}$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{sum} \;\texttt{+=}\; (\mathtt{Rook}_{\mathrm{white}} - \mathtt{Rook}_{\mathrm{black}}) \cdot 5\mathtt{;}$
+\item We would count the number of white bishops $\mathtt{Bishop}_{\mathrm{white}}$ and black bishops
+      $\mathtt{Bishop}_{\mathrm{black}}$,
+      subtract these numbers from each other and multiply the difference by $3$.  
+      The resulting number would be added to $\mathtt{sum}$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{sum} \;\texttt{+=}\; (\mathtt{Bishop}_{\mathrm{white}} - \mathtt{Bishop}_{\mathrm{black}}) \cdot 5\mathtt{;}$
+\item In a similar way we would count knights, queens, and pawns.  Approximately, the weights of
+      knights are $2.5$, a queen is worth $9$ and a pawn is worth $1$.
+\end{enumerate}
+The resulting $\mathtt{sum}$ cn then be used as an approximation of the value of a state.
+
+
 \exercise
 Read up on the game \href{https://en.wikipedia.org/wiki/Connect_Four}{Connect Four}.  You can play it online at
 \\[0.2cm]

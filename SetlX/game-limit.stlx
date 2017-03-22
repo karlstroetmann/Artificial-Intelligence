@@ -2,17 +2,14 @@ value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
     if (finished(State)) {
         return utility(State, player);
     }
-    if (limit == 0) {
-        return 0;
-    }
+    if (limit == 0) { return 0; }
     other := arb(players() - { player });
-    val   := -1;
+    val   := alpha;
     for (ns in nextStates(State, player)) {
-        val := max({ val, -value(ns, other, limit - 1, -beta, -alpha) });
+        val := max({ val, -value(ns, other, limit - 1, -beta, -val) });
         if (val >= beta) {
             return val;
         }
-        alpha := max({ val, alpha });
     }
     return val;
 };
