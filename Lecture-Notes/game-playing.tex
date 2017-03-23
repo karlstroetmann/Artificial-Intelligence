@@ -257,7 +257,7 @@ If the game is not yet finished, assume that player $o$ is the opponent of playe
 \hspace*{1.3cm}
 $\neg \mathtt{finished}(s) \rightarrow 
  \mathtt{value}(s, p) = \max\bigl(\bigl\{
-                     -\mathtt{value}(s, o) \mid n \in \mathtt{nextStates}(s, p)
+                     -\mathtt{value}(n, o) \mid n \in \mathtt{nextStates}(s, p)
                      \bigr\}\bigr)
 $.
 \\[0.2cm]

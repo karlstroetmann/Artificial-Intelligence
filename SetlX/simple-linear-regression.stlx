@@ -1,16 +1,5 @@
 load("table.stlx");
 
-// Find the index of name in List.
-find_index := procedure(name, List) {
-    index := 0;
-    for (s in List) {
-        index += 1;
-        if (s == name) {
-            return index;
-        }
-    }
-    assert(false, "$name$ not found in $List$");
-};
 simple_linear_regression := procedure(fileName, types, name) {
     csv  := readTable(fileName, types);
     data := csv.getData();
@@ -35,6 +24,10 @@ simple_linear_regression := procedure(fileName, types, name) {
     p      := 1 - stat_studentCDF(t, m-2);
     print(t, p);
     return [R2, p];
+};
+// Find the index of x in List.
+find_index := procedure(x, List) {
+    return arb({ idx : idx in [1 .. #List] | List[idx] == x });
 };
 
 test := procedure() {

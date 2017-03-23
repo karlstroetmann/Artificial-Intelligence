@@ -1,8 +1,10 @@
 \chapter{Linear Regression}
 A great deal of the current success of artificial intelligence is due to recent advances in
-\href{https://en.wikipedia.org/wiki/Machine_learning}{machine learning}.  \emph{\color{blue}Linear regression}
+\href{https://en.wikipedia.org/wiki/Machine_learning}{machine learning}.  
+\href{https://en.wikipedia.org/wiki/Linear_regression}{Linear regression}
 is one of the most basic algorithms that are applied in machine learning.  It is also the foundation for more advanced
-forms of machine learning like \emph{\color{blue}logistic regression} and \emph{\color{blue}neural networks}.
+forms of machine learning like \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} and 
+\href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
 Furthermore, linear regression is surprisingly powerful.  Finally, many of the fundamental problems of machine
 learning can already be illustrated with linear regression.  Therefore it is only natural that we begin our
 study of machine learning with the study of linear regression.
@@ -14,30 +16,30 @@ relates the engine displacement to its fuel consumption.  However, due to our la
 physics, this is not an option for us.  Instead, we could try to take a look at different engines and compare
 their engine displacement with the corresponding fuel consumption.  This way, we would collect a set of  
 $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
-where $x_i$ is the engine displacement of the engine in the $i$-th car, while $y_i$ is the consumption of the
+where $x_i$ is the engine displacement of the engine in the $i$-th car, while $y_i$ is the fuel consumption of the
 $i$-th car.  We call $x$ is the \emph{\color{blue}independent variables}, while $y$ is the 
 \emph{\color{blue}dependent variable}.  In linear regression, we use a \emph{\color{blue}linear hypothesis} 
-and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via an
+and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via a linear
 equation of the form
 \\[0.2cm]
 \hspace*{1.3cm}
 $y_i := \vartheta_1 \cdot x_i + \vartheta_0$.
 \\[0.2cm]
-Of course, we do not expect this equation to hold exactly.  The reason is that there are many other factors
-that influence the fuel consumption.  For example, the weight of a car certainly influences the fuel
-consumption.  We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the
+We do not expect this equation to hold exactly.  The reason is that there are many other factors besides the
+engine displacement that influence the fuel consumption.  For example, both the weight of a car and its front
+surface area certainly influence the fuel consumption.  We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the
 \emph{\color{blue}\underline{m}ean \underline{s}quared \underline{e}rror}, which is defined as 
 \begin{equation}
   \label{eq:mse}
  \mathtt{MSE}(\vartheta_0, \vartheta_1) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2,
 \end{equation}
-is minimized.  It can be \href{https://en.wikipedia.org/wiki/Simple_linear_regression}{shown} that the solution
-to this minimization problem is given as follows:
+is minimized.  It can be shown that the solution to this minimization problem is given as follows:
 \begin{equation}
   \label{eq:theta0}
    \vartheta_1 = r_{x,y} \cdot \frac{s_y}{s_x} \quad \mbox{and} \quad \ds\vartheta_0 = \bar{y} - \vartheta_1 \cdot \bar{x}.
 \end{equation}
-Here, $\bar{x}$ and $\bar{y}$ are the \emph{\color{blue}sample mean values} of $x$ and $y$ respectively, i.e.~we have
+This solution makes use of the values $r_{x,y}$, $s_x$, and $s_y$.  In order to define these values, we first
+define the \emph{\color{blue}sample mean values} $\bar{x}$ and $\bar{y}$ of $x$ and $y$ respectively, i.e.~we have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \bar{x} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
@@ -81,7 +83,7 @@ $\vartheta_0$ and $\vartheta_1$, these derivatives have to be set to $0$.
 Assume that we have been given a set of $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$  
 and that we have calculated the parameters $\vartheta_0$ and $\vartheta_1$ according to Equation
 \ref{eq:theta0} and Equation \ref{eq:theta1}.  Provided that not all $x_i$ have the same value, these
-formul\ae\ will returns two numbers.  The question then is how good this linear approximation realy is.  In
+formul\ae\ will returns two numbers.  The question then is how good this linear approximation really is.  In
 order to judge the quality of the linear model that is given by 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -90,7 +92,7 @@ $y = \vartheta_0 + \vartheta_1 \cdot x$
 we can compute the mean squared error according to Equation \ref{eq:mse}.  However, the mean squared error 
 is an absolute number that, by itself, is difficult to interpret.  The reason is that the variable $y$ might be
 inherently noisy and we have to relate this noise to the mean squared error.  Now the noise contained in $y$
-can be measured by the sample variance of $y$ and is given by the formula
+can be measured by the \blue{sample variance} of $y$ and is given by the formula
 \begin{equation}
   \label{eq:var}
   \mathtt{Var}(y) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2.
@@ -153,6 +155,12 @@ $\ds \mathtt{R}^2 = 1 - \frac{\mathtt{RSS}}{\mathtt{TSS}}$.
 \\[0.2cm]
 This is the formula that we will use when we implement simple linear regression.
 
+It should be noted that $\mathrm{R}^2$ is the square of Pearson's \textrm{r}.  The notation is a bit
+inconsistent since Pearson's \textrm{r} is written in lower case, while $\mathrm{R}^2$ is written in upper
+case.  Finally $\mathrm{R}^2$ is also known as the 
+\href{https://en.wikipedia.org/wiki/Coefficient_of_determination}{coefficient of determination}.
+
+
 \subsection{Putting the Theory to the Test}
 In order to get a better feeling for linear regression, we want to test it to investigate the factors that
 determine the fuel consumption of cars.  \myFig{cars.csv} shows the head of the data file ``\texttt{cars.csv}''
@@ -204,7 +212,8 @@ car the following other parameters are listed:
 \item $\mathtt{displacement}$ is the engine displacement in cubic inches, 
 \item $\mathtt{hp}$ is the horse power,
 \item $\mathtt{weight}$ is the weight in pounds,
-\item $\mathtt{acc}$ is the acceleration given as the time in seconds needed to accelerate from 0 miles to 60 miles,
+\item $\mathtt{acc}$ is the acceleration given as the time in seconds needed to accelerate from 0 miles per
+      hour to 60 miles per hour,
 \item $\mathtt{year}$ is the year in which the model was introduced, and
 \item $\mathtt{name}$ is the name of the model.
 \end{enumerate}
@@ -245,15 +254,8 @@ end, I have written the program shown in \myFig{simple-linear-regression.stlx}.
         R2     := 1 - RSS / TSS;
         return R2;
     };
-    find_index := procedure(name, List) {
-        index := 0;
-        for (s in List) {
-            index += 1;
-            if (s == name) {
-                return index;
-            }
-        }
-        assert(false, "$name$ not found in $List$");
+    find_index := procedure(x, List) {
+        return arb({ idx : idx in [1 .. #List] | List[idx] == x });
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -306,8 +308,7 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds\vartheta_0 = \bar{y} - \vartheta_1 \cdot \bar{x}$.
-\item $\mathtt{VarY}$ computes the sample variance of the dependent variable $y$.
-\item $\mathtt{TSS}$ is the total sum of squares and computed using the formula
+\item $\mathtt{TSS}$ is the total sum of squares and is computed using the formula
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds\mathtt{TSS} = \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2$.
@@ -458,7 +459,12 @@ In order to compute the probability that the null hypothesis is true, we have to
 \end{equation}
 The $t$ statistics is distributed according to 
 \href{https://en.wikipedia.org/wiki/Student%27s_t-distribution}{Student's $t$-distribution} 
-with $m-2$ degrees of freedom.  In \textsc{SetlX}, the cumulative Student's $t$-distribution can be computed
+with $m-2$ degrees of freedom.  In the upcomming version of \textsc{SetlX}, a preview of which is already available at
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/jonasunigithub/setlX}{\texttt{https://github.com/jonasunigithub/setlX}}
+\\[0.2cm]
+the cumulative Student's $t$-distribution can be computed
 via the function
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -466,13 +472,13 @@ $\mathtt{stat\_studentCDF}(t, \nu)$,
 \\[0.2cm]
 where $t$ is the value of the $t$-statistic and $\nu$ is the number of degrees of freedom.  If we substitute
 $\nu := m - 2$, then this function computes the probability that the null hypothesis is true.  This probability
-is also known as the \emph{$p$-value}.  If the $p$-value is small, e.g.~less than $0.01$, then the null
+is also known as the \blue{$p$-value}.  If the $p$-value is small, e.g.~less than $0.01$, then the null
 hypothesis is refuted and we can conclude that there is some relationship between $x$ and $y$.  In the example
 previously discussed, i.e.~the example relating the fuel consumption of a car to various other parameters, the
 $p$-values are all very small, i.e.~less than $10^{-16}$.  This is due to the fact that we have had enough data at
 our disposal:  As a rule of thumb we can say that once we have more than 30 pairs $\pair(x_i, y_i)$ and there
 is indeed a relationship between $x$ and $y$, then simple linear regression will detect this relationship, even
-if the relationship is only small. 
+if this relationship is only small. 
 
 \section{General Linear Regression}
 In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
@@ -605,7 +611,7 @@ vector $\mathbf{w}$ appropriately.  A necessary condition for $E(\mathbf{w})$ to
 \hspace*{1.3cm}
 $\nabla E(\mathbf{w}) = \mathbf{0}$,
 \\[0.2cm]
-i.e.~the gradient of $E(\mathbf{w})$ need to be zero.  In order to prepare for the computation of
+i.e.~the gradient of $E(\mathbf{w})$ needs to be zero.  In order to prepare for the computation of
 $\nabla E(\mathbf{w})$, we first compute the gradient of two simpler functions.
 
 \subsubsection{Computing the Gradient of $f(\mathbf{x}) = \mathbf{x}^T \cdot C \cdot \mathbf{x}$}
@@ -652,7 +658,7 @@ If the matrix $C$ is symmetric, i.e.~if $C = C^T$, this simplifies to
 \hspace*{1.3cm}
 $\ds \nabla f(\mathbf{x}) = 2 \cdot C \cdot \mathbf{x}$.
 \\[0.2cm]
-If the function $g: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as 
+Next, if the function $g: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $g(\mathbf{x}) := \mathbf{b}^T \cdot A \cdot \mathbf{x}$, \quad where $\mathbf{b} \in \mathbb{R}^n$ and $A \in \mathbb{R}^{n \times n}$,
@@ -666,7 +672,7 @@ $\ds \nabla g(\mathbf{x}) = A^T \cdot \mathbf{b}$.
 Prove this equation.
 
 \section{Deriving the Normal Equation}
-Next, we derive the so called \emph{normal equation} for linear regression.  To this end, we first
+Next, we derive the so called \blue{normal equation} for linear regression.  To this end, we first
 expand the product in equation (\ref{eq:squared-error-3}):
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -711,8 +717,6 @@ $\mathbf{w}^T \cdot X^T \cdot \mathbf{y} =
 $.
 \\[0.2cm]
 Hence we have shown that
-\\[0.2cm]
-\hspace*{1.3cm}
 \begin{equation}
   \label{eq:squared-error-4}
   E(\mathbf{w}) = \ds \frac{1}{n} \cdot \Bigl(\mathbf{w}^T \cdot \bigl(X^T \cdot X\bigr) \cdot \mathbf{w} 
@@ -720,7 +724,6 @@ Hence we have shown that
                                              + \mathbf{y}^T \cdot \mathbf{y}
                                         \Bigr)
 \end{equation}
-\\[0.2cm]
 holds.  The matrix $X^T \cdot X$ used in the first term is symmetric because
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -788,9 +791,9 @@ derived previously.
 
 At this point you might ask whether the matrix $X^T \cdot X$ is always invertible.  The short answer is yes, provided the
 regression problem is well posed.  By this I mean that there are much more training examples than there are different
-weights.  After all, if you have only 10 training examples but want to determine a 100 different weights, then it is
-obvious that the problem is not well posed.  Now if you have enough training examples you have to be sure that the
-training examples are independent of each other.  For example, lets say you have three training examples 
+weights.  After all, if you have only 10 training examples but want to determine one hundred different weights,
+then it is obvious that the problem is not well posed.  Now if you have enough training examples you have to be
+sure that the training examples are independent of each other.  For example, lets say you have three training examples 
 $\langle\mathbf{x}_1, y^{(1)}\rangle$, $\langle\mathbf{x}_2, y^{(2)}\rangle$, and $\langle\mathbf{x}_3, y^{(3)}\rangle$ and
 you decide that you define a fourth training example $\langle\mathbf{x_4}, y^{(4)}\rangle$ as
 \\[0.2cm]
@@ -802,14 +805,51 @@ then you have not generated any new information and the fourth training example 
 $X^T \cdot X$ invertible.
 
 \subsection{Testing the Statistical Significance}
-
+The $\mathrm{F}$-statistic is defined according to the following formula:
 \begin{equation}
   \label{eq:F-statistic}
-  F = \frac{\mathtt{TSS} - \mathtt{RSS}}{\mathtt{RSS}} \cdot \frac{m - p - 1}{p}
+  \mathrm{F} = \frac{\mathtt{TSS} - \mathtt{RSS}}{\mathtt{RSS}} \cdot \frac{m - n - 1}{p}
 \end{equation}
 The $\mathtt{F}$-statistic is distributed according to the
-\href{https://en.wikipedia.org/wiki/F-distribution}{Fisher-Snedecor-distribution} with $p$ degrees of freedom
-in the nominator and $m - p - 1$ degrees of freedom in the denominator. 
+\href{https://en.wikipedia.org/wiki/F-distribution}{Fisher-Snedecor-distribution} with $n$ degrees of freedom
+in the nominator and $m - n - 1$ degrees of freedom in the denominator. 
+
+\subsection{Implementation}
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    run_linear_regression := procedure(fileName, types) {
+        csv    := readTable(fileName, types);
+        data   := csv.getData();
+        number := #data;
+        dmnsn  := #data[1];    
+        yList  := [];
+        xList  := [];
+        for (i in [1 .. number]) {
+            yList[i] := 1 / data[i][1];
+            xList[i] := la_vector([1.0] + data[i][2..-2]);
+        }
+        X := la_matrix(xList);
+        y := la_vector(yList);
+        w := la_solve(X! * X, X! * y);
+        d := X * w - y;
+        E := +/ [ abs(d[i]) : i in [1 .. number] ] / number;
+        return [w, E];
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{General linear regression.}
+\label{fig:linear-regression.stlx}
+\end{figure}
+
 
 %%% Local Variables:
 %%% mode: latex

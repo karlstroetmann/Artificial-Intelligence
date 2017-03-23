@@ -15,16 +15,19 @@ run_linear_regression := procedure(fileName, types) {
     y := la_vector(yList);
     w := la_solve(X! * X, X! * y);
     d := X * w - y;
-    
-    E := +/ [ abs(d[i]) : i in [1 .. number] ] / number;
-    return [w, E];
+  
+    RSS   := d * d;
+    yMean := +/ yList / number;
+    TSS   := +/ [(yList[i] - yMean) ** 2 : i in [1 .. number]];
+    R2    := 1 - RSS / TSS;
+
+    return R2;
 };
 
 test := procedure() {
     types := ["double", "int", "double", "double", "double", "double", "int", "string"];
-    [w, E] := run_linear_regression("cars.csv", types);
-    print("coefficients:  $w$");
-    print("average error: $E$");
+    R2    := run_linear_regression("cars.csv", types);
+    print("portion of explained variance : $R2$");
 };
 
 test();

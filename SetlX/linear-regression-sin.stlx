@@ -12,7 +12,7 @@ linear_regression_sin := procedure(n, m) {
     y := la_vector(yList);
     w := la_solve(X! * X, X! * y);
     d := X * w - y;
-    E := max([ abs(d[i][1]) : i in [1 .. n] ]);
+    E := max([ abs(d[i]) : i in [1 .. n] ]);
     return [w, E];
 };
 

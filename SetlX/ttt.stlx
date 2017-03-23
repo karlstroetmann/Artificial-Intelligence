@@ -1,5 +1,5 @@
-// load("game.stlx");
-load("game-alpha-beta.stlx");
+load("game.stlx");
+// load("game-alpha-beta.stlx");
 // load("game-limit.stlx");
 
 players := procedure() {
@@ -25,11 +25,13 @@ find_empty := procedure(State) {
     return { [row, col] : row in L, col in L | State[row][col] == " " };
 };
 utility := procedure(State, player) {
-    Lines := all_lines(State);
+    n     := #State;
+    Lines := all_lines(n);
     // all lines are checked whether they contain 3 identical nonempty marks 
     for (Line in Lines) {
-        if (#Line == 1 && Line != { " " }) {
-            if (Line == { player }) {
+        Elements := { State[row][col] : [row, col] in Line };
+        if (#Elements == 1 && Elements != { " " }) {
+            if (Elements == { player }) {
                 return  1;
             } else {
                 return -1;
@@ -41,23 +43,23 @@ utility := procedure(State, player) {
         return 0;  // game drawn
     } // else return om
 };
-all_lines := procedure(State) {
-    n := #State;
+all_lines := procedure(n) {
     L := [1 .. n];
     // Lines is the set of all horizontal, vertical, and diagonal lines in the game
     // we start with the rows
-    Lines := { { State[row][col] : col in L } : row in L };
+    Lines := { { [row, col] : col in L } : row in L };
     // we add the columns
-    Lines += { { State[row][col] : row in L } : col in L };
+    Lines += { { [row, col] : row in L } : col in L };
     // the falling diagonal
-    Lines += { { State[idx][idx] : idx in L } };
+    Lines += { { [idx, idx] : idx in L } };
     // finally, the rising diagonal
-    Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
+    Lines += { { [idx,-idx] : idx in L } };
     return Lines;
 };
 finished := procedure(State) {
-    if (utility(State, "X") != om) { return true; } else { return false; }
+    return utility(State, "X") != om;
 };
+////////////////////////////////////////////////////////////////////////////////
 // for pretty printing
 stateToString := procedure(State) {
     n     := #State;
