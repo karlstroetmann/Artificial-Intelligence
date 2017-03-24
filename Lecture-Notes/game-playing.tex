@@ -378,7 +378,7 @@ Traditionally, these arguments are called
 $\alpha$ and $\beta$ and the new function is caller $\mathtt{alphaBeta}$.  The idea is that the behaviour of
 this function satisfies the following requirements:
 \begin{enumerate}
-\item As long as $\mathtt{value}(s, p)$ is strictly between $\alpha$ and $\beta$, the function
+\item As long as $\mathtt{value}(s, p)$ is between $\alpha$ and $\beta$, the function
       $\mathtt{alphaBeta}$ computes the same result as the function $\mathtt{value}$,
       i.e.~we have
       \\[0.2cm]
@@ -387,7 +387,7 @@ this function satisfies the following requirements:
          \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}(s,p)
       $.
 \item If $\mathtt{value}(\mathtt{State},\mathtt{player}) \leq \alpha$, the only requirement is that
-      the value returned by $\mathtt{valueAlphaBeta}$ is less than or equal to $\alpha$,
+      the value returned by $\mathtt{alphaBeta}$ is less than or equal to $\alpha$,
       i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
@@ -403,7 +403,7 @@ this function satisfies the following requirements:
         \beta \leq \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) 
       $.
 \end{enumerate}
-Therefore, $\mathtt{valueAlphaBeta}(\mathtt{State}, \mathtt{player})$  is only an approximation of the true
+Therefore, $\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player})$  is only an approximation of the true
 value of $\mathtt{value}(\mathtt{State}, \mathtt{player})$.  However, it turns out that this approximation is all that is
 needed.  \myFig{game-alpha-beta.stlx} shows an implementation of $\mathtt{alphaBeta}$ that achieves this
 specification.  The function $\mathtt{value}$ can then be implemented as follows:
@@ -463,7 +463,7 @@ We proceed to discuss the implementation of the function $\mathtt{alphaBeta}$.
       state that has value $\mathtt{val}$, we know already that $\mathtt{value}(s,p)$ is at least
       $\mathtt{val}$.  Therefore, during our recursive evaluation of states we encounter states with a value
       less than $\mathtt{val}$, then these states can be ignored.
-\item As the specification of $\mathtt{valueAlphaBeta}$ ask us to compute the value of $\mathtt{State}$ only in
+\item As the specification of $\mathtt{alphaBeta}$ ask us to compute the value of $\mathtt{State}$ only in
       case it is less than or equal to $\beta$, once we find a successor state $s$ that has a
       value that is at least as big a $\beta$ we can stop the evaluation and return this value.
       This shortcut can result in significant savings of computation time.
