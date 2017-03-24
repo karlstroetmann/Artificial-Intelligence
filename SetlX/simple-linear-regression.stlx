@@ -22,6 +22,10 @@ simple_linear_regression := procedure(fileName, types, name) {
     XSS    := +/ [(X[i] - xMean) ** 2 : i in L];
     t      := abs(theta1) * sqrt((m-2) / RSS * XSS);
     p      := 1 - stat_studentCDF(t, m-2);
+
+    canvas := plot_createCanvas("Fuel consumption vs. $name$");
+    plot_addBullets(canvas, [ [X[i], Y[i]] : i in L ], [0,0,255], 2.0);
+    plot_modSize(canvas, [1000, 1000]);
     print(t, p);
     return [R2, p];
 };
@@ -34,7 +38,8 @@ test := procedure() {
     types := ["double", "int", "double", "double", "double", "double", "int", "string"];
     for (varName in ["displacement", "cyl", "hp", "weight", "acc", "year"]) {
         [R2, p] := simple_linear_regression("cars.csv", types, varName);
-        print("The explained variance for $varName$ vs fuel consumption is $R2$, p value: $p$."); 
+        print("The explained variance for $varName$ vs fuel consumption is $R2$, p value: $p$.");
+        get("Press Enter to continue");
     }
 };
 
