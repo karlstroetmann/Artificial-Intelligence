@@ -373,10 +373,11 @@ recursively as $\mathtt{value}(n,o)$.  As we are dealing with zero sum games her
 \end{enumerate}
 
 \section{$\alpha$-$\beta$-Pruning}
-The minimax algorithm can be improved if we provide two additional arguments to the function $\mathtt{value}$.
-Traditionally, these arguments are called 
-$\alpha$ and $\beta$ and the new function is caller $\mathtt{alphaBeta}$.  The idea is that the behaviour of
-this function satisfies the following requirements:
+The efficiency of the minimax algorithm can be improved if we provide two additional arguments to the function
+$\mathtt{value}$.  Traditionally, these arguments are called $\alpha$ and $\beta$.  In order to be able to
+distinguish between the old function $\mathtt{value}$ and its improved version, we call the improved version 
+$\mathtt{alphaBeta}$.  The idea is that the function $\mathtt{alphaBeta}$ and the function $\mathtt{value}$ are
+related by the following requirements: 
 \begin{enumerate}
 \item As long as $\mathtt{value}(s, p)$ is between $\alpha$ and $\beta$, the function
       $\mathtt{alphaBeta}$ computes the same result as the function $\mathtt{value}$,
@@ -386,34 +387,38 @@ this function satisfies the following requirements:
       $\alpha \leq \mathtt{value}(\mathtt{State}, \mathtt{player}) \leq \beta \;\rightarrow\;
          \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}(s,p)
       $.
-\item If $\mathtt{value}(\mathtt{State},\mathtt{player}) \leq \alpha$, the only requirement is that
-      the value returned by $\mathtt{alphaBeta}$ is less than or equal to $\alpha$,
-      i.e.~we have 
+\item If $\mathtt{value}(\mathtt{State},\mathtt{player}) \leq \alpha$, we require that the value returned by
+      $\mathtt{alphaBeta}$ is less than or equal to $\alpha$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
       $\mathtt{value}(s, p) \leq \alpha \;\rightarrow\;
        \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) \leq \alpha
       $.
-\item Similarly, if $\mathtt{value}(\mathtt{State},\mathtt{player}) \geq \beta$, the only requirement is that
-      the value returned by $\mathtt{valueAlphaBeta}$ is bigger than or equal to $\beta$
-      i.e.~we have 
+\item Similarly, if $\mathtt{value}(\mathtt{State},\mathtt{player}) \geq \beta$, we require that the value
+      returned by $\mathtt{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
       $\beta \leq \mathtt{value}(s, p) \;\rightarrow\;
         \beta \leq \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) 
       $.
 \end{enumerate}
-Therefore, $\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player})$  is only an approximation of the true
-value of $\mathtt{value}(\mathtt{State}, \mathtt{player})$.  However, it turns out that this approximation is all that is
-needed.  \myFig{game-alpha-beta.stlx} shows an implementation of $\mathtt{alphaBeta}$ that achieves this
-specification.  The function $\mathtt{value}$ can then be implemented as follows:
+Therefore, $\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player})$  is only an approximation of
+$\mathtt{value}(\mathtt{State}, \mathtt{player})$.  However, it turns out that this approximation is all that
+is needed.  \myFig{game-alpha-beta.stlx} shows an implementation of $\mathtt{alphaBeta}$ that achieves this
+specification.  Once the function $\mathtt{alphaBeta}$ is implemented, the function $\mathtt{value}$ can then
+be realized as follows: 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{value}(s, p ) := \mathtt{alphaBeta}(s, p, -1, +1)$.
 \\[0.2cm]
 The reason is that we already know that $-1 \leq \mathtt{value}(s,p) \leq +1$ and hence the first case of the
-specification of $\mathtt{alphaBeta}$ guarantees that $\mathtt{value}(s,p) = \mathtt{alphaBeta}(s,p,-1,+1)$.
-The fact that the implementation of $\mathtt{alphaBeta}$ shown in \myFig{game-alpha-beta.stlx} satisfies the
+specification of $\mathtt{alphaBeta}$ guarantees that the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{value}(s,p) = \mathtt{alphaBeta}(s,p,-1,+1)$
+\\[0.2cm]
+holds.  Since $\mathtt{alphaBeta}$ is implemented as a recursive procedure, 
+the fact that the implementation of $\mathtt{alphaBeta}$ shown in \myFig{game-alpha-beta.stlx} satisfies the
 specification given above can be shown by computational induction.  
 
 
@@ -452,27 +457,46 @@ We proceed to discuss the implementation of the function $\mathtt{alphaBeta}$.
 \begin{enumerate}
 \item If $\mathtt{State}$ is a terminal state, the function returns the $\mathtt{utility}$ of the given
       $\mathtt{State}$ with respect to $\mathtt{player}$.
-\item Otherwise, we iterate over all successor states $\mathtt{ns} \in \mathtt{nextStates}(\mathtt{State}, \mathtt{player})$.
+\item Since there are only two players, the $\mathtt{other}$ player is the player 
+      that remains if $\mathtt{player}$ is removed form the set of all players.
+\item The variable $\mathtt{val}$ is supposed to store the maximum of the values of all states
+      that can be reached from the given $\mathtt{State}$ if $\mathtt{player}$ makes one move.
+      
+      According to the specification of $\mathtt{alphaBeta}$,  we are not interested in values that are below
+      $\alpha$.  Hence, it suffices to initialize $\mathtt{val}$ with $\alpha$.   This way, in the case that we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{value}(\mathtt{State},\mathtt{player}) < \alpha$,
+      \\[0.2cm]
+      instead of returning the true value of the given $\mathtt{State}$, the function
+      $\mathtt{alphaBeta}(\mathtt{State},\mathtt{player},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
+\item Next, we iterate over all successor states $\mathtt{ns} \in \mathtt{nextStates}(\mathtt{State}, \mathtt{player})$.
 \item We have to recursively evaluate the states $\mathtt{ns}$ for the $\mathtt{other}$ player.
       Since the value of a state for the $\mathtt{other}$ player is the negative of the value for
       $\mathtt{player}$, we have to exchange the roles of $\alpha$ and $\beta$ and prefix them with a negative
       sign.
 
       Note that the value of $\mathtt{val}$ computed in the previous iteration of the \texttt{for}-loop 
-      can serve as the value of $\alpha$ for the next recursive call, since once we have found a 
+      can serve as the value of the parameter $\alpha$ for the next recursive call, since once we have found a 
       state that has value $\mathtt{val}$, we know already that $\mathtt{value}(s,p)$ is at least
-      $\mathtt{val}$.  Therefore, during our recursive evaluation of states we encounter states with a value
-      less than $\mathtt{val}$, then these states can be ignored.
+      $\mathtt{val}$.  Therefore,  if we encounter states with a value
+      less than $\mathtt{val}$ during our recursive evaluation of the states reachable from $\mathtt{State}$,
+      then those states can be ignored.   This is achieved via the using $\mathtt{val}$ for the parameter $\alpha$.
 \item As the specification of $\mathtt{alphaBeta}$ ask us to compute the value of $\mathtt{State}$ only in
-      case it is less than or equal to $\beta$, once we find a successor state $s$ that has a
+      those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
       value that is at least as big a $\beta$ we can stop the evaluation and return this value.
-      This shortcut can result in significant savings of computation time.
+
+      {\color{red}This shortcut can result in significant savings of computation time!}
 \end{enumerate}
 
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
-$\mathtt{States}$ is so big that we do not stand a chance to explore this set completely.  In those cases, the
-idea is to add a parameter $\mathtt{limit}$ to the procedure $\mathtt{value}$.  On every recursive invocation
+$\mathtt{States}$ is so big that even the fastest computer does not stand a chance to explore this set
+completely.  For example, it is impossible to consider all possible games in chess.  Instead, we have to limit
+the exploration in a way that is similar to the way professional players evaluate their game:  Usually, a
+player considers all variations of the game for, say, the next three moves.  After a given number of moves, the
+value of a position is estimated using an evaluation function.  In order to implement this idea, we add a
+parameter $\mathtt{limit}$ to the procedure $\mathtt{value}$.  On every recursive invocation 
 of the function $\mathtt{value}$, the function $\mathtt{limit}$ is decreased.  Once the limit reaches $0$,
 instead of invoking the function $\mathtt{value}$ again recursively, instead we try to estimate the value of
 the given $\mathtt{State}$ using a heuristic function.  This leads to the code shown in \myFig{game-limit.stlx}.
@@ -516,7 +540,7 @@ to define:
 \texttt{heuristic := [State, player] |-> 0;}
 \\[0.2cm]
 This heuristic would simply estimate the value of all states to be $0$.  As this heuristic is only called after
-it has been tested that the game has not yet been decided, this approach is not unreasonable.  For a more
+it has been tested that the game has not yet been decided, this approach is not utterly unreasonable.  For a more
 complex game like chess, the heuristic could instead be a weighted count of all pieces.  Concretely, the
 algorithm for estimating the value of a state would work as follows:
 \begin{enumerate}
@@ -538,9 +562,12 @@ algorithm for estimating the value of a state would work as follows:
       \hspace*{1.3cm}
       $\mathtt{sum} \;\texttt{+=}\; (\mathtt{Bishop}_{\mathrm{white}} - \mathtt{Bishop}_{\mathrm{black}}) \cdot 5\mathtt{;}$
 \item In a similar way we would count knights, queens, and pawns.  Approximately, the weights of
-      knights are $2.5$, a queen is worth $9$ and a pawn is worth $1$.
+      knights are $3$, a queen is worth $9$ and a pawn is worth $1$.
 \end{enumerate}
-The resulting $\mathtt{sum}$ cn then be used as an approximation of the value of a state.
+The resulting $\mathtt{sum}$ can then be used as an approximation of the value of a state.
+More details about the weights of the pieces can be found in the Wikipedia article 
+``\href{https://en.wikipedia.org/wiki/Chess_piece_relative_value}{chess piece relative value}''.
+
 
 
 \exercise
@@ -555,6 +582,9 @@ Your task is to implement this game.  At the address
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/connect-four-frame.stlx}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/connect-four-frame.stlx}
 \\[0.2cm]
 is a frame that can be used to solve this exercise.
+
+\noindent
+\textbf{To Do:} Explain the purpose of the auxiliary functions that should be implemented.
 \eox
 
 

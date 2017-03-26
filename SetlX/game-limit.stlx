@@ -17,7 +17,7 @@ best_move := procedure(State, player, limit := 5) {
     bestVal := value(State, player, limit);
     NS      := nextStates(State, player);
     other   := arb(players() - { player });
-    return [bestVal, rnd({ns : ns in NS | -value(ns,other,limit) == bestVal})];
+    return [bestVal, rnd({ns : ns in NS | -value(ns,other,limit-1) == bestVal})];
 };
 play_game := procedure(n := 3) {
     State := startState(n);
