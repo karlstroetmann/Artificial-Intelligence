@@ -1,8 +1,9 @@
 \chapter{Linear Regression}
 A great deal of the current success of artificial intelligence is due to recent advances in
 \href{https://en.wikipedia.org/wiki/Machine_learning}{machine learning}.  
-\href{https://en.wikipedia.org/wiki/Linear_regression}{Linear regression}
-is one of the most basic algorithms that are applied in machine learning.  It is also the foundation for more advanced
+In order to get a first taste of what machine learning is about, we introduce 
+\href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression} in this chapter, since linear regression
+is one of the most basic algorithms in machine learning.  It is also the foundation for more advanced
 forms of machine learning like \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} and 
 \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
 Furthermore, linear regression is surprisingly powerful.  Finally, many of the fundamental problems of machine
@@ -18,7 +19,16 @@ their engine displacement with the corresponding fuel consumption.  This way, we
 $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
 where $x_i$ is the engine displacement of the engine in the $i$-th car, while $y_i$ is the fuel consumption of the
 $i$-th car.  We call $x$ is the \emph{\color{blue}independent variables}, while $y$ is the 
-\emph{\color{blue}dependent variable}.  In linear regression, we use a \emph{\color{blue}linear hypothesis} 
+\emph{\color{blue}dependent variable}.  We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{x} := \langle x_1, \cdots, x_m \rangle^{\mathrm{T}}$ \quad and \quad
+$\mathbf{y} := \langle y_1, \cdots, y_m \rangle^{\mathrm{T}}$.
+\\[0.2cm]
+Here, the operator $^\mathrm{T}$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transpose} operator,
+i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.
+
+In linear regression, we use a \emph{\color{blue}linear hypothesis} 
 and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via a linear
 equation of the form
 \\[0.2cm]
@@ -26,8 +36,9 @@ equation of the form
 $y_i := \vartheta_1 \cdot x_i + \vartheta_0$.
 \\[0.2cm]
 We do not expect this equation to hold exactly.  The reason is that there are many other factors besides the
-engine displacement that influence the fuel consumption.  For example, both the weight of a car and its front
-surface area certainly influence the fuel consumption.  We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the
+engine displacement that influence the fuel consumption.  For example, both the weight of a car and its 
+\href{https://en.wikipedia.org/wiki/Automotive_aerodynamics}{aerodynamics} certainly influence the fuel consumption.  
+We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the 
 \emph{\color{blue}\underline{m}ean \underline{s}quared \underline{e}rror}, which is defined as 
 \begin{equation}
   \label{eq:mse}
@@ -36,25 +47,25 @@ surface area certainly influence the fuel consumption.  We want to calculate tho
 is minimized.  It can be shown that the solution to this minimization problem is given as follows:
 \begin{equation}
   \label{eq:theta0}
-   \vartheta_1 = r_{x,y} \cdot \frac{s_y}{s_x} \quad \mbox{and} \quad \ds\vartheta_0 = \bar{y} - \vartheta_1 \cdot \bar{x}.
+   \vartheta_1 = r_{x,y} \cdot \frac{s_y}{s_x} \quad \mbox{and} \quad \ds\vartheta_0 = \bar{\mathbf{y}} - \vartheta_1 \cdot \bar{\mathbf{x}}.
 \end{equation}
 This solution makes use of the values $r_{x,y}$, $s_x$, and $s_y$.  In order to define these values, we first
-define the \emph{\color{blue}sample mean values} $\bar{x}$ and $\bar{y}$ of $x$ and $y$ respectively, i.e.~we have 
+define the \emph{\color{blue}sample mean values} $\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ of $\mathbf{x}$ and $\mathbf{y}$ respectively, i.e.~we have 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \bar{x} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
-$\ds \bar{y} = \frac{1}{m} \cdot \sum\limits_{i=1}^m y_i$.
+$\ds \bar{\mathbf{x}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
+$\ds \bar{\mathbf{y}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m y_i$.
 \\[0.2cm]
-Furthermore, $s_x$ and $s_y$ are the \emph{\color{blue}sample standard deviations} of $x$ and $y$, i.e.~we have
+Furthermore, $s_x$ and $s_y$ are the \emph{\color{blue}sample standard deviations} of $\mathbf{x}$ and $y$, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds s_x = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{x}\bigr)^2\;}$ \quad and \quad
-$\ds s_y = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2\;}$.
+$\ds s_x = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\;}$ \quad and \quad
+$\ds s_y = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2\;}$.
 \\[0.2cm]
 Finally, $r_{x,y}$ is the \emph{\color{blue}sample correlation coefficient} that is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds r_{x,y} = \frac{1}{(m-1) \cdot s_x \cdot s_y} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{x}\bigr) \cdot \bigl(y_i - \bar{y}\bigr)$.
+$\ds r_{x,y} = \frac{1}{(m-1) \cdot s_x \cdot s_y} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)$.
 \\[0.2cm]
 The number $r_{x,y}$ is also known as the
 \href{https://en.wikipedia.org/wiki/Pearson_correlation_coefficient}{Pearson correlation coefficient} or
@@ -63,12 +74,12 @@ The number $r_{x,y}$ is also known as the
 Note that the formula for the parameter $\vartheta_1$ can be simplified to  
 \begin{equation}
   \label{eq:theta1}
-\ds\vartheta_1 = \frac{\sum\limits_{i=1}^m \bigl(x_i - \bar{x}\bigr) \cdot \bigl(y_i - \bar{y}\bigr)}{
-                        \sum\limits_{i=1}^m \bigl(x_i - \bar{x}\bigr)^2}  
+\ds\vartheta_1 = \frac{\sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)}{
+                        \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2}  
 \end{equation}
 This latter formula should be used to calculate $\vartheta_1$.  However, the previous formula is also useful
-because it shows the the correlation coefficient is identical to the coefficient $\vartheta_1$, provided the variables $x$ and
-$y$ have been normalized so that their standard deviation is $1$.
+because it shows the the correlation coefficient is identical to the coefficient $\vartheta_1$, provided the variables $\mathbf{x}$ and
+$\mathbf{y}$ have been normalized so that their standard deviation is $1$.
 
 \exercise
 Proof Equation \ref{eq:theta0} and Equation \ref{eq:theta1}.
@@ -83,16 +94,17 @@ $\vartheta_0$ and $\vartheta_1$, these derivatives have to be set to $0$.
 Assume that we have been given a set of $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$  
 and that we have calculated the parameters $\vartheta_0$ and $\vartheta_1$ according to Equation
 \ref{eq:theta0} and Equation \ref{eq:theta1}.  Provided that not all $x_i$ have the same value, these
-formul\ae\ will returns two numbers.  The question then is how good this linear approximation really is.  In
-order to judge the quality of the linear model that is given by 
+formul\ae\ will return two numbers for $\vartheta_0$ and $\vartheta_1$ hat define a linear model for
+$\mathbf{y}$ in terms of $\mathbf{x}$.  However, at the moment we still lack a number that tell us how good
+this linear model really is.  In order to judge the quality of the linear model given by 
 \\[0.2cm]
 \hspace*{1.3cm}
 $y = \vartheta_0 + \vartheta_1 \cdot x$
 \\[0.2cm]
 we can compute the mean squared error according to Equation \ref{eq:mse}.  However, the mean squared error 
-is an absolute number that, by itself, is difficult to interpret.  The reason is that the variable $y$ might be
-inherently noisy and we have to relate this noise to the mean squared error.  Now the noise contained in $y$
-can be measured by the \blue{sample variance} of $y$ and is given by the formula
+is an absolute number that, by itself, is difficult to interpret.  The reason is that the variable $\mathbf{y}$ might be
+inherently noisy and we have to relate this noise to the mean squared error.  Now the noise contained in $\mathbf{y}$
+can be measured by the \blue{sample variance} of $\mathbf{y}$ and is given by the formula
 \begin{equation}
   \label{eq:var}
   \mathtt{Var}(y) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2.
@@ -104,42 +116,42 @@ $\ds\mathtt{MSE}(\vartheta_0, \vartheta_1) :=
   \frac{1}{m-1} \cdot\sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2
 $,
 \\[0.2cm]
-we see that the sample variance of $y$ is an upper bound for the mean squared error since we have
+we see that the sample variance of $\mathbf{y}$ is an upper bound for the mean squared error since we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{Var}(y) = \mathtt{MSE}(\bar{y}, 0)$,
+$\mathtt{Var}(\mathbf{y}) = \mathtt{MSE}(\bar{\mathbf{y}}, 0)$,
 \\[0.2cm]
 i.e.~the sample variance is the value that we would get for the mean squared error if we would set $\vartheta_0$ to
-the average value of $y$ and $\vartheta_1$ to zero.  Since $\vartheta_0$ and $\vartheta_1$ are chosen to
+the average value of $\mathbf{y}$ and $\vartheta_1$ to zero.  Since $\vartheta_0$ and $\vartheta_1$ are chosen to
 minimize the mean squared error, we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{MSE}(\vartheta_0, \vartheta_1) \leq \mathtt{Var}(y)$.
+$\mathtt{MSE}(\vartheta_0, \vartheta_1) \leq \mathtt{MSE}(\bar{\mathbf{y}}, 0) = \mathtt{Var}(\mathbf{y})$.
 \\[0.2cm]
 The mean squared error is an absolute value and, therefore, difficult to interpret.  The fraction
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \frac{\mathtt{MSE}(\vartheta_0, \vartheta_1)}{\mathtt{Var}(y)}$
 \\[0.2cm]
-is called the portion of the \emph{\color{blue}unexplained variance} because it is the variance that is still
-left if we use our linear model to predict the values of $y$ given the values of $x$.  The
+is called the proportion of the \emph{\color{blue}unexplained variance} because it is the variance that is still
+left if we use our linear model to predict the values of $\mathbf{y}$ given the values of $\mathbf{x}$.  The
 \emph{\color{blue}explained variance} which is also known as the \emph{\color{blue}$\mathtt{R}^2$ statistic} is defined as 
 \begin{equation}
   \label{eq:Rsquare}
-  \mathtt{R}^2 := \frac{\mathtt{Var}(y) - \mathtt{MSE}}{\mathtt{Var}(y)} = 1 - \frac{\mathtt{MSE}}{\mathtt{Var}(y)}.
+  \mathtt{R}^2 := \frac{\mathtt{Var}(\mathbf{y}) - \mathtt{MSE}}{\mathtt{Var}(\mathbf{y})} = 1 - \frac{\mathtt{MSE}}{\mathtt{Var}(\mathbf{y})}.
 \end{equation}
 Here $\mathtt{MSE}$ is short for $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ where we have substituted the values
 from equation \ref{eq:theta0} and \ref{eq:theta1}.  The $\mathtt{R}^2$ statistic measures the quality of our
-model: If it is small, then our model does not explain the variation of the value of $y$ when the value of $x$
+model: If it is small, then our model does not explain the variation of the value of $\mathbf{y}$ when the value of $\mathbf{x}$
 changes.  On the other hand, if it is near a $100\%$, then our model does a good job in explaining the 
-variation of $y$ when $x$ changes.
+variation of $\mathbf{y}$ when $\mathbf{x}$ changes.
 
-Since the formul\ae\ for $\mathtt{Var}(y)$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
+Since the formul\ae\ for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
 denominator $m-1$, this denominator can be cancelled when the $\mathtt{R}^2$ statistic is computed.  To this
 end we define the \emph{\color{blue}total sum of squares} $\mathtt{TSS}$ as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\mathtt{TSS} := \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2 = (m-1) \cdot \mathtt{Var}(y)$
+$\ds\mathtt{TSS} := \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2 = (m-1) \cdot \mathtt{Var}(\mathbf{y})$
 \\[0.2cm]
 and the \emph{\color{blue}residual sum of squares} $\mathtt{RSS}$ as
 \\[0.2cm]
@@ -156,9 +168,10 @@ $\ds \mathtt{R}^2 = 1 - \frac{\mathtt{RSS}}{\mathtt{TSS}}$.
 This is the formula that we will use when we implement simple linear regression.
 
 It should be noted that $\mathrm{R}^2$ is the square of Pearson's \textrm{r}.  The notation is a bit
-inconsistent since Pearson's \textrm{r} is written in lower case, while $\mathrm{R}^2$ is written in upper
+inconsistent since Pearson's $r$ is written in lower case, while $\mathrm{R}^2$ is written in upper
 case.  Finally $\mathrm{R}^2$ is also known as the 
-\href{https://en.wikipedia.org/wiki/Coefficient_of_determination}{coefficient of determination}.
+\href{https://en.wikipedia.org/wiki/Coefficient_of_determination}{coefficient of determination}.  It tells us
+to what is extend the value of the variable $y$ is determined by the value of $x$.
 
 
 \subsection{Putting the Theory to the Test}
@@ -204,20 +217,22 @@ The file ``\texttt{cars.csv}'' is part of the data set accompanying the excellen
 \href{http://www-bcf.usc.edu/~gareth/ISL/index.html}{Introduction to Statistical Learning} by Gareth James,
 Daniela Witten, Trevor Hastie, and Robert Tibshirani \cite{james:2014}.  The file 
 ``\texttt{cars.csv}''  contains the fuel consumption of a number of different cars that were in widespread use during
-the seventies and eighties of the last century.  The first column of this data set contains the 
-\emph{\color{blue}miles per gallon}, which is the reciprocal of the fuel consumption. Furthermore, for every
-car the following other parameters are listed:
+the seventies and early eighties of the last century.  The first column of this data set list the 
+\emph{\color{blue}miles per gallon}, i.e.~the number of miles a car can go with one gallon of gas.  Note that
+this number is inverse to the fuel consumption:  If a car $\mathrm{A}$ can go twice as many miles per gallon
+than another car $\mathrm{B}$, then the fuel consumption of $\mathrm{A}$ is half of the fuel consumption of
+$\mathrm{B}$. Furthermore, besides the miles per gallon, for every car the following other parameters are listed:
 \begin{enumerate}
 \item $\mathtt{cyl}$ is the number of cylinders,
 \item $\mathtt{displacement}$ is the engine displacement in cubic inches, 
-\item $\mathtt{hp}$ is the horse power,
+\item $\mathtt{hp}$ is the engine power given in units of \href{https://en.wikipedia.org/wiki/Horsepower}{horsepower},
 \item $\mathtt{weight}$ is the weight in pounds,
 \item $\mathtt{acc}$ is the acceleration given as the time in seconds needed to accelerate from 0 miles per
       hour to 60 miles per hour,
 \item $\mathtt{year}$ is the year in which the model was introduced, and
 \item $\mathtt{name}$ is the name of the model.
 \end{enumerate}
-Our aim is to determine which of the parameters can be used to explain the fuel consumption of a car.  To this
+Our aim is to determine which of these parameters can be used best to explain the fuel consumption of a car.  To this
 end, I have written the program shown in \myFig{simple-linear-regression.stlx}.
 
 
@@ -250,8 +265,10 @@ end, I have written the program shown in \myFig{simple-linear-regression.stlx}.
                   / (+/ [(X[i]-xMean)**2 : i in L]);
         theta0 := yMean - theta1 * xMean;
         TSS    := +/ [(Y[i] - yMean) ** 2 : i in L];
-        RSS    := +/ [(theta0 + theta1 * X[i] - Y[i]) ** 2 : i in L];
+        RSS    := +/ [(Y[i] - theta0 - theta1 * X[i]) ** 2 : i in L];
         R2     := 1 - RSS / TSS;
+        canvas := plot_createCanvas("Fuel consumption vs. $name$");
+        plot_addBullets(canvas, [ [X[i], Y[i]] : i in L ], [0,0,255], 2.0);
         return R2;
     };
     find_index := procedure(x, List) {
@@ -263,64 +280,81 @@ end, I have written the program shown in \myFig{simple-linear-regression.stlx}.
 \label{fig:simple-linear-regression.stlx}
 \end{figure}
 
+
+\noindent
 The procedure $\mathtt{simple\_linear\_regression}$ take three arguments:
 \begin{enumerate}[(a)]
 \item $\mathtt{fileName}$ is the name of the file containing the data.
 
       It is assumed that this file is a \texttt{csv}-file containing the data that need to be analyzed.
-\item $\mathtt{types}$ is a list of type names of the columns present in the \texttt{csv} file.
-\item $\mathtt{name}$ is the column name that is used for linear regression, i.e.~it specifies the column that 
-      is used as the values for the independent variable $x$.  The dependent variable is assumed to be given in
+\item $\mathtt{types}$ is a list of type names of the columns present in the \texttt{csv} file.  This is needed
+      by \textsc{SetlX} in order to correctly interpret the data.
+
+\item $\mathtt{name}$ is the column name that is to be used for linear regression, i.e.~it specifies the column that 
+      contains the values for the independent variable $x$.  The dependent variable $y$ is assumed to be given in
       the first column of the \texttt{csv}-file.
 \end{enumerate}
 The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works as follows:
 \begin{enumerate}
-\item The function \texttt{readTable} is used to read the files specified in $\mathtt{fileName}$.
+\item The function \texttt{readTable} is used to read the file specified in $\mathtt{fileName}$.
       It returns the object $\mathtt{csv}$ which is of class $\mathtt{Table}$.  This class and the implementation of the function
       $\mathtt{readTable}$ is shown in \myFig{table.stlx}.  The object $\mathtt{csv}$ contains both the column
       names as well as the data that is present in the given file.  The list $\mathtt{types}$ is needed in
-      order to convert the strings that are read into the proper data types.
+      order to convert the strings that are read into their proper data types.
 \item The function $\mathtt{getData}$ extracts the $\mathtt{data}$ from the object $\mathtt{csv}$.
-      Technically, $\mathtt{data}$ is a list of lists.  $\mathtt{data}$ has the same length as there are lines
-      in the file specified by $\mathtt{fileName}$. Every single line in this file is converted
-      into a list of entries of the appropriate types.
-\item $\mathtt{number}$ is the number of data lines in the file specified by $\mathtt{fileName}$.
+      Technically, $\mathtt{data}$ is a list of lists.  The list $\mathtt{data}$ has the same length as there are lines
+      in the file specified by $\mathtt{fileName}$.  Every single line in this file is converted
+      into a list of entries of the appropriate types.  These lists are the elements of the list $\mathtt{data}$.
+\item $\mathtt{number}$ is the number of data lines in the file specified by $\mathtt{fileName}$,
+      i.e.~$\mathtt{number}$ is what we have called $m$ in the formul\ae\ given previously.
 \item $\mathtt{index}$ is the index of the column that has the given $\mathtt{name}$.
+      For example, in the case of the file shown in \myFig{cars.csv}, the $\mathtt{index}$ of the
+      $\mathtt{name}$ ``$\mathtt{displacement}$'' is $3$ as the engine displacement is given in the third
+      column of the file ``\texttt{cars.csv}''.
 \item The values of the dependent variable $y$ are stored in the list $\mathtt{Y}$ and the values of the
       independent variable $x$ are stored in the list $\mathtt{X}$.
 \item The list $\mathtt{L}$ is used as an abbreviation so that iterations over all lists stored in
       $\mathtt{data}$ are simplified.
 \item The \texttt{for}-loop fills the lists $\mathtt{X}$ and $\mathtt{Y}$.  Since the file
       ``\texttt{cars.csv}'' contains the miles per gallon in the first column labelled $\mathtt{mpg}$,
-      we need to convert this data into fuel consumption.  As the fuel consumption is inverse to the miles per
+      we need to convert this data into fuel consumption.  As the fuel consumption is the reciprocal of the miles per
       gallon, the list $\mathtt{Y}$ is filled with the reciprocal of the first column of the file
       ``\texttt{cars.csv}''. 
-\item $\mathtt{xMean}$ is the mean value $\bar{x}$ of the independent variable $x$.
-\item $\mathtt{yMean}$ is the mean value $\bar{y}$ of the dependent variable $y$. 
+\item $\mathtt{xMean}$ is the mean value $\bar{x}$ of the independent variable $\mathbf{x}$.
+\item $\mathtt{yMean}$ is the mean value $\bar{\mathbf{y}}$ of the dependent variable $\mathbf{y}$. 
 \item The coefficient $\mathtt{theta1}$ is computed according to Equation \ref{eq:theta1}, which is repeated
       here for convenience:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ds\vartheta_1 = \frac{\sum\limits_{i=1}^m \bigl(x_i - \bar{x}\bigr) \cdot \bigl(y_i - \bar{y}\bigr)}{
-                        \sum\limits_{i=1}^m \bigl(x_i - \bar{x}\bigr)^2}  
+      $\ds\vartheta_1 = \frac{\sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)}{
+                        \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2}  
       $.
 \item The coefficient $\mathtt{theta0}$ is computed according to Equation \ref{eq:theta0}, which reads
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ds\vartheta_0 = \bar{y} - \vartheta_1 \cdot \bar{x}$.
-\item $\mathtt{TSS}$ is the total sum of squares and is computed using the formula
+      $\ds\vartheta_0 = \bar{\mathbf{y}} - \vartheta_1 \cdot \bar{\mathbf{x}}$.
+\item $\mathtt{TSS}$ is the \blue{total sum of squares} and is computed using the formula
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ds\mathtt{TSS} = \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2$.
-\item $\mathtt{RSS}$ is the residual sum of squares and computed as
+      $\ds\mathtt{TSS} = \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2$.
+\item $\mathtt{RSS}$ is the \blue{residual sum of squares} and is computed as
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds\mathtt{RSS} := \sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2$.
-\item $\mathtt{R2}$ is the $\mathtt{R}^2$ statistic and measures the portion of the explained variance.
+\item $\mathtt{R2}$ is the $\mathtt{R}^2$ statistic and measures the \blue{proportion of the explained variance}.
       It is computed using the formula
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds \mathtt{R}^2 = \frac{\mathtt{TSS} - \mathtt{RSS}}{\mathtt{TSS}}$.
+\item The function $\mathtt{plot\_createCanvas}$ creates a $\mathtt{canvas}$ that is used for plotting.
+\item The function $\mathtt{plot\_addBullets}$ plots data point onto the $\mathtt{canvas}$.
+      The second argument to this function is a list of pairs of the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $[ \pair(x_1,y_1), \cdots, \pair(x_m,y_m)]$
+      \\[0.2cm]
+      The pair $\pair(x_i,y_1)$ is then plotted as a blue circle with radius $2.0$ at the position
+      $\pair(x_i, y_i)$.
 \end{enumerate}
 \myFig{table.stlx} shows the implementation of the class table and the function $\mathtt{readTable}$.  This figure is
 only given for completeness.
@@ -379,7 +413,7 @@ only given for completeness.
 \caption{The class $\mathtt{Table}$.}
 \label{fig:table.stlx}
 \end{figure}
-\pagebreak
+
 
 \begin{figure}[!ht]
 \centering
@@ -412,10 +446,10 @@ compute the explained variance.  The resulting values are shown in Table \ref{ta
 seems that, given the data in the file ``\texttt{cars.csv}'', the best indicator for the fuel consumption is
 the $\mathtt{weight}$ of a car.  The $\mathtt{displacement}$, the power $\mathtt{hp}$ of an engine, and the
 number of cylinders $\mathtt{cyl}$ are also
-good predictors.  But notice that the $\mathtt{weight}$ is the real cause of fuel consumption.  Now if a car
+good predictors.  But notice that the $\mathtt{weight}$ is the real cause of fuel consumption:  If a car
 has a big weight, it will also need a more powerful engine.  Hence the variable $\mathtt{hp}$ is correlated
 with the variable $\mathtt{weight}$ and will therefore also provide a reasonable explanation of the fuel
-consumption, although it is not the real cause.
+consumption, although the high engine power is  not the most important cause of the fuel consumption.
 
 
 \begin{table}
@@ -441,6 +475,8 @@ consumption, although it is not the real cause.
   \caption[explained variance]{Explained variance for various dependent variables.}
   \label{tab:explained-variance}
 \end{table}
+\pagebreak
+
 
 \subsection{Testing the Statistical Significance}
 In this section we answer the question how to access the 
@@ -455,14 +491,14 @@ In order to compute the probability that the null hypothesis is true, we have to
 \emph{\color{blue} $t$-statistic}, which is given by the following formula:
 \begin{equation}
   \label{eq:t-statistics}
-  t := |\vartheta_1| \cdot \sqrt{\frac{\;(m-2)\;}{\mathtt{RSS}} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{x}\bigr)^2\; }.
+  t := |\vartheta_1| \cdot \sqrt{\frac{\;(m-2)\;}{\mathtt{RSS}} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\; }.
 \end{equation}
 The $t$ statistics is distributed according to 
 \href{https://en.wikipedia.org/wiki/Student%27s_t-distribution}{Student's $t$-distribution} 
 with $m-2$ degrees of freedom.  In the upcomming version of \textsc{SetlX}, a preview of which is already available at
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{https://github.com/jonasunigithub/setlX}{\texttt{https://github.com/jonasunigithub/setlX}}
+\href{https://github.com/jonasunigithub/setlX}{\texttt{https://github.com/jonasunigithub/setlX}},
 \\[0.2cm]
 the cumulative Student's $t$-distribution can be computed
 via the function
@@ -471,23 +507,27 @@ via the function
 $\mathtt{stat\_studentCDF}(t, \nu)$,
 \\[0.2cm]
 where $t$ is the value of the $t$-statistic and $\nu$ is the number of degrees of freedom.  If we substitute
-$\nu := m - 2$, then this function computes the probability that the null hypothesis is true.  This probability
+$\nu := m - 2$, then the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+$1 - \mathtt{stat\_studentCDF}(t, \nu)$,
+\\[0.2cm]
+ computes the probability that the null hypothesis is true.  This probability
 is also known as the \blue{$p$-value}.  If the $p$-value is small, e.g.~less than $0.01$, then the null
 hypothesis is refuted and we can conclude that there is some relationship between $x$ and $y$.  In the example
 previously discussed, i.e.~the example relating the fuel consumption of a car to various other parameters, the
-$p$-values are all very small, i.e.~less than $10^{-16}$.  This is due to the fact that we have had enough data at
-our disposal:  As a rule of thumb we can say that once we have more than 30 pairs $\pair(x_i, y_i)$ and there
-is indeed a relationship between $x$ and $y$, then simple linear regression will detect this relationship, even
-if this relationship is only small. 
+$p$-values are all very small, i.e.~less than $2 \cdot 10^{-16}$.  This is due to the fact that we have had enough data at
+our disposal:  As a rule of thumb it can be said that once we have more than 30 pairs $\pair(x_i, y_i)$ and there
+is indeed a relationship between $x$ and $y$, then simple linear regression will detect this relationship.
 
 \section{General Linear Regression}
 In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
 To take the example of the fuel consumption of a car further, in general we would expect that the fuel consumption
-of a car does depend not only on the mass of the car but is also related to the other parameters.  These kinds
-of problems are addressed by  
+of a car does depend not only on the mass of the car but is also related to the other parameters.  
+To this end, we therefore develop the theory of   
 \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
-In a \emph{general regression problem} we are given a list of $n$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
-where $\mathbf{x}^{(i)} \in \mathbb{R}^m$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1,\cdots,n\}$.  These pairs are called the \emph{training examples}.
+In a \blue{general regression problem} we are given a list of $n$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
+where $\mathbf{x}^{(i)} \in \mathbb{R}^m$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1,\cdots,n\}$.  These pairs are called the \blue{training examples}.
 Our goal is to compute a linear function 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -500,7 +540,7 @@ for all $i\in\{1,\cdots,n\}$, i.e.~we want to have
 $\forall i\in\{1,\cdots,n\}:F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$.
 \\[0.2cm]
 In order to make the notation $F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ more precise, we
-define the \emph{squared error} 
+define the \blue{squared error} 
 \begin{equation}
   \label{eq:squared-error-1}
   E := \frac{1}{n} \cdot \sum\limits_{i=1}^n \Bigl(F\bigl(\mathbf{x}^{(i)}\bigr) - y^{(i)}\Bigr)^2. 
@@ -521,7 +561,7 @@ programming languages used in machine learning have special library support for 
 
 The definition of $F$ given above is the model used in
 \href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression}. 
-Here, $\mathbf{w}$ is called the \emph{\color{blue}weight vector} and $b$ is called the \emph{\color{blue}bias}.  It turns
+Here, $\mathbf{w}$ is called the \blue{\color{blue}weight vector} and $b$ is called the \blue{\color{blue}bias}.  It turns
 out that the notation can be simplified if we extend the $m$-dimensional vector $\mathbf{x}$ to an
 $m+1$-dimensional vector $\mathbf{x}'$ such that
 \\[0.2cm]
@@ -750,7 +790,7 @@ This equation can be rewritten as
   \label{eq:normal-equation}
   \bigl(X^T \cdot X\bigr) \cdot \mathbf{w} = X^T \cdot \mathbf{y}.          
 \end{equation}
-This equation is called the \emph{normal equation}.
+This equation is called the \blue{normal equation}.
 Now, if the matrix $X^T \cdot X$ is invertible, then this equation can be rewritten as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -764,7 +804,7 @@ In this case, we define
 $X^+ := \bigl(X^T \cdot X)^{-1} \cdot X^T$.
 \\[0.2cm]
 The expression $X^+$ is called the 
-\href{https://en.wikipedia.org/wiki/Moore–Penrose_pseudoinverse}{\emph{Moore-Penrose pseudoinverse}} of the matrix $X$.
+\href{https://en.wikipedia.org/wiki/Moore–Penrose_pseudoinverse}{Moore-Penrose pseudoinverse} of the matrix $X$.
 We can understand in what sense $X^+$ is an inverse of $X$ by noting that if $X$ itself were invertible, we could solve
 the equation
 \\[0.2cm]
