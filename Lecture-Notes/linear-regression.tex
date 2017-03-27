@@ -718,7 +718,7 @@ $\ds \nabla g(\mathbf{x}) = A^\textrm{T} \cdot \mathbf{b}$.
 \exercise
 Prove this equation.
 
-\section{Deriving the Normal Equation}
+\subsection{Deriving the Normal Equation}
 Next, we derive the so called \blue{normal equation} for linear regression.  To this end, we first
 expand the product in equation (\ref{eq:squared-error-3}):
 \\[0.2cm]
@@ -800,61 +800,10 @@ $\ds\frac{2}{m-1} \cdot \Bigl(X^\textrm{T} \cdot X \cdot \mathbf{w} - X^\textrm{
 This equation can be rewritten as
 \begin{equation}
   \label{eq:normal-equation}
-  \bigl(X^\textrm{T} \cdot X\bigr) \cdot \mathbf{w} = X^\textrm{T} \cdot \mathbf{y}.          
+ \colorbox{red}{\framebox{\colorbox{yellow}{\framebox{
+ $\ds\bigl(X^\textrm{T} \cdot X\bigr) \cdot \mathbf{w} = X^\textrm{T} \cdot \mathbf{y}$.}}}} 
 \end{equation}
 This equation is called the \blue{normal equation}.
-Now, if the matrix $X^\textrm{T} \cdot X$ is invertible, then this equation can be rewritten as
-\\[0.2cm]
-\hspace*{1.3cm}
-\colorbox{red}{\framebox{\colorbox{yellow}{\framebox{
-$\mathbf{w} = \bigl(X^\textrm{T} \cdot X)^{-1} \cdot X^\textrm{T} \cdot \mathbf{y}$.
-}}}}
-\\[0.2cm]
-In this case, we define 
-\\[0.2cm]
-\hspace*{1.3cm}
-$X^+ := \bigl(X^\textrm{T} \cdot X)^{-1} \cdot X^\textrm{T}$.
-\\[0.2cm]
-The expression $X^+$ is called the 
-\href{https://en.wikipedia.org/wiki/Moore–Penrose_pseudoinverse}{Moore-Penrose pseudoinverse} of the matrix $X$.
-We can understand in what sense $X^+$ is an inverse of $X$ by noting that if $X$ itself were invertible, we could solve
-the equation
-\\[0.2cm]
-\hspace*{1.3cm}
-$X \cdot \mathbf{w} = \mathbf{y}$
-\\[0.2cm]
-by defining
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathbf{w} := X^{-1} \cdot \mathbf{y}$.
-\\[0.2cm]
-In that case, the squared error would be zero.
-In general, $X$ will not be invertible for the simple reason that the matrix $X$ is an $m \times p$ matrix and hence is
-not even a square matrix if $m \not= p$.  In practical applications of linear regression the number $m$ of training
-examples is bigger than the dimension $p$ of the feature vectors $\mathbf{x}_i$ that make up the training examples.  Hence there
-is no hope of $X$ being invertible.  The next best thing is then to minimize the squared error.  To do this, we take the
-previous equation for the weight vector $\mathbf{w}$ and replace $X^{-1}$ with the pseudoinverse of $X$.  This gives the
-equation 
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathbf{w} = \bigl(X^\textrm{T} \cdot X)^{-1} \cdot X^\textrm{T} \cdot \mathbf{y}$
-\\[0.2cm]
-derived previously.
-
-At this point you might ask whether the matrix $X^\textrm{T} \cdot X$ is always invertible.  The short answer is yes, provided the
-regression problem is well posed.  By this I mean that there are much more training examples than there are different
-weights.  After all, if you have only 10 training examples but want to determine one hundred different weights,
-then it is obvious that the problem is not well posed.  Now if you have enough training examples you have to be
-sure that the training examples are independent of each other.  For example, lets say you have three training examples 
-$\langle\mathbf{x}_1, y^{(1)}\rangle$, $\langle\mathbf{x}_2, y^{(2)}\rangle$, and $\langle\mathbf{x}_3, y^{(3)}\rangle$ and
-you decide that you define a fourth training example $\langle\mathbf{x_4}, y^{(4)}\rangle$ as
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathbf{x}_4 := \mathbf{x}_1 + \mathbf{x}_2 + \mathbf{x}_3$ \quad and \quad 
-$y^{(4)} := y^{(1)} + y^{(2)} + y^{(3)}$,
-\\[0.2cm]
-then you have not generated any new information and the fourth training example will not help in making the matrix 
-$X^\textrm{T} \cdot X$ invertible.
 
 \subsection{Testing the Statistical Significance}
 The $\mathrm{F}$-statistic is defined according to the following formula:
@@ -863,10 +812,30 @@ The $\mathrm{F}$-statistic is defined according to the following formula:
   \mathrm{F} = \frac{\mathtt{TSS} - \mathtt{RSS}}{\mathtt{RSS}} \cdot \frac{m - p - 1}{p}
 \end{equation}
 The $\mathtt{F}$-statistic is distributed according to the
-\href{https://en.wikipedia.org/wiki/F-distribution}{Fisher-Snedecor-distribution} with $m$ degrees of freedom
-in the nominator and $m - p - 1$ degrees of freedom in the denominator. 
+\href{https://en.wikipedia.org/wiki/F-distribution}{Fisher-Snedecor-distribution} with $p-1$ degrees of freedom
+in the nominator and $m - p$ degrees of freedom in the denominator. 
 
 \subsection{Implementation}
+\myFig{linear-regression.stlx} shows an implementation of general linear regression.
+The procedure $\mathtt{run\_linear\_regression}(f, t)$ takes a file name $f$ and a list of types $t$ as its input.
+\begin{enumerate}
+\item It reads the file and stores the resulting $\mathtt{Table}$ object in the variable $\mathtt{csv}$.
+\item The data from this object is stored as a list of lists in $\mathtt{data}$.
+\item $\mathtt{number}$ is the number of training examples.
+\item $\mathtt{xList}$ stores the data of the independent variable $x$.  Therefore, $\mathtt{xList}$ is a list
+      of vectors.  Note that we have extended the data vectors by putting a $1.0$ at the end.  
+\item $\mathtt{yList}$ stores the data of the depend variable $y$.
+\item The data in $\mathtt{xList}$ is then stored in the matrix $\mathtt{X}$.  
+\item The data in $\mathtt{yList}$ is stored in the vector $\mathtt{y}$.
+\item The normal equation is then solved using the function $\mathtt{la\_solve}$.
+\item The variable $\mathtt{d}$ is the difference between the predictions of the linear model and the observed
+      values $\mathtt{y}$.
+\item $\mathtt{RSS}$ is the residual sum of squares.
+\item $\mathtt{yMean}$ is the mean value of the variable $y$.
+\item $\mathtt{TSS}$ is the total sum of squares.
+\item $\mathtt{R2}$ is the proportion of the explained variance.
+\end{enumerate}
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -882,19 +851,21 @@ in the nominator and $m - p - 1$ degrees of freedom in the denominator.
         csv    := readTable(fileName, types);
         data   := csv.getData();
         number := #data;
-        dmnsn  := #data[1];    
-        yList  := [];
         xList  := [];
+        yList  := [];
         for (i in [1 .. number]) {
             yList[i] := 1 / data[i][1];
-            xList[i] := la_vector([1.0] + data[i][2..-2]);
+            xList[i] := la_vector(data[i][2..-2] + [1.0]);
         }
         X := la_matrix(xList);
         y := la_vector(yList);
         w := la_solve(X! * X, X! * y);
         d := X * w - y;
-        E := +/ [ abs(d[i]) : i in [1 .. number] ] / number;
-        return [w, E];
+        RSS   := d * d;
+        yMean := +/ yList / number;
+        TSS   := +/ [(yList[i] - yMean) ** 2 : i in [1 .. number]];
+        R2    := 1 - RSS / TSS;
+        return R2;
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -902,6 +873,12 @@ in the nominator and $m - p - 1$ degrees of freedom in the denominator.
 \label{fig:linear-regression.stlx}
 \end{figure}
 
+When we run the general linear regression for the data stored in \texttt{cars.csv} that has been discussed
+previously, the proportion of explained variance is $81 \mathtt{\symbol{37}}$.  Considering that our data does
+not take account of the aerodynamics of the cars, this is a reasonable result.
+
+\exercise
+The file ``\texttt{advertising.csv}'', which is available at
 
 %%% Local Variables:
 %%% mode: latex

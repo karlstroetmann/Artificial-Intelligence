@@ -4,12 +4,11 @@ run_linear_regression := procedure(fileName, types) {
     csv    := readTable(fileName, types);
     data   := csv.getData();
     number := #data;
-    dmnsn  := #data[1];    
-    yList  := [];
     xList  := [];
+    yList  := [];
     for (i in [1 .. number]) {
         yList[i] := data[i][1];
-        xList[i] := la_vector([1.0] + data[i][2..-2]);
+        xList[i] := la_vector(data[i][2..-2] + [1.0]);
     }
     X := la_matrix(xList);
     y := la_vector(yList);
