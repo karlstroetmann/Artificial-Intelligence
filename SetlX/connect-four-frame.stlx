@@ -6,12 +6,13 @@ value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
         return 0;
     }
     other := arb(players() - { player });
-    val   := alpha;
+    val   := -1;
     for (ns in nextStates(State, player)) {
-        val := max({ val, -value(ns, other, limit - 1, -beta, -val) });
+        val := max({ val, -value(ns, other, limit - 1, -beta, -alpha) });
         if (val >= beta) {
             return val;
         }
+        alpha := max({ val, alpha });
     }
     return val;
 };
@@ -19,14 +20,15 @@ best_move := procedure(State, player, limit := 5) {
     bestVal := value(State, player, limit);
     NS      := nextStates(State, player);
     other   := arb(players() - { player });
-    return [bestVal, rnd({ns : ns in NS | -value(ns,other,limit) == bestVal})];
+    BestNS  := {ns : ns in NS | -value(ns,other,limit-1) == bestVal};
+    return [bestVal, rnd(BestNS)];
 };
 play_game := procedure() {
     State := startState();
     print(stateToString(State));
     while (!finished(State)) {
         start        := now();
-        [val, State] := best_move(State, "O", 6);
+        [val, State] := best_move(State, "O");
         stop         := now();
         print(cacheStats(value));
         clearCache(value);
@@ -45,9 +47,7 @@ play_game := procedure() {
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-players := procedure() {
-    return { "X", "O" };
-};
+players := [] |-> { "X", "O" };
 startState := procedure() {
     Line   := [ " " : col in [1 .. 7] ];
     return [ Line : row in [1 .. 6] ];
@@ -65,12 +65,9 @@ all_lines := cachedProcedure() {
     // Your code here!
 };
 last_line_filled := procedure(State) {
-    // Your code here!
+    // "Your code here!";
 };
-finished := procedure(State) {
-    player := "X";
-    if (utility(State, player) != om) { return true; } else { return false; }
-};
+finished := State |-> utility(State, "X") != om;
 
 ////////////////////////////////////////////////////////////////////////////////
 

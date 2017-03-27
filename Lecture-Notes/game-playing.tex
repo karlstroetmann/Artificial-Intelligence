@@ -560,7 +560,7 @@ algorithm for estimating the value of a state would work as follows:
       The resulting number would be added to $\mathtt{sum}$:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{sum} \;\texttt{+=}\; (\mathtt{Bishop}_{\mathrm{white}} - \mathtt{Bishop}_{\mathrm{black}}) \cdot 5\mathtt{;}$
+      $\mathtt{sum} \;\texttt{+=}\; (\mathtt{Bishop}_{\mathrm{white}} - \mathtt{Bishop}_{\mathrm{black}}) \cdot 3\mathtt{;}$
 \item In a similar way we would count knights, queens, and pawns.  Approximately, the weights of
       knights are $3$, a queen is worth $9$ and a pawn is worth $1$.
 \end{enumerate}
@@ -581,11 +581,45 @@ Your task is to implement this game.  At the address
 \hspace*{1.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/connect-four-frame.stlx}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/connect-four-frame.stlx}
 \\[0.2cm]
-is a frame that can be used to solve this exercise.
-
-\noindent
-\textbf{To Do:} Explain the purpose of the auxiliary functions that should be implemented.
-\eox
+is a frame that can be used to solve this exercise.  In this frame, only the following procedures need to be
+implemented. 
+\begin{enumerate}
+\item The procedure $\mathtt{nextStates}(s, p)$ is called with a state $s$ and a player $p$.
+      It is supposed to return the set of all states that can be reached from the given state $s$ if player $p$
+      is next to make a move.  In order to implement this function efficiently, you should make use of the
+      function $\mathtt{find\_empty}$ that is described below.  
+\item The procedure $\mathtt{find\_empty}(s, c)$ is called with a state $s$ and a column $c$.  It searches the
+      column $c$ of the board specified by $s$ bottom up for the first empty square.  Once an empty square is found, 
+      the corresponding row is returned.  If all the squares in the column $c$ are filled, then the number $7$
+      is returned instead.
+\item The procedure $\mathtt{utility}(s, p)$ is called with a state $s$ and a player $p$.
+      It computes the utility that this state has for player $p$ if player $p$ is the next to move.
+      For efficiency reasons, the implementation of $\mathtt{utility}$ should make use of the auxiliary functions
+      $\mathtt{all\_lines}$ and $\mathtt{last\_line\_filled}$ that are described below.
+\item The procedure $\mathtt{all\_lines}()$ takes no arguments.  It is supposed to compute all sets of coordinates that form
+      a line of four consecutive squares.  For example, one such set would be the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\{ \pair(1,1), \pair(1,2), \pair(1,3), \pair(1,4) \}$.
+      \\[0.2cm]
+      This set would be the vertical line that starts at $\pair(1,1)$.  The horizontal line that starts at the
+      location  $\pair(1,1)$ is the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\{ \pair(1,1), \pair(2,1), \pair(3,1), \pair(4,1) \}$,
+      \\[0.2cm]
+      while the rising diagonal starting at $\pair(1,1)$ is represented by the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\{ \pair(1,1), \pair(2,2), \pair(3,3), \pair(4,4) \}$.
+      \\[0.2cm]
+      Note that the procedure $\mathtt{all\_lines}$ should be implemented as a \texttt{cachedProcedure}.  This
+      way it is guaranteed that the necessary computation is only performed once.
+\item The procedure $\mathtt{last\_line\_filled}(s)$ takes a state $s$.  It checks whether the game is drawn.
+      The game is drawn iff the board is completely filled.  This can be checked most efficiently by checking
+      the final row of the board.  If this row is completely filled, all other rows must have  been filled, too.
+      \eox
+\end{enumerate}
 
 
 %%% Local Variables:
