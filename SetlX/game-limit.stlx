@@ -24,7 +24,7 @@ play_game := procedure(n := 3) {
     print(stateToString(State));
     while (!finished(State)) {
         start        := now();
-        [val, State] := best_move(State, "O", 7);
+        [val, State] := best_move(State, "O");
         stop         := now();
         print(cacheStats(value));
         clearCache(value);
