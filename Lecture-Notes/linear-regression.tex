@@ -176,7 +176,8 @@ to what is extend the value of the variable $y$ is determined by the value of $x
 
 \subsection{Putting the Theory to the Test}
 In order to get a better feeling for linear regression, we want to test it to investigate the factors that
-determine the fuel consumption of cars.  \myFig{cars.csv} shows the head of the data file ``\texttt{cars.csv}''
+determine the fuel consumption of cars.  \myFig{cars.csv} shows the head of the data file 
+``\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/cars.csv}{\texttt{cars.csv}}''
 which I have adapted from the file
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -879,6 +880,35 @@ not take account of the aerodynamics of the cars, this is a reasonable result.
 
 \exercise
 The file ``\texttt{advertising.csv}'', which is available at
+\\[0.2cm]
+\hspace*{0.0cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/advertising.csv}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/advertising.csv}},
+\\[0.2cm]
+contains data about advertising.  Concretely, let us think that this data lists the amount of money that has
+been spent in advertising a luxury refrigerator that is able to detect the amount of food stored and that is
+able to reorder supplies with \href{https://en.wikipedia.org/wiki/AmazonFresh}{AmazonFresh}$^\mathtt{TM}$.
+Every line of this csv file has five entries:
+\begin{enumerate}
+\item The first column is interpreted as the number of a store.  All together, there are 200 stores that have sold this
+      refrigerator.  It is assumed that all of these stores are located in different counties.
+\item The second column gives the amount of money spent in TV advertising in thousands of dollar for the store in
+      that county.
+\item The third column gives the amount of money spent in radio advertising in thousands of dollar.
+\item The fourth column gives the amount of money spent in newspaper advertising in thousands of dollar.
+\item The fifth column gives the number of refrigerators that have been sold in the corresponding store.
+\end{enumerate}
+Your task as a marketing manager is to evaluate the effectiveness of the different type of advertisements.
+Should you spend more money on newspaper adds and less on TV adds or is it the other way around?  Or are radio
+advertisements the way to go? Assume that your advertising budget is fixed and that you want to sell as many
+refrigerators as possible.  
+\vspace*{0.2cm}
+
+\noindent
+\textbf{Note}:  I have stolen the file ``\texttt{advertising.csv}'' from the data set accompanying the book
+``\href{http://www-bcf.usc.edu/~gareth/ISL/index.html}{Introduction to Statistical Learning}''
+\cite{james:2014}.  As far as I understand it, the data contained in this file is hypothetical data, i.e.~it
+has been made up. 
+\eox
 
 %%% Local Variables:
 %%% mode: latex
