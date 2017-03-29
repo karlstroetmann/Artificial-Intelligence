@@ -22,10 +22,10 @@ $i$-th car.  We call $x$ is the \emph{\color{blue}independent variables}, while 
 \emph{\color{blue}dependent variable}.  We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{x} := \langle x_1, \cdots, x_m \rangle^{\mathrm{T}}$ \quad and \quad
-$\mathbf{y} := \langle y_1, \cdots, y_m \rangle^{\mathrm{T}}$.
+$\mathbf{x} := \langle x_1, \cdots, x_m \rangle^\top$ \quad and \quad
+$\mathbf{y} := \langle y_1, \cdots, y_m \rangle^\top$.
 \\[0.2cm]
-Here, the operator $^\mathrm{T}$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transpose} operator,
+Here, the operator $^\top$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transpose} operator,
 i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.
 
 In linear regression, we use a \emph{\color{blue}linear hypothesis} 
@@ -553,10 +553,10 @@ In order to proceed, we need to have a model for the function $F$.  The simplest
 model, i.e.~we assume that $F$ is given as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds F(\mathbf{x}) = \sum\limits_{j=1}^p w_j \cdot x_j + b = \mathbf{x}^T \cdot \mathbf{w} + b$ \quad where $\mathbf{w} \in \mathbb{R}^p$ and $b\in\mathbb{R}$.
+$\ds F(\mathbf{x}) = \sum\limits_{j=1}^p w_j \cdot x_j + b = \mathbf{x}^\top \cdot \mathbf{w} + b$ \quad where $\mathbf{w} \in \mathbb{R}^p$ and $b\in\mathbb{R}$.
 \\[0.2cm]
-Here, the expression $\mathbf{x}^T \cdot \mathbf{w}$ denotes the matrix product of the vector
-$\mathbf{x}^T$, which is viewed as a $1$-by-$m$ matrix, and the vector $\mathbf{w}$.  Alternatively, this
+Here, the expression $\mathbf{x}^\top \cdot \mathbf{w}$ denotes the matrix product of the vector
+$\mathbf{x}^\top$, which is viewed as a $1$-by-$m$ matrix, and the vector $\mathbf{w}$.  Alternatively, this
 expression could be interpreted as the dot product of the vector $\mathbf{x}$ and the vector $\mathbf{w}$.
 At this point you might wonder why it is useful to introduce matrix notation here.  The reason is
 that this notation shortens the formula and, furthermore, is more efficient to implement since most
@@ -577,47 +577,47 @@ $x_j' := x_j$ \quad for all $j\in\{1,\cdots,p\}$ \quad and \quad $x_{m+1}' := 1$
 To put it in words, the vector $\mathbf{x}'$ results from the vector $\mathbf{x}$ by appending the number $1$:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{x}' = \langle x_1, \cdots, x_p, 1 \rangle^T$ \quad where $\langle x_1, \cdots, x_p \rangle = \mathbf{x}^T$.
+$\mathbf{x}' = \langle x_1, \cdots, x_p, 1 \rangle^\top$ \quad where $\langle x_1, \cdots, x_p \rangle = \mathbf{x}^\top$.
 \\[0.2cm]
 Furthermore, we define 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{w}' := \langle w_1, \cdots, w_p, b \rangle^T$ \quad where $\langle w_1, \cdots, w_p \rangle = \mathbf{w}^T$.
+$\mathbf{w}' := \langle w_1, \cdots, w_p, b \rangle^\top$ \quad where $\langle w_1, \cdots, w_p \rangle = \mathbf{w}^\top$.
 \\[0.2cm]
 Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $F(\mathbf{x}) = \mathbf{w} \cdot \mathbf{x} + b = \mathbf{w}' \cdot \mathbf{x}'$.
 \\[0.2cm]
-Hence, the bias has been incorporated into the weight vector at the cost of appending a $1$ at the
+Hence, the bias has been incorporated into the weight vector at the cost of appending the number $1$ at the end of
 input vector.  As we want to use this simplification, from now on we assume that the input vectors
 $\mathbf{x}^{(i)}$ have all been extended so that there last component is $1$.  Using this
 assumption,  we define the
 function $F$ as
 \\[0.2cm]
 \hspace*{1.3cm}
-$F(\mathbf{x}) := \mathbf{x}^T \cdot \mathbf{w}$.
+$F(\mathbf{x}) := \mathbf{x}^\top \cdot \mathbf{w}$.
 \\[0.2cm]
 Now equation (\ref{eq:squared-error-1}) can be rewritten as follows:
 \begin{equation}
   \label{eq:squared-error-2}
-  \mathtt{MSE}(\mathbf{w}) = \frac{1}{m-1} \cdot \sum\limits_{i=1}^n \Bigl(\bigl(\mathbf{x}^{(i)})^T \cdot \mathbf{w}  - y^{(i)}\Bigr)^2.
+  \mathtt{MSE}(\mathbf{w}) = \frac{1}{m-1} \cdot \sum\limits_{i=1}^n \Bigl(\bigl(\mathbf{x}^{(i)})^\top \cdot \mathbf{w}  - y^{(i)}\Bigr)^2.
 \end{equation}
 Our aim is to rewrite the sum appearing in this equation as a scalar product of a vector with
 itself.  To this end, we first define the vector $\mathbf{y}$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{y} := \langle y^{(1)}, \cdots, y^{(m)} \rangle^T$.
+$\mathbf{y} := \langle y^{(1)}, \cdots, y^{(m)} \rangle^\top$.
 \\[0.2cm]
 Note that $\mathbf{y} \in \mathbb{R}^m$ since it has a component for all of the $m$ training
-examples.  Next, we define the matrix $X$ as follows:
+examples.  Next, we define the \blue{design matrix} $X$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $X := \left(
   \begin{array}{c}
-    \bigl(\mathbf{x}^{(1)}\bigr)^T  \\
+    \bigl(\mathbf{x}^{(1)}\bigr)^\top  \\
     \vdots                         \\
-    \bigl(\mathbf{x}^{(m)}\bigr)^T
+    \bigl(\mathbf{x}^{(m)}\bigr)^\top
   \end{array}
   \right)   
 $
@@ -628,15 +628,15 @@ Now we have the following:
 \hspace*{1.3cm}
 $X \cdot \mathbf{w} - \mathbf{y} = \left(
   \begin{array}{c}
-    \bigl(\mathbf{x}^{(1)}\bigr)^T  \\
+    \bigl(\mathbf{x}^{(1)}\bigr)^\top  \\
     \vdots                         \\
-    \bigl(\mathbf{x}^{(m)}\bigr)^T
+    \bigl(\mathbf{x}^{(m)}\bigr)^\top
   \end{array}
   \right) \cdot \mathbf{w} - \mathbf{y} = \left(
   \begin{array}{c}
-    \bigl(\mathbf{x}^{(1)}\bigr)^T \cdot \mathbf{w} - y_1 \\
+    \bigl(\mathbf{x}^{(1)}\bigr)^\top \cdot \mathbf{w} - y_1 \\
     \vdots                         \\
-    \bigl(\mathbf{x}^{(m)}\bigr)^T \cdot \mathbf{w} - y_m
+    \bigl(\mathbf{x}^{(m)}\bigr)^\top \cdot \mathbf{w} - y_m
   \end{array}
   \right)
 $
@@ -645,29 +645,29 @@ Taking the square of the vector $X \cdot \mathbf{w} - \mathbf{y}$ we discover th
 we can rewrite equation (\ref{eq:squared-error-2}) as follows:
 \begin{equation}
   \label{eq:squared-error-3}
-  \mathtt{MSE}(\mathbf{w}) = \frac{1}{m-1} \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr)^T \cdot 
+  \mathtt{MSE}(\mathbf{w}) = \frac{1}{m-1} \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr)^\top \cdot 
                                             \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr).
 \end{equation}
 
 \subsection{Some Useful Gradients}
-In the last section, we have computed the squared error $E(\mathbf{w})$ using equation
-(\ref{eq:squared-error-3}).  Our goal is to minimize the $E(\mathbf{w})$ by choosing the weight
-vector $\mathbf{w}$ appropriately.  A necessary condition for $E(\mathbf{w})$ to be minimal is 
+In the last section, we have computed the mean squared error $\mathtt{MSE}(\mathbf{w})$ using equation
+(\ref{eq:squared-error-3}).  Our goal is to minimize the $\mathtt{MSE}(\mathbf{w})$ by choosing the weight
+vector $\mathbf{w}$ appropriately.  A necessary condition for $\mathtt{MSE}(\mathbf{w})$ to be minimal is 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\nabla E(\mathbf{w}) = \mathbf{0}$,
+$\nabla \mathtt{MSE}(\mathbf{w}) = \mathbf{0}$,
 \\[0.2cm]
-i.e.~the gradient of $E(\mathbf{w})$ needs to be zero.  In order to prepare for the computation of
-$\nabla E(\mathbf{w})$, we first compute the gradient of two simpler functions.
+i.e.~the gradient of $\mathtt{MSE}(\mathbf{w})$ needs to be zero.  In order to prepare for the computation of
+$\nabla \mathtt{MSE}(\mathbf{w})$, we first compute the gradient of two simpler functions.
 
-\subsubsection{Computing the Gradient of $f(\mathbf{x}) = \mathbf{x}^T \cdot C \cdot \mathbf{x}$}
+\subsubsection{Computing the Gradient of $f(\mathbf{x}) = \mathbf{x}^\top \cdot C \cdot \mathbf{x}$}
 Suppose the function $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$f(\mathbf{x}) := \mathbf{x}^T \cdot C \cdot \mathbf{x}$ \quad where $C \in \mathbb{R}^{n \times n}$.
+$f(\mathbf{x}) := \mathbf{x}^\top \cdot C \cdot \mathbf{x}$ \quad where $C \in \mathbb{R}^{n \times n}$.
 \\[0.2cm]
 If we write the matrix $C$ as $C = (c_{i,j})_{i=1,\cdots,n \atop j=1,\cdots,n}$ and the vector
-$\mathbf{x}$ as $\mathbf{x} = \langle x_1, \cdots, x_n \rangle^T$,  then $f(\mathbf{x})$ can be
+$\mathbf{x}$ as $\mathbf{x} = \langle x_1, \cdots, x_n \rangle^\top$,  then $f(\mathbf{x})$ can be
 computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -692,16 +692,16 @@ $
 & = &
 \ds \sum\limits_{j=1}^n c_{k,j} \cdot x_j + \sum\limits_{i=1}^n x_i \cdot c_{i,k} \\[0.5cm]
 & = &
-  \bigl(C \cdot \mathbf{x}\bigr)_k + \bigl(C^\textrm{T} \cdot \mathbf{x}\bigr)_k
+  \bigl(C \cdot \mathbf{x}\bigr)_k + \bigl(C^\top \cdot \mathbf{x}\bigr)_k
 \end{array}
 $
 \\[0.2cm]
 Hence we have shown that 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \nabla f(\mathbf{x}) = (C + C^\textrm{T}) \cdot \mathbf{x}$.
+$\ds \nabla f(\mathbf{x}) = (C + C^\top) \cdot \mathbf{x}$.
 \\[0.2cm]
-If the matrix $C$ is symmetric, i.e.~if $C = C^\textrm{T}$, this simplifies to
+If the matrix $C$ is symmetric, i.e.~if $C = C^\top$, this simplifies to
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \nabla f(\mathbf{x}) = 2 \cdot C \cdot \mathbf{x}$.
@@ -709,12 +709,12 @@ $\ds \nabla f(\mathbf{x}) = 2 \cdot C \cdot \mathbf{x}$.
 Next, if the function $g: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$g(\mathbf{x}) := \mathbf{b}^\textrm{T} \cdot A \cdot \mathbf{x}$, \quad where $\mathbf{b} \in \mathbb{R}^n$ and $A \in \mathbb{R}^{n \times n}$,
+$g(\mathbf{x}) := \mathbf{b}^\top \cdot A \cdot \mathbf{x}$, \quad where $\mathbf{b} \in \mathbb{R}^n$ and $A \in \mathbb{R}^{n \times n}$,
 \\[0.2cm]
 then a similar calculation shows that
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \nabla g(\mathbf{x}) = A^\textrm{T} \cdot \mathbf{b}$.
+$\ds \nabla g(\mathbf{x}) = A^\top \cdot \mathbf{b}$.
 
 \exercise
 Prove this equation.
@@ -727,66 +727,66 @@ expand the product in equation (\ref{eq:squared-error-3}):
 $
 \begin{array}[t]{lcll}
  \mathtt{MSE}(\mathbf{w}) & = & 
- \ds \frac{1}{m-1} \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr)^\textrm{T} \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr) 
+ \ds \frac{1}{m-1} \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr)^\top \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr) 
  \\[0.5cm]
  & = & 
- \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\textrm{T} \cdot X^\textrm{T} - \textbf{y}^\textrm{T}\bigr) \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr) 
- & \mbox{since $(A \cdot B)^\textrm{T} = B^\textrm{T} \cdot A^\textrm{T}$}
+ \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\top \cdot X^\top - \textbf{y}^\top\bigr) \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr) 
+ & \mbox{since $(A \cdot B)^\top = B^\top \cdot A^\top$}
  \\[0.5cm]
  & = & 
- \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot X \cdot \mathbf{w} 
-                             - \textbf{y}^\textrm{T} \cdot X \cdot \mathbf{w} 
-                             - \mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot \mathbf{y}
-                             + \mathbf{y}^\textrm{T} \cdot \mathbf{y}
+ \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\top \cdot X^\top \cdot X \cdot \mathbf{w} 
+                             - \textbf{y}^\top \cdot X \cdot \mathbf{w} 
+                             - \mathbf{w}^\top \cdot X^\top \cdot \mathbf{y}
+                             + \mathbf{y}^\top \cdot \mathbf{y}
                        \bigr)
  \\[0.5cm]
  & = & 
- \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot X \cdot \mathbf{w} 
-                             - 2 \cdot \textbf{y}^\textrm{T} \cdot X \cdot \mathbf{w} 
-                             + \mathbf{y}^\textrm{T} \cdot \mathbf{y}
+ \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\top \cdot X^\top \cdot X \cdot \mathbf{w} 
+                             - 2 \cdot \textbf{y}^\top \cdot X \cdot \mathbf{w} 
+                             + \mathbf{y}^\top \cdot \mathbf{y}
                        \bigr)
- & \mbox{since $\mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot \mathbf{y} = \textbf{y}^\textrm{T} \cdot X \cdot \mathbf{w}$}
+ & \mbox{since $\mathbf{w}^\top \cdot X^\top \cdot \mathbf{y} = \textbf{y}^\top \cdot X \cdot \mathbf{w}$}
 \end{array}
 $
 \\[0.2cm]
 The fact that 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot \mathbf{y} = \textbf{y}^\textrm{T} \cdot X \cdot \mathbf{w}$
+$\mathbf{w}^\top \cdot X^\top \cdot \mathbf{y} = \textbf{y}^\top \cdot X \cdot \mathbf{w}$
 \\[0.2cm]
 might not be immediately obvious.  It follows from two facts:
 \begin{enumerate}
 \item For two matrices $A$ and $B$ such that the matrix product $A \cdot B$ is defined we have 
       \\[0.2cm]
       \hspace*{1.3cm}
-      $(A \cdot B)^\mathrm{T} = B^\mathrm{T} \cdot A^\mathrm{T}$.
-\item The matrix product $\mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot \mathbf{y}$ is a real number.  The transpose $r^\textrm{T}$ of a real number $r$ is the number
-      itself, i.e.~$r^\textrm{T} = r$ for all $r \in \mathbb{R}$.  Therefore, we have
+      $(A \cdot B)^\top = B^\top \cdot A^\top$.
+\item The matrix product $\mathbf{w}^\top \cdot X^\top \cdot \mathbf{y}$ is a real number.  The transpose $r^\top$ of a real number $r$ is the number
+      itself, i.e.~$r^\top = r$ for all $r \in \mathbb{R}$.  Therefore, we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot \mathbf{y} = 
-\bigl(\mathbf{w}^\textrm{T} \cdot X^\textrm{T} \cdot \mathbf{y}\bigr)^\textrm{T} =
-\mathbf{y}^\textrm{T} \cdot X \cdot \mathbf{w}
+      $\mathbf{w}^\top \cdot X^\top \cdot \mathbf{y} = 
+\bigl(\mathbf{w}^\top \cdot X^\top \cdot \mathbf{y}\bigr)^\top =
+\mathbf{y}^\top \cdot X \cdot \mathbf{w}
 $.
 \end{enumerate}
 Hence we have shown that
 \begin{equation}
   \label{eq:squared-error-4}
-  \mathtt{MSE}(\mathbf{w}) = \ds \frac{1}{m-1} \cdot \Bigl(\mathbf{w}^\textrm{T} \cdot \bigl(X^\textrm{T} \cdot X\bigr) \cdot \mathbf{w} 
-                                             - 2 \cdot \textbf{y}^\textrm{T} \cdot X \cdot \mathbf{w} 
-                                             + \mathbf{y}^\textrm{T} \cdot \mathbf{y}
+  \mathtt{MSE}(\mathbf{w}) = \ds \frac{1}{m-1} \cdot \Bigl(\mathbf{w}^\top \cdot \bigl(X^\top \cdot X\bigr) \cdot \mathbf{w} 
+                                             - 2 \cdot \textbf{y}^\top \cdot X \cdot \mathbf{w} 
+                                             + \mathbf{y}^\top \cdot \mathbf{y}
                                         \Bigr)
 \end{equation}
-holds.  The matrix $X^\textrm{T} \cdot X$ used in the first term is symmetric because
+holds.  The matrix $X^\top \cdot X$ used in the first term is symmetric because
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl(X^\textrm{T} \cdot X\bigr)^\textrm{T} = X^\textrm{T} \cdot \bigl(X^\textrm{T}\bigr)^\textrm{T} = X^\textrm{T} \cdot X$.
+$\bigl(X^\top \cdot X\bigr)^\top = X^\top \cdot \bigl(X^\top\bigr)^\top = X^\top \cdot X$.
 \\[0.2cm]
 Using the results from the previous section we can now compute the gradient of $\mathtt{MSE}(\mathbf{w})$ with respect to
 $\mathbf{w}$.  The result is
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \nabla \mathtt{MSE}(\mathbf{w}) = \frac{2}{m-1} \cdot \Bigl(X^\textrm{T} \cdot X \cdot \mathbf{w} - X^\textrm{T} \cdot \mathbf{y}\Bigr)$.
+$\ds \nabla \mathtt{MSE}(\mathbf{w}) = \frac{2}{m-1} \cdot \Bigl(X^\top \cdot X \cdot \mathbf{w} - X^\top \cdot \mathbf{y}\Bigr)$.
 \\[0.2cm]
 If the squared error $\mathtt{MSE}(\mathbf{w})$ has a minimum for the weights $\mathbf{w}$, then we must have
 \\[0.2cm]
@@ -796,15 +796,29 @@ $\nabla \mathtt{MSE}(\mathbf{w}) = \mathbf{0}$.
 This leads to the equation
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\frac{2}{m-1} \cdot \Bigl(X^\textrm{T} \cdot X \cdot \mathbf{w} - X^\textrm{T} \cdot \mathbf{y}\Bigr) = \mathbf{0}$.
+$\ds\frac{2}{m-1} \cdot \Bigl(X^\top \cdot X \cdot \mathbf{w} - X^\top \cdot \mathbf{y}\Bigr) = \mathbf{0}$.
 \\[0.2cm]
 This equation can be rewritten as
 \begin{equation}
   \label{eq:normal-equation}
  \colorbox{red}{\framebox{\colorbox{yellow}{\framebox{
- $\ds\bigl(X^\textrm{T} \cdot X\bigr) \cdot \mathbf{w} = X^\textrm{T} \cdot \mathbf{y}$.}}}} 
+ $\ds\bigl(X^\top \cdot X\bigr) \cdot \mathbf{w} = X^\top \cdot \mathbf{y}$.}}}} 
 \end{equation}
-This equation is called the \blue{normal equation}.
+This equation is called the \blue{normal equation}.  
+
+\remark
+Although the matrix $X^\top \cdot X$ will often be invertible, for numerical reasons it is not
+advisable to rewrite the normal equation as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w} = \bigl(X^\top \cdot X)^{-1} \cdot X^\top \cdot \mathbf{y}$.
+\\[0.2cm]
+Instead, when solving the normal equation we will use the \textsc{SetlX} function $\mathtt{la\_solve}(A,b)$, which
+takes a matrix $A \in \mathbb{R}^{n \times n}$ and a vector $\mathbf{b} \in \mathbb{R}^n$ and solves the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$A \cdot \mathbf{x} = \mathbf{b}$.  \eox
+
 
 \subsection{Testing the Statistical Significance}
 The $\mathrm{F}$-statistic is defined according to the following formula:
@@ -819,23 +833,6 @@ in the nominator and $m - p$ degrees of freedom in the denominator.
 \subsection{Implementation}
 \myFig{linear-regression.stlx} shows an implementation of general linear regression.
 The procedure $\mathtt{run\_linear\_regression}(f, t)$ takes a file name $f$ and a list of types $t$ as its input.
-\begin{enumerate}
-\item It reads the file and stores the resulting $\mathtt{Table}$ object in the variable $\mathtt{csv}$.
-\item The data from this object is stored as a list of lists in $\mathtt{data}$.
-\item $\mathtt{number}$ is the number of training examples.
-\item $\mathtt{xList}$ stores the data of the independent variable $x$.  Therefore, $\mathtt{xList}$ is a list
-      of vectors.  Note that we have extended the data vectors by putting a $1.0$ at the end.  
-\item $\mathtt{yList}$ stores the data of the depend variable $y$.
-\item The data in $\mathtt{xList}$ is then stored in the matrix $\mathtt{X}$.  
-\item The data in $\mathtt{yList}$ is stored in the vector $\mathtt{y}$.
-\item The normal equation is then solved using the function $\mathtt{la\_solve}$.
-\item The variable $\mathtt{d}$ is the difference between the predictions of the linear model and the observed
-      values $\mathtt{y}$.
-\item $\mathtt{RSS}$ is the residual sum of squares.
-\item $\mathtt{yMean}$ is the mean value of the variable $y$.
-\item $\mathtt{TSS}$ is the total sum of squares.
-\item $\mathtt{R2}$ is the proportion of the explained variance.
-\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -873,10 +870,31 @@ The procedure $\mathtt{run\_linear\_regression}(f, t)$ takes a file name $f$ and
 \caption{General linear regression.}
 \label{fig:linear-regression.stlx}
 \end{figure}
+\begin{enumerate}
+\item It reads the file and stores the resulting $\mathtt{Table}$ object in the variable $\mathtt{csv}$.
+\item The data from this object is stored as a list of lists in the variable $\mathtt{data}$.
+\item $\mathtt{number}$ is the number of training examples.
+\item $\mathtt{xList}$ stores the data of the independent variable $x$.  Therefore, $\mathtt{xList}$ is a list
+      of vectors.  Note that we have extended the data vectors by putting a $1.0$ at the end.  
+\item $\mathtt{yList}$ stores the data of the depend variable $y$.
+\item The data in $\mathtt{xList}$ is then stored in the matrix $\mathtt{X}$.  
+\item The data in $\mathtt{yList}$ is stored in the vector $\mathtt{y}$.
+\item The normal equation is formulated and solved using the function $\mathtt{la\_solve}$.
+      Note that the postfix-operator ``\texttt{!}'' computes the transpose of a matrix when applied to a matrix.
+\item The variable $\mathtt{d}$ is the difference between the predictions of the linear model and the observed
+      values $\mathtt{y}$.
+\item $\mathtt{RSS}$ is the residual sum of squares.
+\item $\mathtt{yMean}$ is the mean value of the variable $y$.
+\item $\mathtt{TSS}$ is the total sum of squares.
+\item $\mathtt{R2}$ is the proportion of the explained variance.
+\end{enumerate}
 
-When we run the general linear regression for the data stored in \texttt{cars.csv} that has been discussed
-previously, the proportion of explained variance is $81 \mathtt{\symbol{37}}$.  Considering that our data does
+
+
+When we run the program shown in \myFig{linear-regression.stlx} with the data stored in \texttt{cars.csv},
+which had been discussed previously, then the proportion of explained variance is $81 \mathtt{\symbol{37}}$.  Considering that our data does
 not take account of the aerodynamics of the cars, this is a reasonable result.
+
 
 \exercise
 The file ``\texttt{advertising.csv}'', which is available at
@@ -888,7 +906,7 @@ contains data about advertising.  Concretely, let us think that this data lists 
 been spent in advertising a luxury refrigerator that is able to detect the amount of food stored and that is
 able to reorder supplies with \href{https://en.wikipedia.org/wiki/AmazonFresh}{AmazonFresh}$^\mathtt{TM}$.
 Every line of this csv file has five entries:
-\begin{enumerate}
+\begin{enumerate}[(a)]
 \item The first column is interpreted as the number of a store.  All together, there are 200 stores that have sold this
       refrigerator.  It is assumed that all of these stores are located in different counties.
 \item The second column gives the amount of money spent in TV advertising in thousands of dollar for the store in
@@ -897,16 +915,21 @@ Every line of this csv file has five entries:
 \item The fourth column gives the amount of money spent in newspaper advertising in thousands of dollar.
 \item The fifth column gives the number of refrigerators that have been sold in the corresponding store.
 \end{enumerate}
-Your task as a marketing manager is to evaluate the effectiveness of the different type of advertisements.
-Should you spend more money on newspaper adds and less on TV adds or is it the other way around?  Or are radio
-advertisements the way to go? Assume that your advertising budget is fixed and that you want to sell as many
-refrigerators as possible.  
+Assume you are the marketing manager that is responsible for the advertising campaign.  Your task is to
+evaluate the effectiveness of the different type of advertisements.  To this end, answer the following questions.
+\begin{enumerate}
+\item Should you spend more money on newspaper adds and less on TV adds or is it the other way around?  Or are radio
+      advertisements the way to go? Assume that your advertising budget is fixed and that you want to sell as many
+      refrigerators as possible.  
+\item Check, whether there is an interaction between different types of adds.  For example, check whether TV
+      adds have a positive or negative effect on the effectiveness of radio adds.
+\end{enumerate}
 \vspace*{0.2cm}
 
 \noindent
 \textbf{Note}:  I have stolen the file ``\texttt{advertising.csv}'' from the data set accompanying the book
 ``\href{http://www-bcf.usc.edu/~gareth/ISL/index.html}{Introduction to Statistical Learning}''
-\cite{james:2014}.  As far as I understand it, the data contained in this file is hypothetical data, i.e.~it
+\cite{james:2014}.  As far as I understand it, the data contained in this file is fictional data, i.e.~it
 has been made up. 
 \eox
 
