@@ -601,7 +601,7 @@ $F(\mathbf{x}) := \mathbf{x}^\top \cdot \mathbf{w}$.
 Now equation (\ref{eq:squared-error-1}) can be rewritten as follows:
 \begin{equation}
   \label{eq:squared-error-2}
-  \mathtt{MSE}(\mathbf{w}) = \frac{1}{m-1} \cdot \sum\limits_{i=1}^n \Bigl(\bigl(\mathbf{x}^{(i)})^\top \cdot \mathbf{w}  - y^{(i)}\Bigr)^2.
+  \mathtt{MSE}(\mathbf{w}) = \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \Bigl(\bigl(\mathbf{x}^{(i)})^\top \cdot \mathbf{w}  - y^{(i)}\Bigr)^2.
 \end{equation}
 Our aim is to rewrite the sum appearing in this equation as a scalar product of a vector with
 itself.  To this end, we first define the vector $\mathbf{y}$ as follows:
