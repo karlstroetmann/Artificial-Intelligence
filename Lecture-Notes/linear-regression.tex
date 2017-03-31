@@ -924,12 +924,27 @@ evaluate the effectiveness of the different type of advertisements.  To this end
       refrigerators as possible.  
 
       Use linear regression to solve this question.
-\item Check, whether there is an interaction between different types of adds.  For example, check whether TV
-      adds have a positive or negative effect on the effectiveness of radio adds.
+\item At this point, you will have discovered that only two of the three different types of advertisements 
+      contribute to the number sales.  Check, whether there is an interaction between these two types of
+      advertisements.  For example, check whether TV adds have a positive or negative effect on the
+      effectiveness of radio adds. 
 
-      You can use product terms as new features in your linear regression model to answer this question.
+      You can use a product term as a new features in your linear regression model to answer this question.
       For example, you can include the product of money spend in TV adds and money spend in radio adds as a new
       feature.
+\item In order to further increase the accuracy of our model, we can use a \blue{quadratic model}.
+      If we have only two independent features $x$ and $y$, a quadratic model has the following form:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $f(x,y) = w_1 \cdot x^2 + w_2 \cdot x \cdot y + w_3 \cdot y^2 + w_4 \cdot x + w_5 \cdot y + w_6$.
+      \\[0.2cm]
+      Compute the fraction of the explained variance that is achieved if a quadratic model is used to predict
+      the sales.
+\item In the previous part of the exercise you will have discovered that for a quadratic model, the fraction of
+      the explained variance is quite high.  Hence, the quadratic model seems to be accurate.  Now that you
+      have found an accurate model, by how much can you increase the sales by optimizing the strategy?
+      Assume that for every county the company wants to spend the same amount of money for advertisement that
+      is has been spent previously for that county.  
 \end{enumerate}
 \vspace*{0.2cm}
 
@@ -939,6 +954,44 @@ evaluate the effectiveness of the different type of advertisements.  To this end
 \cite{james:2014}.  As far as I understand it, the data contained in this file is fictional data, i.e.~it
 has been made up. 
 \eox
+
+\noindent
+\textbf{Partial Solution to part 4:}  
+The total budget for advertising in a given county is fixed.  Assume
+this total budget is called $b$.  If $x$ is the amount of money spent for TV advertisements and $y$ is the
+amount of money spent for radio advertisements, then we must have
+\\[0.2cm]
+\hspace*{1.3cm}
+$x + y = b$ \quad and therefore \quad $y = b - x$.
+\\[0.2cm]
+Hence the number of units sold is given by the formula
+\\[0.2cm]
+\hspace*{1.3cm}
+$g(x) := f(x, b - x) = w_1 \cdot x^2 + w_2 \cdot x \cdot (b - x) + w_3 \cdot (b - x)^2 + w_4 \cdot x + w_5 \cdot (b - x) + w_6$.
+\\[0.2cm]
+In order to compute the value $x$ that maximizes $g$ we have to compute the derivative of $g(x)$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[t]{lcl}
+\ds \frac{\mathrm{d} g}{\mathrm{d}x}(x) 
+& = & 2 \cdot w_1 \cdot x + w_2 \cdot b - 2 \cdot w_2 \cdot x + 2 \cdot w_3 \cdot (x - b) + w_4 - w_5 \\[0.2cm]
+& = & 2 \cdot \bigl(w_1 - w_2 + w_3\bigr) \cdot x + w_2 \cdot b - 2 \cdot w_3 \cdot b + w_4 - w_5  
+\end{array}
+$
+\\[0.2cm]
+This expression is $0$ if and only if
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds x = \frac{- w_2 \cdot b + 2 \cdot w_3 \cdot b - w_4 + w_5}{2 \cdot (w_1 - w_2 + w_3)}$.
+\\[0.2cm]
+It turns out that when the advertising strategy is optimized as outline above,  the quadratic model predicts a
+sale of $5\,511\,887$ units, while the number of units sold previously was $2\,804\,500$ units.  Hence, the
+optimized strategy is expected to sell about $97\,\mathtt{\symbol{37}}$ units more than the strategy applied previously. 
+\qed
+
+
+
 
 %%% Local Variables:
 %%% mode: latex

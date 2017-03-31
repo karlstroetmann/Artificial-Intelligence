@@ -1,13 +1,13 @@
 load("table.stlx");
 
-run_linear_regression := procedure(fileName, types) {
+linear_regression := procedure(fileName, types) {
     csv    := readTable(fileName, types);
     data   := csv.getData();
     number := #data;
     xList  := [];
     yList  := [];
     for (i in [1 .. number]) {
-        yList[i] := data[i][1];
+        yList[i] := 1 / data[i][1];
         xList[i] := la_vector(data[i][2..-2] + [1.0]);
     }
     X := la_matrix(xList);
@@ -25,7 +25,7 @@ run_linear_regression := procedure(fileName, types) {
 
 test := procedure() {
     types := ["double", "int", "double", "double", "double", "double", "int", "string"];
-    R2    := run_linear_regression("cars.csv", types);
+    R2    := linear_regression("cars.csv", types);
     print("portion of explained variance : $R2$");
 };
 
