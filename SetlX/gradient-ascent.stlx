@@ -13,23 +13,23 @@
 // value that the function f has at this position.
 findMaximum := procedure(f, gradF, start, eps, verbose := false) {
     x     := start;
-    f_x   := f(x);
+    fx    := f(x);
     alpha := 1.0;
     cnt   := 1;  // number of iterations
     while (true) {
-        [x_old, f_old] := [x, f_x];
-        x   += alpha * gradF(x);
-        f_x := f(x);
+        [xOld, fOld] := [x, fx];
+        x  += alpha * gradF(x);
+        fx := f(x);
         if (verbose) {
-            print("cnt = $cnt$, f($x$) = $f_x$, $f_x - f_old$");
+            print("cnt = $cnt$, f($x$) = $fx$, $fx - fOld$");
             print("gradient = $gradF(x)$");
         }
-        if (f_x < f_old) {   
+        if (fx < fOld) {   
             alpha *= 0.5;
             if (verbose) {
                 print("decrementing: alpha = $alpha$");
             }
-            [x, f_x] := [x_old, f_old];
+            [x, fx] := [xOld, fOld];
             continue;
         } else {
             alpha *= 1.2;
@@ -37,8 +37,8 @@ findMaximum := procedure(f, gradF, start, eps, verbose := false) {
                 print("incrementing: alpha = $alpha$");
             }
         }
-        if (abs(f_x - f_old) <= abs(f_x) * eps) {
-            return [x, f_x, cnt];
+        if (abs(fx - fOld) <= abs(fx) * eps) {
+            return [x, fx, cnt];
         }
         cnt += 1;
     }

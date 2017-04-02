@@ -16,8 +16,8 @@ set of objects $S := \{ o_1, \cdots, o_n \}$ and a set of classes $C := \{ c_1, 
 $\mathtt{classify}: S \rightarrow C$
 \\[0.2cm]
 that assigns a class $\texttt{classify}(o)$ to every object $o \in S$.  The set $S$ is called the \blue{sample space}.
-In the example of spam detection, $S$ is the set of all emails that we might receive, i.e.~$S$ is the set of all strings
-of the \textsc{Ascii} alphabet, while 
+In the example of spam detection, the sample space $S$ is the set of all emails that we might receive, i.e.~$S$
+is the set of all strings of the \textsc{Ascii} alphabet, while  
 \\[0.2cm]
 \hspace*{1.3cm}
 $C = \{ \mathtt{spam}, \mathtt{ham} \}$.
@@ -41,14 +41,15 @@ Booleans.  If
 \hspace*{1.3cm}
 $\texttt{feature}(o, j) \in \mathbb{B}$ for all $o \in S$,
 \\[0.2cm]
-then the $j$-th feature is a \blue{binary feature}.  For example, in the case of spam detection, the first feature
+then the $j$-th feature is a \blue{binary feature}.  I we encode $\mathtt{false}$ as $0$ and $\mathtt{true}$ as
+$1$, then the set of Boolean values $\mathbb{B}$ can be considered a subset of $\mathbb{R}$ and hence Boolean features can be considered
+as real numbers.  For example, in the case of spam detection, the first feature
 could be the occurrence of the string ``\texttt{pharmacy}''.  In this case, we would have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{feature}(o, 1) := (\texttt{pharmacy} \in o)$,
 \\[0.2cm]
 i.e.~the first feature would be to check whether the email $o$ contains the string ``\texttt{pharmacy}''.  
-
 If we want to be more precise, we can instead define the first feature as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -59,7 +60,7 @@ As $\mathtt{count}(\texttt{"pharmacy"}, o)$ is always a natural number, in this 
  \blue{discrete} feature.  However, we can be even more precise than just counting the number of occurrences of
  ``\texttt{pharmacy}''.  After all, there is a difference if the string ``\texttt{pharmacy}'' occurs once in an email
  containing but a hundred characters or whether is occurs once in an email with a length of several thousand
- characters.  To this end, we would define the first feature as
+ characters.  To this end, we would then define the first feature as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \texttt{feature}(o, 1) := \frac{\mathtt{count}(\texttt{"pharmacy"}, o)}{\cnt o}$, 
@@ -90,17 +91,17 @@ Most of the time, the function \texttt{guess} will only approximate the function
 \hspace*{1.3cm}
 $\mathtt{guess}(o) = \mathtt{classify}(o)$
 \\[0.2cm]
-for most objects of $o \in S$ but not for all values.  The \blue{accuracy} of our model is then defined as the fraction
+for most objects of $o \in S$ but not for all of them.  The \blue{accuracy} of our model is then defined as the fraction
 of those objects that are classified correctly, i.e.~
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathtt{accuracy} := \frac{\cnt \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}}{\cnt S}$.
+$\ds \mathtt{accuracy} := \frac{\;\cnt \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\;}{\cnt S}$.
 \\[0.2cm]
 If the set $S$ is infinite, this equation has to be interpreted as a limit, i.e.~we can define
 $S_n$ as the set of strings that have a length of at most $n$.  Then, the accuracy can be defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathtt{accuracy} := \lim\limits_{n\rightarrow\infty}\frac{\cnt \{ o \in S_n \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}}{\cnt S_n}$.
+$\ds \mathtt{accuracy} := \lim\limits_{n\rightarrow\infty}\frac{\;\cnt \{ o \in S_n \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\;}{\cnt S_n}$.
 \\[0.2cm]
 The function $\mathtt{model}$ is usually determined by a set of \blue{parameters} or \blue{weights} $\mathbf{w}$. In
 this case, we have
@@ -108,8 +109,9 @@ this case, we have
 \hspace*{1.3cm}
 $\texttt{model}(\mathbf{x}) = \mathtt{model}(\mathbf{x};\mathbf{w})$
 \\[0.2cm]
-where $\mathbf{x}$ is the vector of features, while $\mathbf{w}$ is the vector of weights.  We will assume that the
-number of weights is the same as the number of features.  When it comes to the choice of the model, it is important to
+where $\mathbf{x}$ is the vector of features, while $\mathbf{w}$ is the vector of weights.  Later, when we
+introduce \blue{logistic regression}, we will assume that the number of weights is the same as the number of features.
+When it comes to the choice of the model, it is important to 
 understand that, at least in practical applications, \underline{all} models are wrong.  Nevertheless, \underline{some}
 models are useful.  There are two reasons for this:
 \begin{enumerate}
@@ -191,12 +193,12 @@ For example, when we discuss \blue{logistic regression} in the next section, we 
 function.  First, let us introduce the $\arg\!\max$ function.  The idea is that
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{\widehat{x}} = \arg\!\max\limits_{\mathbf{x}\in \mathbb{R}} f(\mathbf{x})$
+$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}} f(\mathbf{x})$
 \\[0.2cm]
 is that value of $\mathbf{x} \in \mathbb{R}$ that maximizes $ f(\mathbf{x})$.  Formally, we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\forall \mathbf{x} \in \mathbb{R}^n : f(\mathbf{x}) \leq f\Bigl(\arg\!\max\limits_{\mathbf{x}\in \mathbb{R}} f(\mathbf{x})\Bigr)$.
+$\forall \mathbf{x} \in \mathbb{R}^n : f(\mathbf{x}) \leq f\Bigl(\arg\max\limits_{\mathbf{x}\in \mathbb{R}} f(\mathbf{x})\Bigr)$.
 \\[0.2cm]
 Of course, the function $\arg\!\max$ is only defined when the maximum is unique.
 If the function $f$ is differentiable, we know that a necessary condition for a vector $\mathbf{\widehat{x}} \in \mathbb{R}^n$
@@ -239,8 +241,8 @@ the function $f:\mathbb{R} \rightarrow \mathbb{R}$ that is defined as
 $\ds f(x) := \sin(x) - \frac{1}{2} \cdot x^2$.
 \\[0.2cm]
 This function is shown in Figure \ref{fig:sin-minus-square.eps} on page \pageref{fig:sin-minus-square.eps}.
-It is obvious that this function has a maximum somewhere between $0.6$ and $0.8$.  In order to compute this maximum, we
-can compute the derivative of $f$.   This derivative is given as 
+From the graph of the function it is obvious that this function has a maximum somewhere between $0.6$ and
+$0.8$.  In order to compute this maximum, we can compute the derivative of $f$.   This derivative is given as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $f'(x) = \cos(x) - x$
@@ -297,9 +299,9 @@ In practice, it is best to adapt the step size dynamically during the iteration.
             x  += alpha * gradF(x);
             fx := f(x);
             if (fx < fOld) {   
-                alpha *= 0.5;
+                alpha   *= 0.5;
                 [x, fx] := [xOld, fOld];
-                continue;
+                continue;  // start over
             } else {
                 alpha *= 1.2;
             }
@@ -335,14 +337,15 @@ Next, let us discuss the implementation of gradient ascent.
 \item \texttt{alpha} is the step size $\alpha$.  We initialize \texttt{alpha} as $1.0$.  It will be adapted
       dynamically. 
 \item The \texttt{while} loop starting in line 5 executes the iteration.
-\item In this iteration, we store the values of $\mathbf{x}_n$ and $f(\mathbf{x}_n)$ in the variables
+\item In each iteration, we store the values of $\mathbf{x}_n$ and $f(\mathbf{x}_n)$ in the variables
       \texttt{xOld} and \texttt{fOld}.
 \item Next, we compute $\mathbf{x}_{n+1}$ in line 7 and compute the corresponding value $f(\mathbf{x}_{n+1})$ in line 8.
 \item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$.  This happens if the step
       size $\alpha$ is too large.  Hence, in this case we decrease the value of $\alpha$, discard 
       both $\mathbf{x}_{n+1}$ and $f(\mathbf{x}_{n+1})$ and start over again.
 \item Otherwise, $\mathbf{x}_{n+1}$ is a better approximation of the maximum than $\mathbf{x}_n$.  
-      In order to increase the speed of the convergence we will then increase the step size $\alpha$ by $20\%$.   
+      In order to increase the speed of the convergence of our algorithm we will then increase the step size
+      $\alpha$ by $20\%$.    
 \item The idea of our implementation is to stop the iteration when the function values of 
       $f(\mathbf{x}_{n+1})$ and $f(\mathbf{x}_{n})$ do not differ by more than $\varepsilon$ percent, or, to be more
       precise, if
@@ -370,7 +373,10 @@ has been invented by Broyden, Fletcher, Goldfarb, and Shanno.  Unfortunately, we
 time to discuss this algorithm.
 However, our implementation of gradient ascent is sufficient for our applications and as this is not a course on numerical
 analysis but rather on artificial intelligence we will not delve deeper into this topic but, instead, we refer
-readers interested in more efficient algorithms to the literature \cite{snyman:2005}.  
+readers interested in more efficient algorithms to the literature \cite{snyman:2005}.  If you ever need to find
+the maximum of a function numerically, you should try to use a predefined library routine that implements a
+state of the art algorithm.
+
 
 \section{Logistic Regression}
 In \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} we use a linear model that is combined

@@ -5,7 +5,6 @@ load("gradient-ascent.stlx");
 sigmoid := procedure(x) {
     return 1.0 / (1.0 + exp(-x));
 };
-
 // This is the natural logarithm of the sigmoid function.  It takes care to prevent
 // overflow when computing exp(-x) for negative values of x.  
 logSigmoid := procedure(x) {
@@ -15,7 +14,6 @@ logSigmoid := procedure(x) {
         return x;
     }
 };
-
 // log-lokelihood function
 //   x: feature matrix, x[i] is the i-th input vector
 //      It is assumed that x[i][1] is 1.0 for all i.
@@ -28,7 +26,6 @@ ll := procedure(x, y, w) {
     }
     return result;
 };
-
 gradLL := procedure(x, y, w) {
     result := [];
     for (j in [1 .. #x[1]]) {
@@ -39,7 +36,6 @@ gradLL := procedure(x, y, w) {
     }
     return la_vector(result);
 };
-
 logisticRegressionFile := procedure(fileName, types) {
     csv    := readTable(fileName, types);
     data   := csv.getData();

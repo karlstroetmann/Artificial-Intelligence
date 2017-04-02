@@ -1,56 +1,12 @@
 load("gradient-ascent.stlx");
 
-sigmoid := procedure(x) {
-    return 1.0 / (1.0 + exp(-x));
-};
-
-// This is the natural logarithm of the sigmoid function.  It takes care to prevent
-// overflow when computing exp(-x) for negative values of x.  
-logSigmoid := procedure(x) {
-    if (x > -100) {
-        return -log(1.0 + exp(-x));
-    } else {  
-        return x;
-    }
-};
-
-f := procedure(x) {
-    return 2 + logSigmoid(1 + 1) + logSigmoid(1 - x);
-};
-
-fs := procedure(x) {
-    return sigmoid(-1 - x) - sigmoid(x - 1);
-};
-
-easy := procedure(x) {
-    [x1, x2] := [x[1], x[2]];
-    return -((x1 - 10)**2 + 2*(x2 - 5)**2) + 1;
-};
-
-easyGrad := procedure(x) {
-    [x1, x2] := [x[1], x[2]];
-    return la_vector([ -2 * (x1 - 10), -4 * (x2 - 5) ]);
-};
-        
-rosenbrock := procedure(x) {
-    [x1, x2] := [x[1], x[2]];
-    return 1.0 - ((1 - x1)**2 + 100 * (x2 - x1**2)**2);
-};
-
-rosenbrockGrad := procedure(x) {
-    [x1, x2] := [x[1], x[2]];
-    return la_vector([2 * (1 - x1) + 400 * x1 * (x2 - x1**2), -200 * (x2 - x1**2)]);
-};
+f  := x |-> sin(x) - x**2 /2;
+fs := x |-> cos(x) - x;
 
 test := procedure() {
-    start := 1.11;
+    start := 0;
     [x, fx, cnt] := findMaximum(f, fs, start, 10**-15, true);
     print("maximum at $x$, value $fx$, $cnt$ iterations");
-//    start := la_vector([0, 0]);
-//    [x, fx, cnt] := findMaximum(easy, easyGrad, start, 10**-15, true);
-//    print("maximum at $x$, value $fx$, $cnt$ iterations");
-//    [x, fx, cnt] := findMaximum(rosenbrock, rosenbrockGrad, start, 10**-12, false);
-//    print("maximum at $x$, value $fx$, $cnt$ iterations");
 };
 
 test();
