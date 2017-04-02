@@ -478,13 +478,13 @@ $\ds \exp(t) = \frac{S(t)}{1 - S(t)}$.
 Applying the natural logarithm on both sides of this equation yields
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds t = \ln\Bigl(\frac{S(t)}{1-S(t)}\Bigr)$.
+$\ds t = \ln\left(\frac{S(t)}{1-S(t)}\right)$.
 \\[0.2cm]
 This shows that the inverse of the sigmoid function is given as
 \\[0.2cm]
 \hspace*{1.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
-$\ds S^{-1} (y) = \ln\Bigl(\frac{y}{1-y}\Bigr)$.}}} 
+$\ds S^{-1} (y) = \ln\left(\frac{y}{1-y}\right)$.}}} 
 \\[0.2cm]
 This function is known as the \href{https://en.wikipedia.org/wiki/Logit}{logit function}.
 Next, let us compute the derivative of $S(t)$, i.e.~$\ds S'(t) =\frac{\mathrm{d}S}{\mathtt{d}t}$.  We have
@@ -539,12 +539,14 @@ We use the following model to compute the probability that an object with featur
 \hspace*{1.3cm}
 $P(y=+1\;|\;\mathbf{x};\mathbf{w}) = S(\mathbf{x} \cdot \mathbf{w})$.
 \\[0.2cm]
-Here $\mathbf{x} \cdot \mathbf{w}$ denotes the dot product of the vectors $\mathbf{x}$ and $\mathbf{y}$.  
+Here $\mathbf{x} \cdot \mathbf{w}$ denotes the dot product of the vectors $\mathbf{x}$ and $\mathbf{y}$.  It is
+assumed that $\mathbf{x}$ contains a constant feature which  always takes the value of $1$.
 Seeing this model the first time you might think that this model is not very general and that it can only be
 applied in very special circumstances.  However, the fact is that the features can be functions of arbitrary complexity
 and hence this model is much more general than it appears on first sight.
 
-As $y$ can only take the values $+1$ or $-1$ and complementary probabilities add up to $1$, we have
+We assume that $y$ can only take the values $+1$ or $-1$,  e.g.~in the example of spam detection $y = 1$ if the
+email is spam and $y = -1$ otherwise.  Since complementary probabilities add up to $1$, we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $P(y=-1\;|\;\mathbf{x};\mathbf{w}) = 1 - P(y=+1\;|\;\mathbf{x};\mathbf{w}) 
@@ -561,7 +563,7 @@ Given $N$ objects $o_1, \cdots, o_n $ with feature vectors $\mathbf{x}_1, \cdots
 want to determine the weight vector $\mathbf{w}$ such that the likelihood $\ell(\mathbf{X}, \mathbf{y})$ of all of our
 observations is maximized.  This approach is called the 
 \href{https://en.wikipedia.org/wiki/Maximum_likelihood_estimation}{maximum likelihood estimation} of the weights.
-As we assume the probabilities of different objects to be independent, the individual
+As we assume the probabilities of different observations are independent, the individual
 probabilities have to be multiplied to compute the overall likelihood $\ell(\mathbf{X}, \mathbf{y};\mathbf{w})$ 
 of a given training set:
 \\[0.2cm]
@@ -575,7 +577,7 @@ easier to work with sums than with products, instead of maximizing the function 
 $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) := \ln\bigl(\ell(\mathbf{X},\mathbf{y};\mathbf{w})\bigr)$. 
 \\[0.2cm]
 As the natural logarithm is a monotone function, the functions $\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ and 
-$\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ take their maximum at the same value of $\mathbf{w}$.  Since we have
+$\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ take their maximum at the same value of $\mathbf{w}$.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ln(a \cdot b) = \ln(a) + \ln(b)$,
@@ -596,11 +598,12 @@ need to determine those values of the coefficients $\mathbf{w}$ that satisfy
 $\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) = 0$.
 \\[0.2cm]
 In order to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ with respect to the
-coefficients $\mathbf{w}$ we need to compute the partial derivative of the dot product $\mathbf{x}_i \cdot \mathbf{w}$.
+coefficients $\mathbf{w}$ we need to compute the partial derivative of the dot product $\mathbf{x}_i \cdot
+\mathbf{w}$ with respect to the weights $w_j$.
 We define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds h(\mathbf{w}) := \mathbf{x}_i \cdot \mathbf{w} = \sum\limits_{j=1}^D x_{i,j} \cdot w_j$.
+$\ds h(\mathbf{w}) := \mathbf{x}_i \cdot \mathbf{w} = \sum\limits_{k=1}^D x_{i,k} \cdot w_j$.
 \\[0.2cm]
 Then we have
 \\[0.2cm]
@@ -611,12 +614,13 @@ Now we are ready to compute the partial derivative of $\ell\ell(\mathbf{X},\math
 \\[0.2cm]
 \hspace*{1.3cm}
 $
-\begin{array}{cl}
+\begin{array}{cll}
   & \ds \frac{\partial\quad}{\partial\, w_j} \ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) \\[0.5cm]
 = & \ds \frac{\partial\quad}{\partial\, w_j} 
     \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr) 
     \\[0.5cm]
-= & \ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S\bigl(-y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
+= & \ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S\bigl(-y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr),
+  & \mbox{since} \quad \ds \frac{\mathrm{d}L(x)}{\mathrm{d}x} = S(-x).
 \end{array}
 $
 \\[0.2cm]
@@ -635,9 +639,10 @@ $\ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot
 \quad for all $j \in \{1, \cdots, D\}$.
 \\[0.2cm]
 These are $D$ equation for the $D$ variables $w_1, \cdots w_D$.  Due to the occurrence of the sigmoid function, these
-equations are nonlinear.  In order to find the value of $\mathbf{w}$ that maximizes the likelihood, we will instead use
-the method of \href{https://en.wikipedia.org/wiki/Gradient_descent}{gradient ascent} to compute
-the best value of $\mathbf{w}$.  This method has been outlined in the previous section.
+equations are nonlinear.  We can not solve these equations explicitly.  Nevertheless, our computation of the
+gradient of the log-likelihood was not for nought:  We will use gradient ascent in order to find the value of
+$\mathbf{w}$ that maximizes the log-likelihood.
+This method has been outlined in the previous section.
 
 \subsection{Implementing Logistic Regression}
 In order to implement logistic regression we need a data structure for tabular data.  Figure
@@ -775,19 +780,19 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
            return x;
        }
    };
-   ll := procedure(x, y, w) {
+   ll := procedure(X, y, w) {
        result := 0;
-       for (i in [1 .. #x]) {
-           result += logSigmoid(y[i] * (x[i] * w));
+       for (i in [1 .. #X]) {
+           result += logSigmoid(y[i] * (X[i] * w));
        }
        return result;
    };   
-   gradLL := procedure(x, y, w) {
+   gradLL := procedure(X, y, w) {
        result := [];
-       for (j in [1 .. #x[1]]) {
+       for (j in [1 .. #X[1]]) {
            result[j] := 0;
-           for (i in [1 .. #x]) {
-               result[j] += y[i] * x[i][j] * sigmoid((-y[i]) * (x[i] * w));
+           for (i in [1 .. #X]) {
+               result[j] += y[i] * X[i][j] * sigmoid((-y[i]) * (X[i] * w));
            }
        }
        return la_vector(result);
@@ -803,12 +808,12 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
            yList[i] := data[i][1];
            xList[i] := la_vector([1.0] + data[i][2..]);
        }
-       x := la_matrix(xList);
+       X := la_matrix(xList);
        y := la_vector([2 * y - 1 : y in yList]);
        start := la_vector([0.0 : i in [1 .. dmnsn]]);
        eps   := 10 ** -15;
-       f     := w |=> ll(x, y, w);
-       gradF := w |=> gradLL(x, y, w);
+       f     := w |=> ll(X, y, w);
+       gradF := w |=> gradLL(X, y, w);
        return findMaximum(f, gradF, start, eps)[1];
    };
 \end{Verbatim}
@@ -827,7 +832,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \item Line 5 starts the implementation of the natural logarithm of the sigmoid function, i.e.~we implement
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ds L(x) = \ln\bigl(S(X)\bigr) = \ln\Bigl(\frac{1}{1 + \exp(-x)}\Bigr) =- \ln\bigl(1 + \exp(-x)\bigr)$.
+      $\ds L(x) = \ln\bigl(S(X)\bigr) = \ln\left(\frac{1}{1 + \exp(-x)}\right) =- \ln\bigl(1 + \exp(-x)\bigr)$.
       \\[0.2cm]
       The implementation is more complicated than you might expect.  The reason has to do with
       overflow.  Consider values of $x$ that are smaller than, say, $-1000$.  The problem is that
@@ -839,7 +844,12 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       $\ln\bigl(1 + \exp(1000)\bigr) \approx 1000$.
       \\[0.2cm] 
       The argument works as follows:
-      \\[0.2cm]
+      \pagebreak
+      \vspace*{\fill}
+
+      \pagebreak
+
+      \noindent
       \hspace*{1.3cm}
       $
       \begin{array}{lcll}
@@ -859,7 +869,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
            \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
       $.
       Here $L$ denotes the natural logarithm of the sigmoid of the argument.
-      It is assumed that \texttt{x} is a matrix.  Every observation corresponds to a row in this
+      It is assumed that $\mathbf{X}$ is a matrix.  Every observation corresponds to a row in this
       matrix, i.e.~the vector $\mathbf{x}_i$ is the feature vector containing the features of the
       $i$-th observation.  $\mathbf{y}$ is a vector describing the outcomes, i.e.~the elements
       of this vector are either $+1$ or $-1$.  Finally, $\mathbf{w}$ is the vector of coefficients.
@@ -877,8 +887,9 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       is the name of the csv file containing the data, while the second argument is a list specifying the types
       of the columns.  The elements of this list have to be either \texttt{"int"} or
       \texttt{"double"}.
-      The task of this function is to read the csv file, convert the data in the matrix \texttt{x}
-      and the vector \texttt{y}, and then use gradient ascent to find the best coefficients.
+      The task of this function is to read the csv file, convert the data in the matrix $\mathbf{X}$
+      and the vector $\mathtt{y}$, and then use the method of gradient ascent to find the coefficients
+      $\mathtt{w}$ that maximize the likelihood.
 \end{enumerate}
 If we run the function \texttt{logisticRegressionFile} using the data shown in Figure
 \ref{fig:exam.csv} via
