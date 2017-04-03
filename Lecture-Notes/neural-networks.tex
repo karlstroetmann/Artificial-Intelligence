@@ -1,76 +1,153 @@
 \chapter{Neural Networks}
-A neural network is built from \emph{neurons}.  At the abstraction level that we are looking at
-neural networks, a single neuron with $n$ inputs is defined as a pair $\langle \mathbf{w}, b\rangle$ where
-vector $\mathbf{w} \in \mathbb{R}^m$ is called the \emph{weight vector} and $b \in \mathbb{R}$ is called the \emph{bias}.  
-Conceptually, a neuron is a function $p$ that maps a vector $\mathbf{x} \in \mathbb{R}^m$ into the
+In this chapter, we discuss \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
+Many of the most visible breakthroughs in artificial intelligence involve neural networks.  
+\begin{enumerate}
+\item The current system used by Google to automatically translate web pages is called
+      \href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine Translation} and,
+      as the name suggests, is based on neural networks.  
+\item \href{https://de.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
+      \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol}{recently} 
+      beaten \href{https://en.wikipedia.org/wiki/Lee_Sedol}{Lee Sedol} in the game of go.  Lee Sedol is
+      currently ranked second in the game of go. 
+\item \href{https://en.wikipedia.org/wiki/Autonomous_car}{Autonomous driving} makes heavy use of neural networks.
+\end{enumerate}
+The list given above is far from being complete.  In this chapter, we will only discuss \blue{feedforward} 
+neural networks.  Although recently 
+\href{https://en.wikipedia.org/wiki/Recurrent_neural_network}{recurrent neural networks} have gotten a lot of
+attention, these type of neural networks are more difficult to train and are therefore beyond the scope of this
+introduction.  The rest of this chapter is strongly influenced by the excellent online book 
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{http://neuralnetworksanddeeplearning.com/index.html}{http://neuralnetworksanddeeplearning.com/index.html}
+\\[0.2cm]
+that has been written by Michael Nielsen \cite{nielsen:2015}.
+
+\section{Feedforward Neural Networks}
+A neural network is built from \blue{neurons}.  At the abstraction level that we are looking at
+neural networks, a single neuron with $n$ inputs is defined as a pair $\langle \mathbf{w}, b\rangle$ where the
+vector $\mathbf{w} \in \mathbb{R}^m$ is called the \blue{weight vector} and the number $b \in \mathbb{R}$ is called the \blue{bias}.  
+Conceptually, a neuron is a function $p$ that maps an input vector $\mathbf{x} \in \mathbb{R}^m$ into the
 interval $[0,1]$.  This function is defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds p(\mathbf{x}; \mathbf{w}) := a(\mathbf{x} \cdot \mathbf{w} + b)$,
 \\[0.2cm]
-where $a$ is called the \emph{activation function}.  In our applications, we will use the sigmoid
+where $a$ is called the \blue{activation function}.  In our applications, we will always use the sigmoid
 function as our activation function, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
 \\[0.2cm]
-The function $p$ modeling the neuron can also be written using index notation.  If
+The function $p$ modelling the neuron can be written more explicitly using index notation.  If
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{w} = \langle w_1, \cdots, w_m \rangle^T$ 
+$\mathbf{w} = \langle w_1, \cdots, w_m \rangle^\top$ 
 \\[0.2cm]
 is the weight vector and 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{x} = \langle x_1, \cdots, x_m \rangle^T$
+$\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
 \\[0.2cm]
-is the input vector, then 
+is the input vector, then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds p(\mathbf{x}; \mathbf{w}) = S\left(\sum\limits_{i=1}^m x_i \cdot w_i + b\right)$
+$\ds p(\mathbf{x}; \mathbf{w}) = S\left(\sum\limits_{i=1}^m (x_i \cdot w_i + b)\right)$,
 \\[0.2cm]
-if we use the sigmoid function as our activation function.  If you compare $p(\mathbf{x}; \mathbf{w})$ 
+where $S$ denotes the sigmoid function.  If we compare $p(\mathbf{x}; \mathbf{w})$ 
 to a similar function appearing in the last chapter, you will notice 
 that so far a neuron works just like logistic regression.  The only difference is that the bias $b$
-is now explicit.  
+is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
+feature vector $\mathbf{x}$ was always equal to $1$.  This assumption enabled us to incorporate the bias $b$ into the
+weight vector $\mathbf{w}$.
 
-A neural network is a layered network of neurons.  Formally, the \emph{topology} of a neural network is
+A \blue{feedforward neural network} is a layered network of neurons.  Formally, the \blue{topology} of a neural network is
 given by a number $L \in \mathbb{N}$ and a list of $[m(1), \cdots, m(L)]$ of $L$ natural numbers.  The number
-$L$ is called the number of layers and for $i \in \{2,\cdots,L\}$ the number $m(i)$ is the number of
-neurons in the $l$-th layer.  The first layer is called the input layer, the last layer (i.e.~the
-layer with index $L$) is called the output layer and the remaining layers are called 
-\emph{hidden layers}.  If there is more than one hidden layer, the neural network is called a
-\emph{deep neural network}.
+$L$ is called the \blue{number of layers} and for $i \in \{2,\cdots,L\}$ the number $m(i)$ is the number of
+neurons in the $l$-th layer.  The first layer is called the \blue{input layer} and hence $L(1)$ is the number of
+inputs to the neural network.  The input layer does not contain
+neurons but instead just contains \blue{input nodes}.  The last layer (i.e.~the
+layer with index $L$) is called the \blue{output layer} and the remaining layers are called 
+\blue{hidden layers}.  If there is more than one hidden layer, the neural network is called a
+\blue{deep neural network}.
 
-As the first layer is the input layer, the \emph{input dimension} is defined as
-$m(1)$.  Similarly, the \emph{output dimension} is defined as $m(L)$.
-Every node in the $l$-th layer is connected to every node in the $(l+1)$-th layer.
+As the first layer is the input layer, the \blue{input dimension} is defined as
+$m(1)$.  Similarly, the \blue{output dimension} is defined as $m(L)$.
+Every node in the $l$-th layer is connected to every node in the $(l+1)$-th layer via a \blue{weight}.
 The weight $w_{j,k}^{(l)}$ is the weight of the connection from the $k$-th neuron in layer $l-1$ to
-the $j$-th neuron in layer $l$.  The weights in layer $l$ are combined into the weight matrix of
-layer $W^{(l)}$ which is defined as
+the $j$-th neuron in layer $l$.  The weights in layer $l$ are combined into the \blue{weight matrix} $W^{(l)}$ of
+the layer $l$: This matrix is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds W^{(l)} := \bigl( w_{j,k}^{(l)} \bigr)$.
 \\[0.2cm]
-Note that $W^{(l)}$ is an $m(l-1) \times m(l)$ matrix, i.e.~we have
+Note that $W^{(l)}$ is an $m(l) \times m(l-1)$ matrix, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds W^{(l)} \in \mathbb{R}^{m(l-1) \times m(l)}$.
+$\ds W^{(l)} \in \mathbb{R}^{m(l) \times m(l-1)}$.
 \\[0.2cm]
-The $j$-th neuron in layer $l$ has the bias $b_j^{(l)}$.  Then, the activation of the $j$-th neuron
+The $j$-th neuron in layer $l$ has the \blue{bias} $b_j^{(l)}$.  These biases of layer $l$ are combined into
+the \blue{bias vector}
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle$.
+\\[0.2cm]
+Then, the \blue{activation} of the $j$-th neuron
 in layer $l$ is denoted as $a_j^{(l)}$ and is defined as 
+\begin{equation}
+  \label{eq:feedforward}
+ a_j^{(l)}(\mathbf{x}) := S\left(\sum\limits_{k=1}^{m(l-1)} \left(w_{j,k}^{(l)}\cdot a^{(l-1)}(\mathbf{x}) +
+  b_{j}^{(l)}\right)\right) \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
+\end{equation}
+Here, $\mathbf{x}$ is the input vector.  The \blue{activation vector} of layer $l$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds a_j^{(l)} := S\left(\sum\limits_{k=1}^{n(l-1)} w_{j,k}^{(l)}\cdot a^{(l-1)} + b_{j}^{(l)}\right)$.
+$\mathbf{a}^{(l)} := \langle a_1^{(l)}, \cdots, a_{m(l)}^{(l)} \rangle$.
 \\[0.2cm]
-The output of our neural network for an input $\mathbf{x}$ is given by the neuron in the output
+For $l = 1$ we define
+\\[0.2cm]
+\hspace*{1.3cm}
+$a^{(1)}_j(\mathbf{x}) := x_j$,
+\\[0.2cm]
+i.e.~the activation of the input layer is the input of the neural network and hence we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{a}^{(1)} = \mathbf{x}$.
+\\[0.2cm]
+The output of our neural network for an input $\mathbf{x}$ is given by the neurons in the output
 layer,  i.e.~the output vector 
-$\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{(m(L))}$ is defined as 
+$\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{o}(\mathbf{x}) = \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle$.
+$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle$.
 \\[0.2cm]
-We assume that we have $n$ training examples 
+Note that the equations (\ref{eq:feedforward} describe how information propagates through the neural network:
+\begin{enumerate}
+\item Initially, the input vector $\mathbf{x}$ is given and stored in the first layer of the neural network:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{a}^{(1)}(\mathbf{x}) := \mathbf{x}$.
+\item The first layer of neurons, which is the second layer of nodes,  is activated and computes the activation
+      vector $\mathbf{a}^{(2)}$ according to the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{a}^{(2)}(\mathbf{x}) := S\bigl(W^{(2)} \cdot \mathbf{a}^{(1)}(\mathbf{x}) + \mathbf{b}^{(2)}\bigr) = 
+                                        S\bigl(W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}\bigr)
+      $.
+\item The second layer of neurons, which is the third layer of nodes,  is activated and computes the activation
+      vector $\mathbf{a}^{(3)}(\mathbf{x})$ according to the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{a}^{(3)}(\mathbf{x}) := S\bigl(W^{(3)} \cdot \mathbf{a}^{(2)}(\mathbf{x}) + \mathbf{b}^{(3)}\bigr)
+                          = S\Bigl(W^{(3)} \cdot S\bigl(W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}\bigr) + \mathbf{b}^{(1)}\Bigr)
+        $
+\item This proceeds until the output layer is reached and 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{o}(\mathbf{x}) := \mathbf{a}^{(L)}(\mathbf{x})$
+      \\[0.2cm]
+      has been computed.
+\end{enumerate}
+Next, we assume that we have $n$ \blue{training examples} 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$ \quad for $i=1,\cdots,n$ 
@@ -80,27 +157,35 @@ such that
 \hspace*{1.3cm}
 $\mathbf{x}^{(i)} \in \mathbb{R}^{m(1)}$ and $\mathbf{y}^{(i)} \in \mathbb{R}^{m(L)}$
 \\[0.2cm]
-The \emph{quadratic error cost function} is defined as
+Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $b^{(l)}$ in a way such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) = \mathbf{y}^{(i)}$ \quad for all $i \in \{1,\cdots,n\}$.
+\\[0.2cm]
+Unfortunately, in general we will not be able to achieve equality for all  $i \in \{1,\cdots,n\}$.
+In those cases, our goal is to minimize the error.  To this end, the \blue{quadratic error cost function} is
+defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
-     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
- \frac{1}{2 \cdot m} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
+     \mathbf{x}^{(1)}, y^{(1)}, \cdots, \mathbf{x}^{(n)},y^{(n)} \Bigr) := 
+ \frac{1}{2 \cdot m} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - y^{(i)}\Bigr)^2
 $.
 \\[0.2cm]
-Note that the cost function is additive in the training examples $\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$.
-In order to simplify the notation we therefore define
+Note that the cost function is additive in the training examples $\langle \mathbf{x}^{(i)}, y^{(i)} \rangle$.
+In order to simplify the notation we define
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) := 
- \frac{1}{2} \cdot \Bigl(\mathbf{o}\bigl(\mathbf{x}\bigr) - \mathbf{y}\Bigr)^2
-$.
+ \frac{1}{2} \cdot \Bigl(\mathbf{o}\bigl(\mathbf{x}\bigr) - y\Bigr)^2
+$,
 \\[0.2cm]
+i.e.~$C_{\mathbf{x},\mathbf{y}}$ is the part of the cost function that is associated with a single training example $\pair(\mathbf{x},y)$.
 Then, we have
 \\[0.2cm]
 $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
-     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
- \frac{1}{m} \cdot \sum\limits_{i=1}^n C_{\mathbf{x^{(i)}}, \mathbf{y^{(i)}}}\Bigr(W^{(2)}, \cdots W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) 
+     \mathbf{x}^{(1)}, y^{(1)}, \cdots, \mathbf{x}^{(n)},y^{(n)} \Bigr) := 
+ \frac{1}{m} \cdot \sum\limits_{i=1}^n C_{\mathbf{x^{(i)}}, y^{(i)}}\Bigr(W^{(2)}, \cdots W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) 
 $.
 \\[0.2cm]
 As the notation
@@ -108,10 +193,118 @@ As the notation
 \hspace*{1.3cm}
 $C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr)$
 \\[0.2cm]
-is far too heavy, we will abbreviate this term as $C$ in the following
-discussion of the backpropagation algorithm.
+is far too heavy, we will abbreviate this term as $C_{\mathbf{x}, \mathbf{y}}$ in the following
+discussion of the backpropagation algorithm.  Similarly, we abbreviate the quadratic error cost function as $C$.
+Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $\mathbf{b}^{(l)}$ such that the
+quadratic error cost function $C$ is minimized.  Similar to logistic regression we will use gradient descent to
+find this minimum\footnote{
+  In logistic regression we have tried to maximize the log-likelihood.  Here, instead
+  we minimize the quadratic error cost function.  Hence, instead of gradient ascent we now use gradient descent. 
+}.
 
 \section{Backpropagation}
+The breakthrough in the application of neural networks was the rediscovering of the
+\href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
+ David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986}.  Essentially, the backpropagation
+ algorithm is an efficient way to compute the partial derivatives of the cost function $C$ with respect to the
+ weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.  We start by defining the auxiliary variables $z_j^{(l)}$.
+ These expressions are defined as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds z_j^{(l)} := \sum\limits_{i=1}^{m(l)}  \left(w_{j,k}^{(l)} \cdot a^{(l-1)}(\mathbf{x}) + b_j^{(l)}\right)$
+\\[0.2cm]
+Essentially, $z_j^{(l)}$ is the input to the sigmoid function when the activation $a_j^{(l)}$ is computed,
+i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$a_j^{(l)} = S\Bigl(z_j^{(l)}\Bigr)$.
+\\[0.2cm]
+We will see that partial derivatives of the cost function $C_{\mathbf{x}, \mathbf{y}}$ with respect to both the weights
+$w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$ can be computed easily if we first compute the partial derivatives
+of $C_{\mathbf{x}, \mathbf{y}}$ with respect to $z_j^{(l)}$.  To this end we define
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds\delta_j^{(l)} := \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}}$,
+\\[0.2cm]
+that is we regard $C_{\mathbf{x}, \mathbf{y}}$ as a function of the $z_j^{(l)}$ and take the partial
+derivatives according to these variables.
+
+Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
+of two vectors.  Assume that $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$.  The the \blue{Hadamard product} of
+$\mathbf{x}$ and $\mathbf{y}$ is defined as elementwise:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\left(
+  \begin{array}[c]{c}
+    x_1 \\
+    x_2 \\
+    \vdots \\
+    x_n
+  \end{array}
+\right) \odot
+\left(
+  \begin{array}[c]{c}
+    y_1 \\
+    y_2 \\
+    \vdots \\
+    y_n
+  \end{array}
+\right) = 
+\left(
+  \begin{array}[c]{c}
+    x_1 \cdot y_1 \\
+    x_2 \cdot y_2 \\
+    \vdots \\
+    x_n \cdot y_n
+  \end{array}
+\right)
+$,
+\\[0.2cm]
+i.e.~the $i$-th component of the Hadamard product $\mathbf{x} \odot \mathbf{y}$ is the product of the $i$-th
+component of $\mathbf{x}$ with the $i$-th component of $\mathbf{y}$.
+
+Now we are ready to state the \blue{backpropagation equations}.  The first of these four equations reads as follows:
+\begin{equation}
+  \label{eq:BP1}
+  \delta^{(L)}_j = \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial a_j^{(L)}} \cdot S'\bigl(z_j^{(L)}\bigr),
+  \tag{BP1}
+\end{equation}
+where $S'(x)$ denotes the derivative of the sigmoid function. 
+This equation can also be written in vectorized form using the Hadamard product:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\boldsymbol{\delta}^{(L)} = \nabla_{\mathbf{a}^{(L)}} C_{\mathbf{x}, \mathbf{y}} \odot S'\bigl(\mathbf{z}^{(L)}\bigr)$,
+\\[0.2cm]
+The next equation computes $\boldsymbol{\delta}^{(l)}$ for $l$ less than $L$.  We have
+\begin{equation}
+  \label{eq:BP2}
+  \boldsymbol{\delta}^{(l)} = \Bigl(\bigl(W^{(l+1)}\bigr)^\top \cdot \boldsymbol{\delta}^{(l+1)}\Bigr) \odot S'\bigl(z^{(l)}\bigr).
+  \tag{BP2}
+\end{equation}
+Note that this equation computes $\boldsymbol{\delta}^{(l)}$ in terms of  $\boldsymbol{\delta}^{(l+1)}$:  The error 
+$\boldsymbol{\delta}^{(l+1)}$ at layer $l+1$ is propagated backwards through the neural network to produce the
+error $\boldsymbol{\delta}^{(l)}$ at layer $l$.
+
+Next, we have to compute the partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the bias of the
+$j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
+\begin{equation}
+  \label{eq:BP3}
+  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{b_j^{(l)}} = \delta_j^{(l)}
+  \tag{BP3}
+\end{equation}
+Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the weights:
+\begin{equation}
+  \label{eq:BP4}
+  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{w_{j,k}^{(l)}} = a_k^{(l)} \cdot \delta_j^{(l)}
+  \tag{BP4}
+\end{equation}
+Seeing the equations (\ref{eq:BP3}) and (\ref{eq:BP4})  we understand why it was useful to introduce the
+numbers $\delta_j^{(l)}$: These numbers enable us to compute the partial derivatives of the cost function
+with respect to both the biases and the weights.  Furthermore, the equations (\ref{eq:BP1}) and (\ref{eq:BP2})
+show how these numbers can be computed.
+
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "artificial-intelligence"

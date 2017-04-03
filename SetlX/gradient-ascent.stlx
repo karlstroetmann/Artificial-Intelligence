@@ -24,7 +24,7 @@ findMaximum := procedure(f, gradF, start, eps, verbose := false) {
             print("cnt = $cnt$, f($x$) = $fx$, $fx - fOld$");
             print("gradient = $gradF(x)$");
         }
-        if (fx < fOld) {   
+        if (fx <= fOld) {   
             alpha *= 0.5;
             if (verbose) {
                 print("decrementing: alpha = $alpha$");

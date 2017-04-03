@@ -190,22 +190,22 @@ In machine learning, it is often the case that we have to find either the maximu
 $f: \mathbb{R}^n \rightarrow \mathbb{R}$.
 \\[0.2cm]
 For example, when we discuss \blue{logistic regression} in the next section, we will have to find the maximum of a
-function.  First, let us introduce the $\arg\!\max$ function.  The idea is that
+function.  First, let us introduce the $\arg\max$ function.  The idea is that
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}} f(\mathbf{x})$
+$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f(\mathbf{x})$
 \\[0.2cm]
-is that value of $\mathbf{x} \in \mathbb{R}$ that maximizes $ f(\mathbf{x})$.  Formally, we have
+is that value of $\mathbf{x} \in \mathbb{R}^n$ that maximizes $ f(\mathbf{x})$.  Formally, we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\forall \mathbf{x} \in \mathbb{R}^n : f(\mathbf{x}) \leq f\Bigl(\arg\max\limits_{\mathbf{x}\in \mathbb{R}} f(\mathbf{x})\Bigr)$.
+$\forall \mathbf{x} \in \mathbb{R}^n : f(\mathbf{x}) \leq f\Bigl(\arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f(\mathbf{x})\Bigr)$.
 \\[0.2cm]
 Of course, the function $\arg\!\max$ is only defined when the maximum is unique.
 If the function $f$ is differentiable, we know that a necessary condition for a vector $\mathbf{\widehat{x}} \in \mathbb{R}^n$
 to satisfy
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}} f(\mathbf{x})$ \quad is that we must have \quad $\nabla f(\mathbf{\widehat{x}}) = \mathbf{0}$,
+$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f(\mathbf{x})$ \quad is that we must have \quad $\nabla f(\mathbf{\widehat{x}}) = \mathbf{0}$,
 \\[0.2cm]
 i.e.~the \href{https://en.wikipedia.org/wiki/Gradient}{gradient} of $f$, which we will write as $\nabla f$,
 vanishes at the maximum.  Remember that the gradient of $f$ is defined as
@@ -264,7 +264,7 @@ vectors $\bigl(\mathbf{x}_n\bigr)_{n\in\mathbb{N}}$ such that we have
 \hspace*{1.3cm}
 $f(\mathbf{x}_{n+1}) \geq f(\mathbf{x}_{n})$ \quad for all $n\in\mathbb{N}$.
 \\[0.2cm]
-Hopefully, this sequence will converge against $\widehat{\mathbf{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}}f(\mathbf{x})$.
+Hopefully, this sequence will converge against $\widehat{\mathbf{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n}f(\mathbf{x})$.
 If we do not really know where to start our search, we define $\mathbf{x}_0 := \mathbf{0}$.  In order to
 compute $\mathbf{x}_{n+1}$ given $\mathbf{x}_{n}$, the idea is to move from $\mathbf{x}_n$ in that direction
 where we have the biggest change in the values of $f$.   This direction happens to be the gradient of $f$ at $\mathbf{x}_n$.
