@@ -213,15 +213,25 @@ find this minimum\footnote{
   In logistic regression we have tried to maximize the log-likelihood.  Here, instead
   we minimize the quadratic error cost function.  Hence, instead of gradient ascent we use gradient descent. 
 }.
+\pagebreak
 
 \section{Backpropagation}
-The breakthrough in the application of neural networks was the rediscovering of the
-\href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
- David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  Essentially, the
- backpropagation  algorithm is an efficient way to compute the partial derivatives of the cost function $C$
- with respect to the 
- weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.  Before we can proceed to compute these partial
- derivatives, we need to define some auxiliary variables.
+There are two reasons for the recent success of neural networks.
+\begin{enumerate}
+\item The computing power that is available today has vastly increased in the last 20 years.
+      For example, today the \href{https://en.wikipedia.org/wiki/AMD_Radeon_400_series#Vega}{AMD Vega 10}
+      graphic card offers about 12.5 teraflops in single precision performance.  It consumes about 300 watt.
+      Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which was the most powerful supercomputer in 2000:
+      In 2000 when it topped the rankings of the supercomputers, it  offered a performance of 7.2 teraflops and 
+      needed 6 megawatt to operate.  The cost to build ASCI White where about $110,000,000\,\symbol{36}$.
+      On the contrary, the AMD Vega 10 is expected to cost about $1,000\,\symbol{36}$.
+\item The breakthrough in the theory of neural networks was the rediscovering of the
+      \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
+      David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
+\end{enumerate}
+Essentially, the backpropagation  algorithm is an efficient way to compute the partial derivatives of the cost function $C$
+with respect to the weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.  
+Before we can proceed to compute these partial derivatives, we need to define some auxiliary variables.
 
 \subsection{Definition of some Auxiliary Variables}
 We start by defining the auxiliary variables $z_j^{(l)}$.
@@ -264,6 +274,7 @@ $\boldsymbol{\varepsilon}^{(l)} := \left(
 $.
 \\[0.2cm]
 For reasons that will be explained later, this quantity $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
+\pagebreak
 
 \subsection{The Hadamard Product}
 Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
