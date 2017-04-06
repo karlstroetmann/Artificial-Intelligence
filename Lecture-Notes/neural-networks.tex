@@ -5,12 +5,13 @@ networks:
 \begin{enumerate}
 \item The current system used by Google to \href{https://translate.google.com}{automatically translate} web
       pages is called 
-      \href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine Translation} and,
-      as the name suggests, is based on neural networks.  
+      ``\href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine
+        Translation}''
+      and,  as the name suggests, is based on neural networks.  
 \item \href{https://de.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
       \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol}{recently} 
-      beaten \href{https://en.wikipedia.org/wiki/Lee_Sedol}{Lee Sedol} in the game of go.  Lee Sedol is
-      currently ranked second in the game of go. 
+      beaten \href{https://en.wikipedia.org/wiki/Lee_Sedol}{Lee Sedol} in the game of go.  At that time, Lee Sedol was
+      ranked third among the \href{https://www.goratings.org/history/}{top go players}. 
 \item \href{https://en.wikipedia.org/wiki/Autonomous_car}{Autonomous driving} makes heavy use of neural networks.
 \end{enumerate}
 The list given above is far from being complete.  In this chapter, we will only discuss \blue{feedforward} 
@@ -42,7 +43,7 @@ Conceptually, a neuron is a function $p$ that maps an input vector $\mathbf{x} \
 interval $[0,1]$.  This function is defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds p(\mathbf{x}; \mathbf{w}) := a(\mathbf{x} \cdot \mathbf{w} + b)$,
+$\ds p(\mathbf{x}; \mathbf{w}, b) := a(\mathbf{x} \cdot \mathbf{w} + b)$,
 \\[0.2cm]
 where $a$ is called the \blue{activation function}.  In our applications, we will always use the sigmoid
 function as our activation function, i.e.~we have
@@ -63,9 +64,9 @@ $\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
 is the input vector, then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds p(\mathbf{x}; \mathbf{w}) = S\left(\sum\limits_{i=1}^m (x_i \cdot w_i + b)\right)$,
+$\ds p(\mathbf{x}; \mathbf{w}, b) = S\left(\sum\limits_{i=1}^m (x_i \cdot w_i + b)\right)$.
 \\[0.2cm]
-where $S$ denotes the sigmoid function.  If we compare $p(\mathbf{x}; \mathbf{w})$ 
+If we compare $p(\mathbf{x}; \mathbf{w}, b)$ 
 to a similar function appearing in the last chapter, you will notice 
 that so far a neuron works just like logistic regression.  The only difference is that the bias $b$
 is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
@@ -109,6 +110,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
       \begin{equation}
         \label{eq:feedforward1}
        a^{(1)}_j := x_j.
+       \tag{FF1}
       \end{equation}
       To put it differently, the input vector $\mathbf{x}$ is the activation of the input nodes.
 \item For all other layers we have
@@ -117,6 +119,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
          a_j^{(l)}(\mathbf{x}) := 
              S\left(\sum\limits_{k=1}^{m(l-1)} \left(w_{j,k}^{(l)}\cdot a^{(l-1)}(\mathbf{x}) + b_{j}^{(l)}\right)\right) 
         \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
+       \tag{FF2}
 \end{equation}
 \end{enumerate}
 The \blue{activation vector} of layer $l$ is defined as
@@ -129,7 +132,7 @@ layer,  i.e.~the output vector
 $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle$.
+$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle = \mathbf{a}^{(L)}(\mathbf{x})$.
 \\[0.2cm]
 Note that the equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) describe how information propagates
 through the neural network: 
