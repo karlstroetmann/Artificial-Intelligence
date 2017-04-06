@@ -137,7 +137,7 @@ $\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}
 Note that the equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) describe how information propagates
 through the neural network: 
 \begin{enumerate}
-\item Initially, the input vector $\mathbf{x}$ is given and stored in the first layer of the neural network:
+\item Initially, the input vector $\mathbf{x}$ is given and stored in the input layer of the neural network:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathbf{a}^{(1)}(\mathbf{x}) := \mathbf{x}$.
@@ -160,7 +160,7 @@ through the neural network:
       \hspace*{1.3cm}
       $\mathbf{o}(\mathbf{x}) := \mathbf{a}^{(L)}(\mathbf{x})$
       \\[0.2cm]
-      has been computed.  Note that very node of the neural network performs as in logistic regression.
+      has been computed.  Note that very neuron of the neural network performs logistic regression.
 \end{enumerate}
 Next, we assume that we have $n$ \blue{training examples} 
 \\[0.2cm]
@@ -211,10 +211,11 @@ $C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cd
 is far too heavy, we will abbreviate this term as $C_{\mathbf{x}, \mathbf{y}}$ in the following
 discussion of the backpropagation algorithm.  Similarly, we abbreviate the quadratic error cost function as $C$.
 Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $\mathbf{b}^{(l)}$ such that the
-quadratic error cost function $C$ is minimized.  Similar to logistic regression we will use gradient descent to
+quadratic error cost function $C$ is minimized.  We will use a variation of gradient descent to
 find this minimum\footnote{
-  In logistic regression we have tried to maximize the log-likelihood.  Here, instead
-  we minimize the quadratic error cost function.  Hence, instead of gradient ascent we use gradient descent. 
+  In logistic regression we have tried to \emph{maximize} the log-likelihood.  Here, instead
+  we \emph{minimize} the quadratic error cost function.  Hence, instead of gradient \emph{ascent} we use
+  gradient \emph{descent}.  
 }.
 \pagebreak
 
