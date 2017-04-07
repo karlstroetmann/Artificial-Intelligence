@@ -332,7 +332,7 @@ $S'(x) = \bigl(1 - S(t)\bigr) \cdot S(t)$
 holds.  The equation (\ref{eq:BP1}) can also be written in vectorized form using the Hadamard product:
 \begin{equation}
   \label{eq:BP1s}
-\boldsymbol{\varepsilon}^{(L)} = (\mathbf{a} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)  
+\boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)  
 \tag{BP1v}
 \end{equation}
 Here, we have \blue{vectorized} the application of the function $S'$ to the vector $\mathbf{z}^{(L)}$, i.e.~the
@@ -380,6 +380,15 @@ $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
   \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,l\}$}
   \tag{BP3}
 \end{equation}
+In vectorized notation, this equation takes the following form:
+\begin{equation}
+  \label{eq:BP3v}
+  \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
+  \quad \mbox{for all $l \in \{2, \cdots,l\}$}
+  \tag{BP3v}
+\end{equation}
+Here. $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ denotes the gradient of $C_{\mathbf{x},
+  \mathbf{y}}$ with respect to the bias $\mathbf{b}^{(l)}$.
 Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the weights:
 \begin{equation}
   \label{eq:BP4}
@@ -387,10 +396,30 @@ Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ 
   \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$, $ k \in \{1,\cdots,m(l-1)\}$, and $l \in \{2, \cdots,l\}$}
   \tag{BP4}
 \end{equation}
-Seeing the equations (\ref{eq:BP3}) and (\ref{eq:BP4})  we understand why it was useful to introduce the
+In vectorized notation, this equation can be written as:
+\begin{equation}
+  \label{eq:BP4}
+  \nabla_{W^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top
+  \quad \mbox{for all $l \in \{2, \cdots,l\}$}
+  \tag{BP4}
+\end{equation}
+Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ denotes the matrix
+product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
+row vector $\bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ that is regarded as an $1 \times m(l-1)$ matrix.
+
+The equations (\ref{eq:BP3}) and (\ref{eq:BP4}) show why it was useful to introduce the
 numbers $\varepsilon_j^{(l)}$: These numbers enable us to compute the partial derivatives of the cost function
 with respect to both the biases and the weights.  Furthermore, the equations (\ref{eq:BP1}) and (\ref{eq:BP2})
-show how these numbers can be computed.
+show how these numbers can be computed.  An implementation of backpropagation should use the vectorized
+versions of these equations since this is more efficient for two reasons:
+\begin{enumerate}
+\item Interpreted languages like \textsc{SetlX}, \textsl{Python}, or \textsl{Octave} take much more time to
+      execute a loop than to execute a simple matrix-vector multiplication.  The reason is that in a loop, in
+      addition to executing the statement a given number of times, the statement has to be interpreted 
+      every time it is executed.
+\item Languages that are optimized for machine learning often take care to delegate the execution of matrix
+      operations to the graphical coprocessor which is optimized for these kinds of operations.  
+\end{enumerate}
 
 \subsection{Proof of the Backpropagation Equations}
 Next, we prove the backpropagation equations.  Although the proof is a bit tedious, it should be accessible: The
@@ -435,7 +464,7 @@ in terms of the activation $\mathbf{a}^{(L)}$ as
 \hspace*{1.3cm}
 $\ds C_{\mathbf{x}, \mathbf{y}} = \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2$
 \\[0.2cm]
-and we have $\mathbf{a}^{(L)}(\mathbf{x}) = S\bigl(\mathbf{z}^{(L)}\bigr)$, the chain rule tell us that $\varepsilon_j^{(L)}$ 
+and we have $\mathbf{a}^{(L)}(\mathbf{x}) = S\bigl(\mathbf{z}^{(L)}\bigr)$, the chain rule tells us that $\varepsilon_j^{(L)}$ 
 can be computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
