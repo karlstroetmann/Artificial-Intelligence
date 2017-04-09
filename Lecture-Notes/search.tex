@@ -316,7 +316,7 @@ Figure \ref{fig:sliding-puzzle.stlx} shows how the $3 \times 3$ sliding puzzle c
 a search problem.  We discuss this program line by line.
 \begin{enumerate}
 \item $\mathtt{findTile}$ is an auxiliary procedure that takes a $\mathtt{number}$ and a $\mathtt{state}$ and
-      returns the row and column where the tile labeled with $\mathtt{number}$ can be found.  
+      returns the row and column where the tile labelled with $\mathtt{number}$ can be found.  
 
       Here, a state is represented as a list of lists.  For example, the states shown in Figure
       \ref{fig:8-puzzle.pdf} are represented as shown in line 26 and line 30.  The empty tile is
@@ -819,7 +819,7 @@ is reached? How big is this number if $n = 10,000$?
       needed to store the states.  However,
       to answer this exercise correctly, you should ignore this type of memory.
 \item In order to understand how the stack evolves, we need to know that in \textsc{SetlX} sets are ordered
-      ascendigly.  Furthermore, pairs are ordered lexicographically in \textsc{SetlX}, i.e. we have
+      ascendingly.  Furthermore, pairs are ordered lexicographically in \textsc{SetlX}, i.e. we have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\pair(x_1, y_1) < \pair(x_2, y_2) \quad\Longleftrightarrow\quad x_1 < x_2 \vee (x_1 = x_2 \wedge y_1 < y_2)$.
@@ -2122,8 +2122,8 @@ is allowed to visit at most $3\,000$ states, the algorithm takes less than $9$ s
 \pagebreak
 
 \exercise
-Assume that you have 3 water buckets:  The first bucket can hold 12 liters of water, the second bucket can hold 8 liters,
-while the last bucket can hold 3 liters.  There are three types of action:
+Assume that you have 3 water buckets:  The first bucket can hold 12 litres of water, the second bucket can hold 8 litres,
+while the last bucket can hold 3 litres.  There are three types of action:
 \begin{enumerate}
 \item A bucket can be completely filled.
 \item A bucket can be completely emptied.
@@ -2136,7 +2136,7 @@ while the last bucket can hold 3 liters.  There are three types of action:
             completely, while the water that does not fit into the second bucket remains in the first bucket.  
       \end{enumerate}
 \end{enumerate}
-Your goal is to measure out exactly one liter.  Write a program that computes a plan to achieve this goal.
+Your goal is to measure out exactly one litre.  Write a program that computes a plan to achieve this goal.
 \eox
 \pagebreak
 
