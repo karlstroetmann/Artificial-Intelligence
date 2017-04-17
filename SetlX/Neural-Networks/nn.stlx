@@ -1,0 +1,91 @@
+zeros_vec := n        |-> la_vector([0] * n);
+zeros_mat := [m, n]   |-> la_matrix([[0] * n] * m);
+rndVector := length   |-> la_vector([random() - 0.5: i in [1..length]]);
+my_rnd    := []       |-> (random() - 0.5) / 14; // 14 = 28 / 2
+rndMatrix := [rs, cs] |-> la_matrix([[my_rnd(): c in [1..cs]]: r in [1..rs]]);
+sigmoid   := [x]      |-> la_vector([1 / (1 + exp(-a)) : a in x]);
+// derivative of the sigmoid of a vector
+sigmoid_prime := procedure(x) {
+    s := sigmoid(x); 
+    return la_vector([a * (1 - a): a in s]);
+};
+// compute the index of the biggest value in x
+argmax := procedure(x) {
+    [maxValue, maxIndex] := [x[1], 1];
+    for (i in [2 .. #x] | x[i] > maxValue) {
+        [maxValue, maxIndex] := [x[i], i];
+    }
+    return maxIndex;
+};
+
+class network(inputSize, hiddenSize, outputSize) {
+    mInputSize  := inputSize;   //        784
+    mHiddenSize := hiddenSize;  //  30 .. 100
+    mOutputSize := outputSize;  //         10
+    mBiasesH    := rndVector(mHiddenSize);
+    mBiasesO    := rndVector(mOutputSize);
+    mWeightsH   := rndMatrix(mHiddenSize, mInputSize);
+    mWeightsO   := rndMatrix(mOutputSize, mHiddenSize);
+    
+    feedforward := procedure(x) {
+        AH := sigmoid(mWeightsH * x  + mBiasesH);
+        AO := sigmoid(mWeightsO * AH + mBiasesO);
+        return AO;
+    };
+    sgd := procedure(training_data, epochs, mbs, eta, test_data) {
+        n_test := #test_data;         
+        n      := #training_data;
+        for (j in [1 .. epochs]) {
+            training_data := shuffle(training_data);
+            mini_batches  := [training_data[k .. k+mbs-1]: k in [1, mbs..n]];
+            for (mini_batch in mini_batches) {
+                update_mini_batch(mini_batch, eta);
+            } 
+            print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
+        }
+    };
+    update_mini_batch := procedure(mini_batch, eta) {
+        nabla_BH := zeros_vec(mHiddenSize);
+        nabla_BO := zeros_vec(mOutputSize);
+        nabla_WH := zeros_mat(mHiddenSize, mInputSize);
+        nabla_WO := zeros_mat(mOutputSize, mHiddenSize);
+        for([x,y] in mini_batch) {
+            [dltNbl_BH, dltNbl_BO, dltNbl_WH, dltNbl_WO] := backprop(x, y);
+            nabla_BH += dltNbl_BH;
+            nabla_BO += dltNbl_BO;
+            nabla_WH += dltNbl_WH;
+            nabla_WO += dltNbl_WO;
+        }        
+        // Adjust mBiases and mWeights
+        alpha := eta / #mini_batch;
+        this.mBiasesH  -= alpha * nabla_BH;
+        this.mBiasesO  -= alpha * nabla_BO;
+        this.mWeightsH -= alpha * nabla_WH;
+        this.mWeightsO -= alpha * nabla_WO;
+    };
+    // Backpropagation to calculate the gradient for the cost function
+    // x: training inputs
+    // y: correct result for inputs x
+    backprop := procedure(x, y) {
+        // feedforward pass
+        ZH := mWeightsH * x + mBiasesH;
+        AH := sigmoid(ZH);
+        ZO := mWeightsO * AH + mBiasesO;
+        AO := sigmoid(ZO);
+        // backwards pass, output layer
+        delta    := la_hadamard(AO - y, sigmoid_prime(ZO));
+        nabla_BO := delta;
+        nabla_WO := la_matrix(delta) * la_matrix(AH)!;
+        // backwards pass, hidden layer
+        delta    := la_hadamard(mWeightsO! * delta, sigmoid_prime(ZH));
+        nabla_BH := delta;
+        nabla_WH := la_matrix(delta) * la_matrix(x)!;
+        return [nabla_BH, nabla_BO, nabla_WH, nabla_WO];
+    };
+    // Returns sum of correct guesses after feedforwarding
+    evaluate := procedure(test_data) {
+        test_results := [[argmax(feedforward(x)) - 1, y]: [x, y] in test_data];
+        // Return sum of correct guesses
+        return #[1 : [a, b] in test_results | a == b];
+    };
+}
