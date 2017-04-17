@@ -9,6 +9,7 @@ sigmoid_prime := procedure(x) {
     s := sigmoid(x); 
     return la_vector([a * (1 - a): a in s]);
 };
+hadamard := [x, y] |-> la_vector([x[i] * y[i]: i in [1 .. #x]]);
 // compute the index of the biggest value in x
 argmax := procedure(x) {
     [maxValue, maxIndex] := [x[1], 1];
@@ -73,11 +74,11 @@ class network(inputSize, hiddenSize, outputSize) {
         ZO := mWeightsO * AH + mBiasesO;
         AO := sigmoid(ZO);
         // backwards pass, output layer
-        delta    := la_hadamard(AO - y, sigmoid_prime(ZO));
+        delta    := hadamard(AO - y, sigmoid_prime(ZO));
         nabla_BO := delta;
         nabla_WO := la_matrix(delta) * la_matrix(AH)!;
         // backwards pass, hidden layer
-        delta    := la_hadamard(mWeightsO! * delta, sigmoid_prime(ZH));
+        delta    := hadamard(mWeightsO! * delta, sigmoid_prime(ZH));
         nabla_BH := delta;
         nabla_WH := la_matrix(delta) * la_matrix(x)!;
         return [nabla_BH, nabla_BO, nabla_WH, nabla_WO];
