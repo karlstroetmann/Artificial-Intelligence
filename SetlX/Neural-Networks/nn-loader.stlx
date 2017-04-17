@@ -31,7 +31,7 @@ parse_csv := procedure(file, len) {
 // Read csv-string-line and parse into list
 parse_line := procedure(s) {
     L := split(s, ",");
-    // Convert to values between 0 and 1 by dividing with 256
+    // Convert to values between 0 and 1 by dividing with 255
     return [double(x)/255.0 : x in L];
 };
 // create 10-dimensional vector with 1 in the jth position and zeros elsewhere

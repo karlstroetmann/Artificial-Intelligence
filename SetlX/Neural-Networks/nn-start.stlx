@@ -1,7 +1,6 @@
 load("nn-loader.stlx");
 load("nn.stlx");
 
-// set network structure
 main := procedure() {
     resetRandom();
     training_length := 60000;

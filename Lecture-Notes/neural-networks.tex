@@ -398,10 +398,10 @@ Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ 
 \end{equation}
 In vectorized notation, this equation can be written as:
 \begin{equation}
-  \label{eq:BP4}
+  \label{eq:BP4v}
   \nabla_{W^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top
   \quad \mbox{for all $l \in \{2, \cdots,l\}$}
-  \tag{BP4}
+  \tag{BP4v}
 \end{equation}
 Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ denotes the matrix
 product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
@@ -591,14 +591,324 @@ Therefore, equation (\ref{eq:BP4}) has been verified.
 Prove equation (\ref{eq:BP3}).
 \eoxs
 
-\section{Implementation}
-Lucas Heuser and Johannes Hill have implemented a neural network that is able to recognize digits. 
-The code and some explanations can be found at:
+\section{Stochastic Gradient Descent}
+The equations describing backpropagation describe the gradient of the cost function for a single training
+example $\pair(\mathbf{x}, \mathbf{y})$.  However, when we train a neural network, we need to take all training
+examples into account.  If we have $n$ training examples
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{https://github.com/lucash94/Neural-Network-in-SetlX}{https://github.com/lucash94/Neural-Network-in-SetlX}
+$\langle\mathbf{x}^{(1)}, \mathbf{y}^{(1)})\rangle$,
+$\langle\mathbf{x}^{(2)}, \mathbf{y}^{(2)})\rangle$,
+$\cdots$,
+$\langle\mathbf{x}^{(n)}, \mathbf{y}^{(n)})\rangle$,
 \\[0.2cm]
+then the quadratic error cost function has been previously defined as the sum
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
+     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
+ \frac{1}{2 \cdot n} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
+$.
+\\[0.2cm]
+In practical applications of neural networks, the number of training examples is usually big.  For example, 
+when we later develop a neural network to classify handwritten digits, we will have $60,000$ training examples.  More
+ambitious projects that use neural networks to classify objects in images use millions of training examples.
+When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a bias $b^{(l)}$ we
+have to compute the sums 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial w_{j,k}^{(l)}}$
+\quad and \quad
+$\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial b_{j}^{(l)}}$
+\\[0.2cm]
+over all training examples in order to perform a single step of gradient descent.  If $n$ is large, this is
+computationally costly.  Note that these sums can be regarded as computing average values.  In 
+\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{stochastic gradient descent}, 
+instead we approximate these sums by randomly choosing a small subset of the training examples.  In
+order to formulate this approximation in a convenient notation, let us assume that instead of using all $n$
+training examples, we just use the first $m$ training examples.  Then we approximate the sums show above as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial w_{j,k}^{(l)}}
+ \approx
+ \frac{1}{2\cdot m} \cdot \sum\limits_{i=1}^m \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial w_{j,k}^{(l)}}
+$
+\quad and \quad
+$\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial b_{j}^{(l)}}
+     \approx
+     \frac{1}{2\cdot m} \cdot \sum\limits_{i=1}^m \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial b_{j}^{(l)}}
+$,
+\\[0.2cm]
+i.e.~we approximate these sums by the average value of their first $m$ training examples.
+Of course, in general we will not choose the first $m$ training examples but rather we will choose $m$ \blue{random}
+training examples.  The randomness of this choice is the reason this algorithm is called \blue{stochastic}
+gradient descent.  It turns out that if we take care that eventually all training examples are used during
+gradient descent, then the approximations given above can speed up the learning of neural networks substantially.
 
+\section{Implementation}
+Next, we will take a look at a neural network that is able to recognize digits. 
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    zeros_vec := n        |-> la_vector([0] * n);
+    zeros_mat := [m, n]   |-> la_matrix([[0] * n] * m);
+    rndVector := length   |-> la_vector([random() - 0.5: i in [1..length]]);
+    my_rnd    := []       |-> (random() - 0.5) / 14; // 14 = 28 / 2
+    rndMatrix := [rs, cs] |-> la_matrix([[my_rnd(): c in [1..cs]]: r in [1..rs]]);
+    sigmoid   := [x]      |-> la_vector([1 / (1 + exp(-a)) : a in x]);
+    // derivative of the sigmoid of a vector
+    sigmoid_prime := procedure(x) {
+        s := sigmoid(x); 
+        return la_vector([a * (1 - a): a in s]);
+    };
+    hadamard := [x, y] |-> la_vector([x[i] * y[i]: i in [1 .. #x]]);
+    // compute the index of the biggest value in x
+    argmax := procedure(x) {
+        [maxValue, maxIndex] := [x[1], 1];
+        for (i in [2 .. #x] | x[i] > maxValue) {
+            [maxValue, maxIndex] := [x[i], i];
+        }
+        return maxIndex;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Auxiliary functions.}
+\label{fig:nn.stlx:auxiliary}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    class network(inputSize, hiddenSize, outputSize) {
+        mInputSize  := inputSize;   //        784
+        mHiddenSize := hiddenSize;  //  30 .. 100
+        mOutputSize := outputSize;  //         10
+        mBiasesH    := rndVector(mHiddenSize);
+        mBiasesO    := rndVector(mOutputSize);
+        mWeightsH   := rndMatrix(mHiddenSize, mInputSize);
+        mWeightsO   := rndMatrix(mOutputSize, mHiddenSize);
+        ...   
+    }
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The constructor of the class $\mathtt{network}$.}
+\label{fig:nn.stlx:network}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    sgd := procedure(training_data, epochs, mbs, eta, test_data) {
+        n_test := #test_data;         
+        n      := #training_data;
+        for (j in [1 .. epochs]) {
+            training_data := shuffle(training_data);
+            mini_batches  := [training_data[k .. k+mbs-1]: k in [1, mbs..n]];
+            for (mini_batch in mini_batches) {
+                update_mini_batch(mini_batch, eta);
+            } 
+            print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
+        }
+    };
+    update_mini_batch := procedure(mini_batch, eta) {
+        nabla_BH := zeros_vec(mHiddenSize);
+        nabla_BO := zeros_vec(mOutputSize);
+        nabla_WH := zeros_mat(mHiddenSize, mInputSize);
+        nabla_WO := zeros_mat(mOutputSize, mHiddenSize);
+        for([x,y] in mini_batch) {
+            [dltNbl_BH, dltNbl_BO, dltNbl_WH, dltNbl_WO] := backprop(x, y);
+            nabla_BH += dltNbl_BH;
+            nabla_BO += dltNbl_BO;
+            nabla_WH += dltNbl_WH;
+            nabla_WO += dltNbl_WO;
+        }        
+        alpha := eta / #mini_batch;
+        this.mBiasesH  -= alpha * nabla_BH;
+        this.mBiasesO  -= alpha * nabla_BO;
+        this.mWeightsH -= alpha * nabla_WH;
+        this.mWeightsO -= alpha * nabla_WO;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Stochastic gradient descent.}
+\label{fig:nn.stlx:sgd}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    backprop := procedure(x, y) {
+        ZH := mWeightsH * x + mBiasesH;
+        AH := sigmoid(ZH);
+        ZO := mWeightsO * AH + mBiasesO;
+        AO := sigmoid(ZO);
+        delta    := hadamard(AO - y, sigmoid_prime(ZO));
+        nabla_BO := delta;
+        nabla_WO := la_matrix(delta) * la_matrix(AH)!;
+        delta    := hadamard(mWeightsO! * delta, sigmoid_prime(ZH));
+        nabla_BH := delta;
+        nabla_WH := la_matrix(delta) * la_matrix(x)!;
+        return [nabla_BH, nabla_BO, nabla_WH, nabla_WO];
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Implementation of backpropagation.}
+\label{fig:nn.stlx}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    feedforward := procedure(x) {
+        AH := sigmoid(mWeightsH * x  + mBiasesH);
+        AO := sigmoid(mWeightsO * AH + mBiasesO);
+        return AO;
+    };
+    evaluate := procedure(test_data) {
+        test_results := [[argmax(feedforward(x)) - 1, y]: [x, y] in test_data];
+        return #[1 : [a, b] in test_results | a == b];
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Evaluation functions.}
+\label{fig:nn.stlx:evaluation}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    load("nn-loader.stlx");
+    load("nn.stlx");
+    
+    main := procedure() {
+        resetRandom();
+        training_length := 60000;
+        test_length     := 10000;
+        inputSize       := 784;
+        hiddenSize      :=  30;
+        outputSize      :=  10;
+        [training_data, test_data] := load_data_wrapper(60000, 10000);
+        print("Create Network");
+        net := network(inputSize, hiddenSize, outputSize);
+        print("Start SGD");
+        s1 := now();
+        net.sgd(training_data, 30, 10, 3.0, test_data);
+        s2 := now() - s1;
+        print("Time needed:\t" + s2);
+    };
+    main();
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{How to start the training.}
+\label{fig:nn-start.stlx}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    load_data := procedure(training_length, test_length) {
+    	test_data     := parse_csv("mnist_test.csv",  test_length);
+    	training_data := parse_csv("mnist_train.csv", training_length);
+    	return [training_data, test_data];
+    };
+    parse_csv := procedure(file, len) {
+        images := [0 : i in [1..len]];
+        labels := [0 : i in [1..len]];
+        print("Reading file:\t$file$");
+        csv := readFile(file);
+        for (i in [1..len]) {
+            labels[i] := int(csv[i][1]);    
+            images[i] := parse_line(csv[i][3..]);    
+            if (i % 10000 == 0) {
+                print("Image $i$ of $len$ imported");
+            }
+        }
+        print("End reading:\t$file$");    
+        return [images, labels];
+    };
+    parse_line := procedure(s) {
+        L := split(s, ",");
+        return [double(x)/255.0 : x in L];
+    };
+    vectorized_result := procedure(j) {
+    	e      := la_vector([0] * 10);
+    	e[j+1] := 1; // +1, because the Index starts with 1 in SetlX (not 0)
+    	return e;
+    };
+    load_data_wrapper := procedure(training_length, test_length) {
+    	[tr_d, te_d] := load_data(training_length, test_length);
+    	test_data := format_pixels_label_pairs(te_d[1], te_d[2], test_length);
+     	training_data := format_with_unit_vectors(tr_d[1], tr_d[2], training_length);
+    	return [training_data, test_data];   
+    };
+    format_pixels_label_pairs := procedure(pixels, labels, length) {
+    	return [ [la_vector(pixels[i]), labels[i]] : i in [1..length] ];
+    };
+    format_with_unit_vectors := procedure(pixels, labels, length) {
+    	return [ [la_vector(pixels[i]), vectorized_result(labels[i])] : i in [1..length] ];
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Loading the data.}
+\label{fig:nn-loader.stlx}
+\end{figure}
 
 
 %%% Local Variables:
