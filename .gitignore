@@ -16,3 +16,6 @@ auto/
 _region_.prv
 .DS_Store
 artificial-intelligence.prv
+mnist_train.csv.gz
+SetlX/Neural-Networks/mnist_train.csv.gz
+SetlX/Neural-Networks/mnist_train.csv
