@@ -673,7 +673,7 @@ the binary constraints and shrink these sets even more once we assign values to 
 \item We assume that the set of constraints $\mathtt{Annotated}$ only contains unary and binary constraints.
 \item In order to solve the unary constraints, we iterate over all unary constraints and shrink the set of
       values associated with the variable occurring in the constraint accordingly.
-\item Then, the dictionaries $\mathtt{VariablesPerVar}$ and $\mathtt{BinaryConstrs}$ are combined with the set
+\item Then, the dictionaries $\mathtt{ValuesPerVar}$ and $\mathtt{BinaryConstrs}$ are combined with the set
       of $\mathtt{Variables}$ into a triple that is used as the argument to the call of $\mathtt{bt\_search}$.
 \end{enumerate}
 
