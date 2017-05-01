@@ -857,7 +857,7 @@ implementation is shown in \myFig{depth-first-search-recursive.stlx}.
         }
         newStates := nextStates(state);
         for (ns in newStates | !(ns in Path)) {
-            result     := dfs(ns, goal, nextStates, Path + [ns]);
+            result := dfs(ns, goal, nextStates, Path + [ns]);
             if (result != om) {
                 return result;
             }   
