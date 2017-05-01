@@ -25,37 +25,24 @@ find_empty := procedure(State) {
     return { [row, col] : row in L, col in L | State[row][col] == " " };
 };
 utility := procedure(State, player) {
-    n     := #State;
-    Lines := all_lines(n);
-    // all lines are checked whether they contain 3 identical nonempty marks 
+    Lines := all_lines(State);
     for (Line in Lines) {
-        Elements := { State[row][col] : [row, col] in Line };
-        if (#Elements == 1 && Elements != { " " }) {
-            if (Elements == { player }) {
-                return  1;
-            } else {
-                return -1;
-            }
+        if (#Line == 1 && Line != { " " }) {
+            if (Line == { player }) { return  1; } else { return -1; }
         }
     }
-    // no winner so far, check for a draw
-    if (find_empty(State) == {}) {  // no empty squares
-        return 0;  // game drawn
-    } // else return om
+    if (find_empty(State) == {}) { return 0; } // else return om
 };
-all_lines := procedure(n) {
+all_lines := procedure(State) {
+    n := #State;
     L := [1 .. n];
-    // Lines is the set of all horizontal, vertical, and diagonal lines in the game
-    // we start with the rows
-    Lines := { { [row, col] : col in L } : row in L };
-    // we add the columns
-    Lines += { { [row, col] : row in L } : col in L };
-    // the falling diagonal
-    Lines += { { [idx, idx] : idx in L } };
-    // finally, the rising diagonal
-    Lines += { { [idx,-idx] : idx in L } };
+    Lines := { { State[row][ col] : col in L } : row in L };
+    Lines += { { State[row][ col] : row in L } : col in L };
+    Lines += { { State[idx][ idx] : idx in L } };
+    Lines += { { State[idx][-idx] : idx in L } };
     return Lines;
 };
+
 finished := procedure(State) {
     return utility(State, "X") != om;
 };

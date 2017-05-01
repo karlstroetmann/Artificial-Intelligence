@@ -4,8 +4,9 @@ One major success for the field of artificial intelligence happened in 1997 when
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
 While \emph{\color{blue}Deep Blue} was based on special hardware, according to the
 \href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 18th
-of March 2017, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} has an 
-\href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3390.  To compare, according to the
+of March 2017, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
+on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3390.  
+To compare, according to the
 \href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of March 2017, the current 
 World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
 just 2838.  Hence, he wouldn't stand a chance to win a game against Stockfish.  More recently, the computer program
@@ -138,10 +139,10 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
     all_lines := procedure(State) {
         n := #State;
         L := [1 .. n];
-        Lines := { { State[row][col] : col in L } : row in L };
-        Lines += { { State[row][col] : row in L } : col in L };
-        Lines += { { State[idx][idx] : idx in L } };
-        Lines += { { State[idx][n - (idx - 1) ] : idx in L } };
+        Lines := { { State[row][ col] : col in L } : row in L };
+        Lines += { { State[row][ col] : row in L } : col in L };
+        Lines += { { State[idx][ idx] : idx in L } };
+        Lines += { { State[idx][-idx] : idx in L } };
         return Lines;
     };
     finished := procedure(State) {
