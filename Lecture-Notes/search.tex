@@ -1094,7 +1094,7 @@ quite big:  On my computer, the recursive implementation takes about 36 minutes.
 
 \section{Bidirectional Breadth First Search}
 Breadth first search first visits all states that have a distance of 1 from start, then all
-states that have a distance of 2, then of 3 and so on until finally the goal is found.  If the shortest path
+states that have a distance of 2, then of 3 and so on until finally the goal is found.  If the length of the shortest path
 from $\mathtt{start}$ to $\mathtt{goal}$ is $d$, then all states that have a distance of at most $d$ will be
 visited.  In many search problems, the number of states grows exponentially with the distance, i.e.~there is
 a \emph{\color{blue}branching factor} $b$ such that the set of all states that have a distance of at most $d$
@@ -1105,8 +1105,8 @@ from $\mathtt{start}$ is roughly
 \\[0.2cm]
 At least this is true in the beginning of the search.  As the size of
 the memory that is needed is the most constraining factor when searching, it is important to cut down this
-size.  On simple idea is to start searching both from the node $\mathtt{start}$ and the node $\mathtt{goal}$
-simultaneously.  The justification is that we can hope that the path starting form $\mathtt{start}$ and the
+size.  One simple idea is to start searching both from the node $\mathtt{start}$ and the node $\mathtt{goal}$
+simultaneously.  The justification is that we can hope that the path starting from $\mathtt{start}$ and the
 path starting from $\mathtt{goal}$ will meet in the middle and hence they will both have a size of approximately
 $d/2$.  If this is the case, only
 \\[0.2cm]
