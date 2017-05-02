@@ -243,7 +243,7 @@ We start by defining the auxiliary variables $z_j^{(l)}$.
  layer $l$:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_j^{(l)} := \sum\limits_{k=1}^{m(l-1)}  \left(w_{j,k}^{(l)} \cdot a_k^{(l-1)} + b_j^{(l)}\right)$
+$\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-1)}\right) + b_j^{(l)}$
 \quad for all  $j \in \{1, \cdots, m(l)\}$ and $l \in \{2,\cdots,L\}$.
 \\[0.2cm]
 Of course, the term  $a_k^{(l-1)}$ really is a function of the input vector $\mathbf{x}$.  However, it is better to suppress
@@ -456,7 +456,7 @@ $\ds\varepsilon_j^{(l)} = \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_
 while the numbers $z_j^{(l)}$ have been defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_j^{(l)} := \sum\limits_{k=1}^{m(l-1)}  \left(w_{j,k}^{(l)} \cdot a_k^{(l-1)}(\mathbf{x}) + b_j^{(l)}\right)$.
+$\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-1)}(\mathbf{x})\right) + b_j^{(l)}$.
 \\[0.2cm]
 Since the quadratic error cost function $C_{\mathbf{x}, \mathbf{y}}$ for the training example $\pair(\mathbf{x}, \mathbf{y})$ has been defined 
 in terms of the activation $\mathbf{a}^{(L)}$ as 
@@ -517,7 +517,7 @@ $
 In order to proceed, we have to remember the definition of $z_i^{(l+1)}$.  We have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_i^{(l+1)} = \sum\limits_{k=1}^{m(l)} \Bigl(w_{i,k}^{(l+1)} \cdot S\bigl(z_k^{(l)}\bigr) + b_i^{(l+1)}\Bigr)$
+$\ds z_i^{(l+1)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l+1)} \cdot S\bigl(z_k^{(l)}\bigr)\right) + b_i^{(l+1)}$
 \\[0.2cm]
 Therefore, the partial derivatives $\frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}$ 
 can be computed as follows:
@@ -571,7 +571,7 @@ In order to proceed, we need to evaluate the partial derivative
 $\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_i^{(l)} = \sum\limits_{k=1}^{m(l)} \Bigl(w_{i,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr) + b_i^{(l)}\Bigr)$
+$\ds z_i^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr)\right) + b_i^{(l)}$
 \\[0.2cm]
 Hence we have
 \\[0.2cm]
