@@ -64,7 +64,7 @@ $\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
 is the input vector, then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds p(\mathbf{x}; \mathbf{w}, b) = S\left(\sum\limits_{i=1}^m (x_i \cdot w_i + b)\right)$.
+$\ds p(\mathbf{x}; \mathbf{w}, b) = S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
 \\[0.2cm]
 If we compare $p(\mathbf{x}; \mathbf{w}, b)$ 
 to a similar function appearing in the last chapter, you will notice 
@@ -117,7 +117,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
       \begin{equation}
          \label{eq:feedforward2}
          a_j^{(l)}(\mathbf{x}) := 
-             S\left(\sum\limits_{k=1}^{m(l-1)} \left(w_{j,k}^{(l)}\cdot a^{(l-1)}(\mathbf{x}) + b_{j}^{(l)}\right)\right) 
+             S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
         \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
        \tag{FF2}
 \end{equation}
