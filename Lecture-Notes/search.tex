@@ -177,7 +177,7 @@ as a search problem.  We discuss this formalization line be line.
       infidels on the northern shore is now increased.  Hence, in this case the new state has the form
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{[m - mb, i - ib, 0]}.
+      \texttt{[m + mb, i + ib, 1]}.
       \\[0.2cm]
       As the number of missionaries on the southern shore is $3 - \mathrm{m}$ and the number of infidels on the
       southern shore is $3 - \mathrm{i}$, $\mathtt{mb}$ is now a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while 
@@ -359,7 +359,7 @@ Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows:
       These old states are then saved into a set $\mathtt{Visited}$.
 \end{enumerate}
 In order to avoid loops, an implementation of breadth first search keeps track of those states that have
-been visited.  These states a collected in a set $\mathtt{Visited}$.  Once a state has been added to
+been visited.  These states are collected in a set $\mathtt{Visited}$.  Once a state has been added to
 the set $\mathtt{Visited}$,  it will never be revisited again. 
 Furthermore, in order to keep track of the path leading to the goal, we have a dictionary
 $\mathtt{Parent}$.  For every state $s$ that is in $\mathtt{Frontier}$, $\mathtt{Parent}[s]$ is the state that
