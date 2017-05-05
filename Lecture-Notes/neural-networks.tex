@@ -64,7 +64,7 @@ $\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
 is the input vector, then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds p(\mathbf{x}; \mathbf{w}, b) = S\left(\sum\limits_{i=1}^m (x_i \cdot w_i + b)\right)$.
+$\ds p(\mathbf{x}; \mathbf{w}, b) = S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
 \\[0.2cm]
 If we compare $p(\mathbf{x}; \mathbf{w}, b)$ 
 to a similar function appearing in the last chapter, you will notice 
@@ -101,7 +101,7 @@ The $j$-th neuron in layer $l$ has the \blue{bias} $b_j^{(l)}$.  These biases of
 the \blue{bias vector}
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle$.
+$\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle^\top$.
 \\[0.2cm]
 Then, the \blue{activation} of the $j$-th neuron
 in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
@@ -117,7 +117,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
       \begin{equation}
          \label{eq:feedforward2}
          a_j^{(l)}(\mathbf{x}) := 
-             S\left(\sum\limits_{k=1}^{m(l-1)} \left(w_{j,k}^{(l)}\cdot a^{(l-1)}(\mathbf{x}) + b_{j}^{(l)}\right)\right) 
+             S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a_k^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
         \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
        \tag{FF2}
 \end{equation}
@@ -125,14 +125,14 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 The \blue{activation vector} of layer $l$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{a}^{(l)} := \langle a_1^{(l)}, \cdots, a_{m(l)}^{(l)} \rangle$.
+$\mathbf{a}^{(l)} := \langle a_1^{(l)}, \cdots, a_{m(l)}^{(l)} \rangle^\top$.
 \\[0.2cm]
 The output of our neural network for an input $\mathbf{x}$ is given by the neurons in the output
 layer,  i.e.~the output vector 
 $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle = \mathbf{a}^{(L)}(\mathbf{x})$.
+$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle^\top = \mathbf{a}^{(L)}(\mathbf{x})$.
 \\[0.2cm]
 Note that the equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) describe how information propagates
 through the neural network: 
@@ -243,7 +243,7 @@ We start by defining the auxiliary variables $z_j^{(l)}$.
  layer $l$:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_j^{(l)} := \sum\limits_{k=1}^{m(l-1)}  \left(w_{j,k}^{(l)} \cdot a_k^{(l-1)} + b_j^{(l)}\right)$
+$\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-1)}\right) + b_j^{(l)}$
 \quad for all  $j \in \{1, \cdots, m(l)\}$ and $l \in \{2,\cdots,L\}$.
 \\[0.2cm]
 Of course, the term  $a_k^{(l-1)}$ really is a function of the input vector $\mathbf{x}$.  However, it is better to suppress
@@ -319,7 +319,7 @@ component of $\mathbf{x}$ with the $i$-th component of $\mathbf{y}$.
 Now we are ready to state the \blue{backpropagation equations}.  The first of these four equations reads as follows:
 \begin{equation}
   \label{eq:BP1}
-  \varepsilon^{(L)}_j = (a_j^{(L)} - y_i) \cdot S'\bigl(z_j^{(L)}\bigr)
+  \varepsilon^{(L)}_j = (a_j^{(L)} - y_j) \cdot S'\bigl(z_j^{(L)}\bigr)
  \quad \mbox{for all $j \in \{1, \cdots, m(L)\}$,}
   \tag{BP1}
 \end{equation}
@@ -456,7 +456,7 @@ $\ds\varepsilon_j^{(l)} = \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_
 while the numbers $z_j^{(l)}$ have been defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_j^{(l)} := \sum\limits_{k=1}^{m(l-1)}  \left(w_{j,k}^{(l)} \cdot a_k^{(l-1)}(\mathbf{x}) + b_j^{(l)}\right)$.
+$\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-1)}(\mathbf{x})\right) + b_j^{(l)}$.
 \\[0.2cm]
 Since the quadratic error cost function $C_{\mathbf{x}, \mathbf{y}}$ for the training example $\pair(\mathbf{x}, \mathbf{y})$ has been defined 
 in terms of the activation $\mathbf{a}^{(L)}$ as 
@@ -517,7 +517,7 @@ $
 In order to proceed, we have to remember the definition of $z_i^{(l+1)}$.  We have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_i^{(l+1)} = \sum\limits_{k=1}^{m(l)} \Bigl(w_{i,k}^{(l+1)} \cdot S\bigl(z_k^{(l)}\bigr) + b_i^{(l+1)}\Bigr)$
+$\ds z_i^{(l+1)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l+1)} \cdot S\bigl(z_k^{(l)}\bigr)\right) + b_i^{(l+1)}$
 \\[0.2cm]
 Therefore, the partial derivatives $\frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}$ 
 can be computed as follows:
@@ -571,7 +571,7 @@ In order to proceed, we need to evaluate the partial derivative
 $\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_i^{(l)} = \sum\limits_{k=1}^{m(l)} \Bigl(w_{i,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr) + b_i^{(l)}\Bigr)$
+$\ds z_i^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr)\right) + b_i^{(l)}$
 \\[0.2cm]
 Hence we have
 \\[0.2cm]
