@@ -359,7 +359,7 @@ Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows:
       These old states are then saved into a set $\mathtt{Visited}$.
 \end{enumerate}
 In order to avoid loops, an implementation of breadth first search keeps track of those states that have
-been visited.  These states a collected in a set $\mathtt{Visited}$.  Once a state has been added to
+been visited.  These states are collected in a set $\mathtt{Visited}$.  Once a state has been added to
 the set $\mathtt{Visited}$,  it will never be revisited again. 
 Furthermore, in order to keep track of the path leading to the goal, we have a dictionary
 $\mathtt{Parent}$.  For every state $s$ that is in $\mathtt{Frontier}$, $\mathtt{Parent}[s]$ is the state that
