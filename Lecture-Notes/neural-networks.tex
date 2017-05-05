@@ -101,7 +101,7 @@ The $j$-th neuron in layer $l$ has the \blue{bias} $b_j^{(l)}$.  These biases of
 the \blue{bias vector}
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle$.
+$\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle^\top$.
 \\[0.2cm]
 Then, the \blue{activation} of the $j$-th neuron
 in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
@@ -125,14 +125,14 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 The \blue{activation vector} of layer $l$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{a}^{(l)} := \langle a_1^{(l)}, \cdots, a_{m(l)}^{(l)} \rangle$.
+$\mathbf{a}^{(l)} := \langle a_1^{(l)}, \cdots, a_{m(l)}^{(l)} \rangle^\top$.
 \\[0.2cm]
 The output of our neural network for an input $\mathbf{x}$ is given by the neurons in the output
 layer,  i.e.~the output vector 
 $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle = \mathbf{a}^{(L)}(\mathbf{x})$.
+$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle^\top = \mathbf{a}^{(L)}(\mathbf{x})$.
 \\[0.2cm]
 Note that the equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) describe how information propagates
 through the neural network: 
