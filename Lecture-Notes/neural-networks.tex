@@ -117,7 +117,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
       \begin{equation}
          \label{eq:feedforward2}
          a_j^{(l)}(\mathbf{x}) := 
-             S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
+             S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a_k^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
         \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
        \tag{FF2}
 \end{equation}
@@ -319,7 +319,7 @@ component of $\mathbf{x}$ with the $i$-th component of $\mathbf{y}$.
 Now we are ready to state the \blue{backpropagation equations}.  The first of these four equations reads as follows:
 \begin{equation}
   \label{eq:BP1}
-  \varepsilon^{(L)}_j = (a_j^{(L)} - y_i) \cdot S'\bigl(z_j^{(L)}\bigr)
+  \varepsilon^{(L)}_j = (a_j^{(L)} - y_j) \cdot S'\bigl(z_j^{(L)}\bigr)
  \quad \mbox{for all $j \in \{1, \cdots, m(L)\}$,}
   \tag{BP1}
 \end{equation}
