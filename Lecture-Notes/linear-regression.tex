@@ -18,7 +18,7 @@ physics, this is not an option for us.  Instead, we could try to take a look at 
 their engine displacement with the corresponding fuel consumption.  This way, we would collect a set of  
 $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
 where $x_i$ is the engine displacement of the engine in the $i$-th car, while $y_i$ is the fuel consumption of the
-$i$-th car.  We call $x$ is the \emph{\color{blue}independent variables}, while $y$ is the 
+$i$-th car.  We call $x$ the \emph{\color{blue}independent variable}, while $y$ is the 
 \emph{\color{blue}dependent variable}.  We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -82,19 +82,19 @@ because it shows the the correlation coefficient is identical to the coefficient
 $\mathbf{y}$ have been normalized so that their standard deviation is $1$.
 
 \exercise
-Proof Equation \ref{eq:theta0} and Equation \ref{eq:theta1}.
+Prove Equation \ref{eq:theta0} and Equation \ref{eq:theta1}.
 
 \hint
 Take the partial derivatives of $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ with respect to $\vartheta_0$ and
 $\vartheta_1$.  In order to minimize the expression  $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ with respect to
 $\vartheta_0$ and $\vartheta_1$, these derivatives have to be set to $0$.
 \eox
-
+% do you mean "Assessing the Quality.."? Seems to make more sense.
 \subsection{Accessing the Quality of Linear Regression}
 Assume that we have been given a set of $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$  
 and that we have calculated the parameters $\vartheta_0$ and $\vartheta_1$ according to Equation
 \ref{eq:theta0} and Equation \ref{eq:theta1}.  Provided that not all $x_i$ have the same value, these
-formul\ae\ will return two numbers for $\vartheta_0$ and $\vartheta_1$ hat define a linear model for
+formul\ae\ will return two numbers for $\vartheta_0$ and $\vartheta_1$ that define a linear model for
 $\mathbf{y}$ in terms of $\mathbf{x}$.  However, at the moment we still lack a number that tell us how good
 this linear model really is.  In order to judge the quality of the linear model given by 
 \\[0.2cm]
@@ -121,7 +121,7 @@ we see that the sample variance of $\mathbf{y}$ is an upper bound for the mean s
 \hspace*{1.3cm}
 $\mathtt{Var}(\mathbf{y}) = \mathtt{MSE}(\bar{\mathbf{y}}, 0)$,
 \\[0.2cm]
-i.e.~the sample variance is the value that we would get for the mean squared error if we would set $\vartheta_0$ to
+i.e.~the sample variance is the value that we would get for the mean squared error if we set $\vartheta_0$ to
 the average value of $\mathbf{y}$ and $\vartheta_1$ to zero.  Since $\vartheta_0$ and $\vartheta_1$ are chosen to
 minimize the mean squared error, we have
 \\[0.2cm]
@@ -143,7 +143,7 @@ left if we use our linear model to predict the values of $\mathbf{y}$ given the 
 Here $\mathtt{MSE}$ is short for $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ where we have substituted the values
 from equation \ref{eq:theta0} and \ref{eq:theta1}.  The $\mathtt{R}^2$ statistic measures the quality of our
 model: If it is small, then our model does not explain the variation of the value of $\mathbf{y}$ when the value of $\mathbf{x}$
-changes.  On the other hand, if it is near a $100\%$, then our model does a good job in explaining the 
+changes.  On the other hand, if it is near to $100\%$, then our model does a good job in explaining the 
 variation of $\mathbf{y}$ when $\mathbf{x}$ changes.
 
 Since the formul\ae\ for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
@@ -496,7 +496,7 @@ In order to compute the probability that the null hypothesis is true, we have to
 \end{equation}
 The $t$ statistics is distributed according to 
 \href{https://en.wikipedia.org/wiki/Student%27s_t-distribution}{Student's $t$-distribution} 
-with $m-2$ degrees of freedom.  In the upcomming version of \textsc{SetlX}, a preview of which is already available at
+with $m-2$ degrees of freedom.  In the upcoming version of \textsc{SetlX}, a preview of which is already available at
 \\[0.2cm]
 \hspace*{1.3cm}
 \href{https://github.com/jonassiefker/setlX}{\texttt{https://github.com/jonassiefker/setlX}},
@@ -524,7 +524,7 @@ is indeed a relationship between $x$ and $y$, then simple linear regression will
 \section{General Linear Regression}
 In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
 To take the example of the fuel consumption of a car further, in general we would expect that the fuel consumption
-of a car does depend not only on the mass of the car but is also related to the other parameters.  
+of a car depends not only on the mass of the car but is also related to the other parameters.  
 To this end, we present the theory of   
 \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
 In a \blue{general regression problem} we are given a list of $m$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
@@ -561,9 +561,9 @@ expression could be interpreted as the dot product of the vector $\mathbf{x}$ an
 At this point you might wonder why it is useful to introduce matrix notation here.  The reason is
 that this notation shortens the formula and, furthermore, is more efficient to implement since most
 programming languages used in machine learning have special library support for matrix operations.  
-Provided the computer is equipped with a graphic card,  some
-programming languages are even able to delegate matrix operations to the graphic unit.  This results in a
-considerable speed up.
+Provided the computer is equipped with a graphics card,  some
+programming languages are even able to delegate matrix operations to the graphics unit.  This results in a
+considerable speed-up.
 
 The definition of $F$ given above is the model used in
 \href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression}. 
@@ -591,7 +591,7 @@ $F(\mathbf{x}) = \mathbf{w} \cdot \mathbf{x} + b = \mathbf{w}' \cdot \mathbf{x}'
 \\[0.2cm]
 Hence, the bias has been incorporated into the weight vector at the cost of appending the number $1$ at the end of
 input vector.  As we want to use this simplification, from now on we assume that the input vectors
-$\mathbf{x}^{(i)}$ have all been extended so that there last component is $1$.  Using this
+$\mathbf{x}^{(i)}$ have all been extended so that their last component is $1$.  Using this
 assumption,  we define the
 function $F$ as
 \\[0.2cm]
