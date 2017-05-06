@@ -1032,7 +1032,7 @@ If there is no solution, the implementation of iterative deepening that is shown
 distinguish between the following two reasons for failure:
 \begin{enumerate}
 \item It can fail to find a solution because the depth limit is reached.
-\item It can also fail it has tried all paths without hitting the depth limit but the $\mathtt{Stack}$ is exhausted.  
+\item It can also fail because it has tried all paths without hitting the depth limit but the $\mathtt{Stack}$ is exhausted.  
 \end{enumerate}
 Improve the implementation of iterative deepening so that it will always terminate eventually, provided the
 state space is finite. 
@@ -1041,7 +1041,11 @@ state space is finite.
 \subsection{A Recursive Implementation of Iterative Deepening}
 If we implement iterative deepening recursively, then we know that the call stack is bounded by the length of
 the shortest solution.  \myFig{iterative-deepening-recursive.stlx}  
-shows a recursive implementation of iterative deepening.  This implementation has several nice features:
+shows a recursive implementation of iterative deepening.   The dictionary $\mathtt{Parent}$ is no longer
+required to compute the path.  Instead, the path is built 
+incrementally in the argument $\mathtt{Path}$ of the procedure $\mathtt{dfsLimited}$.
+Unfortunately, the running time of the recursive implementation of iterative deepening is still
+quite big:  On my computer, the recursive implementation takes about 36 minutes.
 
 
 \begin{figure}[!ht]
@@ -1084,13 +1088,6 @@ shows a recursive implementation of iterative deepening.  This implementation ha
 \caption{A recursive implementation of iterative deepening.}
 \label{fig:iterative-deepening-recursive.stlx}
 \end{figure}
-\begin{enumerate}
-\item The path that is computed no longer requires the dictionary $\mathtt{Parent}$ as it is built
-      incrementally in the argument $\mathtt{Path}$ of the procedure $\mathtt{dfsLimited}$.
-\item Similarly, there is no longer a need to keep the dictionary $\mathtt{Distance}$.
-\end{enumerate}
-Unfortunately, the running time of the recursive implementation of iterative deepening is still
-quite big:  On my computer, the recursive implementation takes about 36 minutes.
 
 \section{Bidirectional Breadth First Search}
 Breadth first search first visits all states that have a distance of 1 from start, then all
