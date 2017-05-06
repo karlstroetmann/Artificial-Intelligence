@@ -327,7 +327,7 @@ a search problem.  We discuss this program line by line.
       at the position $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ is
       moved into the position $\langle\mathtt{row}, \mathtt{col}\rangle$, while the tile at position
       $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ becomes empty.
-\item Given a $\mathtt{state}$, the procedure $\mathtt{newStates}$ computes the set of all states
+\item Given a $\mathtt{state}$, the procedure $\mathtt{nextStates}$ computes the set of all states
       that can be reached in one step from $\mathtt{state}$.  The basic idea is to find the position of the
       empty tile and then try to move the empty tile in all possible directions.  If the empty tile is found at
       position $[\mathtt{row}, \mathtt{col}]$ and the direction of the movement is given as $[\mathtt{dx}, \mathtt{dy}]$, then
