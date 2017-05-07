@@ -1809,15 +1809,17 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
     idaStarSearch := procedure(start, goal, nextStates, heuristic) {
         limit := heuristic(start, goal);
         while (true) {
-            Path := search(start, goal, nextStates, 0, limit, [start], heuristic);
+            Path := search([start], goal, nextStates, limit, heuristic);
             if (isList(Path)) {
                 return Path;
             }
             limit := Path;
         }
     };
-    search := procedure(state, goal, nextStates, distance, limit, Path, heuristic) {
-        total  := distance + heuristic(state, goal);
+    search := procedure(Path, goal, nextStates, limit, heuristic) {
+        state    := Path[-1];
+        distance := #Path - 1;
+        total    := distance + heuristic(state, goal);
         if (total > limit) {
             return total;
         }
@@ -1826,8 +1828,7 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
         }
         smallest := mathConst("Infinity");  
         for (ns in nextStates(state) | !(ns in Path) ) {
-            result := search(ns, goal, nextStates, distance + 1, limit, 
-                             Path + [ ns ], heuristic);
+            result := search(Path+[ns], goal, nextStates, limit, heuristic);
             if (isList(result)) {
                 return result;
             }

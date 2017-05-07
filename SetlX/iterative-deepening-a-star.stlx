@@ -13,7 +13,7 @@ idaStarSearch := procedure(start, goal, nextStates, heuristic) {
 
 search := procedure(Path, goal, nextStates, limit, heuristic) {
     state    := Path[-1];
-	distance := #Path - 1;
+    distance := #Path - 1;
     total    := distance + heuristic(state, goal);
     if (total > limit) {
         return total;
