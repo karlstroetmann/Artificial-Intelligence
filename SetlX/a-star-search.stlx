@@ -6,7 +6,7 @@ aStarSearch := procedure(start, goal, nextStates, heuristic) {
     Estimate := { [start, estGoal] };  // Estimated distance
     Frontier := { [estGoal, start] };  // priority queue
     while (Frontier != {}) {
-        [stateEstimate, state] := fromB(Frontier);
+        [_, state] := fromB(Frontier);
         if (state == goal) {
             print("Number of states touched: $#Distance$");
             return pathTo(state, Parent);

@@ -3,15 +3,18 @@ idaStarSearch := procedure(start, goal, nextStates, heuristic) {
     limit := heuristic(start, goal);
     while (true) {
         print("limit = $limit$");
-        Path := search(start, goal, nextStates, 0, limit, [start], heuristic);
+        Path := search([start], goal, nextStates, limit, heuristic);
         if (isList(Path)) {
             return Path;
         }
         limit := Path;
     }
 };
-search := procedure(state, goal, nextStates, distance, limit, Path, heuristic) {
-    total := distance + heuristic(state, goal);
+
+search := procedure(Path, goal, nextStates, limit, heuristic) {
+    state    := Path[-1];
+	distance := #Path - 1;
+    total    := distance + heuristic(state, goal);
     if (total > limit) {
         return total;
     }
@@ -20,7 +23,7 @@ search := procedure(state, goal, nextStates, distance, limit, Path, heuristic) {
     }
     smallest := mathConst("Infinity");
     for (ns in nextStates(state) | !(ns in Path) ) {
-        result := search(ns, goal, nextStates, distance+1, limit, Path+[ns], heuristic);
+        result := search(Path+[ns], goal, nextStates, limit, heuristic);
         if (isList(result)) {
             return result;
         }
@@ -28,4 +31,3 @@ search := procedure(state, goal, nextStates, distance, limit, Path, heuristic) {
     }
     return smallest;
 };
-

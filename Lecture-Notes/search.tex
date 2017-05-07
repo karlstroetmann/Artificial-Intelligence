@@ -1547,7 +1547,7 @@ estimate of the distance from $s$ to $\mathtt{goal}$.  The details of the $\math
         Estimate := { [start, estGoal] };  // estimated distances
         Frontier := { [estGoal, start] };  // priority queue
         while (Frontier != {}) {
-            [stateEstimate, state] := fromB(Frontier);
+            [_, state] := fromB(Frontier);
             if (state == goal) {
                 return pathTo(state, Parent);
             }
@@ -1970,12 +1970,11 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\m
         Estimate := { [start, est] };  
         Frontier := { [est, start] };
         while (#Distance < size && Frontier != {}) {
-            [guess, state] := first(Frontier);
+            [_, state] := fromB(Frontier);
             if (state == goal) {
                 return pathTo(state, Parent);
             }
             stateDist := Distance[state];
-            Frontier  -= { [guess, state] };
             for (neighbour in nextStates(state)) {
                 oldEstimate := Estimate[neighbour];
                 newEstimate := stateDist + 1 + heuristic(neighbour, goal);
