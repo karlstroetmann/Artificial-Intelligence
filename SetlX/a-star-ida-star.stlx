@@ -9,13 +9,12 @@ aStarIdaStarSearch := procedure(start, goal, nextStates, heuristic, size) {
         if (#Distance % 1000 == 0) {
             print("#Distance = $#Distance$");
         }
-        [guess, state] := first(Frontier);
+        [_, state] := fromB(Frontier);
         if (state == goal) {
             print("Number of states touched: $#Distance$");
             return pathTo(state, Parent);
         }
         stateDist := Distance[state];
-        Frontier  -= { [guess, state] };
         for (neighbour in nextStates(state)) {
             oldEstimate := Estimate[neighbour];
             newEstimate := stateDist + 1 + heuristic(neighbour, goal);
