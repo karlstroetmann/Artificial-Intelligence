@@ -107,7 +107,7 @@ river, then the missionaries have a problem.
 \end{figure}
 \noindent
 Figure \ref{fig:missionaries.stlx} shows a formalization of the missionaries and cannibals problem
-as a search problem.  We discuss this formalization line be line.
+as a search problem.  We discuss this formalization line by line.
 \begin{enumerate}
 \item Line 1 defines the auxiliary function \texttt{problem}.
 
@@ -124,7 +124,7 @@ as a search problem.  We discuss this formalization line be line.
       the northern shore, then $3-m$ is the number of missionaries on the southern shore.  Similarly,
       if $i$ is the number of infidels on the northern shore, then the number of infidels on the
       southern shore is $3 - i$.
-\item Line 5 to 18 define the function \texttt{nextStates}.  A state $s$ is represented as a triple of
+\item Lines 5 to 18 define the function \texttt{nextStates}.  A state $s$ is represented as a triple of
       the form
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -162,7 +162,7 @@ as a search problem.  We discuss this formalization line be line.
             and at most 2.  This explains the condition
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\mathtt{mb} + \mathtt{im} \in \{1,2\}$.
+            $\mathtt{mb} + \mathtt{ib} \in \{1,2\}$.
             \\[0.2cm]
             Finally, there should be no problem in the new state on either shore.  This is checked
             using the expression
@@ -192,7 +192,7 @@ define the set of states as follows:
 \end{verbatim}
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
 missionaries and cannibals puzzle.  In that figure, for every state both the northern and the
-eastern shore are shown.  The start state is covered with a blue ellipse, while the goal state is
+southern shore are shown.  The start state is covered with a blue ellipse, while the goal state is
 covered with a green ellipse.  The figure clearly shows that the problem is solvable and that there
 is a solution involving just 11 crossings of the river.
 \eox
