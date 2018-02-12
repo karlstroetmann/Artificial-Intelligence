@@ -23,7 +23,7 @@
 	linkcolor  = blue,
 	citecolor  = red,
         filecolor  = Gold,
-        urlcolor   = [rgb]{0.7, 0.0, 0.7},
+        urlcolor   = [rgb]{0.5, 0.0, 0.5},
 	pdfborder  = {0 0 0} 
 }
 \setlength{\mathindent}{1.3cm}
@@ -59,7 +59,8 @@
 \newfont{\bigchess}{chess30}
 \newcommand{\chf}{\baselineskip20pt\lineskip0pt\chess}
 
-\newcommand{\blue}[1]{\emph{\color{blue}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\red}[1]{{\color{red}#1}}
 
 \newcommand{\exercise}{\vspace*{0.2cm}
 \stepcounter{exercise}
@@ -137,7 +138,7 @@
       An Introduction to Artificial Intelligence \\[0.3cm]
       --- Lecture Notes in Progress ---}
 \author{Prof.~Dr.~Karl Stroetmann}
-\date{\today \\[2.5cm]
+\date{\today \\[0.5cm]
 \noindent
 \begin{minipage}[t]{1.0\linewidth} 
 These lecture notes, their \LaTeX\ sources, and the programs discussed in these lecture notes are all available at
@@ -146,7 +147,10 @@ These lecture notes, their \LaTeX\ sources, and the programs discussed in these 
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/}{https://github.com/karlstroetmann/Artificial-Intelligence}.
 \hspace*{\fill} 
 \\[0.2cm]
-In particular, the lecture notes are found in the directory \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/}{Lecture-Notes} in the file \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/artificial-intelligence.pdf}{artificial-intelligence.pdf}.
+In particular, the lecture notes are found in the directory
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/}{Lecture-Notes} in
+the file
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/artificial-intelligence.pdf}{artificial-intelligence.pdf}. 
 The lecture notes are subject to continuous change.  Provided the program \href{http://git-scm.com/download}{\texttt{git}}
 is installed on your computer, the repository containing the lecture notes can be cloned using the command
 \\[0.2cm]
@@ -159,10 +163,14 @@ Once you have cloned the repository, the command
 \textcolor{amethyst}{\texttt{git pull}}
 \\[0.2cm]
 can be used to load the current version of these lecture notes from 
-\href{https://github.com}{\texttt{github}}.  As this is the first time that I give these lectures, these lecture notes are very incomplete and will be changed frequently during the semester.
+\href{https://github.com}{\texttt{github}}.  As this is the second time that I give this lecture, these lecture
+notes are still incomplete and will be changed frequently during the semester. 
+If you find any typos or inconsistencies, please email me at:
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{mailto:karl.stroetmann@dhbw-mannheim.de}{\texttt{karl.stroetmann@dhbw-mannheim.de}}.
 \end{minipage}
 }
-
 
 
 \begin{document}
