@@ -137,7 +137,7 @@ start := [3,3,1];
 goal  := [0,0,0];
 load("breadth-first-search.stlx");
 // load("depth-first-search.stlx");
-load("depth-first-search-recursive.stlx");
+// load("depth-first-search-recursive.stlx");
 Path := search(start, goal, nextStates);
 print("Solution of length $#Path-1$ found:");
 printPath(Path);

@@ -1,28 +1,28 @@
 \chapter{Search}
-In this chapter we discuss various \emph{\color{blue}search algorithms}.  First, we define
-the notion of a \emph{\color{blue}search problem}.  As one of the examples, we will discuss the
+In this chapter we discuss various \blue{search algorithms}.  First, we define
+the notion of a \blue{search problem}.  As one of the examples, we will discuss the
 \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}.  Then we 
 introduce various algorithms for solving search problems.  In particular, we present
 \begin{enumerate}
-\item breadth first search,
-\item depth first search,
-\item iterative deepening,
-\item bidirectional breadth first search,
-\item $\mathrm{A}^*$ search, 
-\item bidirectional $\mathrm{A}^*$ search,
-\item iterative deepening $\mathrm{A}^*$ search, and
-\item $\mathrm{A}^*$-$\mathrm{IDA}^*$ search.
+\item \blue{breadth first search},
+\item \blue{depth first search},
+\item \blue{iterative deepening},
+\item \blue{bidirectional breadth first search},
+\item \blue{$\mathrm{A}^*$ search}, 
+\item \blue{bidirectional $\mathrm{A}^*$ search},
+\item \blue{iterative deepening $\mathrm{A}^*$ search}, and
+\item \blue{$\mathrm{A}^*$-$\mathrm{IDA}^*$ search}.
 \end{enumerate}
 
 \begin{Definition}[Search Problem]
-  A \emph{\color{blue}search problem} is a tuple of the form
+  A \blue{search problem} is a tuple of the form
   \\[0.2cm]
   \hspace*{1.3cm}
   $\mathcal{P} = \langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$
   \\[0.2cm]
   where
   \begin{enumerate}
-  \item $Q$ is the set of states, also known as the \emph{\color{blue}state space}.
+  \item $Q$ is the set of states, also known as the \blue{state space}.
   \item $\texttt{nextStates}$ is a function taking a state as input and returning the set of those
         states that can be reached from the given state in one step,
         i.e.~we have
@@ -30,34 +30,34 @@ introduce various algorithms for solving search problems.  In particular, we pre
         \hspace*{1.3cm}
         $\texttt{nextStates}:Q \rightarrow 2^Q$.
         \\[0.2cm]
-        The function $\mathtt{nextStates}$ gives rise to the \emph{\color{blue}transition relation} $R$, which is a
+        The function $\mathtt{nextStates}$ gives rise to the \blue{transition relation} $R$, which is a
         relation on $Q$, i.e.~$R \subseteq Q \times Q$.  This relation is defined as follows:
         \\[0.2cm]
         \hspace*{1.3cm}
         $R := \bigl\{ \pair(s_1, s_2) \in Q \times Q \mid s_2 \in \mathtt{nextStates}(s_1) \bigr\}$.
         \\[0.2cm]
         If either $\pair(s_1, s_2) \in R$ or $\pair(s_2, s_1) \in R$, then  $s_1$ and $s_2$ are
-        called \emph{\color{blue}neighboring states}.
-  \item $\mathtt{start}$ is the \emph{\color{blue}start state}, hence $\mathtt{start} \in Q$. 
-  \item $\mathtt{goal}$ is the \emph{\color{blue}goal state}, hence $\mathtt{goal} \in Q$.
+        called \blue{neighboring states}.
+  \item $\mathtt{start}$ is the \blue{start state}, hence $\mathtt{start} \in Q$. 
+  \item $\mathtt{goal}$ is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
 
         Sometimes, instead of a single $\mathtt{goal}$ there is a set of goal states $G$.
   \end{enumerate}
-  A \emph{\color{blue}path} is a list $[s_1, \cdots, s_n]$ such that $\pair(s_i, s_{i+1}) \in R$ for all $i \in
+  A \blue{path} is a list $[s_1, \cdots, s_n]$ such that $\pair(s_i, s_{i+1}) \in R$ for all $i \in
   \{1,\cdots,n-1\}$. 
-  The \emph{\color{blue}length} of this path is defined as the length of the list. 
-  A path $[s_1, \cdots, s_n]$ is a \emph{\color{blue}solution} to the search problem $P$ iff the following
+  The \blue{length} of this path is defined as the length of the list. 
+  A path $[s_1, \cdots, s_n]$ is a \blue{solution} to the search problem $P$ iff the following
   conditions are satisfied:
   \begin{enumerate}
   \item $s_1 = \mathtt{start}$, i.e.~the first element of the path is the start state.
   \item $s_n = \mathtt{goal}$, i.e.~the last element of the path is the goal state. 
   \end{enumerate}
-  A path $p = [s_1, \cdots, s_n]$ is a \emph{\color{blue}minimal solution} to the search problem $\mathcal{P}$ iff it is a
+  A path $p = [s_1, \cdots, s_n]$ is a \blue{minimal solution} to the search problem $\mathcal{P}$ iff it is a
   solution and, furthermore, the length of $p$ is minimal among all other solutions. \eoxs
 \end{Definition}
 
 \remark
-In the literature, a \emph{\color{blue}state} is often called a \emph{\color{blue}node}.  In these lecture
+In the literature, a \blue{state} is often called a \blue{node}.  In these lecture
 notes, I will also refer to states as nodes.  \eoxs
 
 \example
@@ -212,8 +212,8 @@ these 9 squares, 8 are occupied with square tiles that are numbered from 1 to 8.
 empty. Figure \ref{fig:8-puzzle.pdf} on page \pageref{fig:8-puzzle.pdf} shows two possible states of this
 sliding puzzle.  The $4 \times 4$ \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}
 is similar to the $3 \times 3$ sliding puzzle but it is played on a square board of length 4
-instead.  The $4 \times 4$ sliding puzzle is also known as the \emph{\color{blue}15 puzzle}, while the $3 \times 3$ puzzle is
-called the \emph{\color{blue}8 puzzle}.
+instead.  The $4 \times 4$ sliding puzzle is also known as the \blue{15 puzzle}, while the $3 \times 3$ puzzle is
+called the \blue{8 puzzle}.
 
 \begin{figure}[!ht]
 \centering
@@ -354,7 +354,7 @@ Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows:
       In general, $\mathtt{Frontier}$ contains those states that have just been discovered and whose successors have not
       yet been seen.
 \item As long as the set $\mathtt{Frontier}$ does not contain the state $\mathtt{goal}$, we recompute this set 
-      by adding all states to it that can be reached in step from a state in $\mathtt{Frontier}$.
+      by adding all states to it that can be reached in one step from a state in $\mathtt{Frontier}$.
       Then, the states that had been previously present in $\mathtt{Frontier}$ are removed.
       These old states are then saved into a set $\mathtt{Visited}$.
 \end{enumerate}
@@ -496,10 +496,10 @@ inspected all the states.  This is a typical behaviour for breadth first search.
 \label{fig:missionaries.solution}
 \end{figure}
 
-Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes less about 9 seconds to solve
+Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes about 6 seconds to solve
 this problem on my computer\footnote{
-  I happen to own an iMac from 2011.  This iMac is equipped with 16 Gigabytes of main memory and a
-  quad core 2.7 GHz ``Intel Core i5'' processor.  I suspect this to be the I5-2500S (Sandy Bridge) processor.
+  I happen to own an iMac from 2017.  This iMac is equipped with 32 Gigabytes of main memory and a
+  quad core 3.4 GHz ``Intel Core i5'' processor.  I suspect this to be the I5-7500 (Kaby Lake) processor.
 }, while 181439 states are touched.  Again, we see that breadth first search touches nearly all the
 states reachable from the start state.
 
@@ -651,10 +651,10 @@ Figure \ref{fig:8-puzzle.solution1} and Figure \ref{fig:8-puzzle.solution2}.
 We conclude our discussion of breadth first search by noting the two most important properties of
 breadth first search.
 \begin{enumerate}
-\item Breadth first search is \emph{\color{blue}complete}:  If there is a solution to the given
+\item Breadth first search is \blue{complete}:  If there is a solution to the given
       search problem, then breadth first search is going to find it.
-\item The solution found by breadth first search is \emph{\color{blue}optimal}, i.e.~it is the
-      shortest possible solution.
+\item The solution found by breadth first search is \blue{optimal}, i.e.~it is one of the
+      shortest possible solutions.
 \end{enumerate}
 \proof
 Both of these claims can be shown simultaneously.  Consider the implementation of breadth first
@@ -728,7 +728,7 @@ Actually, it is not necessary to understand the details of the implementation sh
 \myFig{depth-first-search.stlx}.  The reason is that the recursive implementation of depth first
 search that is presented in the following subsection is superior to the implementation shown in
 \myFig{depth-first-search.stlx}.
-When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes about 96 seconds to find a solution.  
+When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes about 68 seconds to find a solution.  
 The solution that is found has a length of $41,553$ steps.  As the
 shortest path from $\mathtt{start}$ to $\mathtt{goal}$ has 31 steps, the solution found by depth
 first search is very far from optimal.  All this is rather disappointing news.  The only good news
@@ -786,20 +786,28 @@ $\mathtt{search}$ that is given in \myFig{depth-first-search-path.stlx} is not a
 instance of the  $3 \times 3$ sliding puzzle that was shown in \myFig{8-puzzle.pdf}.
 
 \exercise
-Assume the set of states $Q$ is defined as
+Assume that $n$ is a positive natural number and that the set of states $Q_n$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$Q := \bigl\{ \pair(a, b) \mid a \in \mathbb{N} \wedge b \in \mathbb{N} \bigr\}$.
+$Q_n := \bigl\{ \pair(a, b) \mid a \in \{0,\cdots,n\} \wedge b \in \{0,\cdots,n\} \bigr\}$.
 \\[0.2cm]
 Furthermore, the states $\mathtt{start}$ and $\mathtt{goal}$ are defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,0)$ where $n \in \mathbb{N}$.
+$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,0)$.
 \\[0.2cm]
 Next, the function $\mathtt{nextStates}$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}$.
+$\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \left\{
+\begin{array}{ll}
+\bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}  & \mbox{if $a < n$ and $b < n$} \\[0.1cm]
+\bigl\{\pair(a+1,0), \pair(a+1,b)\bigr\}  & \mbox{if $a < n$ and $b = n$} \\[0.1cm]
+\bigl\{\pair(a,b+1)\bigr\}  & \mbox{if $a = n$ and $b < n$} \\[0.1cm]
+\{\}  & \mbox{if $a = n$ and $b = n$} 
+\end{array}
+\right.
+$
 \\[0.2cm]
 Finally, the search problem $\mathcal{P}$ is defined as
 \\[0.2cm]
@@ -916,7 +924,7 @@ The fact that the recursive version of depth first search took just 2 seconds to
 very impressive.  The questions is whether it might be possible to force depth first search to find
 the shortest solution.  The answer to this question leads to an algorithm that is known as
 \href{https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search}{iterative deepening}.  The main
-idea behind iterative deepening is to run depth first with a \emph{\color{blue}depth limit} $d$.  This limit
+idea behind iterative deepening is to run depth first with a \blue{depth limit} $d$.  This limit
 enforces that a solution has at most a length of $d$.  If no solution is found at a depth of $d$, the new depth
 $d+1$ can be tried next and the process can be continued until a solution is found.  The program shown in
 Figure \ref{fig:iterative-deepening.stlx} on page \pageref{fig:iterative-deepening.stlx} implements this strategy.
@@ -1094,7 +1102,7 @@ Breadth first search first visits all states that have a distance of 1 from star
 states that have a distance of 2, then of 3 and so on until finally the goal is found.  If the length of the shortest path
 from $\mathtt{start}$ to $\mathtt{goal}$ is $d$, then all states that have a distance of at most $d$ will be
 visited.  In many search problems, the number of states grows exponentially with the distance, i.e.~there is
-a \emph{\color{blue}branching factor} $b$ such that the set of all states that have a distance of at most $d$
+a \blue{branching factor} $b$ such that the set of all states that have a distance of at most $d$
 from $\mathtt{start}$ is roughly
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1235,7 +1243,7 @@ all of its neighbours, they had no idea which of the neighbours they should pick
 which of these neighbours might be more promising than the other neighbours.  If a human tries to solve a
 problem, she usually will develop a feeling that certain states are more favourable than other states because
 they seem to be closer to the solution.  In order to formalise this procedure, we next define the notion of a 
-\emph{\color{blue}heuristic}.
+\blue{heuristic}.
 \pagebreak
 
 \begin{Definition}[Heuristic]
@@ -1244,13 +1252,13 @@ Given a search problem
 \hspace*{1.3cm}
 $\mathcal{P} = \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \rangle$,
 \\[0.2cm]
-a \emph{\color{blue}heuristic} is a function
+a \blue{heuristic} is a function
 \\[0.2cm]
 \hspace*{1.3cm}
 $h: Q \rightarrow \mathbb{R}$
 \\[0.2cm]
 that computes an approximation of the distance of a given state $s$ to the goal state $\mathtt{goal}$.
-The heuristic is \emph{\color{blue}admissible} if it always underestimates the true distance, i.e.~if the function
+The heuristic is \blue{admissible} if it always underestimates the true distance, i.e.~if the function
 \\[0.2cm]
 \hspace*{1.3cm}
 $d:Q \rightarrow \mathbb{R}$
@@ -1260,10 +1268,10 @@ computes the true distance of a state $s$ to the goal, then we must have
 \hspace*{1.3cm}
 $h(s) \leq d(s)$ \quad for all $s \in Q$.
 \\[0.2cm]
-Hence, the heuristic is admissible iff it is \emph{\color{blue}optimistic}:  An admissible heuristic must never overestimate the
+Hence, the heuristic is admissible iff it is \blue{optimistic}:  An admissible heuristic must never overestimate the
 distance to the goal, but it is free to underestimate this distance.
 
-Finally, the  heuristic $h$ is called \emph{\color{blue}consistent} iff we have
+Finally, the  heuristic $h$ is called \blue{consistent} iff we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s_2 \in \mathtt{nextStates}(s_1)$.  \eod
@@ -1340,7 +1348,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       $0 \leq 1 + 0$,
       \\[0.2cm]
       this heuristic is obviously consistent, but this heuristic is too trivial to be of any use.
-\item The next heuristic is the \emph{\color{blue}number of misplaced tiles} heuristic.  For a state $s$, 
+\item The next heuristic is the \blue{number of misplaced tiles} heuristic.  For a state $s$, 
       this heuristic counts the number of tiles in $s$ that are not in their final position, i.e.~that are not
       in the same position as the corresponding tile in $\mathtt{goal}$.  For example, in \myFig{8-puzzle.pdf}
       in the state depicted to the left, only the tile with the label $4$ is in the same
@@ -1354,8 +1362,8 @@ In the following, we will discuss several heuristics for the sliding puzzle.
 
       Unfortunately, the number of misplaced tiles heuristic is very crude and therefore not
       particularly useful.
-\item The \emph{\color{blue}Manhattan heuristic} improves on the previous heuristic.  For two points 
-      $\pair(x_1, y_1), \pair(x_2, y_2) \in \mathbb{R}^2$ the \emph{\color{blue}Manhattan distance} of these
+\item The \blue{Manhattan heuristic} improves on the previous heuristic.  For two points 
+      $\pair(x_1, y_1), \pair(x_2, y_2) \in \mathbb{R}^2$ the \blue{Manhattan distance} of these
       points is defined as 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1436,7 +1444,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
     \\[0.2cm]
     and hence $h(s_1) \leq 1 + h(s_2)$.  \qed
 \end{enumerate}
-Now we are ready to present \emph{\color{blue}best first search}.  This algorithm is derived from the stack based
+Now we are ready to present \blue{best first search}.  This algorithm is derived from the stack based
 version of depth first search.  However, instead of using a stack, the algorithm uses a 
 \href{https://en.wikipedia.org/wiki/Priority_queue}{priority queue}.  In this priority queue, the paths are
 ordered with respect to the estimated distance of the state at the end of the path from the $\mathtt{goal}$.
@@ -1510,7 +1518,7 @@ solution found by depth first search, it is still far from an optimal solution. 
 best first search is still not strong enough to solve the $4 \times 4$ puzzle shown in
 \myFig{start-goal.stlx}. 
 
-It should be noted that the fact that the Manhattan distance is a \emph{\color{blue}consistent} heuristic is of
+It should be noted that the fact that the Manhattan distance is a \blue{consistent} heuristic is of
 no consequence for best first search.  Only the $\mathrm{A}^*$ algorithm, which is presented next, makes use of
 this fact.
 
@@ -2146,7 +2154,7 @@ The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese 
 \hspace*{1.3cm}
 \textsl{``A journey of a thousand miles begins but with a single step''}.
 \\[0.2cm]
-This proverb is the foundation of \emph{\color{blue}taoistic search}.  The idea is, instead of trying to reach
+This proverb is the foundation of \blue{taoistic search}.  The idea is, instead of trying to reach
 the goal directly, we rather define some intermediate states which are easier to reach than the goal state and
 that are nearer to the goal than the start state.  To make this idea more precise, consider the following instance of the
 15-puzzle, where the states $\mathtt{Start}$ and $\mathtt{Goal}$ are given as follows:
