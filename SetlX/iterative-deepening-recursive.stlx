@@ -1,5 +1,5 @@
 search := procedure(start, goal, nextStates) {
-    limit := 31;  // Cheat to save time, otherwise this takes about 36 minutes!
+    limit := 1;  
     while (true) {
         print("limit = $limit$");
         result := dfsLimited(start, goal, nextStates, [start], limit);

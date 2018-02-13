@@ -794,7 +794,7 @@ $Q_n := \bigl\{ \pair(a, b) \mid a \in \{0,\cdots,n\} \wedge b \in \{0,\cdots,n\
 Furthermore, the states $\mathtt{start}$ and $\mathtt{goal}$ are defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(0,n)$.
+$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,n)$.
 \\[0.2cm]
 Next, the function $\mathtt{nextStates}$ is defined as
 \\[0.2cm]
@@ -802,7 +802,7 @@ Next, the function $\mathtt{nextStates}$ is defined as
 $\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \left\{
 \begin{array}{ll}
 \bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}  & \mbox{if $a < n$ and $b < n$} \\[0.1cm]
-\bigl\{\pair(a+1,b)              \bigr\}  & \mbox{if $a < n$ and $b = n$} \\[0.1cm]
+\bigl\{\pair(a+1,b), \pair(a+1,0)\bigr\}  & \mbox{if $a < n$ and $b = n$} \\[0.1cm]
 \bigl\{\pair(0,b+1), \pair(a,b+1)\bigr\}  & \mbox{if $a = n$ and $b < n$} \\[0.1cm]
 \{\}  & \mbox{if $a = n$ and $b = n$} 
 \end{array}
@@ -913,14 +913,14 @@ The implementation of $\mathtt{dfs}$ works as follows:
       line of the procedure $\mathtt{dfs}$ is reached, $\mathtt{om}$ is returned by default.
 \end{enumerate}
 
-For the $3 \times 3$ puzzle, it takes about 2 seconds to compute the solution.  In this case, the length of
+For the $3 \times 3$ puzzle, it takes about one second to compute the solution.  In this case, the length of
 the solution is still 3653 steps, which is unsatisfying.  The good news is that this program does not
 need much memory.  The only variable that uses considerable memory is the variable $\mathtt{Path}$.
 If we can somehow keep the list $\mathtt{Path}$ short, then the recursive version of depth first search uses only a
 tiny fraction of the memory needed by breadth first search.
 
 \section{Iterative Deepening}
-The fact that the recursive version of depth first search took just 2 seconds to find a solution is
+The fact that the recursive version of depth first search took just one second to find a solution is
 very impressive.  The questions is whether it might be possible to force depth first search to find
 the shortest solution.  The answer to this question leads to an algorithm that is known as
 \href{https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search}{iterative deepening}.  The main
@@ -1000,7 +1000,7 @@ The nice thing about the program presented in this section is the fact that it d
 memory.  The reason is that the stack can never have a size that is longer than $\mathtt{limit}$ and
 therefore the overall memory that is needed can be bounded by $\mathcal{O}(\mathtt{limit}^2)$.
 However, when we run this program to solve the $3 \times 3$ sliding puzzle, the algorithm takes
-about 42 minutes.  There are two reasons for this:
+about 25 minutes.  There are two reasons for this:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
       to 31.  Essentially, all the computations done with a limit less than $31$ are essentially wasted.
