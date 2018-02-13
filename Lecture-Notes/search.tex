@@ -794,7 +794,7 @@ $Q_n := \bigl\{ \pair(a, b) \mid a \in \{0,\cdots,n\} \wedge b \in \{0,\cdots,n\
 Furthermore, the states $\mathtt{start}$ and $\mathtt{goal}$ are defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,0)$.
+$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(0,n)$.
 \\[0.2cm]
 Next, the function $\mathtt{nextStates}$ is defined as
 \\[0.2cm]
@@ -802,8 +802,8 @@ Next, the function $\mathtt{nextStates}$ is defined as
 $\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \left\{
 \begin{array}{ll}
 \bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}  & \mbox{if $a < n$ and $b < n$} \\[0.1cm]
-\bigl\{\pair(a+1,0), \pair(a+1,b)\bigr\}  & \mbox{if $a < n$ and $b = n$} \\[0.1cm]
-\bigl\{\pair(a,b+1)\bigr\}  & \mbox{if $a = n$ and $b < n$} \\[0.1cm]
+\bigl\{\pair(a+1,b)              \bigr\}  & \mbox{if $a < n$ and $b = n$} \\[0.1cm]
+\bigl\{\pair(0,b+1), \pair(a,b+1)\bigr\}  & \mbox{if $a = n$ and $b < n$} \\[0.1cm]
 \{\}  & \mbox{if $a = n$ and $b = n$} 
 \end{array}
 \right.
