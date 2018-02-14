@@ -386,7 +386,10 @@ $s \in \mathtt{nextStates}(\mathtt{Parent}[s])$.
         Parent   := {};
         while (Frontier != {}) {
             NewFrontier := {};
-            for (s in Frontier, ns in nextStates(s) | !(ns in Visited)) {
+            for ( s in Frontier, ns in nextStates(s) 
+                | !(ns in Visited) && !(ns in Frontier)
+                ) 
+            {
                 NewFrontier += { ns };
                 Parent[ns]  := s;
                 if (ns == goal) {
@@ -832,8 +835,8 @@ is reached? How big is this number if $n = 10,000$?
       \hspace*{1.3cm}
       $\pair(x_1, y_1) < \pair(x_2, y_2) \quad\Longleftrightarrow\quad x_1 < x_2 \vee (x_1 = x_2 \wedge y_1 < y_2)$.
       \\[0.2cm]
-      Hence, when we have a state $\pair(a, b)$, the set $\mathtt{nextStates}\bigl(\pair(a, b)\bigr)$ is
-      ordered as follows:
+      Hence, when we have a state $\pair(a, b)$ such that both $a<n$ and $b < n$, the
+      set $\mathtt{nextStates}\bigl(\pair(a, b)\bigr)$ is ordered as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\bigl\{\pair(a,b+1)\bigr\}, \pair(a+1,b) \bigr\}$. \eoxs
@@ -1053,7 +1056,7 @@ shows a recursive implementation of iterative deepening.   The dictionary $\math
 required to compute the path.  Instead, the path is built 
 incrementally in the argument $\mathtt{Path}$ of the procedure $\mathtt{dfsLimited}$.
 Unfortunately, the running time of the recursive implementation of iterative deepening is still
-quite big:  On my computer, the recursive implementation takes about 36 minutes.
+quite big:  On my computer, the recursive implementation takes about 23 minutes.
 
 
 \begin{figure}[!ht]
@@ -1513,7 +1516,7 @@ implementation are as follows:
       distance is used as the priority in $\mathtt{PrioQueue}$.
 \end{enumerate}
 Best first search solves the instance of the $3 \times 3$ puzzle shown in \myFig{8-puzzle.pdf} in less than
-half a second.  However, the solution that is found takes 75 steps.  While this is not as ridiculous as the
+a quarter of a second.  However, the solution that is found takes 75 steps.  While this is not as ridiculous as the
 solution found by depth first search, it is still far from an optimal solution.  Furthermore,
 best first search is still not strong enough to solve the $4 \times 4$ puzzle shown in
 \myFig{start-goal.stlx}. 
@@ -1757,9 +1760,9 @@ search shown in \myFig{bidirectional-bfs.stlx} relates to breadth first search s
 Hence, we will not discuss the details any further.
 
 When we run bidirectional $\mathrm{A}^*$ search for the $3 \times 3$ sliding puzzle shown in
-\myFig{8-puzzle.pdf}, the program takes 2 second but only uses $2,963$ states.  Therefore, I have tried 
+\myFig{8-puzzle.pdf}, the program takes one second but only uses $2,963$ states.  Therefore, I have tried 
 to solve the $4 \times 4$ sliding puzzle shown in \myFig{start-goal.stlx} using
-bidirectional $\mathrm{A}^*$ search.  A solution of $44$ steps was found in less than $58$ seconds.
+bidirectional $\mathrm{A}^*$ search.  A solution of $44$ steps was found in $50$ seconds.
 Only $20,624$ states had to be processed to compute this solution!  None of the other algorithms presented so
 far was able to compute the solution.
 
