@@ -2,7 +2,7 @@
 \usepackage{fleqn}
 \usepackage{graphicx}
 \usepackage{epstopdf}
-\usepackage{epsfig} 
+\usepackage{epsfig}
 \usepackage{a4wide}
 \usepackage{amssymb}
 \usepackage{fancyvrb}
@@ -11,7 +11,7 @@
 \usepackage[fleqn]{amsmath}
 \usepackage{stmaryrd}
 \usepackage{enumerate}
-\usepackage{color} 
+\usepackage{color}
 \usepackage{xfrac}
 \usepackage{amsmath}
 
@@ -24,7 +24,7 @@
 	citecolor  = red,
         filecolor  = Gold,
         urlcolor   = [rgb]{0.5, 0.0, 0.5},
-	pdfborder  = {0 0 0} 
+	pdfborder  = {0 0 0}
 }
 \setlength{\mathindent}{1.3cm}
 \setlength{\textwidth}{17cm}
@@ -33,7 +33,7 @@
 \addtolength{\topmargin}{-1cm}
 
 \usepackage{fancyhdr}
-\usepackage{lastpage} 
+\usepackage{lastpage}
 
 % \renewcommand*{\familydefault}{\sfdefault}
 
@@ -61,6 +61,11 @@
 
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
+
+% set the monospace-font to Inconsalata-g
+% font-source: http://leonardo-m.livejournal.com/77079.html
+\renewcommand{\encodingdefault}{T1}
+\renewcommand{\ttdefault}{inconsolatag}
 
 \newcommand{\exercise}{\vspace*{0.2cm}
 \stepcounter{exercise}
@@ -134,23 +139,23 @@
 
 \newcounter{exercise}
 
-\title{\epsfig{file=Figures/dhbw-logo.pdf, scale=1.5}\\[0.3cm] 
+\title{\epsfig{file=Figures/dhbw-logo.pdf, scale=1.5}\\[0.3cm]
       An Introduction to Artificial Intelligence \\[0.3cm]
       --- Lecture Notes in Progress ---}
 \author{Prof.~Dr.~Karl Stroetmann}
 \date{\today \\[0.5cm]
 \noindent
-\begin{minipage}[t]{1.0\linewidth} 
+\begin{minipage}[t]{1.0\linewidth}
 These lecture notes, their \LaTeX\ sources, and the programs discussed in these lecture notes are all available at
 \\[0.2cm]
 \hspace*{\fill}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/}{https://github.com/karlstroetmann/Artificial-Intelligence}.
-\hspace*{\fill} 
+\hspace*{\fill}
 \\[0.2cm]
 In particular, the lecture notes are found in the directory
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/}{Lecture-Notes} in
 the file
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/artificial-intelligence.pdf}{artificial-intelligence.pdf}. 
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/artificial-intelligence.pdf}{artificial-intelligence.pdf}.
 The lecture notes are subject to continuous change.  Provided the program \href{http://git-scm.com/download}{\texttt{git}}
 is installed on your computer, the repository containing the lecture notes can be cloned using the command
 \\[0.2cm]
@@ -162,9 +167,9 @@ Once you have cloned the repository, the command
 \hspace*{1.3cm}
 \textcolor{amethyst}{\texttt{git pull}}
 \\[0.2cm]
-can be used to load the current version of these lecture notes from 
+can be used to load the current version of these lecture notes from
 \href{https://github.com}{\texttt{github}}.  As this is the second time that I give this lecture, these lecture
-notes are still incomplete and will be changed frequently during the semester. 
+notes are still incomplete and will be changed frequently during the semester.
 If you find any typos or inconsistencies, please email me at:
 \\[0.2cm]
 \hspace*{1.3cm}
