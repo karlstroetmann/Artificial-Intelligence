@@ -839,12 +839,12 @@ is reached? How big is this number if $n = 10,000$?
       set $\mathtt{nextStates}\bigl(\pair(a, b)\bigr)$ is ordered as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\bigl\{\pair(a,b+1)\bigr\}, \pair(a+1,b) \bigr\}$. \eoxs
+      $\bigl\{\pair(a,b+1), \pair(a+1,b) \bigr\}$. \eoxs
 \end{enumerate}
 
 \subsection{A Recursive Implementation of Depth First Search}
 Sometimes, the depth first search algorithm is presented as a recursive algorithm, since this leads
-to an implementation that is slightly shorter and more easy to understand.  What is more, we no
+to an implementation that is slightly shorter and is easier to understand.  What is more, we no
 longer need the dictionary $\mathtt{Parent}$ to record the parent of each node.  The resulting
 implementation is shown in \myFig{depth-first-search-recursive.stlx}.
 
@@ -882,7 +882,7 @@ implementation is shown in \myFig{depth-first-search-recursive.stlx}.
 The only purpose of the procedure \texttt{search} is to call the procedure $\mathtt{dfs}$, which needs one
 additional argument.  This argument is called $\mathtt{Path}$.  The idea is that $\mathtt{Path}$ is
 a path leading from the state $\mathtt{start}$ to the current $\mathtt{state}$ that is the first
-argument of the procedure $\mathtt{dfs}$.  Of course, on the first invocation of $\mathtt{dfs}$, the
+argument of the procedure $\mathtt{dfs}$.  On the first invocation of $\mathtt{dfs}$, the
 parameter $\mathtt{state}$ is equal to $\mathtt{start}$ and therefore $\mathtt{Path}$ is initialized
 as the list containing only $\mathtt{start}$.
 
@@ -2219,4 +2219,5 @@ lecture.  Your task is to implement the missing functions in the file \texttt{sl
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "artificial-intelligence"
+%%% eval: (setenv "LANG" "en_US.UTF-8")
 %%% End:
