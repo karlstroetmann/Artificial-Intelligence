@@ -1463,7 +1463,7 @@ We always expand the path next that seems to be closest to the goal.
                   xrightmargin  = 0.8cm,
                 ]
     bestFirstSearch := procedure(start, goal, nextStates, heuristic) {
-        PrioQueue := { [0, [start]] };
+        PrioQueue := { [heuristic(start, goal), [start]] };
         while (PrioQueue != {}) {
             [_, Path] := fromB(PrioQueue);
             state     := Path[-1];
