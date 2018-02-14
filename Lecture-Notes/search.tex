@@ -1052,9 +1052,7 @@ state space is finite.
 \subsection{A Recursive Implementation of Iterative Deepening}
 If we implement iterative deepening recursively, then we know that the call stack is bounded by the length of
 the shortest solution.  \myFig{iterative-deepening-recursive.stlx}  
-shows a recursive implementation of iterative deepening.   The dictionary $\mathtt{Parent}$ is no longer
-required to compute the path.  Instead, the path is built 
-incrementally in the argument $\mathtt{Path}$ of the procedure $\mathtt{dfsLimited}$.
+shows a recursive implementation of iterative deepening. 
 Unfortunately, the running time of the recursive implementation of iterative deepening is still
 quite big:  On my computer, the recursive implementation takes about 23 minutes.
 
@@ -1261,7 +1259,7 @@ a \blue{heuristic} is a function
 $h: Q \rightarrow \mathbb{R}$
 \\[0.2cm]
 that computes an approximation of the distance of a given state $s$ to the goal state $\mathtt{goal}$.
-The heuristic is \blue{admissible} if it always underestimates the true distance, i.e.~if the function
+The heuristic is \blue{admissible} if it always \underline{underestimates} the true distance, i.e.~if the function
 \\[0.2cm]
 \hspace*{1.3cm}
 $d:Q \rightarrow \mathbb{R}$
