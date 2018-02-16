@@ -2161,33 +2161,17 @@ that are nearer to the goal than the start state.  To make this idea more precis
 15-puzzle, where the states $\mathtt{Start}$ and $\mathtt{Goal}$ are given as follows:
 \begin{verbatim}
        Start :=  +---+---+---+---+    Goal :=  +---+---+---+---+
-                 |14 |15 | 8 |12 |             | 1 | 2 | 3 | 4 |
+                 |15 |14 | 8 |12 |             | 1 | 2 | 3 | 4 |
                  +---+---+---+---+             +---+---+---+---+
-                 |10 |11 | 9 |13 |             | 5 | 6 | 7 | 8 |
+                 |10 |11 |13 | 9 |             | 5 | 6 | 7 | 8 |
                  +---+---+---+---+             +---+---+---+---+
-                 | 2 | 6 | 5 | 1 |             | 9 |10 |11 |12 |
+                 | 6 | 2 | 5 | 1 |             | 9 |10 |11 |12 |
                  +---+---+---+---+             +---+---+---+---+
-                 | 3 | 7 | 4 |   |             |13 |14 |15 |   |
+                 | 3 | 4 | 7 |   |             |13 |14 |15 |   |
                  +---+---+---+---+             +---+---+---+---+
 \end{verbatim}
-This is one of the hardest instances of the fifteen puzzle.  In order to solve the puzzle, we could try to
-first move the tile numbered with a $1$ into the upper left corner.  The resulting state would have the
-following form:
-\begin{verbatim}
-                 +---+---+---+---+
-                 | 1 | * | * | * |
-                 +---+---+---+---+
-                 | * | * | * | * |
-                 +---+---+---+---+
-                 | * | * | * | * |
-                 +---+---+---+---+
-                 | * | * | * | * |
-                 +---+---+---+---+
-\end{verbatim}
-Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do not care about the actual
-character in the state, for we only want to ensure that the upper left corner contains a $1$.  Once we have reached a
-state specified by the pattern given above, we could the proceed to reach a state that is described by the
-following pattern:
+In order to solve the puzzle, we could try to first move the tiles numbered with $1$ and $2$ into the upper left
+corner.  The resulting state would have the following form:
 \begin{verbatim}
                  +---+---+---+---+
                  | 1 | 2 | * | * |
@@ -2199,16 +2183,32 @@ following pattern:
                  | * | * | * | * |
                  +---+---+---+---+
 \end{verbatim}
-This way, slowly but surely we will reach the goal.
-I have prepared a framework for taoistic search.  The file
+Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do not care about the actual
+character in the state, for we only want to ensure that the first two tiles are positioned correctly.  Once we have reached a
+state specified by the pattern given above, we could the proceed to reach a state that is described by the
+following pattern:
+\begin{verbatim}
+                 +---+---+---+---+
+                 | 1 | 2 | * | * |
+                 +---+---+---+---+
+                 | 5 | 6 | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+\end{verbatim}
+This way, slowly but surely we will reach the goal.  I have prepared a framework for taoistic search.  The file
 \\[0.2cm]
-\hspace*{-0.8cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
+\hspace*{-0.5cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{\footnotesize
+    https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
 \\[0.2cm]
 contains a framework for the sliding puzzle where some functions are left unimplemented.  The file
 \\[0.2cm]
-\hspace*{-0.8cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}}
+\hspace*{0.5cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}{\texttt{\footnotesize
+    https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}}
 \\[0.2cm]
 is also required.  It contains an adapted form of $\mathrm{A}^*$ search.  More Details will be given in the
 lecture.  Your task is to implement the missing functions in the file \texttt{sliding-puzzle-frame.stlx}.
