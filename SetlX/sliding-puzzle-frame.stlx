@@ -92,7 +92,6 @@ create_intermediate := procedure(State, Tiles)  {
 replace_number := procedure(Pattern, tile) {
     // Your code here.
 };
-
 main := procedure() {
     Start := [ [ 15, 14, 8, 12 ],
                [ 10, 11, 13, 9 ],
@@ -105,7 +104,7 @@ main := procedure() {
                [ 13, 14, 15,  0 ]
              ];
     startTime   := now();
-    TileList    := [1, 2, 3, 4, 5, 9, 13, 6, 7, 8, 10, 14, 11, 12, 15];
+    TileList    := [[1, 2], [5, 6], [3, 4], [9, 13], [7, 8], [10, 14], [11, 12, 15]];
     PatternList := create_intermediate(Goal, TileList);
     State       := Start;
     Solution    := [];
@@ -118,7 +117,7 @@ main := procedure() {
         Solution    += Path[..-2];
     }
     Solution += [ Goal ];
-    stopTime := now();
+    stopTime  := now();
     print("number of steps to solve the puzzle: $#Solution-1$");
     print("The solution is:\n");
     for (State in Solution) {
