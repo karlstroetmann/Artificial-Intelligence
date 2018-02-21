@@ -1674,7 +1674,6 @@ does only terminate if either a solution is found or the priority queue $\mathtt
             $\mathtt{neighbour}$ if it exists, which is the case if $\mathtt{oldEstimate}$ is not $\mathtt{om}$.
       \end{enumerate}
 \end{enumerate}
-It can be shown that the $\mathrm{A}^*$ search algorithm is complete and that the computed solution is optimal.
 The $\mathrm{A}^*$ algorithm has been discovered by Hart, Nilsson, and Raphael and was first published in
 1968 \cite{hart:1968}.  However, there was subtle bug in the first publication which was corrected
 in 1972 \cite{hart:1972}.
@@ -1685,6 +1684,145 @@ news is that now only $10,061$ states are touched in the search for a solution. 
 reduction when compared with breadth first search.  The fact that the running time
 is, nevertheless, quite high results from the complexity of computing the Manhattan distance.
 
+
+\subsection{Completeness and Optimality of $A^*$ Search}
+In order to prove the completeness and the optimality of the $A^*$ search algorithm we find convenient to
+reformulate the algorithm:  In particular, we replace the dictionary $\texttt{Parent}$ by a dictionary
+$\texttt{PathDict}$. For every state $s$ that is reached during $A^*$ search, $\texttt{PathDict}[s]$ returns a
+path that connects the node $\texttt{start}$ with the node $s$.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    aStarSearch := procedure(start, goal, nextStates, heuristic) {
+        Distance := { [start, 0] };
+        estGoal  := heuristic(start, goal);
+        Estimate := { [start, estGoal] };    // estimated total distance
+        Frontier := { [estGoal, start] };    // priority queue
+        PathDict := { [start, [start]] };
+        while (Frontier != {}) {
+            [_, state] := fromB(Frontier);
+            if (state == goal) {
+                return PathDict[state];
+            }
+            stateDist := Distance[state];
+            for (neighbour in nextStates(state)) {
+                oldEstimate := Estimate[neighbour];
+                newEstimate := stateDist + 1 + heuristic(neighbour, goal);
+                if (oldEstimate == om || newEstimate < oldEstimate) {
+                    Distance[neighbour] := stateDist + 1;
+                    Estimate[neighbour] := newEstimate;
+                    Frontier            += { [newEstimate, neighbour] };
+                    PathDict[neighbour] := PathDict[state] + [neighbour];
+                    if (oldEstimate != om) {
+                        Frontier -= { [oldEstimate, neighbour] };
+                    }
+                }
+            }
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A path based implementation of $A^*$ search.}
+\label{fig:a-star-search-path.stlx}
+\end{figure}
+
+The implementation of $A^*$ search shown in Figure \ref{fig:a-star-search-path.stlx} on page
+\pageref{fig:a-star-search-path.stlx} differs in two ways from the implementation shown
+\ref{fig:a-star-search-path.stlx} on page \pageref{fig:a-star-search-path.stlx}:
+\begin{enumerate}
+\item The dictionary $\texttt{Parent}$ that is used in our first implementation of $A^*$ search 
+      is no longer needed in our path based implementation.
+\item Instead, the second implementation uses the dictionary $\texttt{PathDict}$.  For every state $s$ that is
+      visited during the search, $\texttt{PathDict}[s]$ stores a path leading form $\texttt{start}$ to $s$.
+\end{enumerate}
+
+\begin{Theorem}[Completeness and Optimality of $A^*$ Search] 
+Assume 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{P} = \langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$
+\\[0.2cm]
+is a search problem and
+\\[0.2cm]
+\hspace*{1.3cm}
+ $\texttt{heuristic}: Q \rightarrow \mathbb{N}$
+\\[0.2cm]
+is a consistent heuristic for the search problem $\mathcal{P}$.   Then the
+$\mathrm{A}^*$ search algorithm is complete and, furthermore, the computed solution is optimal.    
+\end{Theorem}
+
+\proof
+Let us assume that $P_1 = [x_0,x_1, \cdots, x_n]$ is a path connecting the nodes $\texttt{start}$ and
+$\texttt{goal}$ and that, furthermore, there is no shorter path connecting the nodes $\texttt{start}$ and  
+$\texttt{goal}$.  We have to prove that $A^*$ search will find a path $P_2$ from  $\texttt{start}$ to
+$\texttt{goal}$ that has a length of $n$.  In order to establish this claim, we prove the some invariants
+of the algorithm shown in Figure \ref{fig:a-star-search-path.stlx}.  Assume 
+a state $s$ is added to $\texttt{Frontier}$, then the following properties are true:
+\begin{enumerate}[(a)]
+\item $\texttt{PathDict}[s]$ is a shortest path from \texttt{start} to $s$.
+\item The path $\texttt{PathDict}[s]$ has the length $\texttt{Distance}[s]$.
+\end{enumerate}
+
+
+Assume that the search problem at hand has the \blue{branching factor} $b$, i.e.~for every state $s$ there are
+at most $b$ neighbouring states:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{card}\bigl(\texttt{nextStates}(s)\bigr) \leq b$ \quad for all states $s$.
+\\[0.2cm]  
+Then a trivial induction shows that there are at most $b^k$ states that have
+a distance of $k$ from the node $\texttt{start}$.  Let us investigate how the size of the priority queue
+\texttt{Frontier} changes during the iterations of the \texttt{while}-loop:  During every iteration of the
+while loop, exactly one state $s$ is removed from $\texttt{Frontier}$.  Only states $n\in\texttt{nextStates}(s)$ 
+are inserted into the priority queue \texttt{Frontier}.  Let us define the \blue{priority distance} of a state
+$s$ as the known distance from $\texttt{start}$ to $s$ plus the estimated distance from $s$ to
+$\texttt{goal}$.  The priority queue \texttt{Frontier} stores states according to their priority distance.
+Since the estimated distance of a state $s$ from $\texttt{goal}$ is non-negative, the priority distance of a
+state $s$ is at least as big as the distance between $\texttt{start}$ and $s$.  Hence the number of states that
+have at most a priority distance of $k$ is less or equal than the number of states that have a 
+distance of $k$ from \texttt{start}.  However, since every state has at most $b$ neighbours, this latter number
+is bounded by the number
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds 1 + b^1 + b^2 + \cdots + b^k = \frac{b^{k+1}-1}{b-1}$.
+\\[0.2cm]
+Now the important observation is the following: If a state $s$ has the priority distance
+\\[0.2cm]
+\hspace*{1.3cm}
+$k_1 = d + \texttt{heuristic}(s)$ 
+\\[0.2cm]
+and $n$ is a neighbouring state of $s$ that is inserted into \texttt{Frontier} in the iteration of the \texttt{while}-loop
+that removes $s$ from \texttt{Frontier} and $n$ has priority distance
+\\[0.2cm]
+\hspace*{1.3cm}
+$k_2 = d + 1 + \texttt{heuristic}(n)$, 
+\\[0.2cm]
+then we must have
+\\[0.2cm]
+\hspace*{1.3cm}
+$k_1 \leq k_2$
+\\[0.2cm]
+since this is equivalent to the inequality 
+\\[0.2cm]
+\hspace*{1.3cm}
+$d + \texttt{heuristic}(s) \leq d + 1 + \texttt{heuristic}(n)$,
+\\[0.2cm]
+which is in turn equivalent to the inequality
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{heuristic}(s) \leq 1 + \texttt{heuristic}(n)$.
+\\[0.2cm]
+However, the latter inequality is true since $n \in \texttt{nextStates}(s)$ and we have assumed that
+$\texttt{heuristic}$ is consistent.
 
 
 \section{Bidirectional $\mathrm{A}^*$ Search}
@@ -1700,16 +1838,14 @@ is, nevertheless, quite high results from the complexity of computing the Manhat
                   xrightmargin  = 0.0cm,
                 ]
     aStarSearch := procedure(start, goal, nextStates, heuristic) {
-        ParentA    := {};                     ParentB    := {};                    
-        DistanceA  := { [start, 0] };         DistanceB  := { [goal,  0] };
+        ParentA    := {};                    ParentB    := {};                    
+        DistanceA  := { [start, 0] };        DistanceB  := { [goal,  0] };
         estimate   := heuristic(start, goal);
-        EstimateA  := { [start, estimate] };  EstimateB  := { [goal,  estimate] };  
-        FrontierA  := { [estimate, start] };  FrontierB  := { [estimate, goal ] };  
+        EstimateA  := { [start, estimate] }; EstimateB  := { [goal,  estimate] };  
+        FrontierA  := { [estimate, start] }; FrontierB  := { [estimate, goal ] };  
         while (FrontierA != {} && FrontierB != {}) {
-            [guessA, stateA] := first(FrontierA);
-            stateADist       := DistanceA[stateA];
-            [guessB, stateB] := first(FrontierB);
-            stateBDist       := DistanceB[stateB];
+            [guessA, stateA] := first(FrontierA); stateADist := DistanceA[stateA];
+            [guessB, stateB] := first(FrontierB); stateBDist := DistanceB[stateB];
             if (guessA <= guessB) {
                 FrontierA -= { [guessA, stateA] };
                 for (neighbour in nextStates(stateA)) {
@@ -1720,7 +1856,9 @@ is, nevertheless, quite high results from the complexity of computing the Manhat
                         DistanceA[neighbour] := stateADist + 1;
                         EstimateA[neighbour] := newEstimate;
                         FrontierA            += { [newEstimate, neighbour] };
-                        if (oldEstimate != om) { FrontierA -= { [oldEstimate, neighbour] }; }
+                        if (oldEstimate != om) { 
+                            FrontierA -= { [oldEstimate, neighbour] }; 
+                        }
                     }
                     if (DistanceB[neighbour] != om) {
                         return combinePaths(neighbour, ParentA, ParentB);
@@ -1736,7 +1874,9 @@ is, nevertheless, quite high results from the complexity of computing the Manhat
                         DistanceB[neighbour] := stateBDist + 1;
                         EstimateB[neighbour] := newEstimate;
                         FrontierB            += { [newEstimate, neighbour] };
-                        if (oldEstimate != om) { FrontierB -= { [oldEstimate, neighbour] }; }
+                        if (oldEstimate != om) { 
+                            FrontierB -= { [oldEstimate, neighbour] }; 
+                        }
                     }
                     if (DistanceA[neighbour] != om) {
                         return combinePaths(neighbour, ParentA, ParentB);
@@ -1792,7 +1932,6 @@ far was able to compute the solution.
 \caption{A start state and a goal state for the $4 \times 4$ sliding puzzle.}
 \label{fig:start-goal.stlx}
 \end{figure}
-\pagebreak
 
 
 \section{Iterative Deepening $\mathrm{A}^*$ Search}

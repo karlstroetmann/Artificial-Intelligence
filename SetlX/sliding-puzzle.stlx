@@ -103,12 +103,13 @@ main := procedure(params) {
         print(" 10: best first search, then breadth first (4 x 4)     ");
         print(" 11: bidirectional breadth first search                ");
         print(" 12: A* search with Manhattan distance                 ");
-        print(" 13: bidirectional A* search (3 x 3)                   ");
-        print(" 14: bidirectional A* search (4 x 4)                   ");
-        print(" 15: IDA* search (3 x 3)                               ");
-        print(" 16: IDA* search (4 x 4)                               ");
-        print(" 17: A*IDA* search (3 x 3)                             ");
-        print(" 18: A*IDA* search (4 x 4)                             ");
+        print(" 13: A* search with Manhattan distance (path based)    ");
+        print(" 14: bidirectional A* search (3 x 3)                   ");
+        print(" 15: bidirectional A* search (4 x 4)                   ");
+        print(" 16: IDA* search (3 x 3)                               ");
+        print(" 17: IDA* search (4 x 4)                               ");
+        print(" 18: A*IDA* search (3 x 3)                             ");
+        print(" 19: A*IDA* search (4 x 4)                             ");
         choice := read("Enter a number from 1 to 18: ");
     } else {
         choice := int(params[1]);
@@ -126,12 +127,13 @@ main := procedure(params) {
         case 10: load("best-first-breadth-first.stlx"     );
         case 11: load("bidirectional-bfs.stlx"            );
         case 12: load("a-star-search.stlx"                );
-        case 13: load("a-star-bidirectional.stlx"         );
+        case 13: load("a-star-search-path.stlx"           );
         case 14: load("a-star-bidirectional.stlx"         );
-        case 15: load("iterative-deepening-a-star.stlx"   );
+        case 15: load("a-star-bidirectional.stlx"         );
         case 16: load("iterative-deepening-a-star.stlx"   );
-        case 17: load("a-star-ida-star.stlx"              );
+        case 17: load("iterative-deepening-a-star.stlx"   );
         case 18: load("a-star-ida-star.stlx"              );
+        case 19: load("a-star-ida-star.stlx"              );
         default: abort("invalid choice");
     }
     start := [ [8, 0, 6],
@@ -142,7 +144,7 @@ main := procedure(params) {
               [3, 4, 5], 
               [6, 7, 8]
             ];
-    if (choice in { 8, 10, 14, 16, 18 }) {
+    if (choice in { 8, 10, 15, 17, 19 }) {
         start := [ [  1, 2,  0,  4 ],
                    [ 14, 7, 12, 10 ],
                    [  3, 5,  6, 13 ],
@@ -160,13 +162,14 @@ main := procedure(params) {
         case  8:  Path := bestFirstSearch(start, goal, nextStates, manhattan);
         case  9:  Path := bestFirstBestFirst(start, goal, nextStates, manhattan, 4);
         case 10:  Path := bestFirstBestFirst(start, goal, nextStates, manhattan, 4);
-        case 12:  Path := aStarSearch(start, goal, nextStates, manhattan);            
-        case 13:  Path := aStarSearch(start, goal, nextStates, manhattan);
+        case 12:  Path := aStarSearch(start, goal, nextStates, manhattan);
+        case 13:  Path := aStarSearch(start, goal, nextStates, manhattan);            
         case 14:  Path := aStarSearch(start, goal, nextStates, manhattan);
-        case 15:  Path := idaStarSearch(start, goal, nextStates, manhattan);
+        case 15:  Path := aStarSearch(start, goal, nextStates, manhattan);
         case 16:  Path := idaStarSearch(start, goal, nextStates, manhattan);
-        case 17:  Path := aStarIdaStarSearch(start, goal, nextStates, manhattan, 1000);
-        case 18:  Path := aStarIdaStarSearch(start, goal, nextStates, manhattan, 3000);
+        case 17:  Path := idaStarSearch(start, goal, nextStates, manhattan);
+        case 18:  Path := aStarIdaStarSearch(start, goal, nextStates, manhattan, 1000);
+        case 19:  Path := aStarIdaStarSearch(start, goal, nextStates, manhattan, 3000);
         default: Path := search(start, goal, nextStates);
     }
     stopTime  := now();
