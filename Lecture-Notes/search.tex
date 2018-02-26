@@ -52,8 +52,8 @@ introduce various algorithms for solving search problems.  In particular, we pre
   \item $s_1 = \mathtt{start}$, i.e.~the first element of the path is the start state.
   \item $s_n = \mathtt{goal}$, i.e.~the last element of the path is the goal state.
   \end{enumerate}
-  A path $p = [s_1, \cdots, s_n]$ is a \blue{minimal solution} to the search problem $\mathcal{P}$ iff it is a
-  solution and, furthermore, the length of $p$ is minimal among all other solutions. \eoxs
+  A path $p = [s_1, \cdots, s_n]$ is a \blue{minimal solution} to the search problem $\mathcal{P}$
+  iff it is a solution and, furthermore, the length of $p$ is minimal among all other solutions. \eoxs
 \end{Definition}
 
 \remark
@@ -186,9 +186,9 @@ as a search problem.  We discuss this formalization line by line.
 \end{enumerate}
 The code in Figure \ref{fig:missionaries.stlx} does not define the set of states $Q$ of the search problem.  The
 reason is that, in order to solve the problem, we do not need to define this set.  If we wanted to, we could
-define the set of states as follows:
+define the set of states as follows: 
 \begin{verbatim}
-    States := { [m,i,b] : m in {0..3}, i in {0..3}, b in {0,1} | noProblemAtAll(m, i) };
+States := { [m,i,b] : m in {0..3}, i in {0..3}, b in {0,1} | noProblemAtAll(m, i) };
 \end{verbatim}
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
 missionaries and cannibals puzzle.  In that figure, for every state both the northern and the
@@ -1535,7 +1535,8 @@ $f(s) := g(s) + h(s)$,
 \\[0.2cm]
 where $g(s)$ computes the length of the path leading from $\mathtt{start}$ to $s$ and $h(s)$ is the heuristical
 estimate of the distance from $s$ to $\mathtt{goal}$.  The details of the $\mathrm{A}^*$ algorithm are given in
-\myFig{a-star-search.stlx} and discussed below.
+\myFig{a-star-search.stlx} and discussed below. 
+The function \texttt{aStarSearch} takes 4 parameters:
 
 
 \begin{figure}[!ht]
@@ -1581,8 +1582,6 @@ estimate of the distance from $s$ to $\mathtt{goal}$.  The details of the $\math
 \caption{The A$^*$ search algorithm.}
 \label{fig:a-star-search.stlx}
 \end{figure}
-\noindent
-The function \texttt{aStarSearch} takes 4 parameters:
 \begin{enumerate}
 \item \texttt{start} is a state.  This state represents the start state of the search problem.
 \item \texttt{goal} is the goal state.
@@ -1686,10 +1685,13 @@ is, nevertheless, quite high results from the complexity of computing the Manhat
 
 
 \subsection{Completeness and Optimality of $\textrm{A}^*$ Search}
-In order to prove the completeness and the optimality of the $\textrm{A}^*$ search algorithm we find convenient to
+In order to prove the completeness and the optimality of the $\textrm{A}^*$ search algorithm it is convenient to
 reformulate the algorithm:  In particular, we replace the dictionary $\texttt{Parent}$ by a dictionary
 $\texttt{PathDict}$. For every state $s$ that is reached during $\textrm{A}^*$ search, $\texttt{PathDict}[s]$ returns a
-path that connects the node $\texttt{start}$ with the node $s$.
+path that connects the node $\texttt{start}$ with the node $s$.  Furthermore, we have added a set
+$\texttt{Explored}$ to the implementation.  This set is only needed for the proof of the optimality of
+the path found by $\mathrm{A}^*$ search.
+
 
 \begin{figure}[!ht]
 \centering
@@ -1703,15 +1705,15 @@ path that connects the node $\texttt{start}$ with the node $s$.
                   xrightmargin  = 0.8cm,
                 ]
     aStarSearch := procedure(start, goal, nextStates, heuristic) {
-        Distance := { [start, 0] };
         estGoal  := heuristic(start, goal);
         Estimate := { [start, estGoal] };    // estimated total distance
         Frontier := { [estGoal, start] };    // priority queue
         PathDict := { [start, [start]] };
+        Distance := { [start,       0] };
         Explored := {};
         while (Frontier != {}) {
             [_, state] := fromB(Frontier);
-            Explored  += { state };
+            Explored   += { state };
             if (state == goal) {
                 return PathDict[state];
             }
@@ -1737,15 +1739,7 @@ path that connects the node $\texttt{start}$ with the node $s$.
 \label{fig:a-star-search-path.stlx}
 \end{figure}
 
-The implementation of $\textrm{A}^*$ search shown in Figure \ref{fig:a-star-search-path.stlx} on page
-\pageref{fig:a-star-search-path.stlx} differs in two ways from the implementation shown
-\ref{fig:a-star-search-path.stlx} on page \pageref{fig:a-star-search-path.stlx}:
-\begin{enumerate}
-\item The dictionary $\texttt{Parent}$ that is used in our first implementation of $\textrm{A}^*$ search 
-      is no longer needed in our path based implementation.
-\item Instead, the second implementation uses the dictionary $\texttt{PathDict}$.  For every state $s$ that is
-      visited during the search, $\texttt{PathDict}[s]$ stores a path leading form $\texttt{start}$ to $s$.
-\end{enumerate}
+
 
 \begin{Theorem}[Completeness and Optimality of $\textrm{A}^*$ Search] 
 Assume 
@@ -1759,20 +1753,57 @@ is a search problem and
  $\texttt{heuristic}: Q \rightarrow \mathbb{N}$
 \\[0.2cm]
 is a consistent heuristic for the search problem $\mathcal{P}$.   Then the
-$\mathrm{A}^*$ search algorithm is complete and, furthermore, the computed solution is optimal.    
+$\mathrm{A}^*$ search algorithm is complete and, furthermore, the solution that is computed is a shortest path
+leading from $\texttt{start}$ to $\texttt{goal}$.    
 \end{Theorem}
 
 \proof
 In order to prove this theorem, we first need to establish a number of notions that are  needed in
 order to better understand the $\textrm{A}^*$ algorithm.  The first of these notions is the notion of \blue{explored}
-states.  A state is said to have been \blue{explored} iff it has been removed from the priority queue $\texttt{Frontier}$.  
+states.  A state is said to have been \blue{explored} iff it has been
+removed from the priority queue $\texttt{Frontier}$. 
 To emphasize this notion I have added the set $\texttt{Explored}$ in the implementation of $\textrm{A}^*$ search that
 is shown in Figure \ref{fig:a-star-search-path.stlx} on page \pageref{fig:a-star-search-path.stlx}.  A state
 is explored once it has been added to the set $\texttt{Explored}$.  Note that the variable
 \texttt{Explored} serves no purpose in the implementation of $\textrm{A}^*$ search.  It has only been added to aid this
 proof.  Furthermore, we define a state as \blue{visited} iff it has been entered into the 
-dictionary $\texttt{Distance}$.
+dictionary $\texttt{Distance}$.  Before we prove the theorem, let us establish the following claim:
+\vspace*{0.2cm}
 
+\noindent
+\textbf{Claim One}: If a state $s$ is visited and
+$P := \texttt{PathDict}[s]$, then $P$ is a path from $\texttt{start}$ to $s$ and the length of
+$P$ is equal to $\texttt{Distance}[s]$.  
+\vspace*{0.2cm}
+
+\noindent
+We establish this claim by a straightforward computational induction.  
+\begin{enumerate}
+\item[BC:] The first path that is entered into the dictionary $\texttt{PathDict}$ is the path
+           $[\texttt{start}]$.  This path connects the node $\texttt{start}$ with the node $\texttt{start}$.
+           Obviously, this path has the length $0$ and that is exactly the value that is entered in the
+           dictionary $\texttt{PathDict}$ in line 6.
+\item[IS:] If we add in line 22 the path
+           \\[0.2cm]
+           \hspace*{1.3cm}
+           $\texttt{PathDict}[\texttt{state}] + [\texttt{neighbour}]$
+           \\[0.2cm]
+           as a path for the state $\texttt{neighbour}$, then by induction hypotheses we know that
+           $P:=\texttt{PathDict}[\texttt{state}]$ is a path leading from $\texttt{start}$ to $\texttt{state}$ and
+           that, furthermore, the length of the path $P$ is equal to $\texttt{Distance}[\texttt{state}]$.  When
+           we append $\texttt{neighbour}$ to the path $P$, the length of the resulting path is 1 more than the
+           length of $P$ and it is obvious that this new path 
+           \\[0.2cm]
+           \hspace*{1.3cm}
+           $P + [\texttt{neighbour}]$
+           \\[0.2cm]
+           connects $\texttt{start}$ with $\texttt{neighbour}$.  The induction hypotheses tell us that
+           $\texttt{Distance}[\texttt{state}]$ is equal to the length of $P$.  Therefore, the length of the new
+           path is $\texttt{Distance}[\texttt{state}] + 1$ and since $\texttt{stateDist}$ is defined as
+           $\texttt{Distance}[\texttt{state}]$, the correct length is stored in line 23.
+\end{enumerate}
+This concludes the proof of Claim One. \green{$\surd$}
+\vspace*{0.2cm}
 
 Another notion we need to establish is a function $g$ that is defined for all states $s$ and returns the
 distance of $s$ from the state \texttt{start}, i.e.~we have
@@ -1786,7 +1817,8 @@ From the definition of the dictionary $\texttt{Distance}$ it is obvious that
 $g(s) \leq \texttt{Distance}[s]$.
 \\[0.2cm]
 The reason is that every time an entry for a state $s$ is added to the dictionary $\texttt{Distance}$, we have
-found a path from $\texttt{start}$ to $s$ that has the length $\texttt{Distance}[s]$.  
+found a path from $\texttt{start}$ to $s$ that has the length $\texttt{Distance}[s]$.  This might not be the
+shortest path, hence $g(s)$ might be less than the length of this path.
 
 Next, we introduce the notion of the \blue{estimated total distance} of a state $s$ that has been visited
 during the search.  The \blue{estimated total distance} of a state $s$ is written as $f(s)$ and denotes the
@@ -1804,7 +1836,7 @@ In order to prove the theorem we need to establish the following claim.
 \vspace*{0.2cm}
 
 \noindent
-\textbf{Claim One}: If a state $s \in Q$ has been explored, then we have
+\textbf{Claim Two}: If a state $s \in Q$ has been explored, then we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Distance}[s] = g(s)$,
@@ -1813,7 +1845,7 @@ i.e.~the path leading from $\texttt{start}$ to $s$ is guaranteed to be a shortes
 \vspace*{0.2cm}
 
 \noindent
-\textbf{Proof of Claim One:}  The proof of Claim One is a proof by contradiction.  We assume that $s$ is a
+\textbf{Proof of Claim Two:}  The proof of Claim Two is a proof by contradiction.  We assume that $s$ is a
 state that has been explored such that 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1857,11 +1889,9 @@ This implies
 $
 \begin{array}[t]{lcll} 
 f(y_{k+1}) & =  & \texttt{Distance}[y_{k+1}] + \texttt{heuristic}(y_{k+1})     \\[0.2cm]
-          & =  & \texttt{Distance}[y_{k+1}] + \texttt{heuristic}(y_{k+1})  \\[0.2cm]
           &\leq& \texttt{Distance}[y_{k+1}] + m-k-1 + \texttt{heuristic}(s) \\[0.2cm]
-          & =  & k+1 + m-k-1 + \texttt{heuristic}(s) 
+          & =  & (k+1) + m-k-1 + \texttt{heuristic}(s) 
                & \mbox{since $\texttt{Distance}[y_{k+1}] = k+1$} \\[0.2cm]
-          & =  & k+1 + m-k-1 + \texttt{heuristic}(s) \\[0.2cm]
           & =  & m + \texttt{heuristic}(s). 
 \end{array}
 $
@@ -1869,7 +1899,7 @@ $
 Similarly, we can see that 
 \\[0.2cm]
 \hspace*{1.3cm}
-$f(y_{k+2}) \leq k+2 + (m-k-2) + \texttt{heuristic}(s)$
+$f(y_{k+2}) \leq k+2 + (m-k-2) + \texttt{heuristic}(s) = m + \texttt{heuristic}(s)$
 \\[0.2cm]
 and in general we have
 \\[0.2cm]
@@ -1886,7 +1916,7 @@ However, since we have $m < n$ this implies
 \hspace*{1.3cm}
 $f(y_{k+1}) = m + \texttt{heuristic}(s) < n + \mathtt{heuristic}(s) = f(s)$.
 \\[0.2cm]
-However, $f(s)$ is the priority of the state $s$ in the priority queue, while $f(y_{k+1})$ is the priority
+Now $f(s)$ is the priority of the state $s$ in the priority queue, while $f(y_{k+1})$ is the priority
 attached to the state $y_{k+1}$.  At the latest,  the state $y_{k+1}$ is put onto the priority queue $\texttt{Frontier}$
 immediately after the state $x_k$ is explored.  But then the priority of $y_{k+1}$ is higher than the priority
 of the state $s$ and hence it is explored prior to $s$.  Since all states of the form
@@ -1896,17 +1926,50 @@ $y_j$ \quad for $j \in \{k+1, \cdots, m-1\}$
 \\[0.2cm]
 have a priority that is higher than the state $s$, these states would all have been explored prior to the state
 $s$.  In particular, once the state $y_{m-1}$ is explored, the estimated total distance of $s$ would be
- $m + \texttt{heuristic}(s)$ contradicting the fact that it is $n + \texttt{heuristic}(s)$. \red{$\lightning$}
+ $m + \texttt{heuristic}(s)$ contradicting the fact that it is $n + \texttt{heuristic}(s)$.
+This contradiction proves that our assumption 
+\\[0.2cm]
+\hspace*{1.3cm}
+ $\texttt{Distance}[s] > g(s)$
+\\[0.2cm]
+must be wrong and therefore we know that the equation $\texttt{Distance}[s] = g(s)$ must hold for all states
+$s$ that have been explored.   Hence the validity of Claim Two has been established.  \green{$\surd$} 
 \vspace*{0.2cm}
 
-\noindent
-Claim One implies that if the $\textrm{A}^*$ algorithm finds a path from $\texttt{start}$ to $\texttt{goal}$, then this
-path must be optimal.  This follows from the fact that before we check whether the search has reached the
-$\texttt{goal}$, the $\texttt{state}$ that is compared to $\texttt{goal}$ has been explored.  In order to
-finish the proof we still need to show that we will find a path provided a path exists.
 
-$\cdots$ to be continued $\cdots$
-\qed 
+
+\noindent
+Claim Two implies that if the $\textrm{A}^*$ algorithm finds a path from $\texttt{start}$ to $\texttt{goal}$, then this
+path must be optimal.  This follows from the fact that before we check whether the search has reached the
+$\texttt{goal}$, the $\texttt{state}$ that is compared to $\texttt{goal}$ has been explored and, according to
+Claim Two, must therefore be optimal.  
+
+In order to finish the proof we still need to show that we will find a path provided a path exists.  Let us
+therefore assume that there is a path $P$ from $\texttt{start}$ to $\texttt{goal}$.  Let us assume that this path has the form 
+\\[0.2cm]
+\hspace*{1.3cm}
+$P = [s_0, s_1, \cdots, s_{n-1}, s_n]$ \quad where $s_0 = \texttt{start}$ and $s_n = \texttt{goal}$.
+\\[0.2cm]
+The proof proceeds by contradiction.  We assume that the search never discovers the state \texttt{goal}.
+Let $k$ be the smallest index such that the state $s_k$ is explored but the state $s_{k+1}$ is not
+explored.  Since we have
+\begin{enumerate}[(a)]
+\item $s_0 = \texttt{start}$,
+\item the state \texttt{start} is explored at the beginning of the search,
+\item $s_n = \texttt{goal}$,
+\item the state \texttt{goal} is never explored by our assumption,
+\end{enumerate}
+an index $k$ such that  $s_k$ is explored but the state $s_{k+1}$ is not explored must exist.  Now
+when $s_k$ is explored, $s_{k+1}$ is a neighbour of $s_k$ and is put on the \texttt{Frontier}.
+Define $d$ to be the estimated total distance of $s_k$.
+Since \texttt{heuristic} is assumed to be consistent, the estimated total distance of $s_{k+1}$ is
+at most $d+2$.  There are only finite number of states that have an estimated total distance less or
+equal than $d+2$.  Only these states have a priority that is as least as high as the priority of
+$s_{k+1}$.   Once all these states have been explored and removed from the priority queue
+\texttt{Frontier}, $s_{k+1}$ will be explored contrary to our 
+assumption that it is never explored.  This contradiction proves that \texttt{goal} is eventually
+explored and therefore $\mathrm{A}^*$ search is complete.  \qed
+
 
 
 \section{Bidirectional $\mathrm{A}^*$ Search}
