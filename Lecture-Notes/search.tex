@@ -1690,7 +1690,8 @@ reformulate the algorithm:  In particular, we replace the dictionary $\texttt{Pa
 $\texttt{PathDict}$. For every state $s$ that is reached during $\textrm{A}^*$ search, $\texttt{PathDict}[s]$ returns a
 path that connects the node $\texttt{start}$ with the node $s$.  Furthermore, we have added a set
 $\texttt{Explored}$ to the implementation.  This set is only needed for the proof of the optimality of
-the path found by $\mathrm{A}^*$ search.
+the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:a-star-search-path.stlx} on page
+\pageref{fig:a-star-search-path.stlx} shows this version of the algorithm.
 
 
 \begin{figure}[!ht]
@@ -1753,19 +1754,21 @@ is a search problem and
  $\texttt{heuristic}: Q \rightarrow \mathbb{N}$
 \\[0.2cm]
 is a consistent heuristic for the search problem $\mathcal{P}$.   Then the
-$\mathrm{A}^*$ search algorithm is complete and, furthermore, the solution that is computed is a shortest path
+$\mathrm{A}^*$ search algorithm is complete, i.e.~if there is a path from \texttt{start} to \texttt{goal}, then
+the search is successful and, furthermore, the solution that is computed is a shortest path
 leading from $\texttt{start}$ to $\texttt{goal}$.    
 \end{Theorem}
 
 \proof
 In order to prove this theorem, we first need to establish a number of notions that are  needed in
-order to better understand the $\textrm{A}^*$ algorithm.  The first of these notions is the notion of \blue{explored}
+order to improve our understanding of the $\textrm{A}^*$ algorithm.  The first of these notions is the notion of \blue{explored}
 states.  A state is said to have been \blue{explored} iff it has been
 removed from the priority queue $\texttt{Frontier}$. 
 To emphasize this notion I have added the set $\texttt{Explored}$ in the implementation of $\textrm{A}^*$ search that
 is shown in Figure \ref{fig:a-star-search-path.stlx} on page \pageref{fig:a-star-search-path.stlx}.  A state
 is explored once it has been added to the set $\texttt{Explored}$.  Note that the variable
-\texttt{Explored} serves no purpose in the implementation of $\textrm{A}^*$ search.  It has only been added to aid this
+$\texttt{Explored}$ serves no purpose in the implementation of $\textrm{A}^*$ search:  This variable is only
+written but is never read.  I have added the variable $\texttt{Explored}$ to aid this
 proof.  Furthermore, we define a state as \blue{visited} iff it has been entered into the 
 dictionary $\texttt{Distance}$.  Before we prove the theorem, let us establish the following claim:
 \vspace*{0.2cm}
@@ -1782,7 +1785,7 @@ We establish this claim by a straightforward computational induction.
 \item[BC:] The first path that is entered into the dictionary $\texttt{PathDict}$ is the path
            $[\texttt{start}]$.  This path connects the node $\texttt{start}$ with the node $\texttt{start}$.
            Obviously, this path has the length $0$ and that is exactly the value that is entered in the
-           dictionary $\texttt{PathDict}$ in line 6.
+           dictionary $\texttt{Distance}$ in line 6.
 \item[IS:] If we add in line 22 the path
            \\[0.2cm]
            \hspace*{1.3cm}
@@ -1811,7 +1814,8 @@ distance of $s$ from the state \texttt{start}, i.e.~we have
 \hspace*{1.3cm}
 $g(s) := \texttt{dist}(\texttt{start}, s)$ \quad for all $s \in Q$.
 \\[0.2cm]
-From the definition of the dictionary $\texttt{Distance}$ it is obvious that
+Here, the expression $\texttt{dist}(\texttt{start}, s)$ returns the length of the shortest path from
+$\texttt{start}$ to $s$.  From the definition of the dictionary $\texttt{Distance}$ it is obvious that
 \\[0.2cm]
 \hspace*{1.3cm}
 $g(s) \leq \texttt{Distance}[s]$.
@@ -1959,11 +1963,20 @@ explored.  Since we have
 \item $s_n = \texttt{goal}$,
 \item the state \texttt{goal} is never explored by our assumption,
 \end{enumerate}
-an index $k$ such that  $s_k$ is explored but the state $s_{k+1}$ is not explored must exist.  Now
+an index $k$ such that  $s_k$ is explored but the state $s_{k+1}$ is never explored must exist.  Now
 when $s_k$ is explored, $s_{k+1}$ is a neighbour of $s_k$ and is put on the \texttt{Frontier}.
 Define $d$ to be the estimated total distance of $s_k$.
 Since \texttt{heuristic} is assumed to be consistent, the estimated total distance of $s_{k+1}$ is
-at most $d+2$.  There are only finite number of states that have an estimated total distance less or
+at most $d+2$.  The reason is that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{Distance}[s_{k+1}] = \texttt{Distance}[s_k] + 1$ \quad and \quad 
+$\texttt{heuristic}[s_{k+1}] \leq 1 + \texttt{heuristic}[s_k]$,
+\\[0.2cm]
+provided we assume that $s_{k+1} \in \texttt{neighbour}(s_k)$ also implies $s_{k} \in
+\texttt{neighbour}(s_{k+1})$.  
+
+There are only finite number of states that have an estimated total distance less or
 equal than $d+2$.  Only these states have a priority that is as least as high as the priority of
 $s_{k+1}$.   Once all these states have been explored and removed from the priority queue
 \texttt{Frontier}, $s_{k+1}$ will be explored contrary to our 
