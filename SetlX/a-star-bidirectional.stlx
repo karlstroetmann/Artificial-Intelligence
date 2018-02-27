@@ -10,9 +10,6 @@ aStarSearch := procedure(start, goal, nextStates, heuristic) {
     FrontierA  := { [estimate, start] };
     FrontierB  := { [estimate, goal ] };  
     while (FrontierA != {} && FrontierB != {}) {
-        if ((#DistanceA + #DistanceB) % 1000 == 0) {
-            print("#DistanceA + #DistanceB = $#DistanceA + #DistanceB$");
-        }
         [guessA, stateA] := first(FrontierA);
         stateADist       := DistanceA[stateA];
         [guessB, stateB] := first(FrontierB);

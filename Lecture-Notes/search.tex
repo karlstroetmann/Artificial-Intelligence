@@ -2050,13 +2050,20 @@ explored and therefore $\mathrm{A}^*$ search is complete.  \qed
 \caption{Bidirectional $\mathrm{A}^*$ search.}
 \label{fig:a-star-bidirectional.stlx}
 \end{figure}
+\noindent
 So far, the best search algorithm we have encountered is bidirectional breadth first search.  However, in terms
 of memory consumption, the $\mathrm{A}^*$ algorithm also looks very promising.  Hence, it might be a good idea
 to combine these two algorithms.  \myFig{a-star-bidirectional.stlx} shows the resulting program.  This program
 relates to the $\mathrm{A}^*$ algorithm shown in \myFig{a-star-search.stlx} as the algorithm for bidirectional
 search shown in \myFig{bidirectional-bfs.stlx} relates to breadth first search shown in \myFig{breadth-first-search.stlx}.
-Hence, we will not discuss the details any further.
-
+The only new idea is that we alternate between the $\mathrm{A}^*$ search starting from $\texttt{start}$ and the
+$\mathrm{A}^*$ search starting from $\texttt{goal}$ depending on the estimated total distance:
+\begin{enumerate}[(a)]
+\item As long as the search starting from $\texttt{start}$ is more promising, we remove states from
+      \texttt{FrontierA}.
+\item Once the total estimated distance of a path starting from $\texttt{goal}$ is less than the best total
+      estimated distance of a path starting from $\texttt{start}$, we switch and remove states from $\texttt{FrontierB}$.
+\end{enumerate}
 When we run bidirectional $\mathrm{A}^*$ search for the $3 \times 3$ sliding puzzle shown in
 \myFig{8-puzzle.pdf}, the program takes one second but only uses $2,963$ states.  Therefore, I have tried
 to solve the $4 \times 4$ sliding puzzle shown in \myFig{start-goal.stlx} using
