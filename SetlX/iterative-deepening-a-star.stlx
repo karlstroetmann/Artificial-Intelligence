@@ -10,7 +10,6 @@ idaStarSearch := procedure(start, goal, nextStates, heuristic) {
         limit := Path;
     }
 };
-
 search := procedure(Path, goal, nextStates, limit, heuristic) {
     state    := Path[-1];
     distance := #Path - 1;
