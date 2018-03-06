@@ -2266,7 +2266,7 @@ discovered so far is stored in memory.  Hence, $\mathrm{IDA}^*$ is a viable alte
 is not sufficient to support the bidirectional $\mathrm{A}^*$ algorithm.
 
 \section{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ Search Algorithm}
-So far, from all of the algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
+So far, from all of the search algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
 bidirectional $\mathrm{A}^*$ search is only feasible if sufficient memory is available.   While
 $\mathrm{IDA}^*$ requires more time, its memory consumption is much lower than the memory consumption of
 bidirectional $\mathrm{A}^*$.  Hence, it is natural to try to combine the $\mathrm{A}^*$ algorithm and the
@@ -2283,18 +2283,22 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     aStarIdaStarSearch := procedure(start, goal, nextStates, heuristic, size) {
-        Parent   := {};
-        Distance := { [start, 0] };
+        Parent   := {};               // dictionary: state |-> predecessor(state)
+        Distance := { [start, 0] };   // dictionary: state |-> distance(start,state)
         est      := heuristic(start, goal);
-        Estimate := { [start, est] };
-        Frontier := { [est, start] };
+        Estimate := { [start, est] }; // dictionary: state |-> distance(start,state,goal)
+        Frontier := { [est, start] }; // priority queue
         while (#Distance < size && Frontier != {}) {
+            if (#Distance % 1000 == 0) {
+                print("#Distance = $#Distance$");
+            }
             [_, state] := fromB(Frontier);
             if (state == goal) {
+                print("Number of states touched: $#Distance$");
                 return pathTo(state, Parent);
             }
             stateDist := Distance[state];
@@ -2312,8 +2316,8 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
                 }
             }
         }
-        [s, P] := deepeningSearch(goal, start, nextStates, heuristic, Distance);
-        return pathTo(s, Parent) + P;
+        Path := deepeningSearch(goal, start, nextStates, heuristic, Distance);
+        return pathTo(Path[-1], Parent) + reverse(Path)[2..];
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -2379,7 +2383,7 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
 \item Otherwise, the procedure $\texttt{deepeningSearch}$ is called.  This procedure starts an iterative deepening
       $\mathrm{A}^*$ search from the node $\texttt{goal}$.  This search terminates as soon as a state is found
       that has already been encountered during the $\mathrm{A}^*$ search.  The set of these nodes is given to
-      the procedure $\texttt{deepeningSearch}$ via the parameter $\mathrm{Distance}$.  The procedure
+      the procedure $\texttt{deepeningSearch}$ via the parameter $\texttt{Distance}$.  The procedure
       $\texttt{deepeningSearch}$ returns a pair.  The first component of this pair is the state $\texttt{s}$.  This is
       the state in $\texttt{Distance}$ that has been reached by the $\mathrm{IDA}^*$ search.  The second component is the
       path $\texttt{P}$ that leads from the node $\texttt{s}$ to the node $\texttt{goal}$ but that does not include the node $\texttt{s}$.
@@ -2397,30 +2401,32 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
-    deepeningSearch := procedure(g, s, nextStates, heuristic, Distance) {
+    deepeningSearch := procedure(goal, start, nextStates, heuristic, Distance) {
         limit := 0;
         while (true) {
-            Path := search(g, s, nextStates, 0, limit, heuristic, [g], Distance);
+            print("limit = $limit$");
+            Path := search([goal], start, nextStates, limit, heuristic, Distance);
             if (isList(Path)) {
                 return Path;
             }
             limit := Path;
         }
     };
-    search := procedure(g, s, nextStates, d, l, heuristic, Path, Dist) {
-        total := d + heuristic(g, s);
-        if (total > l) {
+    search := procedure(Path, start, nextStates, limit, heuristic, Distance) {
+        state := Path[-1];
+        total := #Path - 1 + heuristic(state, start);
+        if (total > limit) {
             return total;
         }
-        if (Dist[g] != om) {
-            return [g, Path[2..]];
+        if (Distance[state] != om) {
+            return Path;
         }
         smallest := mathConst("Infinity");
-        for (ns in nextStates(g) | !(ns in Path)) {
-            result := search(ns, s, nextStates, d+1, l, heuristic, [ns]+Path, Dist);
+        for (ns in nextStates(state) | !(ns in Path) ) {
+            result := search(Path+[ns], start, nextStates, limit, heuristic, Distance);
             if (isList(result)) {
                 return result;
             }
@@ -2436,8 +2442,8 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
 
 Iterative deepening $\mathrm{A}^*$-$\mathrm{IDA}^*$ is a complete search algorithm.
 On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}, this
-algorithm takes about $1.4$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
-is allowed to visit at most $3\,000$ states, the algorithm takes less than $9$ seconds.
+algorithm takes about $0.8$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
+is allowed to visit at most $3\,000$ states, the algorithm takes less than $6$ seconds.
 % However, there is one caveat:
 % I do not know whether $\mathrm{A}^*$-$\mathrm{IDA}^*$ search finds an optimal path, although in practise it often does.
 
