@@ -33,17 +33,17 @@ varsTerm := procedure(f) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // This is a very basic constraints solver that is based on backtracking.
-solve := procedure(csp) {
-    [Vars, Vals, Constrs] := csp;
-    csp := [Vars, Vals, { [f, collectVars(f)] : f in Constrs }];
+solve := procedure(CSP) {
+    [Vars, Vals, Constrs] := CSP;
+    CSP := [Vars, Vals, { [f, collectVars(f)] : f in Constrs }];
     check {
-        return bt_search({}, csp);
+        return bt_search({}, CSP);
     }
 };
-// Given a partial assignment of variable, this procedure tries to complete
-// this assignment so that the given CSP is solved.
-bt_search := procedure(Assignment, csp) {
-    [Variables, Values, Constraints] := csp;
+// Given a partial assignment, this procedure tries to complete this assignment
+// so that the given CSP is solved.
+bt_search := procedure(Assignment, CSP) {
+    [Variables, Values, Constraints] := CSP;
     if (#Assignment == #Variables) {
         return Assignment;
     }
@@ -51,7 +51,7 @@ bt_search := procedure(Assignment, csp) {
     for (value in Values) {
         check {
             if (is_consistent(var, value, Assignment, Constraints)) {
-                return bt_search(Assignment + { [var, value] }, csp);
+                return bt_search(Assignment + { [var, value] }, CSP);
             }
         }
     }
@@ -60,17 +60,7 @@ bt_search := procedure(Assignment, csp) {
 // Given the current Assignment, select a variable that has not yet been
 // assigned a value.
 select_unassigned_variable := procedure(Assignment, Variables) {
-    return rnd({ v : v in Variables | Assignment[v] == om });
-};
-// Evaluate a formula under a given Assignment.
-//   Assignment: Binary relation assigning values to variables
-//   Vars:       Set of variables occurring in Formula
-//   Formula:    The formula to evaluate
-eval_constraint := procedure(Assignment, Formula, Vars) {
-    for (v in Vars) {
-        execute("$v$ := $Assignment[v]$;");
-    }
-    return eval(Formula);
+    return rnd(Variables - domain(Assignment));
 };
 // Check, whether the extended assignment
 //     Assignment + { [var, value] };
@@ -79,34 +69,37 @@ is_consistent := procedure(var, value, Assignment, Constraints) {
     NewAssignment := Assignment + { [var, value] };
     for ([Formula, Vars] in Constraints | var in Vars) {
         if (Vars <= domain(NewAssignment)) {
-            if (!eval_constraint(NewAssignment, Formula, Vars)) {
+            if (!eval_constraint(NewAssignment, Formula)) {
                 return false;
             }
         }
     }
     return true;
 };
+// Evaluate a formula under a given Assignment.
+//   Assignment: Binary relation assigning values to variables
+//   Vars:       Set of variables occurring in Formula
+//   Formula:    The formula to evaluate
+eval_constraint := procedure(Assignment, Formula) {
+    for ([var, value] in Assignment) {
+        execute("$var$ := $value$;");
+    }
+    return eval(Formula);
+};
 
 main := procedure() {
     resetRandom();
-    startTotal := now();
-    numIterations := 1;
-    for (i in [1..numIterations]) {
-        lower := 8;
-        upper := 32;
-        for (n in [lower .. upper]) {
-            csp      := createCSP(n);   
-            start    := now();
-            solution := solve(csp);
-            stop     := now();
-            total    := (stop - start) / 1000.0;
-            // printSolution(solution);
-            print("The computation for the $n$ queens problem took $total$ seconds.");
-        }
+    lower := 8;
+    upper := 32;
+    for (n in [lower .. upper]) {
+        CSP      := createCSP(n);   
+        start    := now();
+        solution := solve(CSP);
+        stop     := now();
+        total    := (stop - start) / 1000.0;
+        // printSolution(solution);
+        print("The computation for the $n$ queens problem took $total$ seconds.");
     }
-    stopTotal := now();
-    all := (stopTotal - startTotal) / 1000.0;
-    print("The total computation took $all$ seconds.");
 };
 main();
 
