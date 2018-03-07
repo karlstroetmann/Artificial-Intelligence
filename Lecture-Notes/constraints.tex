@@ -281,6 +281,34 @@ The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constr
 that we will be able to develop a so called \blue{constraint solver} that takes as input a \textsc{Csp}
 like the one produced by the program shown in Figure \ref{fig:queens-csp.stlx} and that is then capable of
 computing a solution. 
+\pagebreak
+
+\exercise
+Formulate the $n$ queens puzzle as a search problem.  Represent states as lists of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$[Q_1,\cdots,Q_k]$ \quad where $k \in \{0,\cdots,n\}$ and $Q_i \in \{1,\cdots,n\}$.
+\\[0.2cm]
+Here, $Q_i$ specifies the column of the queen positioned in the $i$-th row.  If we assume that every row has at
+most one queen, the set of all states is then defined as
+\\[0.2cm]
+$\mathcal{Q}:=\bigl\{ [Q_1,\cdots,Q_k] \bigm| 
+         k \el \{0,\cdots,n\} \wedge \forall i \el \{1,\cdots,n\}:Q_i \el \{1,\cdots,n\} \wedge 
+         \forall i,j\el\{1,\cdots,k\}:(i \not=j \rightarrow Q_i \not= Q_j)
+\bigr\}$.
+\begin{enumerate}[(a)]
+\item Derive a mathematical expression that returns the number of states for a given value of $n$.  
+      What is the number of states if $n=8$?
+\item Which of the search algorithms presented in the previous chapter could be used to solve the 8
+      queens puzzle?  Which of these algorithms will work best?
+\item Solve the 8 queens puzzle using an appropriate search algorithm.
+
+      Note that we do not know the goal of this search problem.  Instead, you have to adapt the
+      search algorithm so that it takes a function $\texttt{isGoal}$ instead of a state $\texttt{goal}$.  For a given
+      state $s$, the function $\texttt{isGoal}(s)$ returns true iff $s$ is a solution of the $n$ queens puzzle.
+      \eoxs
+\end{enumerate}
+
 
 \subsection{Applications}
 Besides the toy problems discussed so far, there are a number of industrial applications of constraint
