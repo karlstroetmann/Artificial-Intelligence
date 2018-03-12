@@ -24,12 +24,7 @@ brute_force_search := procedure(Assignment, CSP) {
     }
 };
 check_all_constraints := procedure(Assignment, Constraints) {
-    for (f in Constraints) {
-        if (!eval_constraint(Assignment, f)) {
-            return false;
-        }
-    }
-    return true;
+    return forall(f in Constraints | eval_constraint(Assignment, f));
 };       
 eval_constraint := procedure(Assignment, Formula) {
     for ([var, value] in Assignment) {
