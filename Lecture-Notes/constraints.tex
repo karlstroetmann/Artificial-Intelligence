@@ -1,6 +1,10 @@
 \chapter{Constraint Satisfaction}
-In this chapter we discuss algorithms for solving \blue{constraint satisfaction problems}.
-This chapter is structured as follows:
+In this chapter we discuss algorithms for solving 
+\href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problems}.
+These problems can be seen as a refinement of the search problems discussed in the previous chapter:  In a
+search problem, the states are abstract and therefore have no structure that can be exploited to guide the
+search.  In a \blue{constraint satisfaction problem}, the states have a structure that can be exploited to
+guide the search.  This chapter is structured as follows:
 \begin{enumerate}
 \item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
       concept, two examples of constraint satisfaction problems are presented.  After that, we discuss
@@ -9,7 +13,7 @@ This chapter is structured as follows:
       The idea behind brute force search is to test all possible variable assignments.
 \item In most cases, the search space is too big to be enumerated completely.
       \blue{Backtracking search} improves on brute force search by mixing the generation
-      of assignments with the testing of the constraints.  In most cases, this approach can
+      of assignments with the testing of the constraints.  In many cases, this approach can
       drastically improve the performance of the search algorithm.
 \item Backtracking search can be refined by using \blue{constraint propagation} and by
       using the \blue{most restricted variable} heuristic.
@@ -103,11 +107,12 @@ problem can be formalized as a constraint satisfaction problem.  To this end we 
 \item $\texttt{Vars} := \{ \mathrm{WA}, \mathrm{NT}, \mathrm{SA}, \mathrm{Q}, \mathrm{NSW}, \mathrm{V}, \mathrm{T} \}$,
 \item $\texttt{Values} := \{ \texttt{red}, \texttt{green}, \texttt{blue} \}$,
 \item $\texttt{Constraints} := $ \\[0.1cm]
-      \hspace*{1.3cm}
+      \hspace*{0.3cm}
       $\bigl\{ \mathrm{WA} \not= \mathrm{NT}, \mathrm{WA} \not= \mathrm{SA},
                  \mathrm{NT} \not= \mathrm{SA}, \mathrm{NT} \not= \mathrm{Q},
-                 \mathrm{SA} \not= \mathrm{Q}, \mathrm{SA} \not= \mathrm{NSW}, \mathrm{SA} \not= \mathrm{V}, 
+                 \mathrm{SA} \not= \mathrm{Q},  \mathrm{SA} \not= \mathrm{NSW}, \mathrm{SA} \not= \mathrm{V}, 
                  \mathrm{Q}  \not= \mathrm{NSW},
+                 \mathtt{NSW}\not= \mathtt{V}, 
                  \mathrm{V}  \not= \mathrm{T}
        \bigr\}
       $
@@ -153,13 +158,17 @@ Next, let us define the constraints.  There are three different types of constra
       $\texttt{SameRow} := \bigl\{ \texttt{V}_i \not= \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
       Here the condition $i < j$ ensures that, for example, we have the constraint $\texttt{V}_2 \not= \texttt{V}_1$
-      but not the constraint  $\texttt{V}_1 \not= \texttt{V}_2$, as the latter would be redundant if the former is
-      already given.
+      but not the constraint  $\texttt{V}_1 \not= \texttt{V}_2$, as the latter constraint would be redundant if
+      the former constraint has already been established.
 \item We have constraints that express that no two queens positioned in different rows share the same rising
       diagonal.  To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{SameRising} := \bigl\{ i + \texttt{V}_i \not= j + \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
+      $\texttt{SameRising} := \bigl\{ i + \texttt{V}_i \not= j + \texttt{V}_j \bigm| i \in \{1,\cdots,8\}
+      \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
+      \\[0.2cm]
+      A more detailed explanation of these and the following constraints is given in my lecture notes on 
+      \href{https://github.com/karlstroetmann/Logik/blob/master/Lecture-Notes/logic.pdf}{logic}.
 \item We have constraints that express that no two queens positioned in different rows share the same falling
       diagonal.  To capture these constraints, we define
       \\[0.2cm]
@@ -280,7 +289,14 @@ the eight queens problem to the problem of putting $n$ queens on a board of size
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
 that we will be able to develop a so called \blue{constraint solver} that takes as input a \textsc{Csp}
 like the one produced by the program shown in Figure \ref{fig:queens-csp.stlx} and that is then capable of
-computing a solution. 
+computing a solution.  In effect, this enables us to use
+\href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming}:  Instead of specifying
+an algorithm that solves a problem we confine ourselves to  specifying the problem precisely and then let a
+general purpose problem solver do the job of finding the solution.  This approach of declarative programming 
+was one of the main ideas incorporated in the programming language
+\href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to the promisses
+made in declarative programming as a viable general purpose programming method, constraint programming has
+proven to be very useful in a number of domains. 
 \pagebreak
 
 \exercise
@@ -332,8 +348,9 @@ $8^8 = 16,777,216$
 \\[0.2cm]
 different assignments that need to be tested.  Given the clock speed of modern computers, checking a million
 assignments per second is plausible.  Hence, this approach is be able to solve the eight queens problem in
-less than 12 minutes.  The approach of testing all possible combinations is known as \blue{brute force search}.
-An implementation is shown in \myFig{csp-brute-force.stlx}.
+less than 5 minutes.  The approach of testing all possible combinations is known as
+\href{https://en.wikipedia.org/wiki/Brute-force_search}{brute force search}.  An implementation of brute force
+search is shown in \myFig{csp-brute-force.stlx}. 
 
 \begin{figure}[!ht]
 \centering
@@ -351,13 +368,13 @@ An implementation is shown in \myFig{csp-brute-force.stlx}.
     };
     brute_force_search := procedure(Assignment, CSP) {
         [Variables, Values, Constraints] := CSP;
-        if (domain(Assignment) == Variables) { // all variables have been assigned
+        if (#Assignment == #Variables) {  // all variables have been assigned
             if (check_all_constraints(Assignment, Constraints)) {
                 return Assignment;
             }
             return;
         }
-        var := first(Variables - domain(Assignment));
+        var := rnd(Variables - domain(Assignment));
         for (value in Values) {
             NewAss := Assignment + { [var, value] };
             result := brute_force_search(NewAss, CSP);
@@ -388,20 +405,28 @@ The sole purpose of $\texttt{search}$ is to call the function $\texttt{brute\_fo
       \hspace*{1.3cm}
       $\texttt{CSP} = [\texttt{Variables}, \texttt{Values}, \texttt{Constraints}]$.
       \\[0.2cm]
-      The set $\texttt{Variables}$ contains those variables of the $\texttt{CSP}$ that have not yet been assigned.
+      Here, \texttt{Constraints} is a set of first order logic formul\ae\ that are given as strings.  These
+      strings have to follow the syntax of \textsc{SetlX} formul\ae\ so that they can be evaluated using the
+      \textsc{SetlX} function $\texttt{eval}$.
 \end{enumerate}
 The implementation of $\texttt{brute\_force\_search}$ works as follows:
 \begin{enumerate}
-\item If all variables have been assigned a value, the set $\texttt{Variables}$ will the same as the domain of
-      the dictionary $\texttt{Assignment}$.  Hence, $\texttt{Assignment}$ is a complete assignment of all
-      variables.  Therefore, we now have to test whether all constraints are satisfied.  This is done using the
-      auxiliary procedure $\texttt{check\_all\_constraints}$ that is shown in \myFig{csp-brute-force.stlx-2}.
+\item If all variables have been assigned a value, the dictionary $\texttt{Assignment}$ will have the same
+      number of entries as the set $\texttt{Variables}$ has elements.  Hence, in that case
+      $\texttt{Assignment}$ is a complete assignment of all variables and we now have to test whether
+      all constraints are satisfied.  This is done using the auxiliary procedure
+      $\texttt{check\_all\_constraints}$ that is shown in \myFig{csp-brute-force.stlx-2}. 
       If the current $\texttt{Assignment}$ does indeed satisfy all constraints, it is a solution to the given
       $\texttt{CSP}$ and is therefore returned.
 
       If, instead, some constraint is violated, then the procedure returns the undefined value $\Omega$.
-\item If the assignment is not yet complete, we pick a variable $\texttt{var}$ from the set of those
-      $\texttt{Variables}$ that still have no value assigned.  Then, for every possible
+\item If the assignment is not yet complete, we randomly\footnote{
+         Experimental evidence suggests that picking a random variable performs much better than sorting the
+         variables and always picking the first unassigned variable.
+      } 
+      pick a variable $\texttt{var}$ from the set of those
+      $\texttt{Variables}$ that still have no value assigned.  
+      Then, for every possible
       $\texttt{value}$ in the set $\texttt{Values}$, we augment the current partial
       $\texttt{Assignment}$ to the new assignment
       \\[0.2cm]
@@ -426,17 +451,11 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
                   xrightmargin  = 0.8cm,
                 ]
     check_all_constraints := procedure(Assignment, Constraints) {
-        for (f in Constraints) {
-            Vars := collectVars(f);
-            if (!eval_constraint(Assignment, f, Vars)) {
-                return false;
-            }
-        }
-        return true;
+        return forall(f in Constraints | eval_constraint(Assignment, f));
     };       
-    eval_constraint := procedure(Assignment, Formula, Vars) {
-        for (v in Vars) {
-            execute("$v$ := $Assignment[v]$;");
+    eval_constraint := procedure(Assignment, Formula) {
+        for ([var, value] in Assignment) {
+            execute("$var$ := $value$;");
         }
         return eval(Formula);
     };
@@ -448,13 +467,11 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
 
 The function $\texttt{check\_all\_constraints}$ takes a complete variable $\texttt{Assignment}$ as
 its first input.  The second input is the set of $\texttt{Constraints}$.  For all formul\ae\
-$\texttt{f}$ from the set $\texttt{Constraints}$, it computes the set of variables $\texttt{Vars}$ occurring in $\texttt{f}$.  Then the
-constraint $\texttt{f}$ is evaluated using the function $\texttt{eval\_constraint}$.  If the evaluation of any of the constraints returns
-$\texttt{false}$, the function $\texttt{check\_all\_constraints}$ returns $\texttt{false}$.  Otherwise, $\texttt{true}$ is returned.
+$\texttt{f}$ from the set $\texttt{Constraints}$, it checks whether $\texttt{f}$ is satisfied.  This is done
+using the auxiliary $\texttt{eval\_constraint}$.  
 
-The procedure $\texttt{eval\_constraint}$ takes a partial $\texttt{Assignment}$, a $\texttt{Formula}$
-that is supposed to be a constraint, and the set of variables $\texttt{Vars}$ that occur in
-$\texttt{Formula}$.  Its purpose is to evaluate $\texttt{Formula}$ using the $\texttt{Assignment}$.  In
+The procedure $\texttt{eval\_constraint}$ takes an $\texttt{Assignment}$ and a $\texttt{Formula}$
+that is supposed to be a constraint. Its purpose is to evaluate $\texttt{Formula}$ using the $\texttt{Assignment}$.  In
 order for this to be possible we have to assume that
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -462,21 +479,21 @@ $\texttt{var}(\texttt{Formula)} \subseteq \texttt{dom}(\texttt{Assignment})$,
 \\[0.2cm]
 i.e.~all variables occurring in $\texttt{Formula}$ have a value assigned in $\texttt{Assignment}$.
 
-The $\texttt{Formula}$ is evaluated by first assigning the value prescribed in $\texttt{Assignment}$ to
-all variables $\texttt{v}$ occurring in $\texttt{Vars}$.  Once these assignments have been executed in
+The $\texttt{Formula}$ is evaluated by first assigning the variables assigned in $\texttt{Assignment}$ to
+their corresponding values.  Once these assignments have been executed in
 the \texttt{for}-loop, the $\texttt{Formula}$ can be evaluated using the procedure $\texttt{eval}$, which
 is one of the predefined procedures in \textsc{SetlX}.
 
-When I tested this brute force search with the eight queens problem, it took about 684 seconds to
+When I tested this brute force search with the eight queens problem, it took less than 300 seconds to
 compute a solution.  In contrast, the seven queens problem only took 16 seconds.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\frac{8^8}{7^7} \approx 20.3$ \quad \and \quad $\ds\frac{684}{16} \approx 42.8$
+$\ds\frac{8^8}{7^7} \approx 20.3$ \quad \and \quad $\ds\frac{684}{16} \approx 18.8$
 \\[0.2cm]
 this shows that the computation time does indeed grow with the number of possible assignments that
 have to be checked.  However, the correspondence is not exact.  The reason is that we stop our
 search as soon as a solution is found.  If we are lucky and the given \textsc{Csp} is easy to solve, this
-might happen when we have checked only a small portion of the space of possible assignments.
+might happen when we have checked only a small portion of the set of all possible assignments.
 
 \section{Backtracking Search}
 One simple approach to solve a \textsc{Csp} is via \blue{backtracking}.

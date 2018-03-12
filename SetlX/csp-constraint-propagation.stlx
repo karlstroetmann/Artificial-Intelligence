@@ -89,6 +89,8 @@ most_constrained_variable := procedure(Assignment, Values) {
     minSize    := min({ #U : [x, U] in Unassigned });
     return rnd({ x : [x, U] in Unassigned | #U == minSize });
 };
+// Given a variable x and a value v, extend the Assignment so that x is bound to v
+// and compute the Values that can still be assigned to the unassigned variables.
 propagate := procedure(x, v, Assignment, Constraints, Values) {
     NewAssignment := Assignment + { [x, v] };
     Values[x]     := { v };

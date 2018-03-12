@@ -8,13 +8,13 @@ solve := procedure(CSP) {
 // this assignment so that the given CSP is solved.
 brute_force_search := procedure(Assignment, CSP) {
     [Variables, Values, Constraints] := CSP;
-    if (domain(Assignment) == Variables) {  // all variables have been assigned
+    if (#Assignment == #Variables) {  // all variables have been assigned
         if (check_all_constraints(Assignment, Constraints)) {
             return Assignment;
         }
         return;
     }
-    var := first(Variables - domain(Assignment));
+    var := rnd(Variables - domain(Assignment));
     for (value in Values) {
         NewAss := Assignment + { [var, value] };
         result := brute_force_search(NewAss, CSP);
