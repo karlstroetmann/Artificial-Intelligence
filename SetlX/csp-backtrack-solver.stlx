@@ -47,7 +47,7 @@ bt_search := procedure(Assignment, CSP) {
     if (#Assignment == #Variables) {
         return Assignment;
     }
-    var := select_unassigned_variable(Assignment, Variables);
+    var := rnd(Variables - domain(Assignment));
     for (value in Values) {
         check {
             if (is_consistent(var, value, Assignment, Constraints)) {
@@ -57,28 +57,17 @@ bt_search := procedure(Assignment, CSP) {
     }
     backtrack;
 };
-// Given the current Assignment, select a variable that has not yet been
-// assigned a value.
-select_unassigned_variable := procedure(Assignment, Variables) {
-    return rnd(Variables - domain(Assignment));
-};
 // Check, whether the extended assignment
 //     Assignment + { [var, value] };
 // is consistent with the given constraints.
 is_consistent := procedure(var, value, Assignment, Constraints) {
-    NewAssignment := Assignment + { [var, value] };
-    for ([Formula, Vars] in Constraints | var in Vars) {
-        if (Vars <= domain(NewAssignment)) {
-            if (!eval_constraint(NewAssignment, Formula)) {
-                return false;
-            }
-        }
-    }
-    return true;
+    NA := Assignment + { [var, value] };
+    return forall([F, Vars] in Constraints |
+                  var in Vars && Vars <= domain(NA) => eval_constraint(NA, F)
+                 );
 };
 // Evaluate a formula under a given Assignment.
 //   Assignment: Binary relation assigning values to variables
-//   Vars:       Set of variables occurring in Formula
 //   Formula:    The formula to evaluate
 eval_constraint := procedure(Assignment, Formula) {
     for ([var, value] in Assignment) {
@@ -90,14 +79,14 @@ eval_constraint := procedure(Assignment, Formula) {
 main := procedure() {
     resetRandom();
     lower := 8;
-    upper := 32;
+    upper := 16;
     for (n in [lower .. upper]) {
         CSP      := createCSP(n);   
         start    := now();
         solution := solve(CSP);
         stop     := now();
         total    := (stop - start) / 1000.0;
-        // printSolution(solution);
+        printSolution(solution);
         print("The computation for the $n$ queens problem took $total$ seconds.");
     }
 };

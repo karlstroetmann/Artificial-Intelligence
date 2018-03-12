@@ -50,16 +50,12 @@ solve := procedure(l, n) {
     if (#l == n) {
         return l;
     }
-    for (x in { 1 .. n } - {i : i in l}) {
+    for (x in {1 .. n} - {i : i in l}) {
         try {
             testNext(l, x);
             // if this has worked so far, try to add more queens
             return solve(l + [x], n);
-        } catchUsr (e) {
-            if (e != "fail") {
-                throw(e);
-            }            
-        }
+        } catchUsr(e) {}            
     }
     throw("fail");
 };
@@ -75,4 +71,35 @@ testNext := procedure(l, x) {
     }
 };
 
-print(solve([], 8));
+// This procedure prints the chessboard that iis specified by Queens. Queens is
+// a list of length n. For all i in [1..n], Queens[i] specifies the column of
+// the queen that is positioned in row i.
+printSolution := procedure(Queens) {
+    if (Queens == om) {
+        print("no solution found");
+        return;
+    }
+    n := #Queens;
+    print((4 * n + 1) * "-");
+    for (row in [1..n]) {
+        line := "|";
+        for (col in [1..n]) {
+            if (Queens[row] == col) {
+                line += " Q |";
+            } else {
+                line += "   |";
+            }
+        }
+        print(line);
+        print((4*n+1) * "-");
+    }
+};
+
+main := procedure(n) {
+    start  := now();
+    Queens := solve([], n);
+    stop   := now();
+    printSolution(Queens);
+    print("Time used: $(stop - start)/1000.0$ sec.");
+};
+main(16);

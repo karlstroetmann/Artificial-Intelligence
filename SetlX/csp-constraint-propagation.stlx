@@ -54,7 +54,7 @@ solve_unary := procedure(constraint, variable, Values) {
     LegalValues := {};
     for (value in Values) {
         Assignment := { [variable, value] };
-        if (eval_constraint(Assignment, constraint, { variable })) {
+        if (eval_constraint(Assignment, constraint)) {
             LegalValues += { value };
         }
     }
@@ -83,7 +83,8 @@ bt_search := procedure(Assignment, CSP) {
     backtrack;
 };
 // Given the current Assignment, select a variable that has not yet been
-// assigned a value.
+// assigned a value.  Choose the variable that has the least number of
+// possible values.
 most_constrained_variable := procedure(Assignment, Values) {
     Unassigned := { [x, U] : [x, U] in Values | Assignment[x] == om };
     minSize    := min({ #U : [x, U] in Unassigned });
@@ -94,16 +95,14 @@ most_constrained_variable := procedure(Assignment, Values) {
 propagate := procedure(x, v, Assignment, Constraints, Values) {
     NewAssignment := Assignment + { [x, v] };
     Values[x]     := { v };
-    for ([Formula, Vars] in Constraints | x in Vars) {
-        if (#Vars > 2) {
-            continue;    // propagation only for binary constraints
-        }
+    // constraint propagation is only for binary constraints
+    for ([Formula, Vars] in Constraints | x in Vars && #Vars == 2) {
         y := arb(Vars - { x });  
         if (!(y in domain(NewAssignment))) {
             NewValues := Values[y];
             for (w in NewValues) {
                 A2 := NewAssignment + { [y, w] };
-                if (!eval_constraint(A2, Formula, Vars)) {
+                if (!eval_constraint(A2, Formula)) {
                     NewValues -= { w };
                 }
             }
@@ -117,23 +116,17 @@ propagate := procedure(x, v, Assignment, Constraints, Values) {
 //     Assignment + { [var, value] };
 // is consistent with the given constraints.
 is_consistent := procedure(var, value, Assignment, Constraints) {
-    NewAssignment := Assignment + { [var, value] };
-    for ([Formula, Vars] in Constraints | var in Vars) {
-        if (Vars <= domain(NewAssignment)) {
-            if (!eval_constraint(NewAssignment, Formula, Vars)) {
-                return false;
-            }
-        }
-    }
-    return true;
+    NA := Assignment + { [var, value] };
+    return forall([F, Vars] in Constraints |
+                  var in Vars && Vars <= domain(NA) => eval_constraint(NA, F)
+                 );
 };
 // Evaluate a formula under a given Assignment.
 //   Assignment: Binary relation assigning values to variables
-//   Vars:       Set of variables occurring in Formula
 //   Formula:    The formula to evaluate
-eval_constraint := procedure(Assignment, Formula, Vars) {
-    for (v in Vars) {
-        execute("$v$ := $Assignment[v]$;");
+eval_constraint := procedure(Assignment, Formula) {
+    for ([var, value] in Assignment) {
+        execute("$var$ := $value$;");
     }
     return eval(Formula);
 };

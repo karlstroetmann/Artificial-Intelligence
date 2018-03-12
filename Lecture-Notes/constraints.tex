@@ -496,9 +496,12 @@ search as soon as a solution is found.  If we are lucky and the given \textsc{Cs
 might happen when we have checked only a small portion of the set of all possible assignments.
 
 \section{Backtracking Search}
-One simple approach to solve a \textsc{Csp} is via \blue{backtracking}.
-\myFig{csp-backtrack-solver.stlx-1} shows a simple \textsc{Csp} solver that employs backtracking.  We discuss
-this program next.
+Due to the combinatorial explosion of the search space, brute force search is only viable when we deal with
+small problems.  One approach to solve a \textsc{Csp} that is both simple and at least more efficient than brute
+force search is \blue{backtracking}.  \myFig{csp-backtrack-solver.stlx-1} shows a simple \textsc{Csp} solver
+that employs backtracking.  We discuss this program next.  The procedure $\texttt{solve}$ takes a constraint
+satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.  
+
 
 \begin{figure}[!ht]
 \centering
@@ -523,7 +526,7 @@ this program next.
         if (#Assignment == #Variables) {
             return Assignment;
         }
-        var := select_unassigned_variable(Assignment, Variables);
+        var := rnd(Variables - domain(Assignment));
         for (value in Values) {
             check {
                 if (is_consistent(var, value, Assignment, Constraints)) {
@@ -538,19 +541,20 @@ this program next.
 \caption{A backtracking \textsc{Csp} solver.}
 \label{fig:csp-backtrack-solver.stlx-1}
 \end{figure}
-The procedure $\texttt{solve}$ takes a constraint satisfaction problem $\texttt{CSP}$ as input and tries to
-find a solution.  
 \begin{enumerate}
 \item First, the $\texttt{CSP}$ is split into its components.
 \item Next, for every constraint $\texttt{f}$ of the given $\texttt{CSP}$, we compute the set of variables that
-      are used in $\texttt{f}$.  These variables are then stored together with the constraint $\texttt{f}$ and
+      are used in $\texttt{f}$.  This is done using the procedure $\texttt{collectVars}$ that is shown in
+      Figure \ref{fig:collectVars.stlx} on page \pageref{fig:collectVars.stlx}.
+      These variables are then stored together with the constraint $\texttt{f}$ and
       the correspondingly modified data structure is stored in $\texttt{CSP}$ and is called an
       \blue{augmented \textsc{Csp}}.
 
       The reason to compute and store these variables is efficiency: When we later check whether a constraint $\texttt{f}$
       is satisfied for a partial variable assignment $\texttt{Assignment}$ where $\texttt{Assignment}$ is
-      stored as a dictionary, we can only check the constraint $\texttt{f}$ iff all of the variables occurring
-      in $\texttt{f}$ are elements of the domain of $\texttt{Assignment}$. 
+      stored as a dictionary, we only need to check the constraint $\texttt{f}$ iff all of the variables occurring
+      in $\texttt{f}$ are elements of the domain of $\texttt{Assignment}$.   It would be wasteful to compute
+      these variables every time.
 \item Next, we call the procedure $\texttt{bt\_search}$ to compute a solution of $\texttt{CSP}$.
       This procedure is enclosed in a \texttt{check}-block.  Conceptually, this \texttt{check}-block is the
       same as if we had enclosed the call to $\texttt{bt\_search}$ in a \texttt{try}-\texttt{catch}-block as
@@ -565,7 +569,50 @@ find a solution.
      The \texttt{check}-block ensures that this exception is silently discarded.  It is just a syntactical
      convenience that is more concise than using \texttt{try} and \texttt{catch}.
 \end{enumerate}
-Next, we discuss the implementation of the procedure $\texttt{bt\_search}$.  This procedure gets a partial assignment
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    collectVars := procedure(f) {
+        return varsTerm(parseTerm(f));
+    };
+    varsTerm := procedure(f) {
+        match (f) {
+            case v | isVariable(v): return { varName(v) };
+            case n | isNumber(n):   return {};
+            case lhs + rhs:         return varsTerm(lhs) + varsTerm(rhs);
+            case lhs - rhs:         return varsTerm(lhs) + varsTerm(rhs);
+            case lhs * rhs:         return varsTerm(lhs) + varsTerm(rhs);
+            case lhs / rhs:         return varsTerm(lhs) + varsTerm(rhs);
+            case lhs \ rhs:         return varsTerm(lhs) + varsTerm(rhs);
+            case lhs % rhs:         return varsTerm(lhs) + varsTerm(rhs);
+            case lhs == rhs:        return varsTerm(lhs) + varsTerm(rhs);
+            case lhs != rhs:        return varsTerm(lhs) + varsTerm(rhs);
+            case !formula:          return varsTerm(formula);
+            case lhs && rhs:        return varsTerm(lhs) + varsTerm(rhs);
+            case lhs || rhs:        return varsTerm(lhs) + varsTerm(rhs);
+            case lhs => rhs:        return varsTerm(lhs) + varsTerm(rhs);
+            case lhs <==> rhs:      return varsTerm(lhs) + varsTerm(rhs);
+            case lhs <!=> rhs:      return varsTerm(lhs) + varsTerm(rhs);
+            default:                return +/ [ varsTerm(t) : t in args(f) ];
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The procedure \texttt{collectVars}.}
+\label{fig:collectVars.stlx}
+\end{figure}
+
+
+Next, we discuss the implementation of the procedure $\texttt{bt\_search}$.  This procedure receives a partial assignment
 $\texttt{Assignment}$ as input together with an augmented $\texttt{CSP}$.  This partial assignment is
 \blue{consistent} with $\texttt{CSP}$:  If $\texttt{f}$ is a constraint of $\texttt{CSP}$ such that
 all the variables occurring in $\texttt{f}$ are members of $\texttt{dom}(\texttt{Assignment})$, then evaluating
@@ -575,12 +622,10 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
 \begin{enumerate}
 \item First, the augmented $\texttt{CSP}$ is split into its components.
 \item Next, if $\texttt{Assignment}$ is already a complete variable assignment, i.e.~if the dictionary
-      $\texttt{assignment}$ has as many elements as there are variables, then it must be a solution of
-      the $\texttt{CSP}$ and is returned.
+      $\texttt{Assignment}$ has as many elements as there are variables, then it must be a solution of
+      the $\texttt{CSP}$ and, therefore, it is returned.
 \item Otherwise, we have to extend the partial $\texttt{Assignment}$.  In order to do so, we first have to
-      select a variable $\texttt{var}$ that has not yet been assigned a value.  This is done using the
-      auxiliary procedure $\texttt{select\_unassigned\_variable}$ that is shown in
-      \myFig{csp-backtrack-solver.stlx-2} and will be discussed later.
+      select a variable $\texttt{var}$ that has not yet been assigned a value in $\texttt{Assignment}$ so far.
 \item Next, it is tried to assign a $\texttt{value}$ to the selected variable $\texttt{var}$.  After assigning
       a $\texttt{value}$ to $\texttt{var}$, we immediately check whether this assignment would be consistent
       with the constraints using the procedure $\texttt{is\_consistent}$.
@@ -597,7 +642,7 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
       \texttt{for}-loop generates a new possible $\texttt{value}$ that can be assigned to the variable
       $\texttt{var}$.  If all possible values have been tried and none was successful, the \texttt{for}-loop
       ends and the \texttt{backtrack}-statement is executed.  Effectively, this statement raises an exception
-      that is caught by one of the \texttt{check}-blocks that are avove the \texttt{backtrack}-statement in the
+      that is caught by one of the \texttt{check}-blocks that are above the \texttt{backtrack}-statement in the
       call stack.
 \end{enumerate}
 
@@ -610,77 +655,53 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                   ]
-    select_unassigned_variable := procedure(Assignment, Variables) {
-        return rnd(Variables - domain(Assignment));
-    };
     is_consistent := procedure(var, value, Assignment, Constraints) {
-        NewAssignment := Assignment + { [var, value] };
-        for ([Formula, Vars] in Constraints | var in Vars) {
-            if (Vars <= domain(NewAssignment)) {
-                if (!eval_constraint(NewAssignment, Formula)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        NA := Assignment + { [var, value] };
+        return forall([F, Vars] in Constraints |
+                      var in Vars && Vars <= domain(NA) => eval_constraint(NA, F)
+                     );
     };
- \end{Verbatim}
+\end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Auxiliary procedures for the \textsc{Csp} solver shown in Figure \ref{fig:csp-backtrack-solver.stlx-1}}
 \label{fig:csp-backtrack-solver.stlx-2}
 \end{figure}
 
-We still need to discuss the implementation of the auxiliary procedures shown in \myFig{csp-backtrack-solver.stlx-2}. 
+We still need to discuss the implementation of the auxiliary procedure $\texttt{is\_consistent}$
+shown in \ref{fig:csp-backtrack-solver.stlx-2}.  This procedure takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
+$\texttt{Assignment}$ and a set of $\texttt{Constraints}$.  It is assumed that $\texttt{Assignment}$ is
+\blue{partially consistent} with respect to the set $\texttt{Constraints}$, i.e.~for every formula $\texttt{f}$
+occurring in $\texttt{Constraints}$ such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{Assignment})$
+\\[0.2cm]
+holds, the formula $\texttt{f}$ evaluates to $\texttt{true}$ given the $\texttt{Assignment}$.  The purpose of
+$\texttt{is\_consistent}$ is to check, whether the extended assignment
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{NA} \;\texttt{:=}\;\texttt{Assignment} \cup \{ \pair(\texttt{var}, \texttt{value}) \}$
+\\[0.2cm]
+that assigns $\texttt{value}$ to the variable $\texttt{var}$ is still partially consistent with $\texttt{Constraints}$. 
+To this end, the \texttt{for}-loop iterates over all $\texttt{Formula}$ in $\texttt{Constraints}$. 
+However, we only have to check those $\texttt{Formula}$ that contain the variable $\texttt{var}$ and,
+furthermore, have the property that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{Vars}(\texttt{Formula}) \subseteq \texttt{dom}(\texttt{NA})$,
+\\[0.2cm]
+i.e.~all variables occurring in $\texttt{Formula}$ need to have a value assigned in
+$\texttt{NA}$.  The reasoning is as follows:
 \begin{enumerate}
-\item The procedure $\texttt{select\_unassigned\_variable}$ takes a partial $\texttt{Assignment}$ and the set
-      of all $\texttt{Variables}$.  It randomly selects a variable $\texttt{v}$ from $\texttt{Variables}$ such that 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{v} \not\in \texttt{dom}(\texttt{Assignment})$
-      \\[0.2cm]
-      holds.
-      
-      It is certainly possible to be more clever here.  We will later show that it is beneficial to select a
-      variable that is a \blue{most constrained variable}, i.e.~a variable such that the number of
-      values that can be assigned to this variable while still having a consistent assignment is minimal.
-\item The procedure $\texttt{is\_consistent}$ takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
-      $\texttt{Assignment}$ and a set of $\texttt{Constraints}$.  It is assumed that $\texttt{Assignment}$ is
-      \blue{partially consistent} with respect to the set $\texttt{Constraints}$, i.e.~for every formula $\texttt{f}$
-      occurring in $\texttt{Constraints}$ such that
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{Assignment})$
-      \\[0.2cm]
-      holds, the formula $\texttt{f}$ evaluates to $\texttt{true}$ given the $\texttt{Assignment}$.  The purpose of
-      $\texttt{is\_consistent}$ is to check, whether the extended assignment
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{NewAssignment} \;\texttt{:=}\;\texttt{Assignment} \cup \{ \pair(\texttt{var}, \texttt{value}) \}$
-      \\[0.2cm]
-      that assigns $\texttt{value}$ to the variable $\texttt{var}$ is still partially consistent with $\texttt{Constraints}$. 
-      To this end, the \texttt{for}-loop iterates over all $\texttt{Formula}$ in $\texttt{Constraints}$. 
-      However, we only have to check those $\texttt{Formula}$ that contain the variable $\texttt{var}$ and,
-      furthermore, have the the property that
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{Vars}(\texttt{Formula}) \subseteq \texttt{dom}(\texttt{NewAssignment})$,
-      \\[0.2cm]
-      i.e.~all variables occurring in $\texttt{Formula}$ need to have a value assigns in
-      $\texttt{NewAssignment}$.  The reasoning is as follows:
-      \begin{enumerate}
-      \item If $\texttt{var}$ does not occur in $\texttt{Formula}$, then adding $\texttt{var}$ to
-            $\texttt{Assignment}$ cannot change the result of evaluating $\texttt{Formula}$ and as
-            $\texttt{Assignment}$ is assumed to be partially consistent with respect to $\texttt{Formula}$, 
-            $\texttt{NewAssignment}$ is also partially consistent with respect to $\texttt{Formula}$.
-      \item If $\texttt{dom}(\texttt{NewAssignment}) \not\subseteq \texttt{Vars}(\texttt{Formula})$, then
-            $\texttt{Formula}$ can not be evaluated anyway. 
-      \end{enumerate}
-      Now if any of the $\texttt{Formula}$ in the $\texttt{Constraints}$ evaluates to $\texttt{false}$, then $\texttt{NewAssignment}$ is not
-      partially consistent and we can immediately return $\texttt{false}$.  Otherwise, $\texttt{true}$ is returned.
-\end{enumerate}  
+\item If $\texttt{var}$ does not occur in $\texttt{Formula}$, then adding $\texttt{var}$ to
+      $\texttt{Assignment}$ cannot change the result of evaluating $\texttt{Formula}$ and as
+      $\texttt{Assignment}$ is assumed to be partially consistent with respect to $\texttt{Formula}$, 
+      $\texttt{NA}$ is also partially consistent with respect to $\texttt{Formula}$.
+\item If $\texttt{dom}(\texttt{NA}) \not\subseteq \texttt{Vars}(\texttt{Formula})$, then $\texttt{Formula}$ can not be evaluated anyway. 
+\end{enumerate}
 If we use backtracking, we can solve the 8 queens problem in less than a second.
 
 \section{Constraint Propagation}
@@ -703,20 +724,18 @@ only a single variable.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    solve := procedure(csp) {
-        [Variables, Values, Constrs] := csp;
-        ValuesPerVar  := { [v, Values] : v in Variables };
-        Annotated     := { [f, collectVars(f)] : f in Constrs };
-        UnaryConstrs  := { [f, V] : [f, V] in Annotated | #V == 1 };
-        BinaryConstrs := { [f, V] : [f, V] in Annotated | #V == 2 };
-        msg := "Constraints should be either unary or binary!";
-        assert(UnaryConstrs + BinaryConstrs == Annotated, msg); 
-        for ([f, V] in UnaryConstrs) {
-            var               := arb(V);
-            ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
-        }
+    solve := procedure(CSP) {
+        [Variables, Values, Constrs] := CSP;
+        ValuesPerVar := { [v, Values] : v in Variables };
+        Annotated    := { [f, collectVars(f)] : f in Constrs };
+        UnaryConstrs := { [f, V] : [f, V] in Annotated | #V == 1 };
+        OtherConstrs := { [f, V] : [f, V] in Annotated | #V >= 2 };
         check {
-            return bt_search({}, [Variables, ValuesPerVar, BinaryConstrs]);
+            for ([f, V] in UnaryConstrs) {
+                var               := arb(V);
+                ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
+            }
+            return bt_search({}, [Variables, ValuesPerVar, OtherConstrs]);
         }
     };
 \end{Verbatim}
@@ -736,17 +755,17 @@ the binary constraints and shrink these sets even more once we assign values to 
 \item The first task of $\texttt{solve}$ is to create the dictionary $\texttt{ValuesPerVar}$.  
       Given a variable $\texttt{v}$, this dictionary assigns the set of values that can be used to instantiate this
       variable.  Initially, this set is the same for all variables and is equal to $\texttt{Values}$.
-\item Next, for every constraint $\texttt{f}$, the dictionary $\texttt{Annotated}$ attaches the
-      variables occurring in a constraint $\texttt{f}$ to $\texttt{f}$.
+\item Next, for every constraint $\texttt{f}$, the dictionary $\texttt{Annotated}$ associates the
+      variables occurring in a constraint with this constraint.
 \item In order to solve the unary constraints we first have to find them.
       The set $\texttt{UnaryConstrs}$ contains all those pairs $[\texttt{f}, \texttt{V}]$ from the set of
       annotated constraints $\texttt{Annotated}$ such that the set of variables $\texttt{V}$ contains just a
       single variable. 
-\item Similarly, the set $\texttt{BinaryConstrs}$ contains those constraints that involve two variables.
-\item We assume that the set of constraints $\texttt{Annotated}$ only contains unary and binary constraints.
+\item Similarly, the set $\texttt{OtherConstrs}$ contains those constraints that involve two or more variables.
 \item In order to solve the unary constraints, we iterate over all unary constraints and shrink the set of
-      values associated with the variable occurring in the constraint accordingly.
-\item Then, the dictionaries $\texttt{ValuesPerVar}$ and $\texttt{BinaryConstrs}$ are combined with the set
+      values associated with the variable occurring in the constraint as dictated by the constraint.
+      This is done using the function $\texttt{solve\_unary}$.
+\item Then, the dictionaries $\texttt{ValuesPerVar}$ and $\texttt{OtherConstrs}$ are combined with the set
       of $\texttt{Variables}$ into a triple that is used as the argument to the call of $\texttt{bt\_search}$.
 \end{enumerate}
 
@@ -760,14 +779,17 @@ the binary constraints and shrink these sets even more once we assign values to 
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                  ]
     solve_unary := procedure(constraint, variable, Values) {
         LegalValues := {};
         for (value in Values) {
             Assignment := { [variable, value] };
-            if (eval_constraint(Assignment, constraint, { variable })) {
+            if (eval_constraint(Assignment, constraint)) {
                 LegalValues += { value };
             }
+        }
+        if (LegalValues == {}) {
+            backtrack;  // CSP is unsolvable
         }
         return LegalValues;
     };
@@ -779,15 +801,18 @@ the binary constraints and shrink these sets even more once we assign values to 
 
 The function $\texttt{solve\_unary}$ shown in \myFig{csp-constraint-propagation.stlx:solve_unary} takes a unary
 $\texttt{constraint}$, a $\texttt{variable}$ and the set of $\texttt{Values}$ that can be assigned to this
-$\texttt{variable}$.  It returns the subset of values that satisfy the given $\texttt{constraint}$.
+$\texttt{variable}$.  It returns the subset of values that can be substituted for the $\texttt{variable}$
+without violating the given $\texttt{constraint}$.
 \begin{enumerate}
 \item To achieve its goal, $\texttt{solve\_unary}$ iterates over all possible $\texttt{Values}$.  
 \item Next, for every $\texttt{value}$ in the set $\texttt{Values}$, an $\texttt{Assignment}$ is created that assign
-      the $\texttt{value}$ to this $\texttt{variable}$.
-\item Then the $\texttt{constraint}$ is evaluated with this $\texttt{Assignment}$.
+      the $\texttt{value}$ to the $\texttt{variable}$.
+\item Then, the $\texttt{constraint}$ is evaluated using the $\texttt{Assignment}$.
 \item If the $\texttt{constraint}$ is satisfied under this $\texttt{Assignment}$, the $\texttt{value}$ is added to the set
       $\texttt{LegalValues}$, which is the set of values which satisfy the unary $\texttt{constraint}$.
-\item Finally, the set of $\texttt{LegalValues}$ is returned.
+\item If the set $\texttt{LegalValues}$ is still empty after we have tried all possible $\texttt{Values}$, then
+      the unary $\texttt{constraint}$ is unsatisfiable and hence the \textsc{Csp} is unsolvable.
+\item Otherwise, the set of $\texttt{LegalValues}$ is returned.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -798,11 +823,11 @@ $\texttt{variable}$.  It returns the subset of values that satisfy the given $\t
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    bt_search := procedure(Assignment, csp) {
-        [Variables, Values, Constraints] := csp;
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                  ]
+    bt_search := procedure(Assignment, CSP) {
+        [Variables, Values, Constraints] := CSP;
         if (#Assignment == #Variables) {
             return Assignment;
         }
@@ -811,13 +836,13 @@ $\texttt{variable}$.  It returns the subset of values that satisfy the given $\t
             check {
                 if (is_consistent(x, val, Assignment, Constraints)) {
                     NewVals := propagate(x, val, Assignment, Constraints, Values);
-                    csp     := [Variables, NewVals, Constraints];
-                    return bt_search(Assignment + { [x, val] }, csp);
+                    CSP     := [Variables, NewVals, Constraints];
+                    return bt_search(Assignment + { [x, val] }, CSP);
                 }
             }
         }
         backtrack;
-    };
+    };                  
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Implementation of $\texttt{bt\_search}$.}
@@ -826,7 +851,7 @@ $\texttt{variable}$.  It returns the subset of values that satisfy the given $\t
 
 The procedure $\texttt{bt\_search}$ shown in \myFig{csp-constraint-propagation.stlx:bt_search} is called with a
 partial $\texttt{Assignment}$ that is guaranteed to be 
-consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and thereby computes a solution to the $\texttt{CSP}$.
+consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and thereby compute a solution of the $\texttt{CSP}$.
 \begin{enumerate}
 \item First, it decomposes the $\texttt{CSP}$ into its components:
       \begin{enumerate}
@@ -874,13 +899,13 @@ consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and
     propagate := procedure(x, v, Assignment, Constraints, Values) {
         NewAssignment := Assignment + { [x, v] };
         Values[x]     := { v };
-        for ([Formula, Vars] in Constraints | x in Vars) {
-            y := arb(Vars - { x });  // Assume binary constraints!!!
+        for ([Formula, Vars] in Constraints | x in Vars && #Vars == 2) {
+            y := arb(Vars - { x });  
             if (!(y in domain(NewAssignment))) {
                 NewValues := Values[y];
-                for (w in Values[y]) {
+                for (w in NewValues) {
                     A2 := NewAssignment + { [y, w] };
-                    if (!eval_constraint(A2, Formula, Vars)) {
+                    if (!eval_constraint(A2, Formula)) {
                         NewValues -= { w };
                     }
                 }
@@ -905,8 +930,13 @@ $\texttt{Assignment}$ and a dictionary $\texttt{Values}$ returning the set of al
 \item Next, it computes from all unassigned variables $\texttt{x}$ the number of values $\texttt{\#U}$ 
       that can be assigned to $\texttt{x}$.  From these numbers, the minimum is computed and stored in $\texttt{minSize}$.  
 \item Finally, the set of variables that are maximally constrained is computed.  These are all those variables
-      $\texttt{x}$ such that $\texttt{Values[x]}$ has size $\texttt{minSize}$.  From these variables, a random
+      $\texttt{x}$ such that $\texttt{Values[x]}$ has size $\texttt{minSize}$.  From these variables, a random 
       variable is returned.
+      
+      The logic behind choosing a maximally constrained variables is that these variables are the most
+      difficult to get right.  If we have a partial assignment that is inconsistent, then we will discover this
+      fact earlier if we try the most difficult variables first.  This might save us a lot of unecessary
+      computation. 
 \end{enumerate}
 The function $\texttt{propagate}$ takes the following inputs:
 \begin{enumerate}[(a)]
@@ -926,12 +956,11 @@ consequences of assigning the value $\texttt{v}$ to the variable $\texttt{x}$.
       maps $\texttt{x}$ to $\texttt{v}$.
 \item As $\texttt{x}$ now has the value of $\texttt{v}$, the corresponding entry in the dictionary
       $\texttt{Values}$ is changed accordingly. 
-\item Next, $\texttt{propagate}$ iterates over all $\texttt{Constraints}$ such that $\texttt{x}$ occurs in 
+\item Next, $\texttt{propagate}$ iterates over all binary $\texttt{Constraints}$ such that $\texttt{x}$ occurs in 
       $\texttt{Formula}$.
-\item The implementation of $\texttt{propagate}$ shown in \myFig{csp-constraint-propagation.stlx-2} assumes
-      that all constraints are \blue{binary constraints}, i.e.~if $\texttt{Formula}$ is a
-      constraint, then $\texttt{Formula}$ contains exactly two different variables.
-      As one of these variables is $\texttt{x}$, the other variable is called $\texttt{y}$.
+\item The remaining variable occurring in $\texttt{Formula}$ is called $\texttt{y}$.  There can be only one other
+      variable in $\texttt{Formula}$ because the test \texttt{\#Vars == 2} assures that \texttt{Formula}
+      is a binary constraint.
 \item If the variable $\texttt{y}$ has already been assigned a value, then there is nothing to do because
       we already know that the assignment $\texttt{NewAssignment}$ is consistent.  This is ensured by the
       previous call to the function $\texttt{is\_consistent}$ in the body of the procedure $\texttt{bt\_search}$.
@@ -950,7 +979,6 @@ I have found that the time needed to solve ten
 instances of 16 queens problem went down from 72 seconds to just 5 seconds.  The procedure is even able to
 solve the 32 queens problem, taking about 4 seconds on average, while the version of backtracking search that
 does not use constraint propagation took more than 3 minutes on average.
-
 
 \exercise
 There are many different versions of the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  
