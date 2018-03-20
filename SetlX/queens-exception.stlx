@@ -59,7 +59,6 @@ solve := procedure(l, n) {
     }
     throw("fail");
 };
-
 // TestNext checks whether it is safe to add a queen in row x in the column that
 // follows those columns that are already specified in the list l of
 // queens already placed.  It is assumed that the queens already 

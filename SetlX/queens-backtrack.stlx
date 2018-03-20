@@ -80,7 +80,6 @@ solve := procedure(Queens, n) {
     }
     backtrack;
 };
-
 // Check whether it is safe to add a queen in row x in the column that
 // follows those columns that are already specified in the list queens of
 // queens already placed.  It is assumed that the queens already 
