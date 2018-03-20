@@ -1,0 +1,60 @@
+load("csp-constraint-propagation.stlx");
+
+// Create a CSP that defines the Zebra puzzle.
+zebraCSP := procedure() {
+    // You need to define the sets Variables, Values, and Constraints appropriately.
+    
+    return [Variables, Values, Constraints];
+};
+// nextTo(x, y) is true iff the house x is next to the house y.
+nextTo := procedure(x, y) {
+    return "your code here";
+};
+// For a given set of variables V, allDifferent(V) computes a set of formulae that express the fact
+// that all variables in V take different values.
+allDifferent := procedure(V) {
+    return "your code here";
+};
+
+// This procedure will print a solution.  The input is a variable assignment as it is computed by
+// procedure solve in the file "csp-constraint-propagation.stlx".
+printSolution := procedure(Assignment) {
+    Nations := { "English", "Spanish", "Ukranian", "Norwegian", "Japanese" };
+    Drinks  := { "Coffee", "Tea", "Milk", "OrangeJuice", "Water" };
+    Pets    := { "Dog", "Snails", "Horse", "Fox", "Zebra" };
+    Brands  := { "LuckyStrike", "Parliaments", "Kools", "Chesterfields", "OldGold" };
+    Colours := { "Red", "Green", "Ivory", "Yellow", "Blue" };
+    print();
+    print("Water is drunk in house number $Assignment[\"Water\"]$.");
+    print("The zebra lives in house number $Assignment[\"Zebra\"]$.");
+    print();
+    longest := max({ #x : [x, h] in Assignment });
+    line    := "-" * (5 * (longest + 3) + 6);
+    for (house in [1 .. 5]) {
+        print(line);
+        l := [];
+        for (Class in [ Nations, Drinks, Pets, Brands, Colours ], x in Class) {
+            l += [ pad("$y$", longest) : [y, h] in Assignment | y == x && h == house ];
+        }
+        print("| $house$: | " + join(l, " | ") + " |");
+    }
+    print(line);
+    print();
+};
+
+pad := procedure(s, l) {
+    n := l - #s;
+    return s + " " * n;
+};
+
+main := procedure() {
+    resetRandom();
+    startTotal := now();
+    csp        := zebraCSP();
+    solution   := solve(csp);
+    stopTotal  := now();
+    all := (stopTotal - startTotal) / 1000.0;
+    print("The total computation took $all$ seconds.");
+    printSolution(solution);
+};
+main();
