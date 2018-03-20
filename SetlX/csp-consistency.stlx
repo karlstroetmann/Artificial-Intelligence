@@ -67,7 +67,7 @@ solve := procedure(csp) {
 //     set of variables occurring in f.
 //   * Connected is a dictionary.  For every variable x, Connected[x] is the
 //     set of variables that occur together with x.
-// It modifies the Dictionary ValuesPerVar.
+// This procedure modifies the Dictionary ValuesPerVar.
 enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connected) {
     UncheckedVars := domain(Var2Formulas);
     while (UncheckedVars != {}) {
@@ -95,12 +95,8 @@ enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connec
 // constraint can be satisfied.
 existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
     AllVars := { var } + Vars;
-    for (A in createAllAssignments(Vars, ValuesPerVar)) {
-        if (eval_constraint(A + { [var, val] }, f, AllVars)) {
-            return true;
-        }
-    }
-    return false;    
+    return exists( A in createAllAssignments(Vars, ValuesPerVar)   |
+                   eval_constraint(A + { [var, val] }, f, AllVars) );
 };
 // Return the set of all possible assignments for the variables in the set Vars.
 createAllAssignments := procedure(Vars, ValuesPerVar) {

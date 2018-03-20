@@ -1071,24 +1071,21 @@ $.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
-    createCSP := procedure() {
-        Variables   := { "S", "E", "N", "D", "M", "O", "R", "Y", "C1", "C2", "C3" };
-        Values      := { 0 .. 9 };
-        Constraints := allDifferent({ "S", "E", "N", "D", "M", "O", "R", "Y" });
-        Constraints += { "(D + E) % 10 == Y", "(D + E) \\ 10 == C1",
-                         "(N + R + C1) % 10 == E", "(N + R + C1) \\ 10 == C2",
-                         "(E + O + C2) % 10 == N", "(E + O + C2) \\ 10 == C3",
-                         "(S + M + C3) % 10 == O", "(S + M + C3) \\ 10 == M"
-                       };
-        Constraints += { "S != 0", "M != 0" };
-        return [Variables, Values, Constraints];
-    };
-    allDifferent := procedure(Vars) {
-        return { "$x$ != $y$" : x in Vars, y in Vars | x != y };
-    };
+   createCSP := procedure() {
+       Variables   := {"S", "E", "N", "D", "M", "O", "R", "Y", "C1", "C2", "C3"};
+       Values      := { 0 .. 9 };
+       Constraints := allDifferent({ "S", "E", "N", "D", "M", "O", "R", "Y" });
+       Constraints += { '(D + E) % 10 == Y', '(D + E) \ 10 == C1',
+                        '(N + R + C1) % 10 == E', '(N + R + C1) \ 10 == C2',
+                        '(E + O + C2) % 10 == N', '(E + O + C2) \ 10 == C3',
+                        '(S + M + C3) % 10 == O', '(S + M + C3) \ 10 == M'
+                      };
+       Constraints += { "S != 0", "M != 0" };
+       return [Variables, Values, Constraints];
+   };
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Formulating ``$\texttt{SEND} + \texttt{MORE} = \texttt{MONEY}$'' as a \textsc{Csp}.}
@@ -1170,10 +1167,14 @@ assignment $A$.  Now, \blue{consistency maintenance} works as follows.
 \end{enumerate}
 The algorithm terminates as every iteration removes either a variable from the set
 $\texttt{UncheckedVariables}$ or it removes a value from one of the sets $\texttt{AllowableValues}[y]$ for some
-variable $y$.  Now the set $\texttt{UncheckedVariables}$ can grow during the algorithm, but the sets 
-$\texttt{AllowableValues}[y]$ can never grow.  However, every time the set $\texttt{UncheckedVariables}$ grows,
-the set $\texttt{AllowableValues}[x]$ shrinks.
-As the sets $\texttt{AllowableValues}[y]$ are finite for all variables $y$, the set
+variable $y$.  Although the set $\texttt{UncheckedVariables}$ can grow during the algorithm,  the union
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigcup\limits_{x \in \mathtt{Vars}} \texttt{AllowableValues}[x]$ 
+\\[0.2cm]
+can never grow:  Every time the set $\texttt{UncheckedVariables}$ grows,
+for some variable $x$ the set $\texttt{AllowableValues}[x]$ shrinks.
+As the sets $\texttt{AllowableValues}[x]$ are finite for all variables $x$, the set
 $\texttt{UncheckedVariables}$ can only grow a finite number of times. 
 Once the set $\texttt{UncheckedVariables}$ does not grow any more, every iteration of the algorithm removes one
 variable from this set and hence the algorithm terminates eventually.
@@ -1189,7 +1190,9 @@ variable from this set and hence the algorithm terminates eventually.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connected) {
+    enforceConsistency := procedure(rw ValuesPerVar,
+                                    Var2Formulas, Annotated, Connected)
+    {
         UncheckedVars := domain(Var2Formulas);
         while (UncheckedVars != {}) {
             variable    := from(UncheckedVars);
@@ -1199,7 +1202,7 @@ variable from this set and hence the algorithm terminates eventually.
             for (f in Constraints) {
                 OtherVars := Annotated[f] - { variable };
                 for (value in Values) {
-                    if(!existsValue(variable, value, f, OtherVars, ValuesPerVar)) {
+                    if(!existsValue(variable,value,f,OtherVars,ValuesPerVar)) {
                         RemovedVals   += { value };
                         UncheckedVars += Connected[variable];
                     }
@@ -1270,15 +1273,11 @@ $\texttt{ValuesPerVar}[x]$ is consistent with the constraints for $x$.  The impl
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                  ]
     existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
         AllVars := { var } + Vars;
-        for (A in createAllAssignments(Vars, ValuesPerVar)) {
-            if (eval_constraint(A + { [var, val] }, f, AllVars)) {
-                return true;
-            }
-        }
-        return false;    
+        return exists( A in createAllAssignments(Vars, ValuesPerVar)   |
+                       eval_constraint(A + { [var, val] }, f, AllVars) );
     };
     createAllAssignments := procedure(Vars, ValuesPerVar) {
         if (Vars == {}) {
