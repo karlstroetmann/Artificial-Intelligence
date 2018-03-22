@@ -344,7 +344,7 @@ checking $n^k$ different assignments.  For example, for the eight queens problem
 8 possible values leading to 
 \\[0.2cm]
 \hspace*{1.3cm}
-$8^8 = 16,777,216$
+$8^8 = 2^{24} = 16,777,216$
 \\[0.2cm]
 different assignments that need to be tested.  Given the clock speed of modern computers, checking a million
 assignments per second is plausible.  Hence, this approach is be able to solve the eight queens problem in
@@ -395,11 +395,12 @@ This $\texttt{CSP}$ is given a triple of the form
 \hspace*{1.3cm}
 $\texttt{CSP} = [\texttt{Variables}, \texttt{Values}, \texttt{Constraints}]$.
 \\[0.2cm]
-The sole purpose of $\texttt{search}$ is to call the function $\texttt{brute\_force\_search}$.  This function takes two arguments.
+The sole purpose of $\texttt{search}$ is to call the function $\texttt{brute\_force\_search}$.  The
+implementation of this function is recursive and the function takes two arguments.
 \begin{enumerate}
-\item $\texttt{Assignment}$ is a partial assignment of values to variables.
-      Initially, this assignment will be empty.  Every recursive call of
-      $\texttt{brute\_force\_search}$ adds the assignment of one variable to the given assignment.
+\item $\texttt{Assignment}$ is a partial assignment of values to variables.  Initially, this assignment will be
+      empty.  Every recursive call of $\texttt{brute\_force\_search}$ adds the assignment of one variable to
+      the given assignment. 
 \item $\texttt{CSP}$ is a triple of the form
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -419,13 +420,12 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
       If the current $\texttt{Assignment}$ does indeed satisfy all constraints, it is a solution to the given
       $\texttt{CSP}$ and is therefore returned.
 
-      If, instead, some constraint is violated, then the procedure returns the undefined value $\Omega$.
+      If, instead, some constraint is violated, then $\texttt{brute\_force\_search}$ returns the undefined value $\Omega$.
 \item If the assignment is not yet complete, we randomly\footnote{
          Experimental evidence suggests that picking a random variable performs much better than sorting the
          variables and always picking the first unassigned variable.
       } 
-      pick a variable $\texttt{var}$ from the set of those
-      $\texttt{Variables}$ that still have no value assigned.  
+      pick a variable $\texttt{var}$ from the set of those $\texttt{Variables}$ that still have no value assigned.  
       Then, for every possible
       $\texttt{value}$ in the set $\texttt{Values}$, we augment the current partial
       $\texttt{Assignment}$ to the new assignment
@@ -467,8 +467,9 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
 
 The function $\texttt{check\_all\_constraints}$ takes a complete variable $\texttt{Assignment}$ as
 its first input.  The second input is the set of $\texttt{Constraints}$.  For all formul\ae\
-$\texttt{f}$ from the set $\texttt{Constraints}$, it checks whether $\texttt{f}$ is satisfied.  This is done
-using the auxiliary $\texttt{eval\_constraint}$.  
+$\texttt{f}$ from the set $\texttt{Constraints}$, it checks whether $\texttt{f}$ is satisfied provided all
+variables are assigned as specified in $\texttt{Assignment}$.  This check is done
+using the auxiliary function $\texttt{eval\_constraint}$.  
 
 The procedure $\texttt{eval\_constraint}$ takes an $\texttt{Assignment}$ and a $\texttt{Formula}$
 that is supposed to be a constraint. Its purpose is to evaluate $\texttt{Formula}$ using the $\texttt{Assignment}$.  In
@@ -484,11 +485,11 @@ their corresponding values.  Once these assignments have been executed in
 the \texttt{for}-loop, the $\texttt{Formula}$ can be evaluated using the procedure $\texttt{eval}$, which
 is one of the predefined procedures in \textsc{SetlX}.
 
-When I tested this brute force search with the eight queens problem, it took less than 300 seconds to
-compute a solution.  In contrast, the seven queens problem only took 16 seconds.  As we have
+When I tested this brute force search with the eight queens problem, it took about 300 seconds to
+compute a solution.  In contrast, the seven queens problem took roughly 14 seconds.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\frac{8^8}{7^7} \approx 20.3$ \quad \and \quad $\ds\frac{684}{16} \approx 18.8$
+$\ds\frac{8^8}{7^7} \approx 20$ \quad \and \quad $\ds\frac{300}{14} \approx 21$
 \\[0.2cm]
 this shows that the computation time does indeed grow with the number of possible assignments that
 have to be checked.  However, the correspondence is not exact.  The reason is that we stop our

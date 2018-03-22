@@ -10,14 +10,14 @@ zebraCSP := procedure() {
 nextTo := procedure(x, y) {
     return "your code here";
 };
-// For a given set of variables V, allDifferent(V) computes a set of formulae that express the fact
-// that all variables in V take different values.
+// For a given set of variables V, allDifferent(V) computes a set of formulae that
+// express the fact that all variables in V take different values.
 allDifferent := procedure(V) {
     return "your code here";
 };
 
-// This procedure will print a solution.  The input is a variable assignment as it is computed by
-// procedure solve in the file "csp-constraint-propagation.stlx".
+// This procedure will print a solution.  The input is a variable assignment as it is
+// computed by procedure solve in the file "csp-constraint-propagation.stlx".
 printSolution := procedure(Assignment) {
     Nations := { "English", "Spanish", "Ukranian", "Norwegian", "Japanese" };
     Drinks  := { "Coffee", "Tea", "Milk", "OrangeJuice", "Water" };

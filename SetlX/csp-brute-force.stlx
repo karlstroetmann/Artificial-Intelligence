@@ -33,6 +33,7 @@ eval_constraint := procedure(Assignment, Formula) {
     return eval(Formula);
 };
 main := procedure() {
+    resetRandom();
     lower := 4;
     upper := 8;
     for (n in [lower .. upper]) {
