@@ -1,0 +1,60 @@
+load("sudoku-data.stlx");
+load("csp-constraint-propagation.stlx");
+
+// Given a sudoku puzzle, this function creates a CSP.
+sudokuCSP := procedure(Puzzle) {
+    // your code here
+    return [Variables, Values, Constraints];
+};
+// L is a list of numbers and variables.  For every x, y in L such that x is different
+// from y and either x or y or both are variables, an inequation of the form x != y is
+// generated.  The set of all of these inequations is returned.
+allDifferent := procedure(L) {
+    Inequations := {};
+    // your code here
+    return Inequations;
+};
+// Given a variable assignment and the original puzzle, this will print the solution
+printSolution := procedure(Assignment, Puzzle) {
+    length := 9 * 4 + 5;
+    print("=" * length);
+    for (row in [1..9]) {
+        s := "|| ";
+        for (col in [1..9]) {
+            entry := Puzzle[row][col];
+            if (col % 3 == 0) {
+                sep := ' || ';
+            } else {
+                sep := ' | ';
+            }
+            if (isNumber(entry)) {
+                s += entry + sep;
+            } else if (Assignment["V$row$$col$"] != om) {
+                s += Assignment["V$row$$col$"] + sep;
+            } else {
+                s += "*" + sep;
+            }
+        }
+        print(s);
+        if (row % 3 == 0) {
+            print("=" * length);
+        } else {
+            print("-" * length);
+        }
+    }
+};
+main := procedure() {
+    resetRandom();
+    Puzzle := sudoku();
+    print("Trying to solve the following puzzle:");
+    printSolution({}, Puzzle);
+    startTotal := now();
+    CSP        := sudokuCSP(Puzzle);
+    Solution   := solve(CSP);
+    stopTotal  := now();
+    all := (stopTotal - startTotal) / 1000.0;
+    print("The total computation took $all$ seconds.");
+    print("There were $#CSP[1]$ variables and $#CSP[3]$ constraints.");
+    printSolution(Solution, Puzzle);
+};
+main();

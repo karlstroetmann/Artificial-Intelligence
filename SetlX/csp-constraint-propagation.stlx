@@ -1,6 +1,6 @@
 loadLibrary("termUtilities");
 // load("queens-csp.stlx");
-load("send-more-money.stlx");
+// load("send-more-money.stlx");
 
 // This function collects all variables occurring in the formula f.
 // To simplify things it is asssumed that f is either an equation or
@@ -156,4 +156,4 @@ mainMoney := procedure() {
     print("The computation took $total$ seconds.");
 };
 // main();
-mainMoney();
+// mainMoney();

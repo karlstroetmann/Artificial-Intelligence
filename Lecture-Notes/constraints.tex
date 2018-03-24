@@ -1017,6 +1017,45 @@ discussed in this section.  You should also try to solve the puzzle using the pr
 section.  Compare the results.
 \eoxs
 
+\begin{table}
+  \centering
+  \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
+    \hline
+    \hline
+      & 3 & 9 &   &   &   &   &   & 7 \\
+    \hline
+      &   &   & 7 &   &   & 4 & 9 & 2 \\
+    \hline
+      &   &   &   & 6 & 5 &   & 8 & 3 \\
+    \hline
+    \hline
+      &   &   & 6 &   & 3 & 2 & 7 &   \\
+    \hline
+      &   &   &   & 4 &   & 8 &   &   \\
+    \hline
+    5 & 6 &   &   &   &   &   &   &   \\
+    \hline
+    \hline
+      &   & 5 & 2 &   & 9 &   &   & 1 \\
+    \hline
+      & 2 & 1 &   &   &   &   & 4 &   \\
+    \hline
+    7 &   &   &   &   &   & 5 &   &   \\
+    \hline
+    \hline
+  \end{tabular}
+  \caption{A super hard sudoku from the magazine ``Zeit Online''.}
+  \label{tab:sudoku}
+\end{table}
+
+\exercise
+Table \ref{tab:sudoku} on page \pageref{tab:sudoku} shows a \href{https://en.wikipedia.org/wiki/Sudoku}{sudoku}
+that I have taken from the
+\href{http://sudoku.zeit.de/cgi-bin/sudoku/sudoku_kd_app_2016.pl?action=level&kd_nr=24091123601092&year=2018&month=03&day=23&level=-c+5}{Zeit Online}
+magazine.  Write a program that transforms this sudoku into a constraint satisfaction problem and solve the
+resulting \textsc{Csp} using the constraint satisfaction solver developed in this section.
+\eoxs
+
 \section{Consistency Checking}
 So far, the constraints in the constraints satisfaction problems discussed are either \blue{unary constraints} 
 or \blue{binary constraints}:  A \blue{unary} constraint is a constraint $\texttt{f}$
