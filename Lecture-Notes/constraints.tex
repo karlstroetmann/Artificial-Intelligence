@@ -734,7 +734,7 @@ only a single variable.
         check {
             for ([f, V] in UnaryConstrs) {
                 var               := arb(V);
-                ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
+                ValuesPerVar[var] := solve_unary(f, var, Values);
             }
             return bt_search({}, [Variables, ValuesPerVar, OtherConstrs]);
         }

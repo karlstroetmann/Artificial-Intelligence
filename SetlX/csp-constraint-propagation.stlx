@@ -1,5 +1,5 @@
 loadLibrary("termUtilities");
-// load("queens-csp.stlx");
+load("queens-csp.stlx");
 // load("send-more-money.stlx");
 
 // This function collects all variables occurring in the formula f.
@@ -43,25 +43,19 @@ solve := procedure(CSP) {
     check {
         for ([f, V] in UnaryConstrs) {
             var               := arb(V);
-            ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
+            ValuesPerVar[var] := solve_unary(f, var, Values);
         }
         return bt_search({}, [Variables, ValuesPerVar, OtherConstrs]);
     }
 };
 // Given a constraint containing only variable, find the values that satisfy
 // this constraint.
-solve_unary := procedure(constraint, variable, Values) {
-    LegalValues := {};
-    for (value in Values) {
-        Assignment := { [variable, value] };
-        if (eval_constraint(Assignment, constraint)) {
-            LegalValues += { value };
-        }
-    }
-    if (LegalValues == {}) {
+solve_unary := procedure(constr, var, Values) {
+    Legal := {value : value in Values | eval_constraint({[var,value]}, constr)};
+    if (Legal == {}) {
         backtrack;  // game over
     }
-    return LegalValues;
+    return Legal;
 };
 // Given a partial assignment of variables, this procedure tries to complete
 // this assignment so that the given CSP is solved.
@@ -97,12 +91,11 @@ propagate := procedure(x, v, Assignment, Constraints, Values) {
     Values[x]     := { v };
     // constraint propagation is only for binary constraints
     for ([Formula, Vars] in Constraints | x in Vars && #Vars == 2) {
-        y := arb(Vars - { x });  
+        y := arb(Vars - { x });
         if (!(y in domain(NewAssignment))) {
             NewValues := Values[y];
             for (w in NewValues) {
-                A2 := NewAssignment + { [y, w] };
-                if (!eval_constraint(A2, Formula)) {
+                if (!eval_constraint({[x,v], [y,w]}, Formula)) {
                     NewValues -= { w };
                 }
             }
@@ -155,5 +148,5 @@ mainMoney := procedure() {
     printSolution(solution);
     print("The computation took $total$ seconds.");
 };
-// main();
+main();
 // mainMoney();

@@ -65,40 +65,44 @@ printBoard := procedure(L) {
         print(line);
         print((4*n+1) * "-");
     }
+    print();
 };
 
 // This procedure solves the n-queens problem using local search.  The parameter 
 // n specifies the size of the board.
 solve := procedure(n) {
-    resetRandom();
     Queens := [];
     // randomly place n queens
     for (row in [1 .. n]) {
         Queens[row] := rnd({1 .. n});
     }
     iteration := 0;
+    lastRow   := 0;
     while (n > 3) {  // there is no solution for n <= 3
         // printBoard(Queens);
-        Conflicts   := { [numConflicts(Queens, row), row] : row in [1 ..n] };
-        [maxNum, _] := last(Conflicts);
-        if (maxNum == 0) {
+        Conflicts := { [numConflicts(Queens, row), row] : row in {1..n}-{lastRow} };
+        [maxNum, _] := last(Conflicts);  // select queen with most conflicts
+        if (maxNum == 0) { // no conflicts, solution found 
             print("number of iterations: $iteration$");
             return Queens;
         }
         if (iteration % 10 != 0) { // avoid infinite loops
-            row := rnd({ row : [num, row] in Conflicts | num == maxNum });
+            row := rnd({ row : [num,row] in Conflicts | num == maxNum });
         } else {
             row := rnd({ 1 .. n });
         }
+        lastRow := row;
         Conflicts := {};
-        for (col in [1 .. n]) {
+        for (col in [1 .. n]) {  
             Board      := Queens;
             Board[row] := col;
             Conflicts  += { [numConflicts(Board, row), col] };
         }
-        [minNum, _] := first(Conflicts);
-        // print("$minNum$ conflicts if queen in row $row$ is moved to colum $column$.");
-        Queens[row] := rnd({ col : [num, col] in Conflicts | num == minNum });
+        [minNum, _] := first(Conflicts); 
+        // randomly choose any column with minimum number of conflicts
+        newColumn := rnd({ col : [num, col] in Conflicts | num == minNum });
+        // print("Move queen in row $row$ to column $newColumn$.");
+        Queens[row] := newColumn;
         iteration += 1;
     }
 };
@@ -118,12 +122,15 @@ numConflicts := procedure(Queens, row) {
     }
     return result;
 };
-
-for (n in [8..1000]) {
-    start    := now();
-    solution := solve(n);
-    stop     := now();
-    total    := (stop - start) / 1000.0;
-    // printBoard(solution);
-    print("The computation for the $n$ queens problem took $total$ seconds.");
-}
+main := procedure() {
+    for (n in [1000..1000]) {
+        resetRandom();
+        start    := now();
+        solution := solve(n);
+        stop     := now();
+        total    := (stop - start) / 1000.0;
+        // printBoard(solution);
+        print("The computation for the $n$ queens problem took $total$ seconds.");
+    }
+};
+main();
