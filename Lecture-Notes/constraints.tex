@@ -709,6 +709,38 @@ If we use backtracking, we can solve the 8 queens problem in less than a second.
 Once we choose a value for a variable, this choice influences the values that are still available for other variables.
 For example, suppose we place the queen in row 1 in the second column, then no other queen can be placed in
 that column.   Additionally, the queen in row 2 can then not be placed in any of the first three columns.
+Abstractly, constraint propagation works as follows.
+\begin{enumerate}
+\item Before the search is started, we create a dictionary $\texttt{ValuesPerVar}$.  For every variable
+      $\texttt{x}$, the dictionary entry $\texttt{ValuesPerVar[x]}$ is the set of values that can be assigned to $\texttt{x}$
+      without violating a constraint.
+\item As long as the problem is not solved,  we choose a variable $\texttt{x}$. 
+      This variable is chosen using the \blue{most constrained variable} heuristic:  We choose a variable
+      $\texttt{x}$ such that the number of values in the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{ValuesPerVar[x]}$ 
+      \\[0.2cm]
+      is minimal.  This is done because we have to
+      find values for all variables.  If the current partial variable assignment can not be completed into a
+      solution, then we want to find out this fact as soon as possible.  Therefore, we try to find the values
+      for the most difficult variables first.  A variable is more difficult to get right if it has only a few
+      values that can be used to instantiate the variable.
+\item Once we have picked a variable $\texttt{x}$, we next iterate over all values $\texttt{v}$ in
+      $\texttt{ValuesPerVar[x]}$.  If assigning the value $\texttt{v}$ to the variable $\texttt{x}$ does not
+      violate a constraint, we \blue{propagate} the consequences of this assignment:
+      \begin{enumerate}
+      \item For every binary constraint $\texttt{F}$ that mentions only the variable $\texttt{x}$ and one other variable
+            $\texttt{y}$ that has not yet been instantiated, we compute the set $\texttt{Legal}$ of those values from 
+            $\texttt{ValuesPerVar[y]}$ that can be assigned to $\texttt{v}$ without violating the constraint
+            $\texttt{F}$.
+            
+      \item Then, the set $\texttt{ValuesPerVar[y]}$ is updated to the set $\texttt{Legal}$ and we go back to
+            step 2.
+      \end{enumerate}
+\end{enumerate}
+
+
 It turns out that elaborating this idea can enhance the performance of backtracking search considerably.
 \myFig{csp-constraint-propagation.stlx-1} shows an implementation of \blue{constraint propagation}.
 This implementation is also able to handle \blue{unary constraints}, i.e.~constraints that contain
@@ -722,8 +754,8 @@ only a single variable.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.3cm,
+                  xrightmargin  = 0.3cm,
                 ]
     solve := procedure(CSP) {
         [Variables, Values, Constrs] := CSP;
@@ -734,9 +766,9 @@ only a single variable.
         check {
             for ([f, V] in UnaryConstrs) {
                 var               := arb(V);
-                ValuesPerVar[var] := solve_unary(f, var, Values);
+                ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
             }
-            return bt_search({}, [Variables, ValuesPerVar, OtherConstrs]);
+            return bt_search({}, Variables, ValuesPerVar, OtherConstrs);
         }
     };
 \end{Verbatim}
@@ -757,7 +789,8 @@ the binary constraints and shrink these sets even more once we assign values to 
       Given a variable $\texttt{v}$, this dictionary assigns the set of values that can be used to instantiate this
       variable.  Initially, this set is the same for all variables and is equal to $\texttt{Values}$.
 \item Next, for every constraint $\texttt{f}$, the dictionary $\texttt{Annotated}$ associates the
-      variables occurring in a constraint with this constraint.
+      variables occurring in a constraint with this constraint.  This dictionary is only needed for efficiency:
+      We do not want to recompute the variables of a constraint every these variables are needed.
 \item In order to solve the unary constraints we first have to find them.
       The set $\texttt{UnaryConstrs}$ contains all those pairs $[\texttt{f}, \texttt{V}]$ from the set of
       annotated constraints $\texttt{Annotated}$ such that the set of variables $\texttt{V}$ contains just a
@@ -766,54 +799,7 @@ the binary constraints and shrink these sets even more once we assign values to 
 \item In order to solve the unary constraints, we iterate over all unary constraints and shrink the set of
       values associated with the variable occurring in the constraint as dictated by the constraint.
       This is done using the function $\texttt{solve\_unary}$.
-\item Then, the dictionaries $\texttt{ValuesPerVar}$ and $\texttt{OtherConstrs}$ are combined with the set
-      of $\texttt{Variables}$ into a triple that is used as the argument to the call of $\texttt{bt\_search}$.
-\end{enumerate}
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                  ]
-    solve_unary := procedure(constraint, variable, Values) {
-        LegalValues := {};
-        for (value in Values) {
-            Assignment := { [variable, value] };
-            if (eval_constraint(Assignment, constraint)) {
-                LegalValues += { value };
-            }
-        }
-        if (LegalValues == {}) {
-            backtrack;  // CSP is unsolvable
-        }
-        return LegalValues;
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{Implementation of $\texttt{solve\_unary}$.}
-\label{fig:csp-constraint-propagation.stlx:solve_unary}
-\end{figure}
-
-The function $\texttt{solve\_unary}$ shown in \myFig{csp-constraint-propagation.stlx:solve_unary} takes a unary
-$\texttt{constraint}$, a $\texttt{variable}$ and the set of $\texttt{Values}$ that can be assigned to this
-$\texttt{variable}$.  It returns the subset of values that can be substituted for the $\texttt{variable}$
-without violating the given $\texttt{constraint}$.
-\begin{enumerate}
-\item To achieve its goal, $\texttt{solve\_unary}$ iterates over all possible $\texttt{Values}$.  
-\item Next, for every $\texttt{value}$ in the set $\texttt{Values}$, an $\texttt{Assignment}$ is created that assign
-      the $\texttt{value}$ to the $\texttt{variable}$.
-\item Then, the $\texttt{constraint}$ is evaluated using the $\texttt{Assignment}$.
-\item If the $\texttt{constraint}$ is satisfied under this $\texttt{Assignment}$, the $\texttt{value}$ is added to the set
-      $\texttt{LegalValues}$, which is the set of values which satisfy the unary $\texttt{constraint}$.
-\item If the set $\texttt{LegalValues}$ is still empty after we have tried all possible $\texttt{Values}$, then
-      the unary $\texttt{constraint}$ is unsatisfiable and hence the \textsc{Csp} is unsolvable.
-\item Otherwise, the set of $\texttt{LegalValues}$ is returned.
+\item Then, we start backtracking search using the function $\texttt{bt\_search}$.  
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -827,8 +813,46 @@ without violating the given $\texttt{constraint}$.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                   ]
-    bt_search := procedure(Assignment, CSP) {
-        [Variables, Values, Constraints] := CSP;
+    solve_unary := procedure(f, var, Values) {
+        Legal := {value : value in Values | eval_constraint({[var,value]}, f)};
+        if (Legal == {}) { backtrack; } // game over
+        return Legal;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Implementation of $\texttt{solve\_unary}$.}
+\label{fig:csp-constraint-propagation.stlx:solve_unary}
+\end{figure}
+
+The function $\texttt{solve\_unary}$ shown in \myFig{csp-constraint-propagation.stlx:solve_unary} takes a unary
+constraint $\texttt{f}$, a variable $\texttt{var}$ and the set of values $\texttt{Values}$ that can be assigned to this
+variable.  It returns the subset of values that can be substituted for the variable $\texttt{var}$
+without violating the given constraint $\texttt{f}$.
+\begin{enumerate}
+\item To achieve its goal, $\texttt{solve\_unary}$ iterates over all possible $\texttt{Values}$.  
+\item Next, for every $\texttt{value}$ in the set $\texttt{Values}$, an assignment is created that assign
+      the $\texttt{value}$ to the variable $\texttt{var}$.  This assignment has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\{[var, value]\}}.
+\item The set $\texttt{Legal}$ collects all those values that satisfy the constraint $\texttt{f}$.
+\item If the set $\texttt{Legal}$ is empty, then the unary constraint $\texttt{f}$ is unsatisfiable and hence
+      the \textsc{Csp} is unsolvable.  In that case, the search has to backtrack.
+\item Otherwise, the set  $\texttt{Legal}$ is returned.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                  ]
+    bt_search := procedure(Assignment, Variables, Values, Constraints) {
         if (#Assignment == #Variables) {
             return Assignment;
         }
@@ -837,13 +861,13 @@ without violating the given $\texttt{constraint}$.
             check {
                 if (is_consistent(x, val, Assignment, Constraints)) {
                     NewVals := propagate(x, val, Assignment, Constraints, Values);
-                    CSP     := [Variables, NewVals, Constraints];
-                    return bt_search(Assignment + { [x, val] }, CSP);
+                    return bt_search(Assignment + { [x, val] },
+                                     Variables, NewVals, Constraints);
                 }
             }
         }
         backtrack;
-    };                  
+    };
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Implementation of $\texttt{bt\_search}$.}
@@ -851,17 +875,11 @@ without violating the given $\texttt{constraint}$.
 \end{figure}
 
 The procedure $\texttt{bt\_search}$ shown in \myFig{csp-constraint-propagation.stlx:bt_search} is called with a
-partial $\texttt{Assignment}$ that is guaranteed to be 
-consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and thereby compute a solution of the $\texttt{CSP}$.
+partial $\texttt{Assignment}$ that is guaranteed to be consistent, a set of $\texttt{Variables}$, a dictionary
+$\texttt{Values}$ associating every variable with the set of values that are admissible for this variable and a
+set of annotated $\texttt{Constraints}$.  It tries to complete $\texttt{Assignment}$ and thereby compute a
+solution of the $\texttt{CSP}$.  
 \begin{enumerate}
-\item First, it decomposes the $\texttt{CSP}$ into its components:
-      \begin{enumerate}
-      \item $\texttt{Values}$ is a dictionary assigning to every variable $\texttt{v}$ the set of values 
-            that can be used to instantiate $\texttt{v}$.  On recursive invocations of $\texttt{bt\_search}$
-            these sets will shrink.
-      \item $\texttt{Constraints}$ is a dictionary that assigns to every constraint $\texttt{f}$ the set of
-            variables occurring in $\texttt{f}$.
-      \end{enumerate}
 \item If the partial $\texttt{Assignment}$ is already complete, i.e.~if it assigns a value to every variable, 
       then a solution to the given $\texttt{CSP}$ has been found and this solution is returned.
 \item Otherwise, we choose a variable $\texttt{x}$ such that the number of values that can still be used to
@@ -871,7 +889,7 @@ consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and
       $\texttt{Values[x]}$ is, in general, smaller than the set of all values of the $\texttt{CSP}$,
       the \texttt{for}-loop in this version of backtracking search is more efficient than the version discussed
       in the previous section. 
-\item If is is consistent to assign $\texttt{val}$ to the variable $\texttt{x}$, we propagate the consequences
+\item If it is consistent to assign $\texttt{val}$ to the variable $\texttt{x}$, we propagate the consequences
       of this assignment using the procedure $\texttt{propagate}$ shown in
       \myFig{csp-constraint-propagation.stlx-2}.
       This procedure updates the values that are still allowed for the variables of the $\texttt{CSP}$ once the
@@ -889,8 +907,8 @@ consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     most_constrained_variable := procedure(Assignment, Values) {
         Unassigned := { [x, U] : [x, U] in Values | Assignment[x] == om };
@@ -898,20 +916,13 @@ consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and
         return rnd({ x : [x, U] in Unassigned | #U == minSize });
     };
     propagate := procedure(x, v, Assignment, Constraints, Values) {
-        NewAssignment := Assignment + { [x, v] };
-        Values[x]     := { v };
-        for ([Formula, Vars] in Constraints | x in Vars && #Vars == 2) {
-            y := arb(Vars - { x });  
-            if (!(y in domain(NewAssignment))) {
-                NewValues := Values[y];
-                for (w in NewValues) {
-                    A2 := NewAssignment + { [y, w] };
-                    if (!eval_constraint(A2, Formula)) {
-                        NewValues -= { w };
-                    }
-                }
-                if (NewValues == {}) { backtrack; }
-                Values[y] := NewValues;
+        Values[x] := { v };
+        for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
+            y := arb(Vars - { x });
+            if (!(y in domain(Assignment))) {
+                Legal := {w : w in Values[y] | eval_constraint({[x,v], [y,w]}, F)};
+                if (Legal == {}) { backtrack; }
+                Values[y] := Legal;
             }
         }
         return Values;
@@ -923,11 +934,11 @@ consistent and a $\texttt{CSP}$.  It tries to complete $\texttt{Assignment}$ and
 \end{figure}
 \myFig{csp-constraint-propagation.stlx-2} show the implementation of the procedures $\texttt{most\_constrained\_variable}$
 and $\texttt{propagate}$.  The procedure $\texttt{most\_constrained\_variable}$ takes a partial
-$\texttt{Assignment}$ and a dictionary $\texttt{Values}$ returning the set of allowed values for all variables as input.
+$\texttt{Assignment}$ and a dictionary $\texttt{Values}$ returning for all variables the set of admissible values.
 \begin{enumerate}
 \item First, this procedure computes the set of $\texttt{Unassigned}$ variables.  For every variable $\texttt{x}$ that
       has not yet been assigned a value in $\texttt{Assignment}$ this set contains the pair 
-      $[\texttt{x}, \texttt{U}]$, where $\texttt{U}$ is the set of allowable values for the variable  $\texttt{x}$.
+      $[\texttt{x}, \texttt{U}]$, where $\texttt{U}$ is the set of admissible values for the variable  $\texttt{x}$.
 \item Next, it computes from all unassigned variables $\texttt{x}$ the number of values $\texttt{\#U}$ 
       that can be assigned to $\texttt{x}$.  From these numbers, the minimum is computed and stored in $\texttt{minSize}$.  
 \item Finally, the set of variables that are maximally constrained is computed.  These are all those variables
@@ -946,40 +957,40 @@ The function $\texttt{propagate}$ takes the following inputs:
 \item $\texttt{Assignment}$ is a partial assignment that contains only assignments for variables that are
       different from $\texttt{x}$.
 \item $\texttt{Constraints}$ is a set of annotated constraints, i.e.~this set contains pairs of the form 
-      $\texttt{[Formula, Vars]}$, where $\texttt{Formula}$ is a constraint and $\texttt{Vars}$ is the set of
-      variables occurring in $\texttt{Formula}$.
+      $\texttt{[F, Vars]}$, where $\texttt{F}$ is a constraint and $\texttt{Vars}$ is the set of
+      variables occurring in $\texttt{F}$.
 \item $\texttt{Values}$ is a dictionary assigning sets of values to the different variables.
 \end{enumerate}
 The function $\texttt{propagate}$ updates the dictionary $\texttt{Values}$ by taking into account the
 consequences of assigning the value $\texttt{v}$ to the variable $\texttt{x}$.
 \begin{enumerate}
-\item The partial $\texttt{Assignment}$ is updated to $\texttt{NewAssignment}$, where $\texttt{NewAssignment}$
-      maps $\texttt{x}$ to $\texttt{v}$.
-\item As $\texttt{x}$ now has the value of $\texttt{v}$, the corresponding entry in the dictionary
+\item As $\texttt{x}$ is assigned the value $\texttt{v}$, the corresponding entry in the dictionary
       $\texttt{Values}$ is changed accordingly. 
-\item Next, $\texttt{propagate}$ iterates over all binary $\texttt{Constraints}$ such that $\texttt{x}$ occurs in 
-      $\texttt{Formula}$.
-\item The remaining variable occurring in $\texttt{Formula}$ is called $\texttt{y}$.  There can be only one other
-      variable in $\texttt{Formula}$ because the test \texttt{\#Vars == 2} assures that \texttt{Formula}
-      is a binary constraint.
+\item Next, $\texttt{propagate}$ iterates over all binary constraints $\texttt{F}$ such that
+      \begin{enumerate}
+      \item $\texttt{x}$ occurs in $\texttt{F}$ and
+      \item $\texttt{F}$ is a binary constraint.
+
+            Constraint propagation as presented in this text only works for binary constraints.
+      \end{enumerate}
+\item As $\texttt{F}$ is a binary constraint, there is one other variable besides the variable $\texttt{x}$
+      that occurs in $\texttt{F}$.  This other variable is called $\texttt{y}$.  
 \item If the variable $\texttt{y}$ has already been assigned a value, then there is nothing to do because
-      we already know that the assignment $\texttt{NewAssignment}$ is consistent.  This is ensured by the
+      we already know that $\texttt{Assignment}$ is consistent.  This is ensured by the
       previous call to the function $\texttt{is\_consistent}$ in the body of the procedure $\texttt{bt\_search}$.
 
       However, if $\texttt{y}$ is still unassigned, it is necessary to update $\texttt{Values}[y]$.
 \item To this end, all values $\texttt{w}$ in $\texttt{Values[y]}$ are tested.  
-      If it turns out that assigning the value $\texttt{w}$ to the variable $\texttt{y}$ violates the
-      constraint $\texttt{Formula}$, then $\texttt{Values[y]}$ must not contain the value $\texttt{w}$ 
-      and, accordingly, this value is removed from $\texttt{Values[y]}$.
-\item If it turns out that $\texttt{Values[y]}$ has been reduced to the empty set, then this means that the
-      partial assignment $\texttt{NewAssignment}$ can not be completed.  Hence, the search has to
-      $\texttt{backtrack}$.
+      The set $\texttt{Legal}$ contains all values $\texttt{w}$ that can be assigned to the variable $\texttt{y}$
+      without violating the constraint $\texttt{F}$.
+\item If it turns out that $\texttt{Legal}$ is the empty set, then this means that the 
+      assignment $\texttt{Assignment}$ is inconsistent with assigning the value $\texttt{v}$ to the variable
+      $\texttt{x}$.  Hence, in this case the  search has to  $\texttt{backtrack}$.
+\item Otherwise, the set of admissible values for $\texttt{y}$ is updated to be the set $\texttt{Legal}$.
 \end{enumerate}
 I have tested the program described in this section using the $n$ queens puzzle. 
-I have found that the time needed to solve ten
-instances of 16 queens problem went down from 72 seconds to just 5 seconds.  The procedure is even able to
-solve the 32 queens problem, taking about 4 seconds on average, while the version of backtracking search that
-does not use constraint propagation took more than 3 minutes on average.
+The procedure is even able to solve the 32 queens problem, taking about 4 seconds on average, while the version
+of backtracking search that does not use constraint propagation took more than 3 minutes on average.
 
 \exercise
 There are many different versions of the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  
@@ -1017,7 +1028,7 @@ discussed in this section.  You should also try to solve the puzzle using the pr
 section.  Compare the results.
 \eoxs
 
-\begin{table}
+\begin{table}[h]
   \centering
   \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
     \hline

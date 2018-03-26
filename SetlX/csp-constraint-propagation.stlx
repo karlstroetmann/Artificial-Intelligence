@@ -13,24 +13,9 @@ varsTerm := procedure(f) {
     match (f) {
         case v | isVariable(v): return { varName(v) };
         case n | isNumber(n):   return {};
-        case lhs + rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs - rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs * rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs / rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs \ rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs % rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs == rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs != rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case !formula:          return varsTerm(formula);
-        case lhs && rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs || rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs => rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs <==> rhs:      return varsTerm(lhs) + varsTerm(rhs);
-        case lhs <!=> rhs:      return varsTerm(lhs) + varsTerm(rhs);
         default:                return +/ [ varsTerm(t) : t in args(f) ];
     }
 };
-
 ////////////////////////////////////////////////////////////////////////////////
 
 // This is a very basic constraints solver that is based on backtracking.
@@ -43,15 +28,15 @@ solve := procedure(CSP) {
     check {
         for ([f, V] in UnaryConstrs) {
             var               := arb(V);
-            ValuesPerVar[var] := solve_unary(f, var, Values);
+            ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
         }
         return bt_search({}, Variables, ValuesPerVar, OtherConstrs);
     }
 };
 // Given a constraint containing only variable, find the values that satisfy
 // this constraint.
-solve_unary := procedure(constr, var, Values) {
-    Legal := {value : value in Values | eval_constraint({[var,value]}, constr)};
+solve_unary := procedure(f, var, Values) {
+    Legal := {value : value in Values | eval_constraint({[var,value]}, f)};
     if (Legal == {}) { backtrack; } // game over
     return Legal;
 };
@@ -84,12 +69,11 @@ most_constrained_variable := procedure(Assignment, Values) {
 // Given a variable x and a value v, extend the Assignment so that x is bound to v
 // and compute the Values that can still be assigned to the unassigned variables.
 propagate := procedure(x, v, Assignment, Constraints, Values) {
-    NewAssignment := Assignment + { [x, v] };
-    Values[x]     := { v };
+    Values[x] := { v };
     // constraint propagation is only done for binary constraints
     for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
         y := arb(Vars - { x });
-        if (!(y in domain(NewAssignment))) {
+        if (!(y in domain(Assignment))) {
             Legal := { w : w in Values[y] | eval_constraint({[x,v], [y,w]}, F) };
             if (Legal == {}) { backtrack; }
             Values[y] := Legal;
