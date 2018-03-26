@@ -13,20 +13,6 @@ varsTerm := procedure(f) {
     match (f) {
         case v | isVariable(v): return { varName(v) };
         case n | isNumber(n):   return {};
-        case lhs + rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs - rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs * rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs / rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs \ rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs % rhs:         return varsTerm(lhs) + varsTerm(rhs);
-        case lhs == rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs != rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case !formula:          return varsTerm(formula);
-        case lhs && rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs || rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs => rhs:        return varsTerm(lhs) + varsTerm(rhs);
-        case lhs <==> rhs:      return varsTerm(lhs) + varsTerm(rhs);
-        case lhs <!=> rhs:      return varsTerm(lhs) + varsTerm(rhs);
         default:                return +/ [ varsTerm(t) : t in args(f) ];
     }
 };
