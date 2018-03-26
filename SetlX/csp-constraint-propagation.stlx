@@ -45,22 +45,19 @@ solve := procedure(CSP) {
             var               := arb(V);
             ValuesPerVar[var] := solve_unary(f, var, Values);
         }
-        return bt_search({}, [Variables, ValuesPerVar, OtherConstrs]);
+        return bt_search({}, Variables, ValuesPerVar, OtherConstrs);
     }
 };
 // Given a constraint containing only variable, find the values that satisfy
 // this constraint.
 solve_unary := procedure(constr, var, Values) {
     Legal := {value : value in Values | eval_constraint({[var,value]}, constr)};
-    if (Legal == {}) {
-        backtrack;  // game over
-    }
+    if (Legal == {}) { backtrack; } // game over
     return Legal;
 };
 // Given a partial assignment of variables, this procedure tries to complete
 // this assignment so that the given CSP is solved.
-bt_search := procedure(Assignment, CSP) {
-    [Variables, Values, Constraints] := CSP;
+bt_search := procedure(Assignment, Variables, Values, Constraints) {
     if (#Assignment == #Variables) {
         return Assignment;
     }
@@ -69,8 +66,8 @@ bt_search := procedure(Assignment, CSP) {
         check {
             if (is_consistent(x, val, Assignment, Constraints)) {
                 NewVals := propagate(x, val, Assignment, Constraints, Values);
-                CSP     := [Variables, NewVals, Constraints];
-                return bt_search(Assignment + { [x, val] }, CSP);
+                return bt_search(Assignment + { [x, val] },
+                                 Variables, NewVals, Constraints);
             }
         }
     }
@@ -89,18 +86,13 @@ most_constrained_variable := procedure(Assignment, Values) {
 propagate := procedure(x, v, Assignment, Constraints, Values) {
     NewAssignment := Assignment + { [x, v] };
     Values[x]     := { v };
-    // constraint propagation is only for binary constraints
-    for ([Formula, Vars] in Constraints | x in Vars && #Vars == 2) {
+    // constraint propagation is only done for binary constraints
+    for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
         y := arb(Vars - { x });
         if (!(y in domain(NewAssignment))) {
-            NewValues := Values[y];
-            for (w in NewValues) {
-                if (!eval_constraint({[x,v], [y,w]}, Formula)) {
-                    NewValues -= { w };
-                }
-            }
-            if (NewValues == {}) { backtrack; }
-            Values[y] := NewValues;
+            Legal := { w : w in Values[y] | eval_constraint({[x,v], [y,w]}, F) };
+            if (Legal == {}) { backtrack; }
+            Values[y] := Legal;
         }
     }
     return Values;
