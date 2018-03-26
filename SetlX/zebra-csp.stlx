@@ -19,7 +19,7 @@ allDifferent := procedure(V) {
 // This procedure will print a solution.  The input is a variable assignment as it is
 // computed by procedure solve in the file "csp-constraint-propagation.stlx".
 printSolution := procedure(Assignment) {
-    Nations := { "English", "Spanish", "Ukranian", "Norwegian", "Japanese" };
+    Nations := { "English", "Spanish", "Ukrainian", "Norwegian", "Japanese" };
     Drinks  := { "Coffee", "Tea", "Milk", "OrangeJuice", "Water" };
     Pets    := { "Dog", "Snails", "Horse", "Fox", "Zebra" };
     Brands  := { "LuckyStrike", "Parliaments", "Kools", "Chesterfields", "OldGold" };
