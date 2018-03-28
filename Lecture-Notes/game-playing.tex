@@ -3,19 +3,17 @@ One major success for the field of artificial intelligence happened in 1997 when
 \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue} was able to beat the World Chess
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
 While \emph{\color{blue}Deep Blue} was based on special hardware, according to the
-\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 18th
-of March 2017, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
-on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3390.  
+\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 24th
+of March 2018, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
+on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3445.  
 To compare, according to the
-\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of March 2017, the current 
+\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of March 2018, the current 
 World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
-just 2838.  Hence, he wouldn't stand a chance to win a game against Stockfish.  More recently, the computer program
+just 2843.  Hence, he wouldn't stand a chance to win a game against Stockfish.  More recently, the computer program
 \href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} was able to beat
-\href{https://en.wikipedia.org/wiki/Lee_Sedol}{Lee Sedol}, who is 
-currently\footnote{This assessment is of March 2017.} 
-considered to be the second best  
-\href{https://en.wikipedia.org/wiki/Go_(game)}{go} player in the world.  Besides go and chess, there are many
-other games where today the performance of a computer exceeds the performance of human players.  To name just
+\href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie}, who is currently\footnote{This assessment is of March 2018.} 
+considered to be the best human \href{https://en.wikipedia.org/wiki/Go_(game)}{go} player in the world.
+Besides go and chess, there are many other games where today the performance of a computer exceeds the performance of human players.  To name just
 one more example, at the beginning of 2017 the program \href{https://en.wikipedia.org/wiki/Libratus}{Libratus} was able to 
 \href{https://www.engadget.com/2017/01/31/libratus-the-poker-playing-ai-destroyed-its-four-human-rivals/}{beat}
 four professional poker players resoundingly.
@@ -24,40 +22,40 @@ In this chapter we want to investigate how a computer can play a game.  To this 
 \blue{game} $\mathcal{G}$ as a six-tuple
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{G} = \langle \mathtt{States}, s_0, \mathtt{Players}, \mathtt{nextStates}, \mathtt{finished},\mathtt{utility} \rangle$
+$\mathcal{G} = \langle \texttt{States}, s_0, \texttt{Players}, \texttt{nextStates}, \texttt{finished},\texttt{utility} \rangle$
 \\[0.2cm]
 where the components are interpreted as follows:
 \begin{enumerate}
-\item $\mathtt{States}$ is the set of all possible \emph{\color{blue}states} of the game.
-\item $s_0 \in \mathtt{startState}$ is the \emph{\color{blue}start state}.
-\item $\mathtt{Players}$ is  the set of \blue{players} of the game.
-\item $\mathtt{nextStates}$ is a function that takes a state $s \in \mathtt{States}$ and a player $p \in \mathtt{Players}$ and returns the set of
+\item $\texttt{States}$ is the set of all possible \emph{\color{blue}states} of the game.
+\item $s_0 \in \texttt{startState}$ is the \emph{\color{blue}start state}.
+\item $\texttt{Players}$ is  the set of \blue{players} of the game.
+\item $\texttt{nextStates}$ is a function that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the set of
       states that can be reached if $p$ has to make a move in the state $s$.  Hence, the signature of
-      $\mathtt{nextStates}$ is given as follows:
+      $\texttt{nextStates}$ is given as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{nextStates}: \mathtt{States} \times \mathtt{Players} \rightarrow 2^{\mathtt{States}}$.
-\item $\mathtt{finished}$ is a function that takes a state $s$ and decides whether the games is finished.
+      $\texttt{nextStates}: \texttt{States} \times \texttt{Players} \rightarrow 2^{\texttt{States}}$.
+\item $\texttt{finished}$ is a function that takes a state $s$ and decides whether the games is finished.
       Therefore
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{finished}: \mathtt{States} \rightarrow \mathbb{B}$.
+      $\texttt{finished}: \texttt{States} \rightarrow \mathbb{B}$.
       \\[0.2cm]
-      Here, $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} := \{ \mathtt{true}, \mathtt{false} \}$.
+      Here, $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} := \{ \texttt{true}, \texttt{false} \}$.
   
-      Using the function $\mathtt{finished}$, we define the set $\mathtt{TerminalStates}$ as the set of those
+      Using the function $\texttt{finished}$, we define the set $\texttt{TerminalStates}$ as the set of those
       states such that the game has finished,  i.e.~we define
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{TerminalStates} := \{ s \in \mathtt{States} \mid \mathtt{finished}(s) \}$.
-\item $\mathtt{utility}$ is a function that takes a state $s \in \mathtt{TerminalStates}$ and a player $p \in \mathtt{Players}$.  If returns
+      $\texttt{TerminalStates} := \{ s \in \texttt{States} \mid \texttt{finished}(s) \}$.
+\item $\texttt{utility}$ is a function that takes a state $s \in \texttt{TerminalStates}$ and a player $p \in \texttt{Players}$.  If returns
       the \blue{value} that the game has for player $p$.  In all of our examples, this value will be an element
-      from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that player $s$ has lost the game,
+      from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that player $p$ has lost the game,
       if the value is $+1$ the player $p$ has won the game and if this value is $0$ then the game is drawn.
-      Hence the signature of $\mathtt{utility}$ is
+      Hence the signature of $\texttt{utility}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{utility}: \mathtt{TerminalStates} \times \mathtt{Players} \rightarrow \{ -1, 0, +1\}$.
+      $\texttt{utility}: \texttt{TerminalStates} \times \texttt{Players} \rightarrow \{ -1, 0, +1\}$.
 \end{enumerate}
 
 \exercise
@@ -70,18 +68,18 @@ Extend the definition of a
 game so that also a games like \blue{dice chess} can be described. 
 \eox
 
-In this chapter we will only consider so called \blue{two person zero sum games}.  This means that the set $\mathtt{Players}$
+In this chapter we will only consider so called \blue{two person zero sum games}.  This means that the set $\texttt{Players}$
 has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{Players} = \{ \mathrm{A}, \mathrm{B} \}$,
+$\texttt{Players} = \{ \mathrm{A}, \mathrm{B} \}$,
 \\[0.2cm]
 then the game is called a \blue{zero sum game} iff we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\forall s \in \mathtt{TerminalStates}:\mathtt{utility}(s, \mathtt{A}) + \mathtt{utility}(s, \mathtt{B}) = 0$,
+$\forall s \in \texttt{TerminalStates}:\texttt{utility}(s, \texttt{A}) + \texttt{utility}(s, \texttt{B}) = 0$,
 \\[0.2cm]
-i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\mathtt{B}$ and vice versa.
+i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\texttt{B}$ and vice versa.
 Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{go} and 
 \href{https://en.wikipedia.org/wiki/Chess}{chess} are two person zero sum games.
 We proceed to discuss an example of a game.
@@ -89,7 +87,7 @@ We proceed to discuss an example of a game.
 \section{Tic-Tac-Toe}
 The game \href{https://en.wikipedia.org/wiki/Tic-tac-toe}{tic-tac-toe} is played on a square board of size 
 $3 \times 3$.  On every turn, one player puts an ``\texttt{X}'' on one of the free squares of the board, while
-the other player puts an $\mathtt{O}$ onto a free square when it is his turn.  If the first player manages
+the other player puts an $\texttt{O}$ onto a free square when it is his turn.  If the first player manages
 to place three \texttt{X}s in a 
 row, column, or diagonal, she has won the game.  Similarly, if the other player manages to put three \texttt{O}s in a
 row, column, or diagonal, this player is the winner.  Otherwise, the game is drawn.
@@ -156,55 +154,55 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
  
 
 \begin{enumerate}
-\item The function $\mathtt{players}$ returns the set $\mathtt{Players}$.  Traditionally, the players in
+\item The function $\texttt{players}$ returns the set $\texttt{Players}$.  Traditionally, the players in
       tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.
-\item The function $\mathtt{startState}$ returns the start state, which is an empty board.
+\item The function $\texttt{startState}$ returns the start state, which is an empty board.
       States are represented as list of lists.  The entries in these lists are the characters 
       ``\texttt{X}'', ``\texttt{O}'', and ``\texttt{ }''.
-      As the  $\mathtt{StartState}$ is the empty board, it is represented as as follows:
+      As the  $\texttt{StartState}$ is the empty board, it is represented as as follows:
       \begin{Verbatim}
       [ [" ", " ", " "], 
         [" ", " ", " "], 
         [" ", " ", " "]
       ].     
       \end{Verbatim}
-      The function $\mathtt{startState}$ receives one optional argument $\mathtt{n}$.
-      By default $\mathtt{n}$ is equal to $3$.  This argument specifies the size of the board.
+      The function $\texttt{startState}$ receives one optional argument $\texttt{n}$.
+      By default $\texttt{n}$ is equal to $3$.  This argument specifies the size of the board.
       Although traditionally tic-tac-toe is played on a $3 \times 3$ board, it can also 
       be played on a bigger board.
-\item The function $\mathtt{nextStates}$ takes a $\mathtt{State}$ and a $\mathtt{player}$ and computes the set
-      of states that can be reached from $\mathtt{State}$ if $\mathtt{player}$ is to move next.
+\item The function $\texttt{nextStates}$ takes a $\texttt{State}$ and a $\texttt{player}$ and computes the set
+      of states that can be reached from $\texttt{State}$ if $\texttt{player}$ is to move next.
       To this end, it first computes the set of \blue{empty} positions.  Every position is represented as pair of the
-      form $[\mathtt{row}, \mathtt{col}]$ where $\mathtt{row}$ specifies the row and $\mathtt{col}$ specifies
+      form $[\texttt{row}, \texttt{col}]$ where $\texttt{row}$ specifies the row and $\texttt{col}$ specifies
       the column of the position.  A position is \blue{empty} iff
       \\[0.2cm]
       \hspace*{1.3cm}
-      $[\mathtt{row}, \mathtt{col}] = \texttt{\symbol{34}\;\;\symbol{34}}$.
+      $[\texttt{row}, \texttt{col}] = \texttt{\symbol{34}\;\;\symbol{34}}$.
       \\[0.2cm]
-      The computation of the empty position has been sourced out to the function $\mathtt{find\_empty}$.
-      The function $\mathtt{nextStates}$ then iterates over the set of empty positions. For every 
-      empty position $[\mathtt{row}, \mathtt{col}]$ it creates a new state $\mathtt{NextState}$ that results
-      from the current $\mathtt{State}$ by putting the mark of $\mathtt{player}$ in this position.  
-      The resulting states are collected in the set $\mathtt{Result}$ and returned.
-\item The function $\mathtt{find\_empty}$ takes a $\mathtt{State}$ and returns the set of empty positions.
-\item The function $\mathtt{utility}$ takes a $\mathtt{State}$ and a $\mathtt{player}$.  If the game is 
-      finished in the given $\mathtt{State}$, it returns the value that this $\mathtt{State}$ has for the
-      current $\mathtt{player}$.  If the game is not yet decided, $\Omega$ is returned instead.
+      The computation of the empty position has been sourced out to the function $\texttt{find\_empty}$.
+      The function $\texttt{nextStates}$ then iterates over the set of empty positions. For every 
+      empty position $[\texttt{row}, \texttt{col}]$ it creates a new state $\texttt{NextState}$ that results
+      from the current $\texttt{State}$ by putting the mark of $\texttt{player}$ in this position.  
+      The resulting states are collected in the set $\texttt{Result}$ and returned.
+\item The function $\texttt{find\_empty}$ takes a $\texttt{State}$ and returns the set of empty positions.
+\item The function $\texttt{utility}$ takes a $\texttt{State}$ and a $\texttt{player}$.  If the game is 
+      finished in the given $\texttt{State}$, it returns the value that this $\texttt{State}$ has for the
+      current $\texttt{player}$.  If the game is not yet decided, $\Omega$ is returned instead.
  
       In order to achieve its goal, the procedure first computes the set of all \blue{line-sets}.
-      Given a $\mathtt{State}$, a \blue{line-set} is a set of those markers that either form a horizontal,
-      vertical, or diagonal line in $\mathtt{State}$, e.g.~the set 
+      Given a $\texttt{State}$, a \blue{line-set} is a set of those markers that either form a horizontal,
+      vertical, or diagonal line in $\texttt{State}$, e.g.~the set 
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\{ \mathtt{State}[1,1], \mathtt{State}[2,2], \mathtt{State}[3,3] \}$
+      $\{ \texttt{State}[1,1], \texttt{State}[2,2], \texttt{State}[3,3] \}$
       \\[0.2cm]
       is the set of entries in a diagonal line.  The game is decided if all entries in this set are either
-      ``$\mathtt{X}$'' or ``$\mathtt{O}$''.  In this case, the set has exactly one element which is different
-      from the blank.  If this element is the same as $\mathtt{player}$, then the game is won by
-      $\mathtt{player}$, otherwise it is lost.
+      ``$\texttt{X}$'' or ``$\texttt{O}$''.  In this case, the set has exactly one element which is different
+      from the blank.  If this element is the same as $\texttt{player}$, then the game is won by
+      $\texttt{player}$, otherwise it is lost.
 
       Finally, if there are no empty squares left, then the game is a draw.
-\item The auxiliary procedure $\mathtt{all\_lines}$ takes a $\mathtt{State}$ and computes the set $\mathtt{Lines}$ of all
+\item The auxiliary procedure $\texttt{all\_lines}$ takes a $\texttt{State}$ and computes the set $\texttt{Lines}$ of all
       \blue{line-sets}. 
       \begin{enumerate}
       \item For any $\mathrm{row} \in \{1,2,3\}$ the set 
@@ -232,11 +230,11 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
             \\[0.2cm]
             is the rising diagonal.
       \end{enumerate}
-\item The procedure $\mathtt{finished}$ takes a $\mathtt{State}$ and checks whether the game is finished.
-      To this end it computes the $\mathtt{utility}$ of the state for the player ``$\mathtt{X}$''.  
-      If this $\mathtt{utility}$ is different from $\Omega$, the game is finished.  Note that it does make no
-      difference whether we take the utility of the state for the player ``$\mathtt{X}$'' or for the player
-      ``$\mathtt{O}$'': If the game is finished for  ``$\mathtt{X}$'', then it is also finished for ``$\mathtt{O}$'' and vice versa.
+\item The procedure $\texttt{finished}$ takes a $\texttt{State}$ and checks whether the game is finished.
+      To this end it computes the $\texttt{utility}$ of the state for the player ``$\texttt{X}$''.  
+      If this $\texttt{utility}$ is different from $\Omega$, the game is finished.  Note that it does make no
+      difference whether we take the utility of the state for the player ``$\texttt{X}$'' or for the player
+      ``$\texttt{O}$'': If the game is finished for  ``$\texttt{X}$'', then it is also finished for ``$\texttt{O}$'' and vice versa.
 \end{enumerate}
 
 \section{The Minimax Algorithm}
@@ -245,30 +243,30 @@ easiest algorithm that works is the \href{https://en.wikipedia.org/wiki/Minimax}
 algorithm is based on the notion of the \blue{value} of a state.  To this end, we define a function
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{value}: \mathtt{States} \times \mathtt{Players} \rightarrow \{-1, 0, +1\}$
+$\texttt{value}: \texttt{States} \times \texttt{Players} \rightarrow \{-1, 0, +1\}$
 \\[0.2cm]
-that takes a state $s \in \mathtt{States}$ and a player $p \in \mathtt{Players}$ and returns the value of $s$ provided both the player $p$ and his
+that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the value of $s$ provided both the player $p$ and his
 opponent play optimally.  The easiest way to define this function is via recursion.  The base case is simple:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{finished}(s) \rightarrow \mathtt{value}(s, p) = \mathtt{utility}(s, p)$.
+$\texttt{finished}(s) \rightarrow \texttt{value}(s, p) = \texttt{utility}(s, p)$.
 \\[0.2cm]
 If the game is not yet finished, assume that player $o$ is the opponent of player $p$.  Then we define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\neg \mathtt{finished}(s) \rightarrow 
- \mathtt{value}(s, p) = \max\bigl(\bigl\{
-                     -\mathtt{value}(n, o) \mid n \in \mathtt{nextStates}(s, p)
+$\neg \texttt{finished}(s) \rightarrow 
+ \texttt{value}(s, p) = \max\bigl(\bigl\{
+                     -\texttt{value}(n, o) \mid n \in \texttt{nextStates}(s, p)
                      \bigr\}\bigr)
 $.
 \\[0.2cm]
 The reason is that if the game is not finished yet, the player $p$ has to evaluate all possible moves.  
 From these, the player $p$ will choose the move that maximizes the value of the game.  In order to do so, the
 player $p$ computes the set 
-$\mathtt{nextStates}(s, p)$ of all states that can be reached from the state $s$ in any one move of the player $p$.
+$\texttt{nextStates}(s, p)$ of all states that can be reached from the state $s$ in any one move of the player $p$.
 Now if $n$ is a state that results from player $p$ making some move, then it is the turn of the other player
-$o$ to make a move.  Hence, in order to evaluate the state $n$, we have to call the function $\mathtt{value}$
-recursively as $\mathtt{value}(n,o)$.  As we are dealing with zero sum games here, we have $\mathtt{value}(n, p) = -\mathtt{value}(n, o)$.
+$o$ to make a move.  Hence, in order to evaluate the state $n$, we have to call the function $\texttt{value}$
+recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games here, we have $\texttt{value}(n, p) = -\texttt{value}(n, o)$.
 \myFig{game.stlx} shows an implementation of this strategy.
 
 
@@ -315,21 +313,21 @@ recursively as $\mathtt{value}(n,o)$.  As we are dealing with zero sum games her
 \label{fig:game.stlx}
 \end{figure}
 \begin{enumerate}
-\item The implementation of the function $\mathtt{value}$ follows the reasoning outlined above.
-      However, note that we have implemented $\mathtt{value}$ as a $\mathtt{cachedProcedure}$, i.e.~as a
-      procedure that \blue{memorizes} its results.  Hence, when the function $\mathtt{value}$ is called a
+\item The implementation of the function $\texttt{value}$ follows the reasoning outlined above.
+      However, note that we have implemented $\texttt{value}$ as a $\texttt{cachedProcedure}$, i.e.~as a
+      procedure that \blue{memorizes} its results.  Hence, when the function $\texttt{value}$ is called a
       second time with the same pair of arguments, it does not recompute the value but rather the value is
-      looked up in a so called \blue{cache} that stores all previous results computed by the function $\mathtt{value}$.  To
+      looked up in a so called \blue{cache} that stores all previous results computed by the function $\texttt{value}$.  To
       understand why this is important, 
       let us consider how many states would be explored in the case of tic-tac-toe if we would not use the idea
       of memorizing previous results, a technique which is know as 
       \href{https://en.wikipedia.org/wiki/Memoization}{memoization}.  In this case, we have 9 moves for player
       ``\texttt{O}'' from the start state, then 8 moves for player ``\texttt{X}'', then again 7 moves for
       player ``\texttt{X}''.  If we disregard the fact that some games are decided after fewer than 9 moves,
-      the function $\mathtt{value}$ needs to consider 
+      the function $\texttt{value}$ needs to consider 
       \\[0.2cm]
       \hspace*{1.3cm}
-      $9 \cdot 8 \cdot 7 \cdot {\dots} \cdot 2 \cdot 1 = 9! = 362880$
+      $9 \cdot 8 \cdot 7 \cdot {\dots} \cdot 2 \cdot 1 = 9! = 362\,880$
       \\[0.2cm]
       moves.  However, if we count the number of possibilities of putting 5 ``\texttt{O}''s and 4
       ``\texttt{X}''s on a $3 \times 3$ board, we see that there are only
@@ -338,88 +336,88 @@ recursively as $\mathtt{value}(n,o)$.  As we are dealing with zero sum games her
       $\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = 126$
       \\[0.2cm]
       possibilities, i.e.~there are a factor of $5! \cdot 4! = 2880$ less states to evaluate!
-\item The function $\mathtt{best\_move}$ takes a $\mathtt{State}$ and a $\mathtt{player}$ and returns a pair $\pair(v,s)$
-      where $s$ is a state that is optimal for the $\mathtt{player}$ and such that $s$ can be reached in one step from
-      $\mathtt{State}$.  Furthermore, $v$ is the value of this state.
+\item The function $\texttt{best\_move}$ takes a $\texttt{State}$ and a $\texttt{player}$ and returns a pair $\pair(v,s)$
+      where $s$ is a state that is optimal for the $\texttt{player}$ and such that $s$ can be reached in one step from
+      $\texttt{State}$.  Furthermore, $v$ is the value of this state.
       \begin{enumerate}[(a)]
-      \item To this end, it first computes the set $\mathtt{NS}$ of all states that can be reached 
-            from the given $\mathtt{State}$ in one step if $\mathtt{player}$ is to move next.
-      \item Since there are only two players, the opponent $\mathtt{other}$ is found by subtracting
-            $\mathtt{player}$ from the set of all players.
-      \item $\mathtt{bestValue}$ is the best value that $\mathtt{player}$ can achieve in the given $\mathtt{State}$.
-      \item The function returns randomly one of those states $\mathtt{ns} \in \mathtt{NS}$ such that 
-            the value of $\mathtt{ns}$ is optimal, i.e.~is equal to $\mathtt{bestValue}$.
+      \item To this end, it first computes the set $\texttt{NS}$ of all states that can be reached 
+            from the given $\texttt{State}$ in one step if $\texttt{player}$ is to move next.
+      \item Since there are only two players, the opponent $\texttt{other}$ is found by subtracting
+            $\texttt{player}$ from the set of all players.
+      \item $\texttt{bestValue}$ is the best value that $\texttt{player}$ can achieve in the given $\texttt{State}$.
+      \item The function returns randomly one of those states $\texttt{ns} \in \texttt{NS}$ such that 
+            the value of $\texttt{ns}$ is optimal, i.e.~is equal to $\texttt{bestValue}$.
             We use randomization here since we want to have more interesting games.  If we would always choose
-            the first state that achieves the best values, then our program would always make the same move in
+            the first state that achieves the best value, then our program would always make the same move in
             a given state.  Hence, playing the program would get boring much sooner.
       \end{enumerate}
-\item The function $\mathtt{play\_game}$ is used to play a game.
+\item The function $\texttt{play\_game}$ is used to play a game.
       \begin{enumerate}
-      \item Initially, $\mathtt{State}$ is the $\mathtt{startState}$.
+      \item Initially, $\texttt{State}$ is the $\texttt{startState}$.
       \item As long as the game is not finished, the procedure keeps running.
       \item We assume that the computer is player ``\texttt{O}'' and that the computer goes first.
-            Hence, the function $\mathtt{best\_move}$ is used to compute the state that results from the best
+            Hence, the function $\texttt{best\_move}$ is used to compute the state that results from the best
             move of player ``\texttt{O}''.
       \item After that, it is checked whether the game is finished.
       \item If the game is not  yet finished, the human is asked to make its move via the function
-            $\mathtt{getMove}$ that takes a $\mathtt{State}$, displays it, and asks the user to enter a move.
+            $\texttt{getMove}$ that takes a $\texttt{State}$, displays it, and asks the user to enter a move.
             The state resulting from this move is then returned and displayed.
       \item Next, we have to check whether the game is finished after our move has been executed.
       \item The \texttt{while}-loop keeps iterating until the game is finished.
             We do not have to put a test into the condition of this \texttt{while}-loop as we call the function
-            $\mathtt{final\_msg}(\mathtt{State})$ every time that a new $\mathtt{State}$ has been reached.
-            This function returns $\mathtt{true}$ iff $\mathtt{finished}(\mathtt{State})$ is true.
+            $\texttt{final\_msg}(\texttt{State})$ every time that a new $\texttt{State}$ has been reached.
+            This function returns $\texttt{true}$ iff $\texttt{finished}(\texttt{State})$ is true.
             Additionally, it prints a message when the game has finished.
       \end{enumerate}
 \end{enumerate}
 
 \section{$\alpha$-$\beta$-Pruning}
 The efficiency of the minimax algorithm can be improved if we provide two additional arguments to the function
-$\mathtt{value}$.  Traditionally, these arguments are called $\alpha$ and $\beta$.  In order to be able to
-distinguish between the old function $\mathtt{value}$ and its improved version, we call the improved version 
-$\mathtt{alphaBeta}$.  The idea is that the function $\mathtt{alphaBeta}$ and the function $\mathtt{value}$ are
+$\texttt{value}$.  Traditionally, these arguments are called $\alpha$ and $\beta$.  In order to be able to
+distinguish between the old function $\texttt{value}$ and its improved version, we call the improved version 
+$\texttt{alphaBeta}$.  The idea is that the function $\texttt{alphaBeta}$ and the function $\texttt{value}$ are
 related by the following requirements: 
 \begin{enumerate}
-\item As long as $\mathtt{value}(s, p)$ is between $\alpha$ and $\beta$, the function
-      $\mathtt{alphaBeta}$ computes the same result as the function $\mathtt{value}$,
+\item As long as $\texttt{value}(s, p)$ is between $\alpha$ and $\beta$, the function
+      $\texttt{alphaBeta}$ computes the same result as the function $\texttt{value}$,
       i.e.~we have
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\alpha \leq \mathtt{value}(\mathtt{State}, \mathtt{player}) \leq \beta \;\rightarrow\;
-         \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}(s,p)
+      $\alpha \leq \texttt{value}(\texttt{State}, \texttt{player}) \leq \beta \;\rightarrow\;
+         \texttt{alphaBeta}(s, p, \texttt{alpha}, \texttt{beta}) = \texttt{value}(s,p)
       $.
-\item If $\mathtt{value}(\mathtt{State},\mathtt{player}) \leq \alpha$, we require that the value returned by
-      $\mathtt{alphaBeta}$ is less than or equal to $\alpha$, i.e.~we have 
+\item If $\texttt{value}(\texttt{State},\texttt{player}) \leq \alpha$, we require that the value returned by
+      $\texttt{alphaBeta}$ is less than or equal to $\alpha$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\mathtt{value}(s, p) \leq \alpha \;\rightarrow\;
-       \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) \leq \alpha
+      $\texttt{value}(s, p) \leq \alpha \;\rightarrow\;
+       \texttt{alphaBeta}(s, p, \texttt{alpha}, \texttt{beta}) \leq \alpha
       $.
-\item Similarly, if $\mathtt{value}(\mathtt{State},\mathtt{player}) \geq \beta$, we require that the value
-      returned by $\mathtt{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
+\item Similarly, if $\texttt{value}(\texttt{State},\texttt{player}) \geq \beta$, we require that the value
+      returned by $\texttt{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\beta \leq \mathtt{value}(s, p) \;\rightarrow\;
-        \beta \leq \mathtt{alphaBeta}(s, p, \mathtt{alpha}, \mathtt{beta}) 
+      $\beta \leq \texttt{value}(s, p) \;\rightarrow\;
+        \beta \leq \texttt{alphaBeta}(s, p, \texttt{alpha}, \texttt{beta}) 
       $.
 \end{enumerate}
-Therefore, $\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player})$  is only an approximation of
-$\mathtt{value}(\mathtt{State}, \mathtt{player})$.  However, it turns out that this approximation is all that
-is needed.  \myFig{game-alpha-beta.stlx} shows an implementation of $\mathtt{alphaBeta}$ that achieves this
-specification.  Once the function $\mathtt{alphaBeta}$ is implemented, the function $\mathtt{value}$ can then
+Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an approximation of
+$\texttt{value}(\texttt{State}, \texttt{player})$.  However, it turns out that this approximation is all that
+is needed.  \myFig{game-alpha-beta.stlx} shows an implementation of $\texttt{alphaBeta}$ that achieves this
+specification.  Once the function $\texttt{alphaBeta}$ is implemented, the function $\texttt{value}$ can then
 be realized as follows: 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{value}(s, p ) := \mathtt{alphaBeta}(s, p, -1, +1)$.
+$\texttt{value}(s, p ) := \texttt{alphaBeta}(s, p, -1, +1)$.
 \\[0.2cm]
-The reason is that we already know that $-1 \leq \mathtt{value}(s,p) \leq +1$ and hence the first case of the
-specification of $\mathtt{alphaBeta}$ guarantees that the equation
+The reason is that we already know that $-1 \leq \texttt{value}(s,p) \leq +1$ and hence the first case of the
+specification of $\texttt{alphaBeta}$ guarantees that the equation
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{value}(s,p) = \mathtt{alphaBeta}(s,p,-1,+1)$
+$\texttt{value}(s,p) = \texttt{alphaBeta}(s,p,-1,+1)$
 \\[0.2cm]
-holds.  Since $\mathtt{alphaBeta}$ is implemented as a recursive procedure, 
-the fact that the implementation of $\mathtt{alphaBeta}$ shown in \myFig{game-alpha-beta.stlx} satisfies the
+holds.  Since $\texttt{alphaBeta}$ is implemented as a recursive procedure, 
+the fact that the implementation of $\texttt{alphaBeta}$ shown in \myFig{game-alpha-beta.stlx} satisfies the
 specification given above can be shown by computational induction.  
 
 
@@ -454,36 +452,36 @@ specification given above can be shown by computational induction.
 \label{fig:game-alpha-beta.stlx}
 \end{figure}
 
-We proceed to discuss the implementation of the function $\mathtt{alphaBeta}$.
+We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
 \begin{enumerate}
-\item If $\mathtt{State}$ is a terminal state, the function returns the $\mathtt{utility}$ of the given
-      $\mathtt{State}$ with respect to $\mathtt{player}$.
-\item Since there are only two players, the $\mathtt{other}$ player is the player 
-      that remains if $\mathtt{player}$ is removed form the set of all players.
-\item The variable $\mathtt{val}$ is supposed to store the maximum of the values of all states
-      that can be reached from the given $\mathtt{State}$ if $\mathtt{player}$ makes one move.
+\item If $\texttt{State}$ is a terminal state, the function returns the $\texttt{utility}$ of the given
+      $\texttt{State}$ with respect to $\texttt{player}$.
+\item Since there are only two players, the $\texttt{other}$ player is the player 
+      that remains if $\texttt{player}$ is removed form the set of all players.
+\item The variable $\texttt{val}$ is supposed to store the maximum of the values of all states
+      that can be reached from the given $\texttt{State}$ if $\texttt{player}$ makes one move.
       
-      According to the specification of $\mathtt{alphaBeta}$,  we are not interested in values that are below
-      $\alpha$.  Hence, it suffices to initialize $\mathtt{val}$ with $\alpha$.   This way, in the case that we have
+      According to the specification of $\texttt{alphaBeta}$,  we are not interested in values that are below
+      $\alpha$.  Hence, it suffices to initialize $\texttt{val}$ with $\alpha$.   This way, in the case that we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{value}(\mathtt{State},\mathtt{player}) < \alpha$,
+      $\texttt{value}(\texttt{State},\texttt{player}) < \alpha$,
       \\[0.2cm]
-      instead of returning the true value of the given $\mathtt{State}$, the function
-      $\mathtt{alphaBeta}(\mathtt{State},\mathtt{player},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
-\item Next, we iterate over all successor states $\mathtt{ns} \in \mathtt{nextStates}(\mathtt{State}, \mathtt{player})$.
-\item We have to recursively evaluate the states $\mathtt{ns}$ for the $\mathtt{other}$ player.
-      Since the value of a state for the $\mathtt{other}$ player is the negative of the value for
-      $\mathtt{player}$, we have to exchange the roles of $\alpha$ and $\beta$ and prefix them with a negative
+      instead of returning the true value of the given $\texttt{State}$, the function
+      $\texttt{alphaBeta}(\texttt{State},\texttt{player},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
+\item Next, we iterate over all successor states $\texttt{ns} \in \texttt{nextStates}(\texttt{State}, \texttt{player})$.
+\item We have to recursively evaluate the states $\texttt{ns}$ for the $\texttt{other}$ player.
+      Since the value of a state for the $\texttt{other}$ player is the negative of the value for
+      $\texttt{player}$, we have to exchange the roles of $\alpha$ and $\beta$ and prefix them with a negative
       sign.
 
-      Note that the value of $\mathtt{val}$ computed in the previous iteration of the \texttt{for}-loop 
+      Note that the value of $\texttt{val}$ computed in the previous iteration of the \texttt{for}-loop 
       can serve as the value of the parameter $\alpha$ for the next recursive call, since once we have found a 
-      state that has value $\mathtt{val}$, we know already that $\mathtt{value}(s,p)$ is at least
-      $\mathtt{val}$.  Therefore,  if we encounter states with a value
-      less than $\mathtt{val}$ during our recursive evaluation of the states reachable from $\mathtt{State}$,
-      then those states can be ignored.   This is achieved via the using $\mathtt{val}$ for the parameter $\alpha$.
-\item As the specification of $\mathtt{alphaBeta}$ ask us to compute the value of $\mathtt{State}$ only in
+      state that has value $\texttt{val}$, we know already that $\texttt{value}(s,p)$ is at least
+      $\texttt{val}$.  Therefore,  if we encounter states with a value
+      less than $\texttt{val}$ during our recursive evaluation of the states reachable from $\texttt{State}$,
+      then those states can be ignored.   This is achieved via the using $\texttt{val}$ for the parameter $\alpha$.
+\item As the specification of $\texttt{alphaBeta}$ ask us to compute the value of $\texttt{State}$ only in
       those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
       value that is at least as big a $\beta$ we can stop the evaluation and return this value.
 
@@ -492,15 +490,15 @@ We proceed to discuss the implementation of the function $\mathtt{alphaBeta}$.
 
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
-$\mathtt{States}$ is so big that even the fastest computer does not stand a chance to explore this set
+$\texttt{States}$ is so big that even the fastest computer does not stand a chance to explore this set
 completely.  For example, it is impossible to consider all possible games in chess.  Instead, we have to limit
 the exploration in a way that is similar to the way professional players evaluate their game:  Usually, a
 player considers all variations of the game for, say, the next three moves.  After a given number of moves, the
 value of a position is estimated using an evaluation function.  In order to implement this idea, we add a
-parameter $\mathtt{limit}$ to the procedure $\mathtt{value}$.  On every recursive invocation 
-of the function $\mathtt{value}$, the function $\mathtt{limit}$ is decreased.  Once the limit reaches $0$,
-instead of invoking the function $\mathtt{value}$ again recursively, instead we try to estimate the value of
-the given $\mathtt{State}$ using a heuristic function.  This leads to the code shown in \myFig{game-limit.stlx}.
+parameter $\texttt{limit}$ to the procedure $\texttt{value}$.  On every recursive invocation 
+of the function $\texttt{value}$, the function $\texttt{limit}$ is decreased.  Once the limit reaches $0$,
+instead of invoking the function $\texttt{value}$ again recursively, instead we try to estimate the value of
+the given $\texttt{State}$ using a heuristic function.  This leads to the code shown in \myFig{game-limit.stlx}.
 
 
 \begin{figure}[!ht]
@@ -545,27 +543,27 @@ it has been tested that the game has not yet been decided, this approach is not 
 complex game like chess, the heuristic could instead be a weighted count of all pieces.  Concretely, the
 algorithm for estimating the value of a state would work as follows:
 \begin{enumerate}
-\item Initially, the variable $\mathtt{sum}$ is set to $0$:
+\item Initially, the variable $\texttt{sum}$ is set to $0$:
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{sum := 0;}
-\item We would count the number of white rooks $\mathtt{Rook}_{\mathrm{white}}$ and black rooks $\mathtt{Rook}_{\mathrm{black}}$,
+\item We would count the number of white rooks $\texttt{Rook}_{\mathrm{white}}$ and black rooks $\texttt{Rook}_{\mathrm{black}}$,
       subtract these numbers from each other and multiply the difference by $5$.  
-      The resulting number would be added to $\mathtt{sum}$:
+      The resulting number would be added to $\texttt{sum}$:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{sum} \;\texttt{+=}\; (\mathtt{Rook}_{\mathrm{white}} - \mathtt{Rook}_{\mathrm{black}}) \cdot 5\mathtt{;}$
-\item We would count the number of white bishops $\mathtt{Bishop}_{\mathrm{white}}$ and black bishops
-      $\mathtt{Bishop}_{\mathrm{black}}$,
+      $\texttt{sum} \;\texttt{+=}\; (\texttt{Rook}_{\mathrm{white}} - \texttt{Rook}_{\mathrm{black}}) \cdot 5\texttt{;}$
+\item We would count the number of white bishops $\texttt{Bishop}_{\mathrm{white}}$ and black bishops
+      $\texttt{Bishop}_{\mathrm{black}}$,
       subtract these numbers from each other and multiply the difference by $3$.  
-      The resulting number would be added to $\mathtt{sum}$:
+      The resulting number would be added to $\texttt{sum}$:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{sum} \;\texttt{+=}\; (\mathtt{Bishop}_{\mathrm{white}} - \mathtt{Bishop}_{\mathrm{black}}) \cdot 3\mathtt{;}$
+      $\texttt{sum} \;\texttt{+=}\; (\texttt{Bishop}_{\mathrm{white}} - \texttt{Bishop}_{\mathrm{black}}) \cdot 3\texttt{;}$
 \item In a similar way we would count knights, queens, and pawns.  Approximately, the weights of
       knights are $3$, a queen is worth $9$ and a pawn is worth $1$.
 \end{enumerate}
-The resulting $\mathtt{sum}$ can then be used as an approximation of the value of a state.
+The resulting $\texttt{sum}$ can then be used as an approximation of the value of a state.
 More details about the weights of the pieces can be found in the Wikipedia article 
 ``\href{https://en.wikipedia.org/wiki/Chess_piece_relative_value}{chess piece relative value}''.
 
@@ -585,19 +583,19 @@ Your task is to implement this game.  At the address
 is a frame that can be used to solve this exercise.  In this frame, only the following procedures need to be
 implemented. 
 \begin{enumerate}
-\item The procedure $\mathtt{nextStates}(s, p)$ is called with a state $s$ and a player $p$.
+\item The procedure $\texttt{nextStates}(s, p)$ is called with a state $s$ and a player $p$.
       It is supposed to return the set of all states that can be reached from the given state $s$ if player $p$
       is next to make a move.  In order to implement this function efficiently, you should make use of the
-      function $\mathtt{find\_empty}$ that is described below.  
-\item The procedure $\mathtt{find\_empty}(s, c)$ is called with a state $s$ and a column $c$.  It searches the
+      function $\texttt{find\_empty}$ that is described below.  
+\item The procedure $\texttt{find\_empty}(s, c)$ is called with a state $s$ and a column $c$.  It searches the
       column $c$ of the board specified by $s$ bottom up for the first empty square.  Once an empty square is found, 
       the corresponding row is returned.  If all the squares in the column $c$ are filled, then the number $7$
       is returned instead.
-\item The procedure $\mathtt{utility}(s, p)$ is called with a state $s$ and a player $p$.
+\item The procedure $\texttt{utility}(s, p)$ is called with a state $s$ and a player $p$.
       It computes the utility that this state has for player $p$ if player $p$ is the next to move.
-      For efficiency reasons, the implementation of $\mathtt{utility}$ should make use of the auxiliary functions
-      $\mathtt{all\_lines}$ and $\mathtt{last\_line\_filled}$ that are described below.
-\item The procedure $\mathtt{all\_lines}()$ takes no arguments.  It is supposed to compute all sets of coordinates that form
+      For efficiency reasons, the implementation of $\texttt{utility}$ should make use of the auxiliary functions
+      $\texttt{all\_lines}$ and $\texttt{last\_line\_filled}$ that are described below.
+\item The procedure $\texttt{all\_lines}()$ takes no arguments.  It is supposed to compute all sets of coordinates that form
       a line of four consecutive squares.  For example, one such set would be the set
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -614,9 +612,9 @@ implemented.
       \hspace*{1.3cm}
       $\{ \pair(1,1), \pair(2,2), \pair(3,3), \pair(4,4) \}$.
       \\[0.2cm]
-      Note that the procedure $\mathtt{all\_lines}$ should be implemented as a \texttt{cachedProcedure}.  This
+      Note that the procedure $\texttt{all\_lines}$ should be implemented as a \texttt{cachedProcedure}.  This
       way it is guaranteed that the necessary computation is only performed once.
-\item The procedure $\mathtt{last\_line\_filled}(s)$ takes a state $s$.  It checks whether the game is drawn.
+\item The procedure $\texttt{last\_line\_filled}(s)$ takes a state $s$.  It checks whether the game is drawn.
       The game is drawn iff the board is completely filled.  This can be checked most efficiently by checking
       the final row of the board.  If this row is completely filled, all other rows must have  been filled, too.
       \eox

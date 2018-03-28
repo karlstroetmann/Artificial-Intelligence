@@ -1,4 +1,4 @@
-value := cachedProcedure(State, player) {
+value := cachedProcedure(State, player) {  // cachedProcedure for dynamic programming
     if (finished(State)) {
         return utility(State, player);
     }
