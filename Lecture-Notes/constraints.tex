@@ -1179,11 +1179,11 @@ Assume that the formula $f$ is a constraint and the set of variables occurring i
 $\texttt{Var}(f) = \{ x \} + R$ \quad where $x \not\in R$,
 \\[0.2cm]
 i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R$ is the set of all variables occurring
-in $f$ that are different from $x$.  Furthermore, assume that we have a dictionary $\texttt{AllowableValues}$ such that
-for every variable $y$, the dictionary entry $\texttt{AllowableValues}[y]$ is the set of values that can be substituted
+in $f$ that are different from $x$.  Furthermore, assume that we have a dictionary $\texttt{ValuesPerVar}$ such that
+for every variable $y$, the dictionary entry $\texttt{ValuesPerVar}[y]$ is the set of values that can be substituted
 for the variable $y$.  Now  \blue{a value $v$ is consistent for $x$ with respect to the constraint $f$} 
 iff the partial assignment $\{ \pair(x, v) \}$ can be extended to an assignment $A$ satisfying the constraint $f$,
-i.e.~for every variable $y \in R$ we have to find a value $w \in \texttt{AllowableValues}[y]$ such that the resulting
+i.e.~for every variable $y \in R$ we have to find a value $w \in \texttt{ValuesPerVar}[y]$ such that the resulting
 assignment $A$ satisfies the equations
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1192,10 +1192,10 @@ $\texttt{evaluate}(f, A) = \texttt{true}$.
 Here, the function $\texttt{evaluate}$ takes a formula $f$ and an assignment $A$ and evaluates $f$ using the
 assignment $A$.  Now, \blue{consistency maintenance} works as follows.
 \begin{enumerate}
-\item The dictionary $\texttt{AllowableValues}$ is initialized as follows:
+\item The dictionary $\texttt{ValuesPerVar}$ is initialized as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{AllowableValues}[x] := \texttt{Values}$ \quad for all $x \in \texttt{Variables}$,
+      $\texttt{ValuesPerVar}[x] := \texttt{Values}$ \quad for all $x \in \texttt{Variables}$,
       \\[0.2cm]
       i.e.~initially every variable $x$ can take any value from the set of $\texttt{Values}$.
 \item Next, the set $\texttt{UncheckedVariables}$ is initialized to the set of all $\texttt{Variables}$:
@@ -1208,8 +1208,8 @@ assignment $A$.  Now, \blue{consistency maintenance} works as follows.
       $x := \texttt{from}(\texttt{UncheckedVariables})$
 \item We iterate over all constraints $f$ such that $x$ occurs in $f$.  
       \begin{enumerate}
-      \item For every value $v \in \texttt{AllowableValues}[x]$ we check whether $v$ is consistent with $f$.
-      \item If $v$ is not consistent with $f$, then $v$ is removed from $\texttt{AllowableValues}[x]$.
+      \item For every value $v \in \texttt{ValuesPerVar}[x]$ we check whether $v$ is consistent with $f$.
+      \item If $v$ is not consistent with $f$, then $v$ is removed from $\texttt{ValuesPerVar}[x]$.
             Furthermore, if $R$ is the set of all variables occurring in $f$ that are different from $x$, 
             then this set $R$ is added to the set of $\texttt{UncheckedVariables}$.
       \end{enumerate}
@@ -1217,15 +1217,15 @@ assignment $A$.  Now, \blue{consistency maintenance} works as follows.
       and remove the next variable from the set $\texttt{UncheckedVariables}$.
 \end{enumerate}
 The algorithm terminates as every iteration removes either a variable from the set
-$\texttt{UncheckedVariables}$ or it removes a value from one of the sets $\texttt{AllowableValues}[y]$ for some
+$\texttt{UncheckedVariables}$ or it removes a value from one of the sets $\texttt{ValuesPerVar}[y]$ for some
 variable $y$.  Although the set $\texttt{UncheckedVariables}$ can grow during the algorithm,  the union
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigcup\limits_{x \in \mathtt{Vars}} \texttt{AllowableValues}[x]$ 
+$\bigcup\limits_{x \in \mathtt{Vars}} \texttt{ValuesPerVar}[x]$ 
 \\[0.2cm]
 can never grow:  Every time the set $\texttt{UncheckedVariables}$ grows,
-for some variable $x$ the set $\texttt{AllowableValues}[x]$ shrinks.
-As the sets $\texttt{AllowableValues}[x]$ are finite for all variables $x$, the set
+for some variable $x$ the set $\texttt{ValuesPerVar}[x]$ shrinks.
+As the sets $\texttt{ValuesPerVar}[x]$ are finite for all variables $x$, the set
 $\texttt{UncheckedVariables}$ can only grow a finite number of times. 
 Once the set $\texttt{UncheckedVariables}$ does not grow any more, every iteration of the algorithm removes one
 variable from this set and hence the algorithm terminates eventually.
@@ -1326,9 +1326,8 @@ $\texttt{ValuesPerVar}[x]$ is consistent with the constraints for $x$.  The impl
                   xrightmargin  = 0.8cm,
                   ]
     existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
-        AllVars := { var } + Vars;
-        return exists( A in createAllAssignments(Vars, ValuesPerVar)   |
-                       eval_constraint(A + { [var, val] }, f, AllVars) );
+        return exists( A in createAllAssignments(Vars, ValuesPerVar) 
+                     | eval_constraint(A + { [var, val] }, f)        );
     };
     createAllAssignments := procedure(Vars, ValuesPerVar) {
         if (Vars == {}) {

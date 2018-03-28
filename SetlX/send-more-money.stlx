@@ -14,7 +14,7 @@ createCSP := procedure() {
                    };
     Constraints += { "S != 0", "M != 0" };
     // Adding the constraints below is like cheating.
-    Constraints += { "C1 < 2", "C2 < 2", "C3 < 2" };  
+    // Constraints += { "C1 < 2", "C2 < 2", "C3 < 2" };  
     return [Variables, Values, Constraints];
 };
 allDifferent := procedure(Vars) {

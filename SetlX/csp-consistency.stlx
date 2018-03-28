@@ -80,7 +80,6 @@ enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connec
 // with variables.  It checks whether there is a value for var such that the
 // constraint f can be satisfied.
 existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
-    AllVars := { var } + Vars;
     return exists( A in createAllAssignments(Vars, ValuesPerVar)
                  | eval_constraint(A + { [var, val] }, f)        );
 };
