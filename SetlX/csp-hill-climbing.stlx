@@ -1,0 +1,71 @@
+loadLibrary("termUtilities");
+load("queens-csp.stlx");
+
+// Given a partial assignment of variable, this procedure tries to complete
+// this assignment so that the given CSP is solved.
+solve := procedure(CSP) {
+    [Variables, Values, Constraints] := CSP;
+    Assignment  := { [x, rnd(Values)] : x in Variables };
+    iteration   := 0;
+    restarts    := 0;
+    UsedAssigns := { Assignment };
+    while (true) {
+        conflicts := violated(Assignment, Constraints);
+        if (conflicts == 0) { // no conflicts, solution found
+            print("#constraints: $#Constraints$, #iterations: $iteration$, #restarts: $restarts$");
+            return Assignment;
+        }
+        NextStates := {};
+        for (x in Variables, v in Values) {
+            NewAssign    := Assignment;
+            NewAssign[x] := v;
+            if (NewAssign in UsedAssigns) {
+                continue;
+            }
+            numConflicts := violated(NewAssign, Constraints);
+            NextStates   += { [numConflicts, x, v] };
+        }
+        minConflicts := first(NextStates)[1];
+        if (minConflicts <= conflicts) {
+            [_,x,v] := rnd({[n,x,v] : [n,x,v] in NextStates | n == minConflicts});
+            Assignment[x] := v;
+            UsedAssigns += { Assignment };
+        } else { // random restart
+            restarts   += 1;
+            Assignment := { [x, rnd(Values)] : x in Variables };
+        }
+        iteration += 1;
+    }
+};
+// Return the set of constraints that are violated given the Assignment.
+// Annotated is a set of pairs of the form [f, V] where f is a
+// constraint and V is the set of variables occurring in f.
+violated := procedure(Assignment, Constraints) {
+    return #{ f : f in Constraints | !eval_constr(Assignment, f) };
+};
+// Evaluate Formula using the given Assignment.
+eval_constr := procedure(Assignment, Formula) {
+    for ([var, value] in Assignment) {
+        execute("$var$ := $value$;");
+    }
+    return eval(Formula);
+};
+main := procedure() {
+    resetRandom();
+    for (i in [1..42]) {
+        x := rnd([1..100]);
+    }
+    lower := 100;
+    upper := 1000;
+    for (n in [lower .. upper]) {
+        csp      := createCSP(n);   
+        start    := now();
+        solution := solve(csp);
+        stop     := now();
+        total    := (stop - start) / 1000.0;
+        printSolution(solution);
+        print("The computation for the $n$ queens problem took $total$ seconds.");
+    }
+};
+main();
+

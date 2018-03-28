@@ -21,8 +21,8 @@ varsTerm := procedure(f) {
 
 // This is a constraints solver that is based on backtracking, constraint
 // propagation, and maintaining arc-consistency.
-solve := procedure(csp) {
-    [Variables, Values, Constrs] := csp;
+solve := procedure(CSP) {
+    [Variables, Values, Constrs] := CSP;
     ValuesPerVar := { [x, Values] : x in Variables };
     Annotated    := { [f, collectVars(f)] : f in Constrs };
     UnaryConstrs := { [f, V] : [f, V] in Annotated | #V == 1 };
@@ -39,8 +39,8 @@ solve := procedure(csp) {
         }
         Var2Formulas := variables2Formulas(OtherConstrs);
         enforceConsistency(ValuesPerVar, Var2Formulas, Annotated, Connected);
-        csp := [Variables, ValuesPerVar, OtherConstrs, Var2Formulas];
-        return bt_search({}, csp, Connected);
+        print(ValuesPerVar);
+        return bt_search({}, Variables, ValuesPerVar, OtherConstrs);
     }
 };
 // This procedure takes four arguments:
@@ -75,14 +75,14 @@ enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connec
         ValuesPerVar[variable] := Remaining;
     }
 };
-// This procedure takes a variable v, a value, a constraint f, the set Vars of those
+// This procedure takes a variable var, a value val, a constraint f, the set Vars of those
 // variables in f that are different from v and a dictionary associating values
-// with variables.  It checks whether there is a value for v such that the
-// constraint can be satisfied.
+// with variables.  It checks whether there is a value for var such that the
+// constraint f can be satisfied.
 existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
     AllVars := { var } + Vars;
-    return exists( A in createAllAssignments(Vars, ValuesPerVar)   |
-                   eval_constraint(A + { [var, val] }, f, AllVars) );
+    return exists( A in createAllAssignments(Vars, ValuesPerVar)
+                 | eval_constraint(A + { [var, val] }, f)        );
 };
 // Return the set of all possible assignments for the variables in the set Vars.
 createAllAssignments := procedure(Vars, ValuesPerVar) {
@@ -94,7 +94,7 @@ createAllAssignments := procedure(Vars, ValuesPerVar) {
     Assignments := createAllAssignments(Vars, ValuesPerVar);
     return { { [var, val] } + A : val in Values, A in Assignments };
 };
-// This procdure takes the set of annotated of constraints as input.  It returns
+// This procdure takes the set of annotated constraints as input.  It returns
 // a dictionary that attaches to every variable v the set of those constraints f
 // such that v occurs in f.
 variables2Formulas := procedure(Constraints) {
@@ -110,23 +110,14 @@ variables2Formulas := procedure(Constraints) {
 };
 // Given a constraint containing only variable, find the values that satisfy
 // this constraint.
-solve_unary := procedure(constraint, variable, Values) {
-    LegalValues := {};
-    for (value in Values) {
-        Assignment := { [variable, value] };
-        if (eval_constraint(Assignment, constraint, { variable })) {
-            LegalValues += { value };
-        }
-    }
-    if (LegalValues == {}) {
-        backtrack;  // game over
-    }
-    return LegalValues;
+solve_unary := procedure(f, var, Values) {
+    Legal := {value : value in Values | eval_constraint({[var,value]}, f)};
+    if (Legal == {}) { backtrack; } // game over
+    return Legal;
 };
-// Given a partial assignment of variable, this procedure tries to complete
+// Given a partial assignment of variables, this procedure tries to complete
 // this assignment so that the given CSP is solved.
-bt_search := procedure(Assignment, csp, Connected) {
-    [Variables, Values, Constraints, Var2Formulas] := csp;
+bt_search := procedure(Assignment, Variables, Values, Constraints) {
     if (#Assignment == #Variables) {
         return Assignment;
     }
@@ -135,8 +126,8 @@ bt_search := procedure(Assignment, csp, Connected) {
         check {
             if (is_consistent(x, val, Assignment, Constraints)) {
                 NewVals := propagate(x, val, Assignment, Constraints, Values);
-                csp := [Variables, NewVals, Constraints, Var2Formulas];
-                return bt_search(Assignment + { [x, val] }, csp, Connected);
+                return bt_search(Assignment + { [x, val] },
+                                 Variables, NewVals, Constraints);
             }
         }
     }
@@ -149,53 +140,38 @@ most_constrained_variable := procedure(Assignment, Values) {
     minSize    := min({ #U : [x, U] in Unassigned });
     return rnd({ x : [x, U] in Unassigned | #U == minSize });
 };
+// Given a variable x and a value v, extend the Assignment so that x is bound to v
+// and compute the Values that can still be assigned to the unassigned variables.
 propagate := procedure(x, v, Assignment, Constraints, Values) {
-    NewAssignment := Assignment + { [x, v] };
-    Values[x]     := { v };
-    for ([Formula, Vars] in Constraints | x in Vars) {
-        if (#Vars > 2) {
-            continue;    // propagation only for binary constraints
-        }
-        OtherVars   := Vars - { x };
-        UnboundVars := { y : y in OtherVars | !(y in domain(NewAssignment)) }; 
-        if (#UnboundVars == 1) {
-            y         := arb(UnboundVars);
-            NewValues := Values[y];
-            for (w in Values[y]) {
-                A2 := NewAssignment + { [y, w] };
-                if (!eval_constraint(A2, Formula, Vars)) {
-                    NewValues -= { w };
-                }
-            }
-            if (NewValues == {}) { backtrack; }
-            Values[y] := NewValues;
+    Values[x] := { v };
+    // constraint propagation is only done for binary constraints
+    for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
+        y := arb(Vars - { x });
+        if (!(y in domain(Assignment))) {
+            Legal := { w : w in Values[y] | eval_constraint({[x,v], [y,w]}, F) };
+            if (Legal == {}) { backtrack; }
+            Values[y] := Legal;
         }
     }
     return Values;
-};
-// Evaluate a formula under a given Assignment.
-//   Assignment: Binary relation assigning values to variables
-//   Vars:       Set of variables occurring in Formula
-//   Formula:    The formula to evaluate
-eval_constraint := procedure(Assignment, Formula, Vars) {
-    for (v in Vars) {
-        execute("$v$ := $Assignment[v]$;");
-    }
-    return eval(Formula);
 };
 // Check, whether the extended assignment
 //     Assignment + { [var, value] };
 // is consistent with the given constraints.
 is_consistent := procedure(var, value, Assignment, Constraints) {
-    NewAssignment := Assignment + { [var, value] };
-    for ([Formula, Vars] in Constraints | var in Vars) {
-        if (Vars <= domain(NewAssignment)) {
-            if (!eval_constraint(NewAssignment, Formula, Vars)) {
-                return false;
-            }
-        }
+    NA := Assignment + { [var, value] };
+    return forall([F, Vars] in Constraints |
+                  var in Vars && Vars <= domain(NA) => eval_constraint(NA, F)
+                 );
+};
+// Evaluate a formula under a given Assignment.
+//   Assignment: Binary relation assigning values to variables
+//   Formula:    The formula to evaluate
+eval_constraint := procedure(Assignment, Formula) {
+    for ([var, value] in Assignment) {
+        execute("$var$ := $value$;");
     }
-    return true;
+    return eval(Formula);
 };
 // For every variable, print those values that might still be assigned
 // to this variable.  This is only for debugging. 
@@ -213,9 +189,9 @@ main := procedure() {
         lower := 8;
         upper := 32;
         for (n in [lower .. upper]) {
-            csp      := createCSP(n);
+            CSP      := createCSP(n);
             start    := now();
-            solution := solve(csp);
+            solution := solve(CSP);
             stop     := now();
             total    := (stop - start) / 1000.0;
             // printSolution(solution);
@@ -228,9 +204,9 @@ main := procedure() {
 };
 mainMoney := procedure() {
     resetRandom();
-    csp      := createCSP();
+    CSP      := createCSP();
     start    := now();
-    solution := solve(csp);
+    solution := solve(CSP);
     stop     := now();
     total    := (stop - start) / 1000.0;
     printSolution(solution);
