@@ -2,15 +2,10 @@ load("game.stlx");
 // load("game-alpha-beta.stlx");
 // load("game-limit.stlx");
 
-players := procedure() {
-    return { "X", "O" };
-};
-startState := procedure(n := 3) {
-    L := [1 .. n];
-    return [ [ " " : col in L] : row in L];
-};
+players    := [] |-> { "X", "O" };
+startState := [] |-> [ [ " " : col in [1..3]] : row in [1..3] ];
 nextStates := procedure(State, player) {
-    Empty  := find_empty(State);
+    Empty  := empty(State);
     Result := {};
     for ([row, col] in Empty) {
         NextState           := State;
@@ -19,11 +14,7 @@ nextStates := procedure(State, player) {
     }
     return Result;
 };
-find_empty := procedure(State) {
-    n := #State;
-    L := [1 .. n];
-    return { [row, col] : row in L, col in L | State[row][col] == " " };
-};
+empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col] == " "};
 utility := procedure(State, player) {
     Lines := all_lines(State);
     for (Line in Lines) {
@@ -31,31 +22,27 @@ utility := procedure(State, player) {
             if (Line == { player }) { return  1; } else { return -1; }
         }
     }
-    if (find_empty(State) == {}) { return 0; } // else return om
+    if (forall(row in [1..3], col in [1..3] | State[row][col] != " ")) {
+        return 0;   
+    }
 };
 all_lines := procedure(State) {
-    n := #State;
-    L := [1 .. n];
-    Lines := { { State[row][ col] : col in L } : row in L };
-    Lines += { { State[row][ col] : row in L } : col in L };
-    Lines += { { State[idx][ idx] : idx in L } };
-    Lines += { { State[idx][-idx] : idx in L } };
+    Lines := { { State[row][ col] : col in [1..3] } : row in [1..3] };
+    Lines += { { State[row][ col] : row in [1..3] } : col in [1..3] };
+    Lines += { { State[idx][ idx] : idx in [1..3] } };
+    Lines += { { State[idx][-idx] : idx in [1..3] } };
     return Lines;
 };
-
 finished := procedure(State) {
     return utility(State, "X") != om;
 };
 ////////////////////////////////////////////////////////////////////////////////
-// for pretty printing
 stateToString := procedure(State) {
-    n     := #State;
-    L     := [1 .. n];
-    ls    := "\n" + "-" * (4 * n + 1) + "\n";  // line separator
+    L     := [1 .. 3];
+    ls    := "\n" + "-" * (4 * 3 + 1) + "\n";  // line separator
     board := join(["| " + join([State[r][c]: c in L]," | ") + " |": r in L], ls);
     return ls + board + ls;
 };
-
 getMove := procedure(State) {
     [row, col] := split(read("Your turn, enter move as row, col: "), " *, *");
     [row, col] := [int(row), int(col)];
@@ -64,18 +51,17 @@ getMove := procedure(State) {
 };
 final_msg := procedure(State) {
     if (finished(State)) {
-        msg := "The game is finished. ";
         if (utility(State, "X") == 1) {
-            print(msg + "You have won!");
+            print("You have won!");
         } else if (utility(State, "X") == -1) {
-            print(msg + "You lost!");
+            print("You have lost!");
         } else {
-            print(msg + "It's a draw.");
+            print("It's a draw.");
         }
         return true;
     }
     return false;
 };
 
-play_game(3);
+play_game();
 

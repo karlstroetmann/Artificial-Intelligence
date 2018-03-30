@@ -13,8 +13,9 @@ just 2843.  Hence, he wouldn't stand a chance to win a game against Stockfish.  
 \href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} was able to beat
 \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie}, who is currently\footnote{This assessment is of March 2018.} 
 considered to be the best human \href{https://en.wikipedia.org/wiki/Go_(game)}{go} player in the world.
-Besides go and chess, there are many other games where today the performance of a computer exceeds the performance of human players.  To name just
-one more example, at the beginning of 2017 the program \href{https://en.wikipedia.org/wiki/Libratus}{Libratus} was able to 
+Besides go and chess, there are many other games where today the performance of a computer exceeds the
+performance of human players.  To name just one more example, at the beginning of 2017 the program
+\href{https://en.wikipedia.org/wiki/Libratus}{Libratus} was able to  
 \href{https://www.engadget.com/2017/01/31/libratus-the-poker-playing-ai-destroyed-its-four-human-rivals/}{beat}
 four professional poker players resoundingly.
 
@@ -102,16 +103,13 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    players := procedure() { return { "X", "O" }; };
-    startState := procedure(n) {
-        L := [1 .. n];
-        return [ [ " " : col in L] : row in L];
-    };
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                  ]
+    players    := [] |-> { "X", "O" };
+    startState := [] |-> [ [ " " : col in [1..3]] : row in [1..3] ];
     nextStates := procedure(State, player) {
-        Empty  := find_empty(State);
+        Empty  := empty(State);
         Result := {};
         for ([row, col] in Empty) {
             NextState           := State;
@@ -120,11 +118,7 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
         }
         return Result;
     };
-    find_empty := procedure(State) {
-        n := #State;
-        L := [1 .. n];
-        return { [row, col] : row in L, col in L | State[row][col] == " " };
-    };
+    empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col] == " "};
     utility := procedure(State, player) {
         Lines := all_lines(State);
         for (Line in Lines) {
@@ -132,19 +126,19 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
                 if (Line == { player }) { return  1; } else { return -1; }
             }
         }
-        if (find_empty(State) == {}) { return 0; } // else return om
+        if (forall(row in [1..3], col in [1..3] | State[row][col] != " ")) {
+            return 0;   
+        }
     };
     all_lines := procedure(State) {
-        n := #State;
-        L := [1 .. n];
-        Lines := { { State[row][ col] : col in L } : row in L };
-        Lines += { { State[row][ col] : row in L } : col in L };
-        Lines += { { State[idx][ idx] : idx in L } };
-        Lines += { { State[idx][-idx] : idx in L } };
+        Lines := { { State[row][ col] : col in [1..3] } : row in [1..3] };
+        Lines += { { State[row][ col] : row in [1..3] } : col in [1..3] };
+        Lines += { { State[idx][ idx] : idx in [1..3] } };
+        Lines += { { State[idx][-idx] : idx in [1..3] } };
         return Lines;
     };
     finished := procedure(State) {
-        if (utility(State, "X") != om) { return true; } else { return false; }
+        return utility(State, "X") != om;
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -166,10 +160,6 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
         [" ", " ", " "]
       ].     
       \end{Verbatim}
-      The function $\texttt{startState}$ receives one optional argument $\texttt{n}$.
-      By default $\texttt{n}$ is equal to $3$.  This argument specifies the size of the board.
-      Although traditionally tic-tac-toe is played on a $3 \times 3$ board, it can also 
-      be played on a bigger board.
 \item The function $\texttt{nextStates}$ takes a $\texttt{State}$ and a $\texttt{player}$ and computes the set
       of states that can be reached from $\texttt{State}$ if $\texttt{player}$ is to move next.
       To this end, it first computes the set of \blue{empty} positions.  Every position is represented as pair of the
@@ -179,12 +169,13 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
       \hspace*{1.3cm}
       $[\texttt{row}, \texttt{col}] = \texttt{\symbol{34}\;\;\symbol{34}}$.
       \\[0.2cm]
-      The computation of the empty position has been sourced out to the function $\texttt{find\_empty}$.
+      The computation of the empty position has been sourced out to the function $\texttt{empty}$.
       The function $\texttt{nextStates}$ then iterates over the set of empty positions. For every 
       empty position $[\texttt{row}, \texttt{col}]$ it creates a new state $\texttt{NextState}$ that results
       from the current $\texttt{State}$ by putting the mark of $\texttt{player}$ in this position.  
       The resulting states are collected in the set $\texttt{Result}$ and returned.
-\item The function $\texttt{find\_empty}$ takes a $\texttt{State}$ and returns the set of empty positions.
+\item The function $\texttt{empty}$ takes a state $\texttt{S}$ and returns the set of positions that are empty
+      in this state.
 \item The function $\texttt{utility}$ takes a $\texttt{State}$ and a $\texttt{player}$.  If the game is 
       finished in the given $\texttt{State}$, it returns the value that this $\texttt{State}$ has for the
       current $\texttt{player}$.  If the game is not yet decided, $\Omega$ is returned instead.
@@ -194,7 +185,7 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
       vertical, or diagonal line in $\texttt{State}$, e.g.~the set 
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\{ \texttt{State}[1,1], \texttt{State}[2,2], \texttt{State}[3,3] \}$
+      $\{\, \texttt{State}[1,1],\, \texttt{State}[2,2],\, \texttt{State}[3,3]\, \}$
       \\[0.2cm]
       is the set of entries in a diagonal line.  The game is decided if all entries in this set are either
       ``$\texttt{X}$'' or ``$\texttt{O}$''.  In this case, the set has exactly one element which is different
@@ -294,8 +285,8 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
       bestVal := value(State, player);
       return [bestVal, rnd({ns : ns in NS | -value(ns,other) == bestVal})];
     };
-    play_game := procedure(n := 3) {
-        State := startState(n);
+    play_game := procedure() {
+        State := startState();
         print(stateToString(State));
         while (true) {
             [val, State] := best_move(State, "O");

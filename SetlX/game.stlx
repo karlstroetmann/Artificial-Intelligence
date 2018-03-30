@@ -11,8 +11,8 @@ best_move := procedure(State, player) {
     bestVal := value(State, player);
     return [bestVal, rnd({ns : ns in NS | -value(ns,other) == bestVal})];
 };
-play_game := procedure(n := 3) {
-    State := startState(n);
+play_game := procedure() {
+    State := startState();
     print(stateToString(State));
     while (true) {
         start        := now();

@@ -123,7 +123,7 @@ numConflicts := procedure(Queens, row) {
     return result;
 };
 main := procedure() {
-    for (n in [1000..1000]) {
+    for (n in [8..100]) {
         resetRandom();
         start    := now();
         solution := solve(n);
