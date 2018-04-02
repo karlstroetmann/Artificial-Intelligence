@@ -149,7 +149,7 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
 
 \begin{enumerate}
 \item The function $\texttt{players}$ returns the set $\texttt{Players}$.  Traditionally, the players in
-      tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.
+      tic-tac-toe are called \texttt{X} and \texttt{O}.
 \item The function $\texttt{startState}$ returns the start state, which is an empty board.
       States are represented as list of lists.  The entries in these lists are the characters 
       ``\texttt{X}'', ``\texttt{O}'', and ``\texttt{ }''.
@@ -237,7 +237,7 @@ algorithm is based on the notion of the \blue{value} of a state.  To this end, w
 $\texttt{value}: \texttt{States} \times \texttt{Players} \rightarrow \{-1, 0, +1\}$
 \\[0.2cm]
 that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the value of $s$ provided both the player $p$ and his
-opponent play optimally.  The easiest way to define this function is via recursion.  The base case is simple:
+opponent play \blue{optimally}.  The easiest way to define this function is via recursion.  The base case is simple:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{finished}(s) \rightarrow \texttt{value}(s, p) = \texttt{utility}(s, p)$.
@@ -251,7 +251,7 @@ $\neg \texttt{finished}(s) \rightarrow
                      \bigr\}\bigr)
 $.
 \\[0.2cm]
-The reason is that if the game is not finished yet, the player $p$ has to evaluate all possible moves.  
+The reason is that, if the game is not finished yet, the player $p$ has to evaluate all possible moves.  
 From these, the player $p$ will choose the move that maximizes the value of the game.  In order to do so, the
 player $p$ computes the set 
 $\texttt{nextStates}(s, p)$ of all states that can be reached from the state $s$ in any one move of the player $p$.
@@ -269,8 +269,8 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     value := cachedProcedure(State, player) {
         if (finished(State)) {
@@ -305,7 +305,7 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
 \end{figure}
 \begin{enumerate}
 \item The implementation of the function $\texttt{value}$ follows the reasoning outlined above.
-      However, note that we have implemented $\texttt{value}$ as a $\texttt{cachedProcedure}$, i.e.~as a
+      However, note that we have implemented the function $\texttt{value}$ as a $\texttt{cachedProcedure}$, i.e.~as a
       procedure that \blue{memorizes} its results.  Hence, when the function $\texttt{value}$ is called a
       second time with the same pair of arguments, it does not recompute the value but rather the value is
       looked up in a so called \blue{cache} that stores all previous results computed by the function $\texttt{value}$.  To
@@ -313,8 +313,8 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
       let us consider how many states would be explored in the case of tic-tac-toe if we would not use the idea
       of memorizing previous results, a technique which is know as 
       \href{https://en.wikipedia.org/wiki/Memoization}{memoization}.  In this case, we have 9 moves for player
-      ``\texttt{O}'' from the start state, then 8 moves for player ``\texttt{X}'', then again 7 moves for
-      player ``\texttt{X}''.  If we disregard the fact that some games are decided after fewer than 9 moves,
+      \texttt{O} from the start state, then 8 moves for player \texttt{X}, then again 7 moves for
+      player \texttt{X}.  If we disregard the fact that some games are decided after fewer than 9 moves,
       the function $\texttt{value}$ needs to consider 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -326,7 +326,10 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
       \hspace*{1.3cm}
       $\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = 126$
       \\[0.2cm]
-      possibilities, i.e.~there are a factor of $5! \cdot 4! = 2880$ less states to evaluate!
+      possibilities, because we only have to count the number of ways to put 5 ``\texttt{O}''s on
+      9 positions and that number is the same as the number of subsets of five elements from a set of nine elements.
+      Therefore, if we disregard the fact that some games are decided after fewer than nine moves,  there are a
+      factor of $5! \cdot 4! = 2880$ less terminal states to evaluate if we use memoization! 
 \item The function $\texttt{best\_move}$ takes a $\texttt{State}$ and a $\texttt{player}$ and returns a pair $\pair(v,s)$
       where $s$ is a state that is optimal for the $\texttt{player}$ and such that $s$ can be reached in one step from
       $\texttt{State}$.  Furthermore, $v$ is the value of this state.
@@ -346,9 +349,9 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
       \begin{enumerate}
       \item Initially, $\texttt{State}$ is the $\texttt{startState}$.
       \item As long as the game is not finished, the procedure keeps running.
-      \item We assume that the computer is player ``\texttt{O}'' and that the computer goes first.
+      \item We assume that the computer is player \texttt{O} and that the computer goes first.
             Hence, the function $\texttt{best\_move}$ is used to compute the state that results from the best
-            move of player ``\texttt{O}''.
+            move of player \texttt{O}.
       \item After that, it is checked whether the game is finished.
       \item If the game is not  yet finished, the human is asked to make its move via the function
             $\texttt{getMove}$ that takes a $\texttt{State}$, displays it, and asks the user to enter a move.
@@ -360,6 +363,40 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
             This function returns $\texttt{true}$ iff $\texttt{finished}(\texttt{State})$ is true.
             Additionally, it prints a message when the game has finished.
       \end{enumerate}
+\end{enumerate}
+In order to better understand the reason for using memoization in the implementation of the function
+\texttt{value} we introduce the following notions.
+\begin{Definition}[\blue{Game Tree}]
+  Assume that
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\mathcal{G} = \langle \texttt{States}, s_0, \texttt{Players}, \texttt{nextStates}, \texttt{finished},\texttt{utility} \rangle$
+  \\[0.2cm]
+  is a game. Then a \blue{play of length $n$} is a list of states of the form 
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $[s_0, s_1, \cdots, s_n]$ \quad such that \quad $\forall i\in\{0,\cdots,n-1\}: s_{i+1} \in \texttt{nextStates}(s_i)$.
+  \\[0.2cm]
+  The \blue{game tree} of the game $\mathcal{G}$ is the set of all possible plays.  \eox
+\end{Definition}
+
+\noindent
+The following exercise yields a better understanding of the effects of memoization.
+
+\exercise
+In \blue{simplified tic-tac-toe} the game only ends when there are no more empty squares left.
+The player \texttt{X} wins if she has more rows, columns, or diagonals of three \texttt{X}s than the player
+\texttt{O} has rows, columns, or diagonals of three \texttt{O}s.  Similarly, the player \texttt{O} wins
+if he has more rows, columns, or diagonals of three \texttt{O}s than the player \texttt{X} has rows, columns,
+or diagonals of three \texttt{X}s.  Otherwise, the game is a draw. 
+\begin{enumerate}[(a)]
+\item Derive a formula that gives the number of all states of simplified tic-tac-toe.  
+
+      \textbf{Notice} that this question does not ask for the number of all terminal states but rather ask for
+      all states. 
+\item Write a short program to evaluate the formula derived in part (a) of this exercise.
+\item Derive a formula to compute the number of all possible plays of simplified tic-tac-toe.
+\item Write a short program to evaluate the formula derived in part (c) of this exercise.
 \end{enumerate}
 
 \section{$\alpha$-$\beta$-Pruning}
