@@ -1,8 +1,8 @@
 \chapter{Playing Games}
-One major success for the field of artificial intelligence happened in 1997 when the chess-playing computer
+One major breakthrough for the field of artificial intelligence happened in 1997 when the chess-playing computer
 \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue} was able to beat the World Chess
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
-While \emph{\color{blue}Deep Blue} was based on special hardware, according to the
+While \blue{Deep Blue} was based on special hardware, according to the
 \href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 24th
 of March 2018, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
 on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3445.  
@@ -27,17 +27,18 @@ $\mathcal{G} = \langle \texttt{States}, s_0, \texttt{Players}, \texttt{nextState
 \\[0.2cm]
 where the components are interpreted as follows:
 \begin{enumerate}
-\item $\texttt{States}$ is the set of all possible \emph{\color{blue}states} of the game.
-\item $s_0 \in \texttt{startState}$ is the \emph{\color{blue}start state}.
-\item $\texttt{Players}$ is  the set of \blue{players} of the game.
+\item $\texttt{States}$ is the set of all possible \blue{states} of the game.
+\item $s_0 \in \texttt{startState}$ is the \blue{start state}.
+\item $\texttt{Players}$ is  the list of \blue{players} of the game.  The first element in \texttt{Players} is
+      the player to start the game and after that the players take turns.
 \item $\texttt{nextStates}$ is a function that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the set of
-      states that can be reached if $p$ has to make a move in the state $s$.  Hence, the signature of
+      states that can be reached if the player $p$ has to make a move in the state $s$.  Hence, the signature of
       $\texttt{nextStates}$ is given as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{nextStates}: \texttt{States} \times \texttt{Players} \rightarrow 2^{\texttt{States}}$.
 \item $\texttt{finished}$ is a function that takes a state $s$ and decides whether the games is finished.
-      Therefore
+      Therefore, the signature of $\texttt{finished}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{finished}: \texttt{States} \rightarrow \mathbb{B}$.
@@ -52,7 +53,7 @@ where the components are interpreted as follows:
 \item $\texttt{utility}$ is a function that takes a state $s \in \texttt{TerminalStates}$ and a player $p \in \texttt{Players}$.  If returns
       the \blue{value} that the game has for player $p$.  In all of our examples, this value will be an element
       from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that player $p$ has lost the game,
-      if the value is $+1$ the player $p$ has won the game and if this value is $0$ then the game is drawn.
+      if the value is $+1$ the player $p$ has won the game and if this value is $0$, then the game is drawn.
       Hence the signature of $\texttt{utility}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -69,11 +70,11 @@ Extend the definition of a
 game so that also a games like \blue{dice chess} can be described. 
 \eox
 
-In this chapter we will only consider so called \blue{two person zero sum games}.  This means that the set $\texttt{Players}$
+In this chapter we will only consider so called \blue{two person zero sum games}.  This means that the list $\texttt{Players}$
 has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{Players} = \{ \mathrm{A}, \mathrm{B} \}$,
+$\texttt{Players} = \bigl[ \mathrm{A}, \mathrm{B} \bigr]$,
 \\[0.2cm]
 then the game is called a \blue{zero sum game} iff we have
 \\[0.2cm]
@@ -88,7 +89,7 @@ We proceed to discuss an example of a game.
 \section{Tic-Tac-Toe}
 The game \href{https://en.wikipedia.org/wiki/Tic-tac-toe}{tic-tac-toe} is played on a square board of size 
 $3 \times 3$.  On every turn, one player puts an ``\texttt{X}'' on one of the free squares of the board, while
-the other player puts an $\texttt{O}$ onto a free square when it is his turn.  If the first player manages
+the other player puts an ``$\texttt{O}$'' onto a free square when it is his turn.  If the first player manages
 to place three \texttt{X}s in a 
 row, column, or diagonal, she has won the game.  Similarly, if the other player manages to put three \texttt{O}s in a
 row, column, or diagonal, this player is the winner.  Otherwise, the game is drawn.
@@ -106,7 +107,7 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                   ]
-    players    := [] |-> { "X", "O" };
+    players    := [] |-> [ "X", "O" ];
     startState := [] |-> [ [ " " : col in [1..3]] : row in [1..3] ];
     nextStates := procedure(State, player) {
         Empty  := empty(State);
@@ -118,7 +119,7 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
         }
         return Result;
     };
-    empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col] == " "};
+    empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col]==" "};
     utility := procedure(State, player) {
         Lines := all_lines(State);
         for (Line in Lines) {
@@ -257,7 +258,8 @@ player $p$ computes the set
 $\texttt{nextStates}(s, p)$ of all states that can be reached from the state $s$ in any one move of the player $p$.
 Now if $n$ is a state that results from player $p$ making some move, then it is the turn of the other player
 $o$ to make a move.  Hence, in order to evaluate the state $n$, we have to call the function $\texttt{value}$
-recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games here, we have $\texttt{value}(n, p) = -\texttt{value}(n, o)$.
+recursively as $\texttt{value}(n,o)$.   Since the gains of the other player $o$ are the losses of the player
+$p$, we have to take the negative of  $\texttt{value}(n, o)$.
 \myFig{game.stlx} shows an implementation of this strategy.
 
 
@@ -272,24 +274,24 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    value := cachedProcedure(State, player) {
+    other := p |-> ([o : o in players() | o != p])[1];
+    value := cachedProcedure(State, player) {  // dynamic programming
         if (finished(State)) {
             return utility(State, player);
         }
-        other := arb(players() - { player });
-        return max({ -value(ns, other) : ns in nextStates(State, player) });
+        return max({-value(ns,other(player)):ns in nextStates(State,player)});
     };
     best_move := procedure(State, player) {
-      NS      := nextStates(State, player);
-      other   := arb(players() - { player });
-      bestVal := value(State, player);
-      return [bestVal, rnd({ns : ns in NS | -value(ns,other) == bestVal})];
+        NS      := nextStates(State, player);
+        bestVal := value(State, player);
+        return [bestVal, rnd({ns:ns in NS|-value(ns,other(player))==bestVal})];
     };
     play_game := procedure() {
         State := startState();
         print(stateToString(State));
         while (true) {
-            [val, State] := best_move(State, "O");
+            firstPlayer  := players()[1];
+            [val, State] := best_move(State, firstPlayer);
             print("For me, the game has the value $val$. My move:");
             print(stateToString(State));
             if (final_msg(State)) { return; }
@@ -304,6 +306,10 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
 \label{fig:game.stlx}
 \end{figure}
 \begin{enumerate}
+\item Given a player $\texttt{p}$, the function $\texttt{other}$ computes the other player,
+      which is the first element of the list of all players that are different from $p$.
+      This works because we assume that there are just two players.  Therefore the list of all players
+      different from the player $\texttt{p}$ contains exactly one element.
 \item The implementation of the function $\texttt{value}$ follows the reasoning outlined above.
       However, note that we have implemented the function $\texttt{value}$ as a $\texttt{cachedProcedure}$, i.e.~as a
       procedure that \blue{memorizes} its results.  Hence, when the function $\texttt{value}$ is called a
@@ -313,8 +319,8 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
       let us consider how many states would be explored in the case of tic-tac-toe if we would not use the idea
       of memorizing previous results, a technique which is know as 
       \href{https://en.wikipedia.org/wiki/Memoization}{memoization}.  In this case, we have 9 moves for player
-      \texttt{O} from the start state, then 8 moves for player \texttt{X}, then again 7 moves for
-      player \texttt{X}.  If we disregard the fact that some games are decided after fewer than 9 moves,
+      \texttt{X} from the start state, then 8 moves for player \texttt{O}, then again 7 moves for
+      player \texttt{O}.  If we disregard the fact that some games are decided after fewer than 9 moves,
       the function $\texttt{value}$ needs to consider 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -329,15 +335,16 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
       possibilities, because we only have to count the number of ways to put 5 ``\texttt{O}''s on
       9 positions and that number is the same as the number of subsets of five elements from a set of nine elements.
       Therefore, if we disregard the fact that some games are decided after fewer than nine moves,  there are a
-      factor of $5! \cdot 4! = 2880$ less terminal states to evaluate if we use memoization! 
+      factor of $5! \cdot 4! = 2880$ less terminal states to evaluate if we use memoization!
+
+      As we have to evaluate not just terminal states but all states, the saving is actually a bit smaller that
+      2880.  The next exercise explores this in more detail.
 \item The function $\texttt{best\_move}$ takes a $\texttt{State}$ and a $\texttt{player}$ and returns a pair $\pair(v,s)$
       where $s$ is a state that is optimal for the $\texttt{player}$ and such that $s$ can be reached in one step from
       $\texttt{State}$.  Furthermore, $v$ is the value of this state.
       \begin{enumerate}[(a)]
       \item To this end, it first computes the set $\texttt{NS}$ of all states that can be reached 
             from the given $\texttt{State}$ in one step if $\texttt{player}$ is to move next.
-      \item Since there are only two players, the opponent $\texttt{other}$ is found by subtracting
-            $\texttt{player}$ from the set of all players.
       \item $\texttt{bestValue}$ is the best value that $\texttt{player}$ can achieve in the given $\texttt{State}$.
       \item The function returns randomly one of those states $\texttt{ns} \in \texttt{NS}$ such that 
             the value of $\texttt{ns}$ is optimal, i.e.~is equal to $\texttt{bestValue}$.
@@ -349,14 +356,17 @@ recursively as $\texttt{value}(n,o)$.  As we are dealing with zero sum games her
       \begin{enumerate}
       \item Initially, $\texttt{State}$ is the $\texttt{startState}$.
       \item As long as the game is not finished, the procedure keeps running.
-      \item We assume that the computer is player \texttt{O} and that the computer goes first.
+      \item We compute the player \texttt{firstPlayer} that starts the game and assume that the computer goes first.
             Hence, the function $\texttt{best\_move}$ is used to compute the state that results from the best
-            move of player \texttt{O}.
+            move of $\texttt{firstPlayer}$.
       \item After that, it is checked whether the game is finished.
-      \item If the game is not  yet finished, the human is asked to make its move via the function
+      \item If the game is not  yet finished, the user is asked to make its move via the function
             $\texttt{getMove}$ that takes a $\texttt{State}$, displays it, and asks the user to enter a move.
             The state resulting from this move is then returned and displayed.
-      \item Next, we have to check whether the game is finished after our move has been executed.
+
+            Note that we do not check the legality of the move entered by the user.  This feature can be used
+            for exploration and cheating.
+      \item Next, we have to check whether the game is finished after the  move of the user has been executed.
       \item The \texttt{while}-loop keeps iterating until the game is finished.
             We do not have to put a test into the condition of this \texttt{while}-loop as we call the function
             $\texttt{final\_msg}(\texttt{State})$ every time that a new $\texttt{State}$ has been reached.
@@ -375,9 +385,11 @@ In order to better understand the reason for using memoization in the implementa
   is a game. Then a \blue{play of length $n$} is a list of states of the form 
   \\[0.2cm]
   \hspace*{1.3cm}
-  $[s_0, s_1, \cdots, s_n]$ \quad such that \quad $\forall i\in\{0,\cdots,n-1\}: s_{i+1} \in \texttt{nextStates}(s_i)$.
+  $[s_0, s_1, \cdots, s_n]$ \quad such that \quad $\forall i\in\{0,\cdots,n-1\}: s_{i+1} \in \texttt{nextStates}(s_i, p_i)$,
   \\[0.2cm]
-  The \blue{game tree} of the game $\mathcal{G}$ is the set of all possible plays.  \eox
+  where the players $p_i$ are defined such that for all even $i\in\{0,\cdots,n-1\}$ we have that $p_i$ is the
+  first element in the list $\texttt{Players}$, while $p_i$ is the second element otherwise.
+  The \blue{game tree} of the game $\mathcal{G}$ is the set of all possible plays.  \eoxs
 \end{Definition}
 
 \noindent
@@ -392,10 +404,10 @@ or diagonals of three \texttt{X}s.  Otherwise, the game is a draw.
 \begin{enumerate}[(a)]
 \item Derive a formula that gives the number of all states of simplified tic-tac-toe.  
 
-      \textbf{Notice} that this question does not ask for the number of all terminal states but rather ask for
+      \textbf{Notice} that this question does not ask for the number of all terminal states but rather asks for
       all states. 
 \item Write a short program to evaluate the formula derived in part (a) of this exercise.
-\item Derive a formula to compute the number of all possible plays of simplified tic-tac-toe.
+\item Derive a formula to compute the size of the game tree of simplified tic-tac-toe.
 \item Write a short program to evaluate the formula derived in part (c) of this exercise.
 \end{enumerate}
 

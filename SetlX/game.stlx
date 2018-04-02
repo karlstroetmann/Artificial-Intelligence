@@ -1,22 +1,22 @@
+other := p |-> ([o : o in players() | o != p])[1];
 value := cachedProcedure(State, player) {  // cachedProcedure for dynamic programming
     if (finished(State)) {
         return utility(State, player);
     }
-    other := arb(players() - { player });
-    return max({ -value(ns, other) : ns in nextStates(State, player) });
+    return max({ -value(ns, other(player)) : ns in nextStates(State, player) });
 };
 best_move := procedure(State, player) {
     NS      := nextStates(State, player);
-    other   := arb(players() - { player });
     bestVal := value(State, player);
-    return [bestVal, rnd({ns : ns in NS | -value(ns,other) == bestVal})];
+    return [bestVal, rnd({ns : ns in NS | -value(ns,other(player)) == bestVal})];
 };
 play_game := procedure() {
     State := startState();
     print(stateToString(State));
     while (true) {
         start        := now();
-        [val, State] := best_move(State, "O");
+        firstPlayer  := players()[1];
+        [val, State] := best_move(State, firstPlayer);
         stop         := now();
         print(cacheStats(value));
         print("For me, the game has the value $val$. My move:");

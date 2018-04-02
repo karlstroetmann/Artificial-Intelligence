@@ -1,11 +1,11 @@
+other := p |-> ([o : o in players() | o != p])[1];
 value := cachedProcedure(State, player, alpha := -1, beta := 1) {
     if (finished(State)) {
         return utility(State, player);
     }
-    other := arb(players() - { player });
-    val   := alpha;
+    val := alpha;
     for (ns in nextStates(State, player)) {
-        val := max({ val, -value(ns, other, -beta, -val) });
+        val := max({ val, -value(ns, other(player), -beta, -val) });
         if (val >= beta) {
             return val;
         }
@@ -15,15 +15,15 @@ value := cachedProcedure(State, player, alpha := -1, beta := 1) {
 best_move := procedure(State, player) {
     bestVal := value(State, player);
     NS      := nextStates(State, player);
-    other   := arb(players() - { player });
-    return [bestVal, rnd({ns : ns in NS | -value(ns,other) == bestVal})];
+    return [bestVal, rnd({ns : ns in NS | -value(ns,other(player)) == bestVal})];
 };
-play_game := procedure(n) {
-    State := startState(n);
+play_game := procedure() {
+    State := startState();
     print(stateToString(State));
     while (!finished(State)) {
         start        := now();
-        [val, State] := best_move(State, "O");
+        firstPlayer  := players()[1];
+        [val, State] := best_move(State, firstPlayer);
         stop         := now();
         print(cacheStats(value));
         clearCache(value);
