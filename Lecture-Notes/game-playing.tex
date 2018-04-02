@@ -478,6 +478,7 @@ specification given above can be shown by computational induction.
             if (val >= beta) {
                 return val;
             }
+            alpha := max({ val, alpha });
         }
         return val;
     };
@@ -565,7 +566,8 @@ the given $\texttt{State}$ using a \blue{heuristic function}.  This leads to the
             val := max({ val, -value(ns, other, limit - 1, -beta, -val) });
             if (val >= beta) {
                 return val;
-            }
+             }
+             alpha := max({ val, alpha });             
         }
         return val;
     };

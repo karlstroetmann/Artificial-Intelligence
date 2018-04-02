@@ -6,7 +6,7 @@ value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
     if (limit == 0) {
         return 0;
     }
-    val   := -1;
+    val := -1;
     for (ns in nextStates(State, player)) {
         val := max({ val, -value(ns, other(player), limit - 1, -beta, -alpha) });
         if (val >= beta) {

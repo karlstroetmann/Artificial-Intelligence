@@ -9,6 +9,7 @@ value := cachedProcedure(State, player, alpha := -1, beta := 1) {
         if (val >= beta) {
             return val;
         }
+        alpha := max({ val, alpha });
     }
     return val;
 };
