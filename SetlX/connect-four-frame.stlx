@@ -1,3 +1,4 @@
+other := p |-> ([o : o in players() | o != p])[1];
 value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
     if (finished(State)) {
         return utility(State, player);
@@ -5,10 +6,9 @@ value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
     if (limit == 0) {
         return 0;
     }
-    other := arb(players() - { player });
     val   := -1;
     for (ns in nextStates(State, player)) {
-        val := max({ val, -value(ns, other, limit - 1, -beta, -alpha) });
+        val := max({ val, -value(ns, other(player), limit - 1, -beta, -alpha) });
         if (val >= beta) {
             return val;
         }
@@ -19,8 +19,7 @@ value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
 best_move := procedure(State, player, limit := 5) {
     bestVal := value(State, player, limit);
     NS      := nextStates(State, player);
-    other   := arb(players() - { player });
-    BestNS  := {ns : ns in NS | -value(ns,other,limit-1) == bestVal};
+    BestNS  := {ns : ns in NS | -value(ns,other(player),limit-1) == bestVal};
     return [bestVal, rnd(BestNS)];
 };
 play_game := procedure() {
@@ -28,7 +27,8 @@ play_game := procedure() {
     print(stateToString(State));
     while (!finished(State)) {
         start        := now();
-        [val, State] := best_move(State, "O");
+        firstPlayer  := players()[1];
+        [val, State] := best_move(State, firstPlayer);
         stop         := now();
         print(cacheStats(value));
         clearCache(value);
@@ -47,7 +47,7 @@ play_game := procedure() {
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-players := [] |-> { "X", "O" };
+players := [] |-> [ "X", "O" ];
 startState := procedure() {
     Line   := [ " " : col in [1 .. 7] ];
     return [ Line : row in [1 .. 6] ];
@@ -87,15 +87,15 @@ getMove := procedure(State) {
     col := int(col);
     row := find_empty(State, col);
     assert(row <= 6, "illegal move, game aborted");
-    State[row][col] := "X";
+    State[row][col] := "O";
     return State;
 };
 final_msg := procedure(State) {
     if (finished(State)) {
         msg := "The game is finished. ";
-        if (utility(State, "X") == 1) {
+        if (utility(State, "O") == 1) {
             print(msg + "You have won!");
-        } else if (utility(State, "X") == -1) {
+        } else if (utility(State, "O") == -1) {
             print(msg + "You lost!");
         } else {
             print(msg + "It's a draw.");
