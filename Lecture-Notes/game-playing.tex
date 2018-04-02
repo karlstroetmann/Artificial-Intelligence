@@ -423,23 +423,19 @@ related by the following requirements:
       i.e.~we have
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\alpha \leq \texttt{value}(\texttt{State}, \texttt{player}) \leq \beta \;\rightarrow\;
-         \texttt{alphaBeta}(s, p, \texttt{alpha}, \texttt{beta}) = \texttt{value}(s,p)
+      $\alpha \leq \texttt{value}(s, p) \leq \beta \;\rightarrow\;
+         \texttt{alphaBeta}(s, p, \alpha, \beta) = \texttt{value}(s,p)
       $.
-\item If $\texttt{value}(\texttt{State},\texttt{player}) \leq \alpha$, we require that the value returned by
+\item If $\texttt{value}(s, p) \leq \alpha$, we require that the value returned by
       $\texttt{alphaBeta}$ is less than or equal to $\alpha$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\texttt{value}(s, p) \leq \alpha \;\rightarrow\;
-       \texttt{alphaBeta}(s, p, \texttt{alpha}, \texttt{beta}) \leq \alpha
-      $.
-\item Similarly, if $\texttt{value}(\texttt{State},\texttt{player}) \geq \beta$, we require that the value
+      $\texttt{value}(s, p) \leq \alpha \;\rightarrow\; \texttt{alphaBeta}(s, p, \alpha, \beta) \leq \alpha$.
+\item Similarly, if $\texttt{value}(s, p) \geq \beta$, we require that the value
       returned by $\texttt{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\beta \leq \texttt{value}(s, p) \;\rightarrow\;
-        \beta \leq \texttt{alphaBeta}(s, p, \texttt{alpha}, \texttt{beta}) 
-      $.
+      $\beta \leq \texttt{value}(s, p) \;\rightarrow\; \beta \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
 \end{enumerate}
 Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an approximation of
 $\texttt{value}(\texttt{State}, \texttt{player})$.  However, it turns out that this approximation is all that
@@ -469,21 +465,20 @@ specification given above can be shown by computational induction.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     alphaBeta := cachedProcedure(State, player, alpha := -1, beta := 1) {
         if (finished(State)) {
             return utility(State, player);
         }
-        other := arb(players() - { player });
-        val   := alpha;
+        val := alpha;
         for (ns in nextStates(State, player)) {
-            val := max({ val, -alphaBeta(ns, other, -beta, -val) });
+            val := max({ val, -value(ns, other(player), -beta, -val) });
             if (val >= beta) {
                 return val;
             }
-         }
+        }
         return val;
     };
 \end{Verbatim}
@@ -496,8 +491,6 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
 \begin{enumerate}
 \item If $\texttt{State}$ is a terminal state, the function returns the $\texttt{utility}$ of the given
       $\texttt{State}$ with respect to $\texttt{player}$.
-\item Since there are only two players, the $\texttt{other}$ player is the player 
-      that remains if $\texttt{player}$ is removed form the set of all players.
 \item The variable $\texttt{val}$ is supposed to store the maximum of the values of all states
       that can be reached from the given $\texttt{State}$ if $\texttt{player}$ makes one move.
       
@@ -520,25 +513,34 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
       state that has value $\texttt{val}$, we know already that $\texttt{value}(s,p)$ is at least
       $\texttt{val}$.  Therefore,  if we encounter states with a value
       less than $\texttt{val}$ during our recursive evaluation of the states reachable from $\texttt{State}$,
-      then those states can be ignored.   This is achieved via the using $\texttt{val}$ for the parameter $\alpha$.
+      then those states can be ignored.   This is achieved by using $\texttt{-val}$ for the parameter $\beta$.
 \item As the specification of $\texttt{alphaBeta}$ ask us to compute the value of $\texttt{State}$ only in
       those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
       value that is at least as big a $\beta$ we can stop the evaluation and return this value.
 
-      {\color{red}This shortcut can result in significant savings of computation time!}
+      \blue{In practice, this shortcut results in significant savings of computation time!}
 \end{enumerate}
+
+\exercise
+Proof that for any state $s$ and player $p$ we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{alphaBeta}(s, p, -1, 1) = \texttt{value}(s, p)$.
+\\[0.2cm]
+\textbf{Hint}:  This claim is best shown using \blue{computational induction}.
+\eox
 
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
 $\texttt{States}$ is so big that even the fastest computer does not stand a chance to explore this set
-completely.  For example, it is impossible to consider all possible games in chess.  Instead, we have to limit
+completely.  For example, it is impossible to consider all possible states in chess.  Instead, we have to limit
 the exploration in a way that is similar to the way professional players evaluate their game:  Usually, a
 player considers all variations of the game for, say, the next three moves.  After a given number of moves, the
 value of a position is estimated using an evaluation function.  In order to implement this idea, we add a
 parameter $\texttt{limit}$ to the procedure $\texttt{value}$.  On every recursive invocation 
 of the function $\texttt{value}$, the function $\texttt{limit}$ is decreased.  Once the limit reaches $0$,
-instead of invoking the function $\texttt{value}$ again recursively, instead we try to estimate the value of
-the given $\texttt{State}$ using a heuristic function.  This leads to the code shown in \myFig{game-limit.stlx}.
+instead of invoking the function $\texttt{value}$ again recursively, we try to estimate the value of
+the given $\texttt{State}$ using a \blue{heuristic function}.  This leads to the code shown in \myFig{game-limit.stlx}.
 
 
 \begin{figure}[!ht]
@@ -549,8 +551,8 @@ the given $\texttt{State}$ using a heuristic function.  This leads to the code s
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
         if (finished(State)) {
@@ -580,7 +582,7 @@ to define:
 \\[0.2cm]
 This heuristic would simply estimate the value of all states to be $0$.  As this heuristic is only called after
 it has been tested that the game has not yet been decided, this approach is not utterly unreasonable.  For a more
-complex game like chess, the heuristic could instead be a weighted count of all pieces.  Concretely, the
+complex game like chess, the heuristic could instead be a \blue{weighted count} of all pieces.  Concretely, the
 algorithm for estimating the value of a state would work as follows:
 \begin{enumerate}
 \item Initially, the variable $\texttt{sum}$ is set to $0$:
