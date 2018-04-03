@@ -5,10 +5,11 @@ value := cachedProcedure(State, player, alpha := -1, beta := 1) {
     }
     val := alpha;
     for (ns in nextStates(State, player)) {
-        val := max({ val, -value(ns, other(player), -beta, -val) });
+        val := max({ val, -value(ns, other(player), -beta, -alpha) });
         if (val >= beta) {
             return val;
         }
+        alpha := max({ val, alpha });
     }
     return val;
 };

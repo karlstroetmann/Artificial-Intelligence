@@ -474,7 +474,7 @@ specification given above can be shown by computational induction.
         }
         val := alpha;
         for (ns in nextStates(State, player)) {
-            val := max({ val, -value(ns, other(player), -beta, -val) });
+            val := max({ val, -value(ns, other(player), -beta, -alpha) });
             if (val >= beta) {
                 return val;
             }
@@ -496,7 +496,7 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
       that can be reached from the given $\texttt{State}$ if $\texttt{player}$ makes one move.
       
       According to the specification of $\texttt{alphaBeta}$,  we are not interested in values that are below
-      $\alpha$.  Hence, it suffices to initialize $\texttt{val}$ with $\alpha$.   This way, in the case that we have
+      $\texttt{alpha}$.  Hence, it suffices to initialize $\texttt{val}$ with $\texttt{alpha}$.   This way, in the case that we have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{value}(\texttt{State},\texttt{player}) < \alpha$,
@@ -504,22 +504,19 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
       instead of returning the true value of the given $\texttt{State}$, the function
       $\texttt{alphaBeta}(\texttt{State},\texttt{player},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
 \item Next, we iterate over all successor states $\texttt{ns} \in \texttt{nextStates}(\texttt{State}, \texttt{player})$.
-\item We have to recursively evaluate the states $\texttt{ns}$ for the $\texttt{other}$ player.
-      Since the value of a state for the $\texttt{other}$ player is the negative of the value for
+\item We have to recursively evaluate the states $\texttt{ns}$ with respect to the opponent  $\texttt{other}(\texttt{player})$.
+      Since the value of a state for the opponent is the negative of the value for
       $\texttt{player}$, we have to exchange the roles of $\alpha$ and $\beta$ and prefix them with a negative
       sign.
-
-      Note that the value of $\texttt{val}$ computed in the previous iteration of the \texttt{for}-loop 
-      can serve as the value of the parameter $\alpha$ for the next recursive call, since once we have found a 
-      state that has value $\texttt{val}$, we know already that $\texttt{value}(s,p)$ is at least
-      $\texttt{val}$.  Therefore,  if we encounter states with a value
-      less than $\texttt{val}$ during our recursive evaluation of the states reachable from $\texttt{State}$,
-      then those states can be ignored.   This is achieved by using $\texttt{-val}$ for the parameter $\beta$.
 \item As the specification of $\texttt{alphaBeta}$ ask us to compute the value of $\texttt{State}$ only in
       those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
       value that is at least as big a $\beta$ we can stop the evaluation and return this value.
 
       \blue{In practice, this shortcut results in significant savings of computation time!}
+\item Once we have found a successor state that has a value $\texttt{val}$ greater than $\texttt{alpha}$,
+      we can increase $\texttt{alpha}$ to the value $\texttt{val}$.  The reason is, that once we know we can
+      achieve a value of $\texttt{val}$ we are no longer interested in any values less than $\texttt{val}$.
+      This is the reason for assigning to $\texttt{alpha}$ the maximum of $\texttt{val}$ and $\texttt{alpha}$.
 \end{enumerate}
 
 \exercise
@@ -559,15 +556,14 @@ the given $\texttt{State}$ using a \blue{heuristic function}.  This leads to the
         if (finished(State)) {
             return utility(State, player);
         }
-        if (limit == 0) { return heuristic(State, player); }
-        other := arb(players() - { player });
-        val   := alpha;
+        if (limit == 0) { return 0; }
+        val := alpha;
         for (ns in nextStates(State, player)) {
-            val := max({ val, -value(ns, other, limit - 1, -beta, -val) });
+            val := max({val, -value(ns, other(player), limit-1, -beta, -alpha)});
             if (val >= beta) {
                 return val;
-             }
-             alpha := max({ val, alpha });             
+            }
+            alpha := max({val, alpha});
         }
         return val;
     };

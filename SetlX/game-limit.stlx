@@ -6,14 +6,15 @@ value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
     if (limit == 0) { return 0; }
     val := alpha;
     for (ns in nextStates(State, player)) {
-        val := max({ val, -value(ns, other(player), limit - 1, -beta, -val) });
+        val := max({ val, -value(ns, other(player), limit - 1, -beta, -alpha) });
         if (val >= beta) {
             return val;
         }
+        alpha := max({val, alpha});
     }
     return val;
 };
-best_move := procedure(State, player, limit := 2) {
+best_move := procedure(State, player, limit := 5) {
     bestVal := value(State, player, limit);
     NS      := nextStates(State, player);
     return [bestVal, rnd({ns : ns in NS | -value(ns,other(player),limit-1) == bestVal})];
