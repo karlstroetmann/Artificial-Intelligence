@@ -1,5 +1,5 @@
-load("game.stlx");
-// load("game-alpha-beta.stlx");
+// load("game.stlx");
+load("game-alpha-beta.stlx");
 // load("game-limit.stlx");
 
 players    := [] |-> [ "X", "O" ];
