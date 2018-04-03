@@ -10,11 +10,10 @@ value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
         if (val >= beta) {
             return val;
         }
-        alpha := max({ val, alpha });
     }
     return val;
 };
-best_move := procedure(State, player, limit := 5) {
+best_move := procedure(State, player, limit := 2) {
     bestVal := value(State, player, limit);
     NS      := nextStates(State, player);
     return [bestVal, rnd({ns : ns in NS | -value(ns,other(player),limit-1) == bestVal})];
