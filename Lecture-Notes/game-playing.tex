@@ -657,9 +657,19 @@ implemented.
 \item The procedure $\texttt{last\_line\_filled}(s)$ takes a state $s$.  It checks whether the game is drawn.
       The game is drawn iff the board is completely filled.  This can be checked most efficiently by checking
       the final row of the board.  If this row is completely filled, all other rows must have  been filled, too.
-      \eox
 \end{enumerate}
-
+Once you have a working implementation of \blue{Connect Four}, try to improve the strength of your program by
+adding a non-trivial heuristic to evaluate non-terminal states.  As an example of a non-trivial heuristic you
+can define a \blue{triple} as a set of three marks of either \texttt{X}s or \texttt{O}s in a row that is
+followed by a blank space.  The blank space could also be between the marks.  Now if there is a state $s$ that
+has $a$ triples of \texttt{X}s and $b$ triples of \texttt{O}s and the game is not finished, then define
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \texttt{value}(s, \texttt{X}, \texttt{limit}, \alpha, \beta) = \frac{a - b}{10}$ \quad if $\texttt{limit} = 0$.
+\\[0.2cm]
+In order to implement a heuristic of this kind you have to change line 5 in the implementation of the
+function \texttt{value} shown in Figure \ref{fig:game-limit.stlx} on page \pageref{fig:game-limit.stlx}.
+\eox
 
 %%% Local Variables:
 %%% mode: latex
