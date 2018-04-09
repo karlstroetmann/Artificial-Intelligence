@@ -62,10 +62,17 @@ Furthermore, $s_x$ and $s_y$ are the \emph{\color{blue}sample standard deviation
 $\ds s_x = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\;}$ \quad and \quad
 $\ds s_y = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2\;}$.
 \\[0.2cm]
+Next, $\mathrm{Cov}[\mathbf{x}, \mathbf{y}]$ is the \blue{sample covariance} and is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathrm{Cov}[\mathbf{x}, \mathbf{y}] = \frac{1}{(m-1)} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)$.
+\\[0.2cm]
 Finally, $r_{x,y}$ is the \emph{\color{blue}sample correlation coefficient} that is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds r_{x,y} = \frac{1}{(m-1) \cdot s_x \cdot s_y} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)$.
+$\ds r_{x,y} = \frac{1}{(m-1) \cdot s_x \cdot s_y} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)
+            = \frac{\mathrm{Cov}[\mathbf{x}, \mathbf{y}]}{s_x \cdot s_y}
+$.
 \\[0.2cm]
 The number $r_{x,y}$ is also known as the
 \href{https://en.wikipedia.org/wiki/Pearson_correlation_coefficient}{Pearson correlation coefficient} or
@@ -79,7 +86,7 @@ Note that the formula for the parameter $\vartheta_1$ can be simplified to
 \end{equation}
 This latter formula should be used to calculate $\vartheta_1$.  However, the previous formula is also useful
 because it shows the the correlation coefficient is identical to the coefficient $\vartheta_1$, provided the variables $\mathbf{x}$ and
-$\mathbf{y}$ have been normalized so that their standard deviation is $1$.
+$\mathbf{y}$ have been \blue{normalized} so that their standard deviation is $1$.
 
 \exercise
 Prove Equation \ref{eq:theta0} and Equation \ref{eq:theta1}.
