@@ -430,12 +430,13 @@ related by the following requirements:
       $\texttt{alphaBeta}$ is less than or equal to $\alpha$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\texttt{value}(s, p) \leq \alpha \;\rightarrow\; \texttt{alphaBeta}(s, p, \alpha, \beta) \leq \alpha$.
+      $\texttt{value}(s, p) \leq \alpha \;\rightarrow\; \texttt{alphaBeta}(s, p, \alpha, \beta) \leq
+      \mathtt{value}(s, p)$.
 \item Similarly, if $\texttt{value}(s, p) \geq \beta$, we require that the value
       returned by $\texttt{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\beta \leq \texttt{value}(s, p) \;\rightarrow\; \beta \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
+      $\beta \leq \texttt{value}(s, p) \;\rightarrow\; \mathtt{value}(s, p) \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
 \end{enumerate}
 Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an approximation of
 $\texttt{value}(\texttt{State}, \texttt{player})$.  However, it turns out that this approximation is all that
@@ -613,7 +614,7 @@ More details about the weights of the pieces can be found in the Wikipedia artic
 Read up on the game \href{https://en.wikipedia.org/wiki/Connect_Four}{Connect Four}.  You can play it online at
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{http://www.4-gewinnt.de}{\texttt{http://www.4-gewinnt.de}}
+\href{http://www.connectfour.org/connect-4-online.php}{\texttt{http://www.connectfour.org/connect-4-online.php}}
 \\[0.2cm]
 Your task is to implement this game.  At the address
 \\[0.2cm]
