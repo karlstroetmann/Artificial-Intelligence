@@ -22,7 +22,6 @@ class Table(columnNames, types, data) {
       };
   }
 }
-
 // The argument fileName is the name of a csv file.  The first line of this file
 // should be strings specifying the column0 names.  The remaining lines are the data.
 readTable := procedure(fileName, types) {

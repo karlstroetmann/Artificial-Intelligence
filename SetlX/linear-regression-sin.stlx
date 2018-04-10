@@ -44,6 +44,6 @@ createPolynom := procedure(coefficients) {
 };
     
 
-// test(200, 10);
+test(200, 10);
 
 test(25, 24); 

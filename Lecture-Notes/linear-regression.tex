@@ -431,14 +431,16 @@ only given for completeness.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     test := procedure() {
-        types := ["double", "int", "double", "double", "double", "double", "int", "string"];
+      types := [ "double", "int", "double", "double",
+                 "double", "double", "int", "string"
+               ];
         for (varName in ["displacement", "cyl", "hp", "weight", "acc", "year"]) {
             R2 := simple_linear_regression("cars.csv", types, varName);
-            print("The explained variance for $varName$ vs fuel consumption is $R2$."); 
+            print("Explained variance for $varName$ vs fuel consumption: $R2$."); 
         }
     };
 \end{Verbatim}
@@ -503,13 +505,8 @@ In order to compute the probability that the null hypothesis is true, we have to
 \end{equation}
 The $t$ statistics is distributed according to 
 \href{https://en.wikipedia.org/wiki/Student%27s_t-distribution}{Student's $t$-distribution} 
-with $m-2$ degrees of freedom.  In the upcoming version of \textsc{SetlX}, a preview of which is already available at
-\\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/jonassiefker/setlX}{\texttt{https://github.com/jonassiefker/setlX}},
-\\[0.2cm]
-the cumulative Student's $t$-distribution can be computed
-via the function
+  with $m-2$ degrees of freedom.
+The cumulative Student's $t$-distribution can be computed via the function
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{stat\_studentCDF}(t, \nu)$,
@@ -664,7 +661,7 @@ vector $\mathbf{w}$ appropriately.  A necessary condition for $\mathtt{MSE}(\mat
 \hspace*{1.3cm}
 $\nabla \mathtt{MSE}(\mathbf{w}) = \mathbf{0}$,
 \\[0.2cm]
-i.e.~the gradient of $\mathtt{MSE}(\mathbf{w})$ needs to be zero.  In order to prepare for the computation of
+i.e.~the gradient of $\mathtt{MSE}(\mathbf{w})$ with respect to $\mathbf{w}$ needs to be zero.  In order to prepare for the computation of
 $\nabla \mathtt{MSE}(\mathbf{w})$, we first compute the gradient of two simpler functions.
 
 \subsubsection{Computing the Gradient of $f(\mathbf{x}) = \mathbf{x}^\top \cdot C \cdot \mathbf{x}$}
@@ -708,7 +705,7 @@ Hence we have shown that
 \hspace*{1.3cm}
 $\ds \nabla f(\mathbf{x}) = (C + C^\top) \cdot \mathbf{x}$.
 \\[0.2cm]
-If the matrix $C$ is symmetric, i.e.~if $C = C^\top$, this simplifies to
+If the matrix $C$ is \blue{symmetric}, i.e.~if $C = C^\top$, this simplifies to
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \nabla f(\mathbf{x}) = 2 \cdot C \cdot \mathbf{x}$.
@@ -839,7 +836,12 @@ in the nominator and $m - p$ degrees of freedom in the denominator.
 
 \subsection{Implementation}
 \myFig{linear-regression.stlx} shows an implementation of general linear regression.
-The procedure $\mathtt{run\_linear\_regression}(f, t)$ takes a file name $f$ and a list of types $t$ as its input.
+The procedure
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{run\_linear\_regression}(f, t)$
+\\[0.2cm]
+takes a file name $f$ and a list of types $t$ as its input.
 
 \begin{figure}[!ht]
 \centering
@@ -906,8 +908,9 @@ not take account of the aerodynamics of the cars, this is a reasonable result.
 \exercise
 The file ``\texttt{advertising.csv}'', which is available at
 \\[0.2cm]
-\hspace*{0.0cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/advertising.csv}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/advertising.csv}},
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/advertising.csv}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/\\
+\hspace*{1.22cm} blob/master/SetlX/advertising.csv}},
 \\[0.2cm]
 contains data about advertising.  Concretely, let us think that this data lists the amount of money that has
 been spent in advertising a luxury refrigerator that is able to detect the amount of food stored and that is
