@@ -23,10 +23,17 @@ simple_linear_regression := procedure(fileName, types, name) {
     t      := abs(theta1) * sqrt((m-2) / RSS * XSS);
     p      := 1 - stat_studentCDF(t, m-2);
 
-    canvas := plot_createCanvas("Fuel consumption vs. $name$");
+    
+    xMin   := 0.5 * min(X);
+    yMin   := theta0 + theta1 * xMin;
+    xMax   := 1.1 * max(X);
+    yMax   := theta0 + theta1 * xMax;
+    canvas := plot_createCanvas("Fuel consumption vs. $name$: R2 = $toShort(R2)$");
     plot_addBullets(canvas, [ [X[i], Y[i]] : i in L ], [0,0,255], 2.0);
-    plot_modSize(canvas, [1000, 1000]);
+    plot_addListGraph(canvas, [[xMin, yMin], [xMax, yMax]], "regression line", [255,0,0]);
     plot_labelAxis(canvas, name, "fuel consumption (gallons/mile)");
+    plot_modSize(canvas, [1000, 1000]);
+
     print(t, p);
     return [R2, p];
 };
@@ -34,7 +41,7 @@ simple_linear_regression := procedure(fileName, types, name) {
 find_index := procedure(x, List) {
     return arb({ idx : idx in [1 .. #List] | List[idx] == x });
 };
-
+toShort := x |-> round(x * 1000) * 0.001;
 test := procedure() {
     types := ["double", "int", "double", "double", "double", "double", "int", "string"];
     for (varName in ["displacement", "cyl", "hp", "weight", "acc", "year"]) {
