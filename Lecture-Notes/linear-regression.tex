@@ -18,8 +18,8 @@ physics, this is not an option for us.  Instead, we could try to take a look at 
 their engine displacement with the corresponding fuel consumption.  This way, we would collect a set of  
 $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
 where $x_i$ is the engine displacement of the engine in the $i$-th car, while $y_i$ is the fuel consumption of the
-$i$-th car.  We call $x$ the \emph{\color{blue}independent variable}, while $y$ is the 
-\emph{\color{blue}dependent variable}.  We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
+$i$-th car.  We call $x$ the \blue{independent variable}, while $y$ is the 
+\blue{dependent variable}.  We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{x} := \langle x_1, \cdots, x_m \rangle^\top$ \quad and \quad
@@ -28,7 +28,7 @@ $\mathbf{y} := \langle y_1, \cdots, y_m \rangle^\top$.
 Here, the operator $^\top$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transpose} operator,
 i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.
 
-In linear regression, we use a \emph{\color{blue}linear hypothesis} 
+In linear regression, we use a \blue{linear hypothesis} 
 and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via a linear
 equation of the form
 \\[0.2cm]
@@ -39,7 +39,7 @@ We do not expect this equation to hold exactly.  The reason is that there are ma
 engine displacement that influence the fuel consumption.  For example, both the weight of a car and its 
 \href{https://en.wikipedia.org/wiki/Automotive_aerodynamics}{aerodynamics} certainly influence the fuel consumption.  
 We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the 
-\emph{\color{blue}\underline{m}ean \underline{s}quared \underline{e}rror}, which is defined as 
+\blue{\underline{m}ean \underline{s}quared \underline{e}rror}, which is defined as 
 \begin{equation}
   \label{eq:mse}
  \mathtt{MSE}(\vartheta_0, \vartheta_1) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2,
@@ -50,13 +50,13 @@ is minimized.  It can be shown that the solution to this minimization problem is
    \vartheta_1 = r_{x,y} \cdot \frac{s_y}{s_x} \quad \mbox{and} \quad \ds\vartheta_0 = \bar{\mathbf{y}} - \vartheta_1 \cdot \bar{\mathbf{x}}.
 \end{equation}
 This solution makes use of the values $r_{x,y}$, $s_x$, and $s_y$.  In order to define these values, we first
-define the \emph{\color{blue}sample mean values} $\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ of $\mathbf{x}$ and $\mathbf{y}$ respectively, i.e.~we have 
+define the \blue{sample mean values} $\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ of $\mathbf{x}$ and $\mathbf{y}$ respectively, i.e.~we have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \bar{\mathbf{x}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
 $\ds \bar{\mathbf{y}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m y_i$.
 \\[0.2cm]
-Furthermore, $s_x$ and $s_y$ are the \emph{\color{blue}sample standard deviations} of $\mathbf{x}$ and $y$, i.e.~we have
+Furthermore, $s_x$ and $s_y$ are the \blue{sample standard deviations} of $\mathbf{x}$ and $y$, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds s_x = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\;}$ \quad and \quad
@@ -67,7 +67,7 @@ Next, $\mathrm{Cov}[\mathbf{x}, \mathbf{y}]$ is the \blue{sample covariance} and
 \hspace*{1.3cm}
 $\ds \mathrm{Cov}[\mathbf{x}, \mathbf{y}] = \frac{1}{(m-1)} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)$.
 \\[0.2cm]
-Finally, $r_{x,y}$ is the \emph{\color{blue}sample correlation coefficient} that is defined as
+Finally, $r_{x,y}$ is the \blue{sample correlation coefficient} that is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds r_{x,y} = \frac{1}{(m-1) \cdot s_x \cdot s_y} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)
@@ -140,9 +140,9 @@ The mean squared error is an absolute value and, therefore, difficult to interpr
 \hspace*{1.3cm}
 $\ds \frac{\mathtt{MSE}(\vartheta_0, \vartheta_1)}{\mathtt{Var}(y)}$
 \\[0.2cm]
-is called the proportion of the \emph{\color{blue}unexplained variance} because it is the variance that is still
+is called \blue{the proportion of the unexplained variance} because it is the variance that is still
 left if we use our linear model to predict the values of $\mathbf{y}$ given the values of $\mathbf{x}$.  The
-\emph{\color{blue}explained variance} which is also known as the \emph{\color{blue}$\mathtt{R}^2$ statistic} is defined as 
+\blue{proportion of the explained variance} which is also known as the \blue{$\mathtt{R}^2$ statistic} is defined as 
 \begin{equation}
   \label{eq:Rsquare}
   \mathtt{R}^2 := \frac{\mathtt{Var}(\mathbf{y}) - \mathtt{MSE}}{\mathtt{Var}(\mathbf{y})} = 1 - \frac{\mathtt{MSE}}{\mathtt{Var}(\mathbf{y})}.
@@ -155,12 +155,12 @@ variation of $\mathbf{y}$ when $\mathbf{x}$ changes.
 
 Since the formul\ae\ for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
 denominator $m-1$, this denominator can be cancelled when the $\mathtt{R}^2$ statistic is computed.  To this
-end we define the \emph{\color{blue}total sum of squares} $\mathtt{TSS}$ as
+end we define the \blue{total sum of squares} $\mathtt{TSS}$ as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds\mathtt{TSS} := \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2 = (m-1) \cdot \mathtt{Var}(\mathbf{y})$
 \\[0.2cm]
-and the \emph{\color{blue}residual sum of squares} $\mathtt{RSS}$ as
+and the \blue{residual sum of squares} $\mathtt{RSS}$ as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds\mathtt{RSS} := \sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2
@@ -226,7 +226,7 @@ The file ``\texttt{cars.csv}'' is part of the data set accompanying the excellen
 Daniela Witten, Trevor Hastie, and Robert Tibshirani \cite{james:2014}.  The file 
 ``\texttt{cars.csv}''  contains the fuel consumption of a number of different cars that were in widespread use during
 the seventies and early eighties of the last century.  The first column of this data set list the 
-\emph{\color{blue}miles per gallon}, i.e.~the number of miles a car can go with one gallon of gas.  Note that
+\blue{miles per gallon}, i.e.~the number of miles a car can go with one gallon of gas.  Note that
 this number is inverse to the fuel consumption:  If a car $\mathrm{A}$ can go twice as many miles per gallon
 than another car $\mathrm{B}$, then the fuel consumption of $\mathrm{A}$ is half of the fuel consumption of
 $\mathrm{B}$. Furthermore, besides the miles per gallon, for every car the following other parameters are listed:
@@ -498,7 +498,7 @@ results.  In the case of simple linear regression, the
 $\mathtt{H}_0$: There is no relationship between the variables $x$ and $y$.
 \\[0.2cm]
 In order to compute the probability that the null hypothesis is true, we have to compute the
-\emph{\color{blue} $t$-statistic}, which is given by the following formula:
+\blue{ $t$-statistic}, which is given by the following formula:
 \begin{equation}
   \label{eq:t-statistics}
   t := |\vartheta_1| \cdot \sqrt{\frac{\;(m-2)\;}{\mathtt{RSS}} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\; }.
@@ -884,7 +884,7 @@ takes a file name $f$ and a list of types $t$ as its input.
 \item The data from this object is stored as a list of lists in the variable $\mathtt{data}$.
 \item $\mathtt{number}$ is the number of training examples.
 \item $\mathtt{xList}$ stores the data of the independent variable $x$.  Therefore, $\mathtt{xList}$ is a list
-      of vectors.  Note that we have extended the data vectors by putting a $1.0$ at the end.  
+      of vectors.  Note that we have extended the data vectors by putting the number $1.0$ at the end of every vector.  
 \item $\mathtt{yList}$ stores the data of the depend variable $y$.
 \item The data in $\mathtt{xList}$ is then stored in the matrix $\mathtt{X}$.  
 \item The data in $\mathtt{yList}$ is stored in the vector $\mathtt{y}$.
@@ -902,7 +902,7 @@ takes a file name $f$ and a list of types $t$ as its input.
 
 When we run the program shown in \myFig{linear-regression.stlx} with the data stored in \texttt{cars.csv},
 which had been discussed previously, then the proportion of explained variance is $81 \mathtt{\symbol{37}}$.  Considering that our data does
-not take account of the aerodynamics of the cars, this is a reasonable result.
+not take account of the aerodynamics of the cars, this seems like a reasonable result.
 
 
 \exercise

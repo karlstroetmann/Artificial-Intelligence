@@ -19,7 +19,7 @@ linear_regression := procedure(fileName, types) {
     yMean := +/ yList / number;
     TSS   := +/ [(yList[i] - yMean) ** 2 : i in [1 .. number]];
     R2    := 1 - RSS / TSS;
-
+    print(w);
     return R2;
 };
 
