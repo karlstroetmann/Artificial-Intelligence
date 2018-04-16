@@ -40,7 +40,7 @@ Booleans.  If
 \hspace*{1.3cm}
 $\texttt{feature}(o, j) \in \mathbb{B}$ for all $o \in S$,
 \\[0.2cm]
-then the $j$-th feature is a \blue{binary feature}.  I we encode $\mathtt{false}$ as $0$ and $\mathtt{true}$ as
+then the $j$-th feature is a \blue{binary feature}.  If we encode $\mathtt{false}$ as $0$ and $\mathtt{true}$ as
 $1$, then the set of Boolean values $\mathbb{B}$ can be considered a subset of $\mathbb{R}$ and hence Boolean features can be considered
 as real numbers.  For example, in the case of spam detection, the first feature
 could be the occurrence of the string ``\texttt{pharmacy}''.  In this case, we would have
@@ -55,7 +55,12 @@ If we want to be more precise, we can instead define the first feature as
 $\texttt{feature}(o, 1) := \mathtt{count}(\texttt{"pharmacy"}, o)$,
 \\[0.2cm]
 i.e.~we would count the number of occurrences of the string ``\texttt{pharmacy}'' in our email $o$.   
-As $\mathtt{count}(\texttt{"pharmacy"}, o)$ is always a natural number, in this case the first feature would be a
+As the value of
+\\[0.2cm]
+\hspace*{1.3cm}
+ $\mathtt{count}(\texttt{"pharmacy"}, o)$ 
+\\[0.2cm]
+is always a natural number, in this case the first feature would be a
  \blue{discrete} feature.  However, we can be even more precise than just counting the number of occurrences of
  ``\texttt{pharmacy}''.  After all, there is a difference if the string ``\texttt{pharmacy}'' occurs once in an email
  containing but a hundred characters or whether is occurs once in an email with a length of several thousand
@@ -257,7 +262,7 @@ method that can be used to find the maximum of a function
 \hspace*{1.3cm}
 $f: \mathbb{R}^n \rightarrow \mathbb{R}$.
 \\[0.2cm]
-The basic idea is to take a vector $\mathbf{x}_0 \in \mathbb{R}^n$ as start value and define a sequence of
+The basic idea is to take a vector $\mathbf{x}_0 \in \mathbb{R}^n$ as the start value and define a sequence of
 vectors $\bigl(\mathbf{x}_n\bigr)_{n\in\mathbb{N}}$ such that we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -299,8 +304,8 @@ In practice, it is best to adapt the step size dynamically during the iteration.
             fx := f(x);
             if (fx < fOld) {   
                 alpha   *= 0.5;
-                [x, fx] := [xOld, fOld];
-                continue;  // start over
+                [x, fx] := [xOld, fOld];  // reset values and
+                continue;                 // start over
             } else {
                 alpha *= 1.2;
             }
@@ -322,7 +327,7 @@ The function \texttt{findMaximum} takes four arguments:
       $\texttt{x}\in \mathbb{R}^n$ as its input and that it returns a real number.
 \item \texttt{gradF} is the gradient of \texttt{f}.  It takes a vector
       $\texttt{x}\in \mathbb{R}^n$ as its input and returns the vector $\nabla \mathtt{f}(\mathtt{x})$.
-\item \texttt{start} is the a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
+\item \texttt{start} is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
       practice, we will often use $\mathbf{0} \in \mathbb{R}^n$ as the start vector.
 \item \texttt{eps} is the precision that we need for the maximum.  We will have to say more on how \texttt{eps}
       is exactly related to the precision later.  As we are using double precision floating point arithmetic, 
@@ -338,16 +343,19 @@ Next, let us discuss the implementation of gradient ascent.
 \item The \texttt{while} loop starting in line 5 executes the iteration.
 \item In each iteration, we store the values of $\mathbf{x}_n$ and $f(\mathbf{x}_n)$ in the variables
       \texttt{xOld} and \texttt{fOld}.
-\item Next, we compute $\mathbf{x}_{n+1}$ in line 7 and compute the corresponding value $f(\mathbf{x}_{n+1})$ in line 8.
+\item Next, we compute $\mathbf{x}_{n+1}$ in line 7 using the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$.
+\item The corresponding value $f(\mathbf{x}_{n+1})$ is computed in line 8.
 \item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$.  This happens if the step
       size $\alpha$ is too large.  Hence, in this case we decrease the value of $\alpha$, discard 
       both $\mathbf{x}_{n+1}$ and $f(\mathbf{x}_{n+1})$ and start over again.
 \item Otherwise, $\mathbf{x}_{n+1}$ is a better approximation of the maximum than $\mathbf{x}_n$.  
       In order to increase the speed of the convergence of our algorithm we will then increase the step size
       $\alpha$ by $20\%$.    
-\item The idea of our implementation is to stop the iteration when the function values of 
-      $f(\mathbf{x}_{n+1})$ and $f(\mathbf{x}_{n})$ do not differ by more than $\varepsilon$ percent, or, to be more
-      precise, if
+\item The idea of our implementation is to stop the iteration when the relative difference  of 
+      $f(\mathbf{x}_{n+1})$ and $f(\mathbf{x}_{n})$ is less than $\varepsilon$ or, to be more precise, if
       \\[0.2cm]
       \hspace*{1.3cm}
       $f(\mathbf{x}_{n+1}) < f(\mathbf{x}_{n}) \cdot (1 + \varepsilon)$.
@@ -437,7 +445,8 @@ $
 1 - S(t) & = & \ds 1 - \frac{1}{1 + \exp(-t)}             & \mbox{by definition of $S(t)$}           \\[0.5cm]
          & = & \ds \frac{1 + \exp(-t) - 1}{1 + \exp(-t)}  & \mbox{common denominator}                \\[0.5cm]
          & = & \ds \frac{\exp(-t)}{1 + \exp(-t)}          & \mbox{simplify}                          \\[0.5cm]
-         & = & \ds \frac{1}{1 + \exp(+t)}                 & \mbox{expand fraction by $\exp(t)$}      \\[0.5cm]
+         & = & \ds \frac{1}{\exp(+t) + 1}                 & \mbox{expand fraction by $\exp(t)$}      \\[0.5cm]
+         & = & \ds \frac{1}{1 + \exp(+t)}                 &                                          \\[0.5cm]
          & = & S(-t). \qquad _\Box                         & \mbox{by definition of $S(-t)$}
 \end{array}
 $
@@ -515,7 +524,7 @@ $
 \begin{array}{lcll}
   L'(t) & = & \ds \frac{S'(t)}{S(t)}                  & \mbox{by the chain rule} \\[0.5cm]
         & = & \ds \frac{(1 - S(t)) \cdot S(t)}{S(t)}  \\[0.5cm]
-        & = & \ds 1 - S(t)                            \\[0.2cm]
+        & = & \ds 1 - S(t)                            & \mbox{by symmetry} \\[0.2cm]
         & = & \ds S(-t)
 \end{array}
 $
@@ -569,7 +578,8 @@ of a given training set:
 \hspace*{1.3cm}
 $\ds \ell(\mathbf{X},\mathbf{y};\mathbf{w}) = \prod\limits_{i=1}^N P(y_i \;|\;\mathbf{x}_i;\mathbf{w})$.
 \\[0.2cm]
-Here, we have combined the different attribute vectors $\mathbf{x}_i$ into the matrix $\mathbf{X}$.  Since it is
+Here, we have combined the different attribute vectors $\mathbf{x}_i$ into the matrix $\mathbf{X}$ such that
+$\mathbf{x}_i$ is the $i$-th row of the matrix $\mathbf{X}$.  Since it is
 easier to work with sums than with products, instead of maximizing the function $\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ we maximize the function
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -602,12 +612,16 @@ coefficients $\mathbf{w}$ we need to compute the partial derivative of the dot p
 We define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds h(\mathbf{w}) := \mathbf{x}_i \cdot \mathbf{w} = \sum\limits_{k=1}^D x_{i,k} \cdot w_j$.
+$\ds h(\mathbf{w}) := \mathbf{x}_i \cdot \mathbf{w} = \sum\limits_{k=1}^D x_{i,k} \cdot w_k$.
 \\[0.2cm]
 Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \frac{\partial\quad}{\partial\, w_j} h(\mathbf{w}) = x_{i,j}$.
+$\ds \frac{\partial\quad}{\partial\, w_j} h(\mathbf{w})
+   = \frac{\partial\quad}{\partial\, w_j} \sum\limits_{k=1}^D x_{i,k} \cdot w_k
+   = \sum\limits_{k=1}^D x_{i,k} \cdot \frac{\partial\quad}{\partial\, w_j} w_k
+   = \sum\limits_{k=1}^D x_{i,k} \cdot \delta_{j,k} =  x_{i,j}
+$.
 \\[0.2cm]
 Now we are ready to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ with respect to $\mathbf{w}$:
 \\[0.2cm]
