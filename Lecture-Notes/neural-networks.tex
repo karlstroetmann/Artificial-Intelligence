@@ -82,7 +82,17 @@ neurons in the $l$-th layer.  The first layer is called the \blue{input layer}. 
 neurons but instead just contains \blue{input nodes}.  The last layer (i.e.~the
 layer with index $L$) is called the \blue{output layer} and the remaining layers are called 
 \blue{hidden layers}.  If there is more than one hidden layer, the neural network is called a
-\blue{deep neural network}.
+\blue{deep neural network}.  Figure \ref{fig:neural-network.png} on page \pageref{fig:neural-network.png} shows
+a small neural network with two hidden layers.
+
+\begin{figure}[!h]
+  \centering
+   \epsfig{file=Figures/neural-network.png,scale=0.8}
+   \caption{A neural network taken from the book by
+     \href{http://neuralnetworksanddeeplearning.com}{Michael Nielsen}\cite{nielsen:2015}.}
+  \label{fig:neural-network.png}
+\end{figure}
+
 
 As the first layer is the input layer, the \blue{input dimension} is defined as
 $m(1)$.  Similarly, the \blue{output dimension} is defined as $m(L)$.
@@ -219,7 +229,7 @@ find this minimum\footnote{
   we \emph{minimize} the quadratic error cost function.  Hence, instead of gradient \emph{ascent} we use
   gradient \emph{descent}.  
 }.
-\pagebreak
+
 
 \section{Backpropagation}
 There are two reasons for the recent success of neural networks.
@@ -231,6 +241,9 @@ There are two reasons for the recent success of neural networks.
       In 2000 when it topped the rankings of the supercomputers, it  offered a performance of 7.2 teraflops and 
       needed 6 megawatt to operate.  The cost to build ASCI White where about $110,000,000\,\symbol{36}$.
       On the contrary, the AMD RX Vega 64 Liquid costs  $699\symbol{36}$.
+
+      The Nvidia \href{https://www.nvidia.com/en-us/titan/titan-v/}{Titan V} comes at $2,999\symbol{36}$ and
+      offers a stunning 110 teraflops for deep learning.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
@@ -280,12 +293,11 @@ $\boldsymbol{\varepsilon}^{(l)} := \left(
 $.
 \\[0.2cm]
 For reasons that will be explained later, this quantity $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
-\pagebreak
 
 \subsection{The Hadamard Product}
 Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
 of two vectors.  Assume that $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$.  The \blue{Hadamard product} of
-$\mathbf{x}$ and $\mathbf{y}$ is defined by multiplying the vectors elementwise:
+$\mathbf{x}$ and $\mathbf{y}$ is a vector that is defined by multiplying the vectors $\mathbf{x}$ and $\mathbf{y}$ elementwise:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\left(
