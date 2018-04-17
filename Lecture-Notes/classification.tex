@@ -8,7 +8,7 @@ likely to be spam.  For example, a possible feature would be the number of occur
 ``\texttt{pharmacy}'' in the text of the email.
 
 \section{Introduction}
-Formally, the classification problem in machine learning can be stated a s follows.  We are given a
+Formally, the classification problem in machine learning can be stated as follows:  We are given a
 set of objects $S := \{ o_1, \cdots, o_n \}$ and a set of classes $C := \{ c_1, \cdots, c_k \}$.  Furthermore, there exists a function 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -16,7 +16,7 @@ $\mathtt{classify}: S \rightarrow C$
 \\[0.2cm]
 that assigns a class $\texttt{classify}(o)$ to every object $o \in S$.  The set $S$ is called the \blue{sample space}.
 In the example of spam detection, the sample space $S$ is the set of all emails that we might receive, i.e.~$S$
-is the set of all strings of the \textsc{Ascii} alphabet, while  
+is the set of all strings, while  
 \\[0.2cm]
 \hspace*{1.3cm}
 $C = \{ \mathtt{spam}, \mathtt{ham} \}$.
@@ -26,7 +26,7 @@ genuine message otherwise.  Our goal is to compute the function
 \texttt{classify}.  In order to do this, we use an approach known as
 \href{https://en.wikipedia.org/wiki/Supervised_learning}{supervised learning}:  We take a subset $S_\textsl{Train} \subseteq S$ of
 emails where we already know whether the emails are spam or not.  This set $S_\textsl{Train}$ is called the \blue{training set}.
-Next, we define a set of $D$ \blue{features} for every $o \in S$.  These features have to be computable,
+Next, we define a set of $D$ \blue{features} for every $o \in S$.  These features have to be \blue{computable},
 i.e.~we must have a function
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -38,15 +38,20 @@ However, there are cases where these values are just
 Booleans.  If
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{feature}(o, j) \in \mathbb{B}$ for all $o \in S$,
+$\texttt{feature}(o, j) \in \mathbb{B}$ \quad for all $o \in S$,
 \\[0.2cm]
-then the $j$-th feature is a \blue{binary feature}.  If we encode $\mathtt{false}$ as $0$ and $\mathtt{true}$ as
-$1$, then the set of Boolean values $\mathbb{B}$ can be considered a subset of $\mathbb{R}$ and hence Boolean features can be considered
+then the $j$-th feature is called a \blue{binary feature}.  If we encode $\mathtt{false}$ as $-1$ and $\mathtt{true}$ as
+$+1$, then the set of Boolean values $\mathbb{B}$ can be considered a subset of $\mathbb{R}$ and hence Boolean features can be considered
 as real numbers.  For example, in the case of spam detection, the first feature
 could be the occurrence of the string ``\texttt{pharmacy}''.  In this case, we would have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{feature}(o, 1) := (\texttt{pharmacy} \in o)$,
+$\texttt{feature}(o, 1) := \left\{
+\begin{array}{ll}
+  +1 & \mbox{if \ $\texttt{pharmacy}     \in o$,}      \\
+  -1 & \mbox{if \ $\texttt{pharmacy} \not\in o$,}  
+\end{array}\right.
+$
 \\[0.2cm]
 i.e.~the first feature would be to check whether the email $o$ contains the string ``\texttt{pharmacy}''.  
 If we want to be more precise, we can instead define the first feature as
@@ -77,7 +82,7 @@ Having defined the features, we next need a \blue{model} of the function \texttt
 function \texttt{classify} via the features.  This model is given by a function
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{model}: \mathbb{R}^D \rightarrow C$
+$\mathtt{model}: \mathbb{R}^D \rightarrow C$
 \\[0.2cm]
 such that
 \\[0.2cm]
@@ -90,7 +95,7 @@ defined as
 \hspace*{1.3cm}
 $\mathtt{guess}(o) := \mathtt{model}\bigl(\mathtt{feature}(o,1), \cdots, \mathtt{feature}(o,D)\bigr)$
 \\[0.2cm]
-Most of the time, the function \texttt{guess} will only approximate the function \texttt{classify}, i.e.~we will have
+Most of the time, the function \texttt{guess} will only \blue{approximate} the function \texttt{classify}, i.e.~we will have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{guess}(o) = \mathtt{classify}(o)$
@@ -111,24 +116,34 @@ The function $\mathtt{model}$ is usually determined by a set of \blue{parameters
 this case, we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{model}(\mathbf{x}) = \mathtt{model}(\mathbf{x};\mathbf{w})$
+$\mathtt{model}(\mathbf{x}) = \mathtt{model}(\mathbf{x};\mathbf{w})$
 \\[0.2cm]
 where $\mathbf{x}$ is the vector of features, while $\mathbf{w}$ is the vector of weights.  Later, when we
-introduce \blue{logistic regression}, we will assume that the number of weights is the same as the number of features.
-When it comes to the choice of the model, it is important to 
-understand that, at least in practical applications, \underline{all} models are wrong.  Nevertheless, \underline{some}
-models are useful.  There are two reasons for this:
+introduce \blue{logistic regression}, we will assume that the number of weights is the same as the number of
+features.  Then, the weights specify the relative importance of the different features.
+
+When it comes to the choice of model, it is important to understand that, at least in practical applications,
+\underline{all} models are wrong.  Nevertheless, \underline{some} models are useful.  There are two reasons for this:
 \begin{enumerate}
-\item We do not fully understand the function \texttt{classify} that we want to approximate by the function \texttt{model}.
+\item We do not fully understand the function \texttt{classify} that we want to approximate by the function $\mathtt{model}$.
 \item The function \texttt{classify} is so complex, that even if we could compute it exactly, the resulting model 
       would be much too complicated.
 \end{enumerate}
 The situation is similar in physics: Let us assume that we intend to model the fall of an object.  A model that is a
-hundred percent accurate would have to include not only air friction, but also the possible effects of tidal forces or,
-in case we have a metallic object, the effects of the magnetic field of the earth have to be taken into account.  On top
-of that we need some corrections from relativistic physics and even quantum physics.  A model of this kind
-would be so complicated that it would be useless. 
-
+hundred percent accurate would have to include the following forces:
+\begin{enumerate}[(a)]
+\item gravitational acceleration,
+\item air friction, 
+\item tidal forces, i.e.~the effects that the rotation of the earth has on moving objects,
+\item celestial forces, i.e.~the gravitational acceleration caused by celestial objects like the moon or the
+      sun.
+\item In case we have a metallic object we have to be aware of the magnetic forces
+      caused by the \href{https://www.britannica.com/science/geomagnetic-field}{geomagnetic field}.
+\item To be fully accurate, we might have to include corrections from relativistic physics and even quantum
+      physics.   
+\item As physics is not a closed subject, there might be other forces at work which we still do not know of. 
+\end{enumerate}
+Hence, a correct model would be so complicated that it would be unmanageable and therefore useless. 
 
 Let us summarize our introductory discussion of machine learning in general and classification in particular.
 A set $S$ of objects and a set $C$ of classes are given.  Our goal is to approximate a function
@@ -136,7 +151,7 @@ A set $S$ of objects and a set $C$ of classes are given.  Our goal is to approxi
 \hspace*{1.3cm}
 $\mathtt{classify}: S \rightarrow C$
 \\[0.2cm]
-using certain \blue{features} of our objects.  The function \texttt{classify} is then approximated using a function
+using certain \blue{features} of our objects.  The function $\mathtt{classify}$ is then approximated using a function
 \texttt{model} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -144,7 +159,7 @@ $\mathtt{model}\bigl(\mathtt{feature}(o,1), \cdots, \mathtt{feature}(o,D); \math
 \\[0.2cm]
 The model depends on a vector of parameters $\mathbf{w}$.  In order to \blue{learn} these parameters, we are given a 
 \blue{training set} $S_\textsl{Train}$ that is a subset of $S$.  As we are dealing with \blue{supervised learning}, the function 
-classify is known for all objects $o \in S_\textsl{Train}$.   Our goal is to determine the parameters $\mathbf{w}$ such that the
+$\mathtt{classify}$ is known for all objects $o \in S_\textsl{Train}$.   Our goal is to determine the parameters $\mathbf{w}$ such that the
 number of mistakes we make on the training set is minimized.  
 
 \subsection{Notation}
@@ -168,7 +183,7 @@ Mathematically, our goal is now to maximize the accuracy of our model as a funct
 Besides spam detection, there are many other classification problems that can be solved using machine learning.  To give
 just one more example, imagine a general practitioner that receives a patient and examines his symptoms.  In this case,
 the symptoms can be seen as the features of the patient.  For example, these features could be
-\begin{enumerate}
+\begin{enumerate}[(a)]
 \item body temperature,
 \item blood pressure,
 \item heart rate,
@@ -185,7 +200,15 @@ $\{ \mathtt{commonCold}, \mathtt{pneumonia}, \mathtt{asthma}, \mathtt{flu}, \cdo
 Hence, the task of disease diagnosis is a classification problem.  This was one of the earliest problem that was tackled
 by artificial intelligence.  As of today, 
 \href{https://en.wikipedia.org/wiki/Computer-aided_diagnosis}{computer-aided diagnosis} has been used for more than 40
-years in many hospitals. 
+years in many hospitals.  There are a number of diseases that today can be diagnosed more accurately by a
+computer than by a specialist.  One such example is the  \href{http://www.ultromics.com}{diagnosis of heart disease}.
+Other examples of classifications are the following:
+\begin{enumerate}
+\item image recognition,
+\item speech recognition,
+\item credit card fraud detection,
+\item credit approval.
+\end{enumerate}
 
 \section{Digression: The Method of Gradient Ascent \label{section:gradient-ascent}}
 In machine learning, it is often the case that we have to find either the maximum or the minimum of a function
@@ -223,6 +246,7 @@ $\nabla f := \left(
  \end{array}
  \right).
 $
+\vspace*{0.2cm}
 
 \begin{figure}[!th]
 \centering
@@ -238,7 +262,7 @@ Unfortunately, in many cases the equation
 \hspace*{1.3cm}
 $\nabla f(\mathbf{\widehat{x}}) = \mathbf{0}$
 \\[0.2cm]
-can not be solved explicitly.  This is already true in the one-dimensional case, i.e.~if $n=1$.  For example, consider
+cannot be solved explicitly.  This is already true in the one-dimensional case, i.e.~if $n=1$.  For example, consider
 the function $f:\mathbb{R} \rightarrow \mathbb{R}$ that is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -253,16 +277,20 @@ $f'(x) = \cos(x) - x$
 \\[0.2cm]
 As it happens, the equation $\cos(x) - x = 0$ does not seem to have a solution in 
 \href{https://en.wikipedia.org/wiki/Closed-form_expression}{closed form}.  Hence, we can only approximate
-the solution numerically.
-
-
+the solution numerically via a sequence of numbers $(x_n\bigr)_{n\in\mathbb{N}}$ such that the limit
+$\ds \lim\limits_{n\rightarrow\infty} x_n$
+exists and is a solution of the equation $\cos(x) - x = 0$, i.e.~we want to have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \cos\Bigl(\lim\limits_{n\rightarrow\infty} x_n\Bigr) = \lim\limits_{n\rightarrow\infty} x_n$.
+\\[0.2cm]
 The method of \href{https://en.wikipedia.org/wiki/Gradient_descent}{gradient ascent} is a numerical
 method that can be used to find the maximum of a function 
 \\[0.2cm]
 \hspace*{1.3cm}
-$f: \mathbb{R}^n \rightarrow \mathbb{R}$.
+$f: \mathbb{R}^n \rightarrow \mathbb{R}$
 \\[0.2cm]
-The basic idea is to take a vector $\mathbf{x}_0 \in \mathbb{R}^n$ as the start value and define a sequence of
+numerically.  The basic idea is to take a vector $\mathbf{x}_0 \in \mathbb{R}^n$ as the start value and define a sequence of
 vectors $\bigl(\mathbf{x}_n\bigr)_{n\in\mathbb{N}}$ such that we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -277,11 +305,60 @@ Therefore, the definition of $\mathbf{x}_{n+1}$ is given as follows:
 \hspace*{1.3cm}
 $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$ \quad for all $n \in \mathbb{N}_0$.
 \\[0.2cm]
-Here, $\alpha$ is called the \blue{step size}.  It determines by how much we move in the direction of the gradient.
-In practice, it is best to adapt the step size dynamically during the iteration.  Figure
-\ref{fig:gradient-ascent.stlx} shows how this is done.
-
-
+Here, $\alpha$ is called the \blue{step size} also known as the \blue{learning rate}.  It determines by how
+much we move in the direction of the gradient.  In practise, it is best to adapt the step size dynamically
+during the iterations.  Figure \ref{fig:gradient-ascent.stlx} on page \pageref{fig:gradient-ascent.stlx} shows
+how this is done. 
+The function \texttt{findMaximum} takes four arguments:
+\begin{enumerate}
+\item \texttt{f} is the function that is to be maximized.  It is assumed that \texttt{f} takes a vector
+      $\texttt{x}\in \mathbb{R}^n$ as its input and that it returns a real number.
+\item \texttt{gradF} is the gradient of \texttt{f}.  It takes a vector
+      $\texttt{x}\in \mathbb{R}^n$ as its input and returns the vector $\nabla \mathtt{f}(\mathtt{x})$.
+\item \texttt{start} is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
+      practice, we will often use $\mathbf{0} \in \mathbb{R}^n$ as the start vector.
+\item \texttt{eps} is the precision that we need for the maximum.  We will have to say more on how \texttt{eps}
+      is related to the precision later.  As we are using double precision floating point arithmetic, 
+      it won't make sense to use a value for \texttt{eps} that is smaller than $10^{-15}$.
+\end{enumerate}
+Next, let us discuss the implementation of gradient ascent.
+\begin{enumerate}
+\item \texttt{x} is initialized with the parameter \texttt{start}.  Hence, \texttt{start} is really the same as
+      $\mathbf{x}_0$. 
+\item \texttt{fx} is the value that the function $f$ takes for the argument \texttt{x}.
+\item \texttt{alpha} is the \blue{learning rate}.  We initialize \texttt{alpha} as $1.0$.  The learning rate
+      will be adapted dynamically. 
+\item The body of the \texttt{while} loop starting in line 5 executes one iteration of gradient ascent.
+\item In each iteration, we store the values of $\mathbf{x}_n$ and $f(\mathbf{x}_n)$ in the variables
+      \texttt{xOld} and \texttt{fOld}.  This is needed since we need to ensure that the values of
+      $f(\mathbf{x}_n)$ are increasing.
+\item Next, we compute $\mathbf{x}_{n+1}$ in line 7 using the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$.
+\item The corresponding value $f(\mathbf{x}_{n+1})$ is computed in line 8.
+\item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$.  This happens if the step
+      size $\alpha$ is too large.  Hence, in this case we decrease the value of $\alpha$, discard 
+      both $\mathbf{x}_{n+1}$ and $f(\mathbf{x}_{n+1})$ and start over again.
+\item Otherwise, $\mathbf{x}_{n+1}$ is a better approximation of the maximum than $\mathbf{x}_n$.  
+      In order to increase the speed of the convergence of our algorithm we will then increase the learning rate
+      $\alpha$ by $20\%$.    
+\item The idea of our implementation is to stop the iteration when the relative difference  of 
+      $f(\mathbf{x}_{n+1})$ and $f(\mathbf{x}_{n})$ is less than $\varepsilon$ or, to be more precise, if
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $f(\mathbf{x}_{n+1}) < f(\mathbf{x}_{n}) \cdot (1 + \varepsilon)$.
+      \\[0.2cm]
+      As the sequence $\bigl(f(\mathbf{x}_n\bigr)_{n\in\mathbb{N}}$ will be monotonically
+      increasing, i.e.~we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $f(\mathbf{x}_{n+1}) \geq f(\mathbf{x}_{n})$ \quad for all $n\in\mathbb{N}$,
+      \\[0.2cm]
+      the condition given above is sufficient.  Now, if the increase of  $f(\mathbf{x}_{n+1})$ is less than $f(\mathbf{x}_{n}) \cdot (1 + \varepsilon)$ 
+      we assume that we have reached the maximum with the required precision.  In this case we return both the
+      value of \texttt{x} and the corresponding function value $f(\mathtt{x})$.
+\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -320,59 +397,8 @@ In practice, it is best to adapt the step size dynamically during the iteration.
 \label{fig:gradient-ascent.stlx}
 \end{figure}
 
-\noindent
-The function \texttt{findMaximum} takes four arguments:
-\begin{enumerate}
-\item \texttt{f} is the function that is to be maximized.  It is assumed that \texttt{f} takes a vector
-      $\texttt{x}\in \mathbb{R}^n$ as its input and that it returns a real number.
-\item \texttt{gradF} is the gradient of \texttt{f}.  It takes a vector
-      $\texttt{x}\in \mathbb{R}^n$ as its input and returns the vector $\nabla \mathtt{f}(\mathtt{x})$.
-\item \texttt{start} is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
-      practice, we will often use $\mathbf{0} \in \mathbb{R}^n$ as the start vector.
-\item \texttt{eps} is the precision that we need for the maximum.  We will have to say more on how \texttt{eps}
-      is exactly related to the precision later.  As we are using double precision floating point arithmetic, 
-      it won't make sense to use a value for \texttt{eps} that is smaller than $10^{-15}$.
-\end{enumerate}
-Next, let us discuss the implementation of gradient ascent.
-\begin{enumerate}
-\item \texttt{x} is initialized with the parameter \texttt{start}.  Hence, \texttt{start} is really the same as
-      $\mathbf{x}_0$. 
-\item \texttt{fx} is the value that the function $f$ takes for the argument \texttt{x}.
-\item \texttt{alpha} is the step size $\alpha$.  We initialize \texttt{alpha} as $1.0$.  It will be adapted
-      dynamically. 
-\item The \texttt{while} loop starting in line 5 executes the iteration.
-\item In each iteration, we store the values of $\mathbf{x}_n$ and $f(\mathbf{x}_n)$ in the variables
-      \texttt{xOld} and \texttt{fOld}.
-\item Next, we compute $\mathbf{x}_{n+1}$ in line 7 using the formula
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$.
-\item The corresponding value $f(\mathbf{x}_{n+1})$ is computed in line 8.
-\item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$.  This happens if the step
-      size $\alpha$ is too large.  Hence, in this case we decrease the value of $\alpha$, discard 
-      both $\mathbf{x}_{n+1}$ and $f(\mathbf{x}_{n+1})$ and start over again.
-\item Otherwise, $\mathbf{x}_{n+1}$ is a better approximation of the maximum than $\mathbf{x}_n$.  
-      In order to increase the speed of the convergence of our algorithm we will then increase the step size
-      $\alpha$ by $20\%$.    
-\item The idea of our implementation is to stop the iteration when the relative difference  of 
-      $f(\mathbf{x}_{n+1})$ and $f(\mathbf{x}_{n})$ is less than $\varepsilon$ or, to be more precise, if
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $f(\mathbf{x}_{n+1}) < f(\mathbf{x}_{n}) \cdot (1 + \varepsilon)$.
-      \\[0.2cm]
-      As the sequence $\bigl(f(\mathbf{x}_n\bigr)_{n\in\mathbb{N}}$ will be monotonically
-      increasing, i.e.~we have
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $f(\mathbf{x}_{n+1}) \geq f(\mathbf{x}_{n})$ \quad for all $n\in\mathbb{N}$,
-      \\[0.2cm]
-      the condition given above is sufficient.  Now, if the increase of  $f(\mathbf{x}_{n+1})$ is less than $f(\mathbf{x}_{n}) \cdot (1 + \varepsilon)$ 
-      we assume that we have reached the maximum with the required precision.  In this case we return both the
-      value of \texttt{x} and the corresponding function value $f(\mathtt{x})$.
-\end{enumerate}
 The implementation of gradient ascent given above is not the most sophisticated variant of this algorithm.
-It should also be noted that there are algorithms that are more powerful than
-gradient ascent.  The first of these methods is the
+Furthermore, there are algorithms that are more powerful than gradient ascent.  The first of these methods is the
 \href{https://en.wikipedia.org/wiki/Conjugate_gradient_method}{conjugate gradient method}.  A
 refinement of this method is the
 \href{https://en.wikipedia.org/wiki/Broyden-Fletcher-Goldfarb-Shanno_algorithm}{BFGS-algorithm} that
@@ -382,13 +408,31 @@ However, our implementation of gradient ascent is sufficient for our application
 analysis but rather on artificial intelligence we will not delve deeper into this topic but, instead, we refer
 readers interested in more efficient algorithms to the literature \cite{snyman:2005}.  If you ever need to find
 the maximum of a function numerically, you should try to use a predefined library routine that implements a
-state of the art algorithm.
-
+state of the art algorithm.  For example, in \href{https://www.python.org}{Python} the method
+\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html#scipy.optimize.minimize}{minimize}
+from the package \texttt{scipy.optimize} offers various algorithms for minimization.
 
 \section{Logistic Regression}
-In \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} we use a linear model that is combined
-with the \blue{sigmoid function}.  Before we can discuss the details of logistic regression we need to
-define this function and state some of its properties. 
+If we have a model such that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{model}(\mathbf{x}, \mathbf{w}) \approx \mathtt{classify}(\mathbf{x})$
+\\[0.2cm]
+we want to choose the weight vector $\mathbf{w}$ in a way such that the accuracy 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{accuracy}(\mathbf{w}) := 
+\frac{\;\cnt \bigl\{ \mathbf{o} \in S \bigm| \mathtt{model}(\mathtt{feature}\bigl(\mathbf{o}),\mathbf{w}\bigr) = \mathtt{classify}(\mathbf{o})\bigr\}\;}{\cnt S}$
+\\[0.2cm]
+is maximized.  However, there is a snag:  The accuracy is not a smooth function of the weight vector
+$\mathbf{w}$.  It can't be because the number of errors of our model is a natural number and not a real number
+that could change smoothly when the weight vector $\mathbf{w}$ is changed.  Hence, the accuracy is not differentiable as a function
+of the weight vector.  The way to proceed is to work with \blue{probabilities} instead.  Instead of assigning a
+class to an object $\mathbf{o}$ we rather assign a probability $p$ to the object $\mathbf{o}$ that measures how
+probable it is that object $\mathbf{o}$ has a given class $c$.  Then we try to maximize this probability.  In
+\href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} we use a linear model that is 
+combined with the \blue{sigmoid function}.  Before we can discuss the details of logistic regression we need to
+define this function and state some of its properties.  
 
 \subsection{The Sigmoid Function}
 \begin{Definition}[Sigmoid Function]
@@ -424,7 +468,13 @@ the sigmoid function has the following properties:
 $\ds \lim_{t\rightarrow-\infty} S(t) = 0$ \quad and \quad
 $\ds \lim_{t\rightarrow+\infty} S(t) = 1$.
 \\[0.2cm]
-Another important property is the symmetry of the sigmoid function.  Figure \ref{fig:sigmoid.eps} shows that if the
+As the sigmoid function is monotonically increasing, this shows that indeed 
+\\[0.2cm]
+\hspace*{1.3cm}
+$0 \leq S(t) \leq 1$  \quad for all $t \in \mathbb{R}$.
+\\[0.2cm]
+Therefore, the value of the sigmoid function can be interpreted as a probability.
+Another important property of the sigmoid function is its symmetry.  Figure \ref{fig:sigmoid.eps} shows that if the
 sigmoid function is shifted down by $\frac{1}{2}$, the resulting function is 
 \href{https://en.wikipedia.org/wiki/Point_reflection}{centrally symmetric}, i.e.~we have
 \\[0.2cm]
@@ -512,7 +562,7 @@ We have shown
 \hspace*{1.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{$S'(t) = \bigl(1 - S(t)\bigr) \cdot S(t)$.}}}
 \\[0.2cm]
-We will later need the derivative of the logarithm of the logistic function.  We define
+We will later need the derivative of the natural logarithm of the logistic function.  We define
 \\[0.2cm]
 \hspace*{1.3cm}
 $L(t) := \ln\bigl(S(t)\bigr)$.
@@ -524,8 +574,8 @@ $
 \begin{array}{lcll}
   L'(t) & = & \ds \frac{S'(t)}{S(t)}                  & \mbox{by the chain rule} \\[0.5cm]
         & = & \ds \frac{(1 - S(t)) \cdot S(t)}{S(t)}  \\[0.5cm]
-        & = & \ds 1 - S(t)                            & \mbox{by symmetry} \\[0.2cm]
-        & = & \ds S(-t)
+        & = & \ds 1 - S(t)                            & \mbox{simplify} \\[0.2cm]
+        & = & \ds S(-t)                               & \mbox{by the symmetry} 
 \end{array}
 $
 \\[0.2cm]
@@ -542,15 +592,22 @@ As this is our most important result, we highlight it:
 
 
 \subsection{The Model of Logistic Regression}
-We use the following model to compute the probability that an object with features $\mathbf{x}$ will be of the given class:
+In logistic regression we deal with \blue{binary classification}, i.e.~we assume that we just need to decide
+whether a given object has a fixed class or not.  We use the following model to compute the \blue{probability} that an
+object with features $\mathbf{x}$ will be of the given class: 
 \\[0.2cm]
 \hspace*{1.3cm}
 $P(y=+1\;|\;\mathbf{x};\mathbf{w}) = S(\mathbf{x} \cdot \mathbf{w})$.
 \\[0.2cm]
-Here $\mathbf{x} \cdot \mathbf{w}$ denotes the dot product of the vectors $\mathbf{x}$ and $\mathbf{y}$.  It is
-assumed that $\mathbf{x}$ contains a constant feature which  always takes the value of $1$.
+Here $\mathbf{x} \cdot \mathbf{w}$ denotes the dot product of the vectors $\mathbf{x}$ and $\mathbf{w}$,
+i.e. we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{x} \cdot \mathbf{w} = \sum\limits_{i=1}^D x_i \cdot w_i$.
+\\[0.2cm] 
+To simplify calculations, it is assumed that $\mathbf{x}$ contains a \blue{constant feature} that always takes the value of $1$.
 Seeing this model the first time you might think that this model is not very general and that it can only be
-applied in very special circumstances.  However, the fact is that the features can be functions of arbitrary complexity
+applied in very special circumstances.  However, the fact is that the features $x_i$ can be functions of arbitrary complexity
 and hence this model is much more general than it appears on first sight.
 
 We assume that $y$ can only take the values $+1$ or $-1$,  e.g.~in the example of spam detection $y = 1$ if the
@@ -585,8 +642,8 @@ easier to work with sums than with products, instead of maximizing the function 
 \hspace*{1.3cm}
 $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) := \ln\bigl(\ell(\mathbf{X},\mathbf{y};\mathbf{w})\bigr)$. 
 \\[0.2cm]
-As the natural logarithm is a monotone function, the functions $\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ and 
-$\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ take their maximum at the same value of $\mathbf{w}$.  As we have
+As the natural logarithm is a \href{https://en.wikipedia.org/wiki/Monotonic_function}{monotonically increasing}
+function, the functions $\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ and  $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ take their maximum at the same value of $\mathbf{w}$.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ln(a \cdot b) = \ln(a) + \ln(b)$,
@@ -651,7 +708,7 @@ Next, we have to find the value of $\mathbf{w}$ such that
 $\ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w}) = 0$
 \quad for all $j \in \{1, \cdots, D\}$.
 \\[0.2cm]
-These are $D$ equation for the $D$ variables $w_1, \cdots w_D$.  Due to the occurrence of the sigmoid function, these
+These are $D$ equations for the $D$ variables $w_1, \cdots, w_D$.  Due to the occurrence of the sigmoid function, these
 equations are nonlinear.  We can not solve these equations explicitly.  Nevertheless, our computation of the
 gradient of the log-likelihood was not for nought:  We will use gradient ascent in order to find the value of
 $\mathbf{w}$ that maximizes the log-likelihood.
@@ -700,9 +757,9 @@ has learned in order to pass the exam.
      }
    }
    readTable := procedure(fileName, types) {
-       all := readFile(fileName);
+       all         := readFile(fileName);
        columnNames := split(all[1], ',\s*');
-       data := [];
+       data        := [];
        for (i in [2 .. #all]) {
            row := split(all[i], ',\s*');
            data[i-1] := [eval("$type$($s$)") : [type, s] in types >< row];
@@ -779,56 +836,49 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
-   load("table.stlx");
-   load("gradient-ascent.stlx");
-   
-   sigmoid := procedure(x) { return 1.0 / (1.0 + exp(-x)); };
-   logSigmoid := procedure(x) {
-       if (x >= -100) {
-           return -log(1.0 + exp(-x));
-       } else {  
-           return x;
-       }
-   };
-   ll := procedure(X, y, w) {
-       result := 0;
-       for (i in [1 .. #X]) {
-           result += logSigmoid(y[i] * (X[i] * w));
-       }
-       return result;
-   };   
-   gradLL := procedure(X, y, w) {
-       result := [];
-       for (j in [1 .. #X[1]]) {
-           result[j] := 0;
-           for (i in [1 .. #X]) {
-               result[j] += y[i] * X[i][j] * sigmoid((-y[i]) * (X[i] * w));
-           }
-       }
-       return la_vector(result);
-   };
-   logisticRegressionFile := procedure(fileName, types) {
-       csv    := readTable(fileName, types);
-       data   := csv.getData();
-       number := #data;
-       dmnsn  := #data[1];    
-       yList  := [];
-       xList  := [];
-       for (i in [1 .. number]) {
-           yList[i] := data[i][1];
-           xList[i] := la_vector([1.0] + data[i][2..]);
-       }
-       X := la_matrix(xList);
-       y := la_vector([2 * y - 1 : y in yList]);
-       start := la_vector([0.0 : i in [1 .. dmnsn]]);
-       eps   := 10 ** -15;
-       f     := w |=> ll(X, y, w);
-       gradF := w |=> gradLL(X, y, w);
-       return findMaximum(f, gradF, start, eps)[1];
-   };
+    load("table.stlx");
+    load("gradient-ascent.stlx");
+    
+    sigmoid := procedure(x) { return 1.0 / (1.0 + exp(-x)); };
+    logSigmoid := procedure(x) {
+        if (x >= -100) {
+            return -log(1.0 + exp(-x));
+        } else {  
+            return x;
+        }
+    };
+    ll := procedure(X, y, w) {
+        return +/ [ logSigmoid(y[i] * (X[i] * w)) : i in [1 .. #X] ];
+    };
+    gradLL := procedure(X, y, w) {
+        result := [];
+        for (j in [1 .. #X[1]]) {
+            result[j] := +/ [y[i]*X[i][j]*sigmoid(-y[i]*(X[i]*w)) : i in [1..#X]];
+        }
+        return la_vector(result);
+    };
+    logisticRegressionFile := procedure(fileName, types) {
+        csv    := readTable(fileName, types);
+        data   := csv.getData();
+        number := #data;
+        dmnsn  := #data[1];    
+        yList  := [];
+        xList  := [];
+        for (i in [1 .. number]) {
+            yList[i] := data[i][1];
+            xList[i] := la_vector([1.0] + data[i][2..]);
+        }
+        X := la_matrix(xList);
+        y := la_vector([2 * y - 1 : y in yList]);
+        start := la_vector([0.0 : i in [1 .. dmnsn]]);
+        eps   := 10 ** -15;
+        f     := w |=> ll(X, y, w);
+        gradF := w |=> gradLL(X, y, w);
+        return findMaximum(f, gradF, start, eps)[1];
+    };
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{An implementation of logistic regression.}
@@ -875,12 +925,15 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       \end{array}
       $
       \\[0.2cm]
-      This is the reason that \texttt{logSigmoid} returns \texttt{x} if \texttt{x} is less than
+      This is the reason that \texttt{logSigmoid} returns \texttt{x} if the value of \texttt{x} is less than
       $-100$.
 \item The function $\mathtt{ll}(\mathbf{x}, \mathbf{y}, \mathbf{w})$ computes the log-lokelihood
+      \\[0.2cm]
+      \hspace*{1.3cm}
       $\ds \ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) = 
            \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
       $.
+      \\[0.2cm]
       Here $L$ denotes the natural logarithm of the sigmoid of the argument.
       It is assumed that $\mathbf{X}$ is a matrix.  Every observation corresponds to a row in this
       matrix, i.e.~the vector $\mathbf{x}_i$ is the feature vector containing the features of the
@@ -897,12 +950,27 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       The different components of this gradient are combined into a vector.
       The arguments are the same as the arguments to the log-lokelihood.
 \item Finally, the function \texttt{logisticRegressionFile} takes two arguments.  The first argument
-      is the name of the csv file containing the data, while the second argument is a list specifying the types
-      of the columns.  The elements of this list have to be either \texttt{"int"} or
-      \texttt{"double"}.
-      The task of this function is to read the csv file, convert the data in the matrix $\mathbf{X}$
-      and the vector $\mathtt{y}$, and then use the method of gradient ascent to find the coefficients
-      $\mathtt{w}$ that maximize the likelihood.
+      is the name of the \texttt{.csv} file containing the data, while the second argument is a list specifying the types
+      of the columns.  The elements of this list have to be either \texttt{"int"} or \texttt{"double"}.
+      The task of this function is to read the \texttt{.csv} file, convert the data in the matrix $\mathbf{X}$
+      and the vector $\mathbf{y}$, and then use the method of gradient ascent to find the weight vector
+      $\mathbf{w}$ that maximize the likelihood.
+
+      As we assume that the entries of the vector $\mathbf{y}$ are either $+1$ or $-1$ but the data provided in
+      the file are instead $1$ or $0$, we need to apply a function that maps $1$ to $+1$ and $0$ to $-1$.
+      The function
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $y \mapsto 2 \cdot y - 1$
+      \\[0.2cm]
+      is used for this mapping in the construction of the vector $\mathbf{y}$.
+
+      Next, we define the functions $\texttt{f}$ and $\texttt{gradF}$ as \blue{closures} using the operator 
+      ``\texttt{|=>}''.  This operator ensures that the values of the matrix $\texttt{X}$ and the vector
+      $\texttt{y}$ are available on invocations of $\texttt{f}$ and $\texttt{gradF}$.
+
+      Finally, the function $\texttt{findMaximum}$ computes the maximum of the log-likelihood using gradient
+      ascent. 
 \end{enumerate}
 If we run the function \texttt{logisticRegressionFile} using the data shown in Figure
 \ref{fig:exam.csv} via

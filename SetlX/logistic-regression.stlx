@@ -14,25 +14,18 @@ logSigmoid := procedure(x) {
         return x;
     }
 };
-// log-lokelihood function
-//   x: feature matrix, x[i] is the i-th input vector
+// log-likelihood function
+//   X: feature matrix, x[i] is the i-th input vector
 //      It is assumed that x[i][1] is 1.0 for all i.
 //   y: output vector, values are either +1 or -1
 //   w: weight vector
 ll := procedure(X, y, w) {
-    result := 0;
-    for (i in [1 .. #X]) {
-        result += logSigmoid(y[i] * (X[i] * w));
-    }
-    return result;
+    return +/ [ logSigmoid(y[i] * (X[i] * w)) : i in [1 .. #X] ];
 };
 gradLL := procedure(X, y, w) {
     result := [];
     for (j in [1 .. #X[1]]) {
-        result[j] := 0;
-        for (i in [1 .. #X]) {
-            result[j] += y[i] * X[i][j] * sigmoid((-y[i]) * (X[i] * w));
-        }
+        result[j] := +/ [y[i]*X[i][j]*sigmoid(-y[i] *(X[i]*w)) : i in [1..#X]];
     }
     return la_vector(result);
 };
