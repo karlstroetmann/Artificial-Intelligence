@@ -533,7 +533,7 @@ In order to proceed, we have to remember the definition of $z_i^{(l+1)}$.  We ha
 \hspace*{1.3cm}
 $\ds z_i^{(l+1)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l+1)} \cdot S\bigl(z_k^{(l)}\bigr)\right) + b_i^{(l+1)}$
 \\[0.2cm]
-Therefore, the partial derivatives $\frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}$ 
+Therefore, the partial derivatives $\ds\frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}$ 
 can be computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -580,24 +580,24 @@ Now by definition of $\varepsilon_j^{(l)}$, the first factor on the right hand s
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \varepsilon_j^{(l)} = \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}}$.
-\\[0.2cm]
+\\[0.0cm]
 In order to proceed, we need to evaluate the partial derivative
-$\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
+$\ds\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_i^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr)\right) + b_i^{(l)}$
+$\ds z_i^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr)\right) + b_i^{(l)}$.
 \\[0.2cm]
 Hence we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}} = S\bigl(z_j^{(l-1)}\bigr) = a_j^{(l-1)}$ 
+$\ds\frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}} = S\bigl(z_k^{(l-1)}\bigr) = a_k^{(l-1)}$. 
 \\[0.2cm]
 Combining these equations we arrive at
 \\[0.2cm]
 \hspace*{1.3cm}
 $ \ds\frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}}  =  
-  \varepsilon_j^{(l)} \cdot a_j^{(l-1)}
-$ 
+  \varepsilon_j^{(l)} \cdot a_k^{(l-1)}
+$. 
 \\[0.2cm]
 Therefore, equation (\ref{eq:BP4}) has been verified.
 
@@ -638,9 +638,9 @@ $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{
 over all training examples in order to perform a single step of gradient descent.  If $n$ is large, this is
 computationally costly.  Note that these sums can be regarded as computing average values.  In 
 \href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{stochastic gradient descent}, 
-instead we approximate these sums by randomly choosing a small subset of the training examples.  In
+we approximate these sums by randomly choosing a small subset of the training examples.  In
 order to formulate this approximation in a convenient notation, let us assume that instead of using all $n$
-training examples, we just use the first $m$ training examples.  Then we approximate the sums show above as follows:
+training examples, we just use the first $m$ training examples.  Then we approximate the sums shown above as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial w_{j,k}^{(l)}}
@@ -660,7 +660,7 @@ gradient descent.  It turns out that if we take care that eventually all trainin
 gradient descent, then the approximations given above can speed up the learning of neural networks substantially.
 
 \section{Implementation}
-Next, we will take a look at a neural network that is able to recognize digits. 
+Next, we will take a look at a neural network that is able to recognize handwritten digits. 
 
 \begin{figure}[!ht]
 \centering
