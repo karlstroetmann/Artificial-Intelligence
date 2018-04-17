@@ -2,7 +2,6 @@
 load_data := procedure(training_length, test_length) {
 	// training_data: 	60,000 sets, a 784 pixels
 	// test_data: 		10,000 sets, a 784 pixels
-	// return [ [[img1] [img2] .. [img n]], [lbl1 .. lbln] ] for each set
 	test_data     := parse_csv("mnist_test.csv",  test_length);
 	training_data := parse_csv("mnist_train.csv", training_length);
 	return [training_data, test_data];
@@ -12,7 +11,6 @@ parse_csv := procedure(file, len) {
     // create empty lists for images and according labels
     images := [0 : i in [1..len]];
     labels := [0 : i in [1..len]];
-    // csv[image,pixels/label] --> csv[3][1]: Label of image 3
     print("Reading file:\t$file$");
     csv := readFile(file);
     // Convert every line into lists    
@@ -38,7 +36,7 @@ parse_line := procedure(s) {
 // desired Result from the neural network / label (0 to 9)
 vectorized_result := procedure(j) {
 	e      := la_vector([0] * 10);
-	e[j+1] := 1; // +1, because the Index starts with 1 in SetlX (not 0)
+	e[j+1] := 1; // j+1, because digit zero has index 1
 	return e;
 };
 // format data sets according to their later use in the neural network
