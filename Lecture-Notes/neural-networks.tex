@@ -391,14 +391,14 @@ $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
 \begin{equation}
   \label{eq:BP3}
   \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{b_j^{(l)}} = \varepsilon_j^{(l)}
-  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,l\}$}
+  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,L\}$}
   \tag{BP3}
 \end{equation}
 In vectorized notation, this equation takes the following form:
 \begin{equation}
   \label{eq:BP3v}
   \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
-  \quad \mbox{for all $l \in \{2, \cdots,l\}$}
+  \quad \mbox{for all $l \in \{2, \cdots,L\}$}
   \tag{BP3v}
 \end{equation}
 Here. $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ denotes the gradient of $C_{\mathbf{x},
@@ -407,20 +407,44 @@ Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ 
 \begin{equation}
   \label{eq:BP4}
   \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}} = a_k^{(l-1)} \cdot \varepsilon_j^{(l)}
-  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$, $ k \in \{1,\cdots,m(l-1)\}$, and $l \in \{2, \cdots,l\}$}
+  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$, $ k \in \{1,\cdots,m(l-1)\}$, and $l \in \{2, \cdots,L\}$}
   \tag{BP4}
 \end{equation}
 In vectorized notation, this equation can be written as:
 \begin{equation}
   \label{eq:BP4v}
   \nabla_{W^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top
-  \quad \mbox{for all $l \in \{2, \cdots,l\}$}
+  \quad \mbox{for all $l \in \{2, \cdots,L\}$}
   \tag{BP4v}
 \end{equation}
 Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ denotes the matrix
 product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
 row vector $\bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ that is regarded as an $1 \times m(l-1)$ matrix.
 
+As the backpropagation equations are at the very core of neural networks, we highlight them:
+\\[0.2cm]
+\hspace*{0.3cm}
+\colorbox{red}{\framebox{\colorbox{orange}{
+\begin{minipage}[h]{0.92\linewidth}
+$
+\begin{array}[h]{llr}
+  \ds \boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)
+     & & \mbox{\hspace*{4cm}(BP1v)}  \\[0.2cm]
+  \ds \boldsymbol{\varepsilon}^{(l)} = \Bigl(\bigl(W^{(l+1)}\bigr)^\top \cdot \boldsymbol{\varepsilon}^{(l+1)}\Bigr) \odot
+  S'\bigl(z^{(l)}\bigr) & \mbox{for all $l \in \{2, \cdots, L-1\}$} &
+  \mbox{(BP2v)}  \\[0.3cm]
+  \ds \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
+  & \mbox{for all $l \in \{2, \cdots,L\}$}
+  & \mbox{(BP3v)}
+  \\[0.2cm]
+  \nabla_{W^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top
+  & \mbox{for all $l \in \{2, \cdots,L\}$}
+  & \mbox{(BP4v)}
+\end{array}
+$
+\end{minipage}
+}}}
+\\[0.2cm]
 The equations (\ref{eq:BP3}) and (\ref{eq:BP4}) show why it was useful to introduce the
 numbers $\varepsilon_j^{(l)}$: These numbers enable us to compute the partial derivatives of the cost function
 with respect to both the biases and the weights.  Furthermore, the equations (\ref{eq:BP1}) and (\ref{eq:BP2})
