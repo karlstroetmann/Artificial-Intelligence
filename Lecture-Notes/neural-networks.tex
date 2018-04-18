@@ -1,26 +1,26 @@
 \chapter{Neural Networks}
 In this chapter, we discuss \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
 Many of the most visible breakthroughs in artificial intelligence have been achieved through the use of neural
-networks: 
+networks:
 \begin{enumerate}
 \item The current system used by Google to \href{https://translate.google.com}{automatically translate} web
-      pages is called 
+      pages is called
       ``\href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine
         Translation}''
       and,  as the name suggests, is based on neural networks.
-\item \href{https://www.deepl.com/translator}{DeepL} is another translator that is based on deep neural networks.      
+\item \href{https://www.deepl.com/translator}{DeepL} is another translator that is based on deep neural networks.
 \item \href{https://de.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
-      \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Ke_Jie}{beaten} 
+      \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Ke_Jie}{beaten}
       beaten the world champion \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie} in the game of
       \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}.
 \item \href{https://www.tensorflow.org/tutorials/image_recognition}{Image recognition} is best done via neural networks.
 \item \href{https://en.wikipedia.org/wiki/Autonomous_car}{Autonomous driving} makes heavy use of neural networks.
 \end{enumerate}
-The list given above is far from being complete.  In this chapter, we will only discuss \blue{feedforward} 
-neural networks.  Although recently 
+The list given above is far from being complete.  In this chapter, we will only discuss \blue{feedforward}
+neural networks.  Although recently
 \href{https://en.wikipedia.org/wiki/Recurrent_neural_network}{recurrent neural networks} have gotten a lot of
 attention, these type of neural networks are more difficult to train and are therefore beyond the scope of this
-introduction.  The rest of this chapter is strongly influenced by the online book 
+introduction.  The rest of this chapter is strongly influenced by the online book
 \\[0.2cm]
 \hspace*{1.3cm}
 \href{http://neuralnetworksanddeeplearning.com/index.html}{http://neuralnetworksanddeeplearning.com/index.html}
@@ -30,17 +30,17 @@ free to access.  I recommend this book to anybody who wants to dive deeper into 
 networks.
 
 \section{Feedforward Neural Networks}
-A neural network is built from \blue{neurons}.  Neural networks are inspired by biological 
+A neural network is built from \blue{neurons}.  Neural networks are inspired by biological
 \href{https://en.wikipedia.org/wiki/Neuron}{neurons}.  However, in order to understand artificial neural
 networks it is not necessary to know how biological neurons work and it is definitely not necessary to
 understand how networks of biological neurons, i.e.~brains, work\footnote{
-  Actually, when it comes to brains, although there are many speculations, surprisingly little is known for a fact.  
-}.  
+  Actually, when it comes to brains, although there are many speculations, surprisingly little is known for a fact.
+}.
 Instead, we develop a mathematical
 abstraction of neurons that will serve as the foundation of the theory developed in this chapter.
 At the abstraction level that we are looking at neural networks, a single neuron with $n$ inputs is defined as
-a pair $\langle \mathbf{w}, b\rangle$ where the 
-vector $\mathbf{w} \in \mathbb{R}^m$ is called the \blue{weight vector} and the number $b \in \mathbb{R}$ is called the \blue{bias}.  
+a pair $\langle \mathbf{w}, b\rangle$ where the
+vector $\mathbf{w} \in \mathbb{R}^m$ is called the \blue{weight vector} and the number $b \in \mathbb{R}$ is called the \blue{bias}.
 Conceptually, a neuron is a function $p$ that maps an input vector $\mathbf{x} \in \mathbb{R}^m$ into the
 interval $[0,1]$.  This function is defined as follows:
 \\[0.2cm]
@@ -56,9 +56,9 @@ $\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
 The function $p$ modelling the neuron can be written more explicitly using index notation.  If
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{w} = \langle w_1, \cdots, w_m \rangle^\top$ 
+$\mathbf{w} = \langle w_1, \cdots, w_m \rangle^\top$
 \\[0.2cm]
-is the weight vector and 
+is the weight vector and
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
@@ -68,8 +68,8 @@ is the input vector, then we have
 \hspace*{1.3cm}
 $\ds p(\mathbf{x}; \mathbf{w}, b) = S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
 \\[0.2cm]
-If we compare $p(\mathbf{x}; \mathbf{w}, b)$ 
-to a similar function appearing in the last chapter, you will notice 
+If we compare $p(\mathbf{x}; \mathbf{w}, b)$
+to a similar function appearing in the last chapter, you will notice
 that so far a neuron works just like logistic regression.  The only difference is that the bias $b$
 is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
 feature vector $\mathbf{x}$ was always equal to $1$.  This assumption enabled us to incorporate the bias $b$ into the
@@ -80,7 +80,7 @@ given by a number $L \in \mathbb{N}$ and a list $[m(1), \cdots, m(L)]$ of $L$ na
 $L$ is called the \blue{number of layers} and for $i \in \{2,\cdots,L\}$ the number $m(i)$ is the number of
 neurons in the $l$-th layer.  The first layer is called the \blue{input layer}.  The input layer does not contain
 neurons but instead just contains \blue{input nodes}.  The last layer (i.e.~the
-layer with index $L$) is called the \blue{output layer} and the remaining layers are called 
+layer with index $L$) is called the \blue{output layer} and the remaining layers are called
 \blue{hidden layers}.  If there is more than one hidden layer, the neural network is called a
 \blue{deep neural network}.  Figure \ref{fig:neural-network.png} on page \pageref{fig:neural-network.png} shows
 a small neural network with two hidden layers.
@@ -128,8 +128,8 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 \item For all other layers we have
       \begin{equation}
          \label{eq:feedforward2}
-         a_j^{(l)}(\mathbf{x}) := 
-             S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a_k^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
+         a_j^{(l)}(\mathbf{x}) :=
+             S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a_k^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right)
         \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
        \tag{FF2}
 \end{equation}
@@ -140,14 +140,14 @@ The \blue{activation vector} of layer $l$ is defined as
 $\mathbf{a}^{(l)} := \langle a_1^{(l)}, \cdots, a_{m(l)}^{(l)} \rangle^\top$.
 \\[0.2cm]
 The output of our neural network for an input $\mathbf{x}$ is given by the neurons in the output
-layer,  i.e.~the output vector 
-$\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as 
+layer,  i.e.~the output vector
+$\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle^\top = \mathbf{a}^{(L)}(\mathbf{x})$.
 \\[0.2cm]
 Note that the equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) describe how information propagates
-through the neural network: 
+through the neural network:
 \begin{enumerate}
 \item Initially, the input vector $\mathbf{x}$ is given and stored in the input layer of the neural network:
       \\[0.2cm]
@@ -157,7 +157,7 @@ through the neural network:
       vector $\mathbf{a}^{(2)}$ according to the formula
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathbf{a}^{(2)}(\mathbf{x}) := S\bigl(W^{(2)} \cdot \mathbf{a}^{(1)}(\mathbf{x}) + \mathbf{b}^{(2)}\bigr) = 
+      $\mathbf{a}^{(2)}(\mathbf{x}) := S\bigl(W^{(2)} \cdot \mathbf{a}^{(1)}(\mathbf{x}) + \mathbf{b}^{(2)}\bigr) =
                                         S\bigl(W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}\bigr)
       $.
 \item The second layer of neurons, which is the third layer of nodes,  is activated and computes the activation
@@ -174,12 +174,12 @@ through the neural network:
       \\[0.2cm]
       has been computed.  Note that every neuron of the neural network performs logistic regression.
 \end{enumerate}
-Next, we assume that we have $n$ \blue{training examples} 
+Next, we assume that we have $n$ \blue{training examples}
 \\[0.2cm]
 \hspace*{1.3cm}
-$\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$ \quad for $i=1,\cdots,n$ 
+$\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$ \quad for $i=1,\cdots,n$
 \\[0.2cm]
-such that 
+such that
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{x}^{(i)} \in \mathbb{R}^{m(1)}$ and $\mathbf{y}^{(i)} \in \mathbb{R}^{m(L)}$
@@ -190,12 +190,12 @@ Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $b^{(l)
 $\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) = \mathbf{y}^{(i)}$ \quad for all $i \in \{1,\cdots,n\}$.
 \\[0.2cm]
 Unfortunately, in general we will not be able to achieve equality for all  $i \in \{1,\cdots,n\}$.
-Therefore, our goal is to minimize the \blue{error} instead.  To be more precise, the 
-\blue{quadratic error cost function} is defined as 
+Therefore, our goal is to minimize the \blue{error} instead.  To be more precise, the
+\blue{quadratic error cost function} is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
-     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
+     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) :=
  \frac{1}{2 \cdot n} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
 $.
 \\[0.2cm]
@@ -203,7 +203,7 @@ Note that the cost function is additive in the training examples $\langle \mathb
 In order to simplify the notation we define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) := 
+$\ds C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) :=
  \frac{1}{2} \cdot \Bigl(\mathbf{a}^{(L)}\bigl(\mathbf{x}\bigr) - \mathbf{y}\Bigr)^2
 $,
 \\[0.2cm]
@@ -211,8 +211,8 @@ i.e.~$C_{\mathbf{x},\mathbf{y}}$ is the part of the cost function that is associ
 Then, we have
 \\[0.2cm]
 $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
-     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
- \frac{1}{n} \cdot \sum\limits_{i=1}^n C_{\mathbf{x^{(i)}}, \mathbf{y}^{(i)}}\Bigr(W^{(2)}, \cdots W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) 
+     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) :=
+ \frac{1}{n} \cdot \sum\limits_{i=1}^n C_{\mathbf{x^{(i)}}, \mathbf{y}^{(i)}}\Bigr(W^{(2)}, \cdots W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr)
 $.
 \\[0.2cm]
 As the notation
@@ -227,7 +227,7 @@ quadratic error cost function $C$ is minimized.  We will use a variation of grad
 find this minimum\footnote{
   In logistic regression we have tried to \emph{maximize} the log-likelihood.  Here, instead
   we \emph{minimize} the quadratic error cost function.  Hence, instead of gradient \emph{ascent} we use
-  gradient \emph{descent}.  
+  gradient \emph{descent}.
 }.
 
 
@@ -238,7 +238,7 @@ There are two reasons for the recent success of neural networks.
       For example, today the \href{https://en.wikipedia.org/wiki/AMD_RX_Vega_series}{AMD RX Vega 64 Liquid}
       graphic card offers about 13.7 teraflops in single precision performance.  It consumes about 350 watt.
       Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which was the most powerful supercomputer in 2000:
-      In 2000 when it topped the rankings of the supercomputers, it  offered a performance of 7.2 teraflops and 
+      In 2000 when it topped the rankings of the supercomputers, it  offered a performance of 7.2 teraflops and
       needed 6 megawatt to operate.  The cost to build ASCI White where about $110,000,000\,\symbol{36}$.
       On the contrary, the AMD RX Vega 64 Liquid costs  $699\symbol{36}$.
 
@@ -246,10 +246,10 @@ There are two reasons for the recent success of neural networks.
       offers a stunning 110 teraflops for deep learning.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
-      David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
+      David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.
 \end{enumerate}
 Essentially, the backpropagation  algorithm is an efficient way to compute the partial derivatives of the cost function $C$
-with respect to the weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.  
+with respect to the weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.
 Before we can proceed to compute these partial derivatives, we need to define some auxiliary variables.
 
 \subsection{Definition of some Auxiliary Variables}
@@ -277,7 +277,7 @@ of $C_{\mathbf{x}, \mathbf{y}}$ with respect to $z_j^{(l)}$.  Therefore we defin
 $\ds\varepsilon_j^{(l)} := \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}}$ \quad for all $j \in \{1, \cdots, m(l)\}$ and $l \in \{2,\cdots, L\}$,
 \\[0.2cm]
 that is we regard $C_{\mathbf{x}, \mathbf{y}}$ as a function of the $z_j^{(l)}$ and take the partial
-derivatives according to these variables.  
+derivatives according to these variables.
 Note that $\varepsilon_j^{(l)}$ does depend on both $\mathbf{x}$ and $\mathbf{y}$.  Since the notation would
 get very cumbersome if we would write $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard $\mathbf{x}$ and
 $\mathbf{y}$ as fixed for now.  Next, the quantities $\varepsilon_j^{(l)}$ are combined into a vector:
@@ -287,7 +287,7 @@ $\boldsymbol{\varepsilon}^{(l)} := \left(
   \begin{array}[c]{c}
     \varepsilon_1^{(l)}      \\
     \vdots             \\
-    \varepsilon_{m(l)}^{(l)}  
+    \varepsilon_{m(l)}^{(l)}
   \end{array}
   \right)
 $.
@@ -295,7 +295,7 @@ $.
 For reasons that will be explained later, this quantity $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
 
 \subsection{The Hadamard Product}
-Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
+Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product}
 of two vectors.  Assume that $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$.  The \blue{Hadamard product} of
 $\mathbf{x}$ and $\mathbf{y}$ is a vector that is defined by multiplying the vectors $\mathbf{x}$ and $\mathbf{y}$ elementwise:
 \\[0.2cm]
@@ -315,7 +315,7 @@ $\left(
     \vdots \\
     y_n
   \end{array}
-\right) := 
+\right) :=
 \left(
   \begin{array}[c]{c}
     x_1 \cdot y_1 \\
@@ -341,12 +341,12 @@ where $S'(x)$ denotes the derivative of the sigmoid function.  We have shown in 
 \ref{chapter:classification} that
 \\[0.2cm]
 \hspace*{1.3cm}
-$S'(x) = \bigl(1 - S(t)\bigr) \cdot S(t)$
+$S'(x) = \bigl(1 - S(x)\bigr) \cdot S(x)$
 \\[0.2cm]
 holds.  The equation (\ref{eq:BP1}) can also be written in vectorized form using the Hadamard product:
 \begin{equation}
   \label{eq:BP1s}
-\boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)  
+\boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)
 \tag{BP1v}
 \end{equation}
 Here, we have \blue{vectorized} the application of the function $S'$ to the vector $\mathbf{z}^{(L)}$, i.e.~the
@@ -357,7 +357,7 @@ $ S'\left(
   \begin{array}[c]{c}
    z_1^{(L)}      \\
    \vdots       \\
-   z_{m(L)}^{(L)} 
+   z_{m(L)}^{(L)}
   \end{array}
   \right) := \left(
   \begin{array}[c]{c}
@@ -368,7 +368,7 @@ $ S'\left(
   \right)
 $.
 \\[0.2cm]
-The next equation computes $\varepsilon_j^{(l)}$ for $l < L$.  
+The next equation computes $\varepsilon_j^{(l)}$ for $l < L$.
 \begin{equation}
   \label{eq:BP2}
   \varepsilon^{(l)}_j = \sum\limits_{i=1}^{m(l+1)} w_{i,j}^{(l+1)} \cdot \varepsilon^{(l+1)}_i \cdot
@@ -382,7 +382,7 @@ This equation is more succinct in vectorized notation:
   S'\bigl(z^{(l)}\bigr) \quad \mbox{for all $l \in \{2, \cdots, L-1\}$}.
   \tag{BP2v}
 \end{equation}
-Note that this equation computes $\boldsymbol{\varepsilon}^{(l)}$ in terms of  $\boldsymbol{\varepsilon}^{(l+1)}$:  The error 
+Note that this equation computes $\boldsymbol{\varepsilon}^{(l)}$ in terms of  $\boldsymbol{\varepsilon}^{(l+1)}$:  The error
 $\boldsymbol{\varepsilon}^{(l+1)}$ at layer $l+1$ is \blue{propagated backwards} through the neural network to produce the
 error $\boldsymbol{\varepsilon}^{(l)}$ at layer $l$.  This is the reason for calling the algorithm \blue{backpropagation}.
 
@@ -390,7 +390,7 @@ Next, we have to compute the partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ 
 $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
 \begin{equation}
   \label{eq:BP3}
-  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{b_j^{(l)}} = \varepsilon_j^{(l)}
+  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial b_j^{(l)}} = \varepsilon_j^{(l)}
   \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,L\}$}
   \tag{BP3}
 \end{equation}
@@ -453,16 +453,16 @@ versions of these equations since this is more efficient for two reasons:
 \begin{enumerate}
 \item Interpreted languages like \textsc{SetlX}, \textsl{Python}, or \textsl{Octave} take much more time to
       execute a loop than to execute a simple matrix-vector multiplication.  The reason is that in a loop, in
-      addition to executing the statement a given number of times, the statement has to be interpreted 
+      addition to executing the statement a given number of times, the statement has to be interpreted
       every time it is executed.
 \item Languages that are optimized for machine learning often take care to delegate the execution of matrix
-      operations to the graphical coprocessor which is optimized for these kinds of operations.  
+      operations to the graphical coprocessor which is optimized for these kinds of operations.
 \end{enumerate}
 
 \subsection{Proof of the Backpropagation Equations}
 Next, we prove the backpropagation equations.  Although the proof is a bit tedious, it should be accessible: The
 \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule}  of
-\href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariate calculus} is all that is needed to  
+\href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariate calculus} is all that is needed to
 understand why the backpropagation equations are true.  As a reminder, the chain rule in multivariate calculus
 works as follows: Assume that the functions $f = f(\mathbf{y})$ and $g = g(\mathbf{x})$ where $\mathbf{y} \in \mathbb{R}^k$,
 $\mathbf{x} \in \mathbb{R}^n$,  $g(\mathbf{x}) \in \mathbb{R}^k$, and $f(\mathbf{y}) \in \mathbb{R}$ are
@@ -472,7 +472,7 @@ differentiable\footnote{
 \\[0.2cm]
 \hspace*{1.3cm}
 $f: \mathbb{R}^k \rightarrow \mathbb{R}$ \quad and \quad
-$g: \mathbb{R}^n \rightarrow \mathbb{R}^k$. 
+$g: \mathbb{R}^n \rightarrow \mathbb{R}^k$.
 \\[0.2cm]
 If the function $h: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as
 \\[0.2cm]
@@ -482,7 +482,7 @@ $h(\mathbf{x}) := f\bigl(g(\mathbf{x})\bigr)$ \quad for all $\mathbf{x} \in \mat
 then the partial derivative of $h$ with respect to $x_j$ satisfies
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \frac{\partial h}{\partial x_j} = 
+$\ds \frac{\partial h}{\partial x_j} =
  \sum\limits_{i=1}^k \frac{\partial f}{\partial y_i} \cdot \frac{\partial g_i}{\partial x_j}
 $.
 \\[0.2cm]
@@ -496,42 +496,42 @@ while the numbers $z_j^{(l)}$ have been defined as
 \hspace*{1.3cm}
 $\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-1)}(\mathbf{x})\right) + b_j^{(l)}$.
 \\[0.2cm]
-Since the quadratic error cost function $C_{\mathbf{x}, \mathbf{y}}$ for the training example $\pair(\mathbf{x}, \mathbf{y})$ has been defined 
-in terms of the activation $\mathbf{a}^{(L)}$ as 
+Since the quadratic error cost function $C_{\mathbf{x}, \mathbf{y}}$ for the training example $\pair(\mathbf{x}, \mathbf{y})$ has been defined
+in terms of the activation $\mathbf{a}^{(L)}$ as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds C_{\mathbf{x}, \mathbf{y}} = \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2$
 \\[0.2cm]
-and we have $\mathbf{a}^{(L)}(\mathbf{x}) = S\bigl(\mathbf{z}^{(L)}\bigr)$, the chain rule tells us that $\varepsilon_j^{(L)}$ 
+and we have $\mathbf{a}^{(L)}(\mathbf{x}) = S\bigl(\mathbf{z}^{(L)}\bigr)$, the chain rule tells us that $\varepsilon_j^{(L)}$
 can be computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $
 \begin{array}{lcl}
-\varepsilon_j^{(L)} 
+\varepsilon_j^{(L)}
 & = & \ds \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(L)}} \\[0.5cm]
 & = & \ds \frac{\partial \quad}{\partial z_j^{(L)}}  \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2
       \\[0.5cm]
-& = & \ds \frac{1}{2} \cdot \frac{\partial \quad}{\partial z_j^{(L)}} 
+& = & \ds \frac{1}{2} \cdot \frac{\partial \quad}{\partial z_j^{(L)}}
       \sum\limits_{i=1}^{m(L)} \Bigl(a_i^{(L)}(\mathbf{x}) - y_i\Bigr)^2
       \\[0.5cm]
-& = & \ds \frac{1}{2} \cdot \frac{\partial \quad}{\partial z_j^{(L)}} 
+& = & \ds \frac{1}{2} \cdot \frac{\partial \quad}{\partial z_j^{(L)}}
       \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr)^2
       \\[0.5cm]
 & = & \ds \frac{1}{2} \cdot
-      \sum\limits_{i=1}^{m(L)} 2 \cdot \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
+      \sum\limits_{i=1}^{m(L)} 2 \cdot \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot
       \frac{\partial \quad}{\partial z_j^{(L)}}S\bigl(z_i^{(L)}\bigr)
       \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
+& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot
       S'\bigl(z_i^{(L)}\bigr) \cdot \frac{\partial z_i^{(L)}}{\partial z_j^{(L)}}
 
       \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
+& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot
       S'\bigl(z_i^{(L)}\bigr) \cdot \delta_{i,j}
       \\[0.5cm]
-& = & \ds \Bigl(S\bigl(z_j^{(L)}\bigr) - y_j\Bigr) \cdot S'\bigl(z_j^{(L)}\bigr) 
+& = & \ds \Bigl(S\bigl(z_j^{(L)}\bigr) - y_j\Bigr) \cdot S'\bigl(z_j^{(L)}\bigr)
       \\[0.5cm]
-& = & \ds \Bigl(a_j^{(L)} - y_j\Bigr) \cdot S'\bigl(z_j^{(L)}\bigr) 
+& = & \ds \Bigl(a_j^{(L)} - y_j\Bigr) \cdot S'\bigl(z_j^{(L)}\bigr)
 \end{array}
 $
 \\[0.2cm]
@@ -540,15 +540,15 @@ Thus we have proved equation \ref{eq:BP1}.  Next, let us compute $\varepsilon_j^
 \hspace*{1.3cm}
 $
 \begin{array}{lcll}
-\varepsilon_j^{(l)} 
+\varepsilon_j^{(l)}
 & = & \ds \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}} \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(l+1)} 
+& = & \ds \sum\limits_{i=1}^{m(l+1)}
       \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_i^{(l+1)}} \cdot \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}
     & \mbox{using the chain rule}
       \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(l+1)} 
+& = & \ds \sum\limits_{i=1}^{m(l+1)}
       \varepsilon_i^{(l+1)} \cdot \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}
-      & \mbox{using the definition of $\varepsilon_i^{(l+1)}$}     
+      & \mbox{using the definition of $\varepsilon_i^{(l+1)}$}
 \end{array}
 $
 \\[0.2cm]
@@ -557,20 +557,20 @@ In order to proceed, we have to remember the definition of $z_i^{(l+1)}$.  We ha
 \hspace*{1.3cm}
 $\ds z_i^{(l+1)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l+1)} \cdot S\bigl(z_k^{(l)}\bigr)\right) + b_i^{(l+1)}$
 \\[0.2cm]
-Therefore, the partial derivatives $\ds\frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}$ 
+Therefore, the partial derivatives $\ds\frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}$
 can be computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $
 \begin{array}{lcl}
-      \ds \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}} 
-& = & \ds \sum\limits_{k=1}^{m(l)} 
-      w_{i,k}^{(l+1)} \cdot S'\bigl(z_k^{(l)}\bigr) \cdot \frac{\partial z_k^{(l)}}{\partial z_j^{(l)}} 
+      \ds \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}
+& = & \ds \sum\limits_{k=1}^{m(l)}
+      w_{i,k}^{(l+1)} \cdot S'\bigl(z_k^{(l)}\bigr) \cdot \frac{\partial z_k^{(l)}}{\partial z_j^{(l)}}
       \\[0.5cm]
-& = & \ds \sum\limits_{k=1}^{m(l)} 
+& = & \ds \sum\limits_{k=1}^{m(l)}
       w_{i,k}^{(l+1)} \cdot S'\bigl(z_k^{(l)}\bigr) \cdot \delta_{k,j}
       \\[0.5cm]
-& = & \ds w_{i,j}^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr) 
+& = & \ds w_{i,j}^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr)
 \end{array}
 $
 \\[0.2cm]
@@ -579,28 +579,28 @@ If we substitute this expression back into the result we got for $\varepsilon_j^
 \hspace*{1.3cm}
 $
 \begin{array}{lcll}
-\varepsilon_j^{(l)} 
-& = & \ds \sum\limits_{i=1}^{m(l+1)} 
+\varepsilon_j^{(l)}
+& = & \ds \sum\limits_{i=1}^{m(l+1)}
       \varepsilon_i^{(l+1)} \cdot \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}
       \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(l+1)} 
-      \varepsilon_i^{(l+1)} \cdot w_{i,j}^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr) 
+& = & \ds \sum\limits_{i=1}^{m(l+1)}
+      \varepsilon_i^{(l+1)} \cdot w_{i,j}^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr)
       \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(l+1)} 
-      w_{i,j}^{(l+1)} \cdot \varepsilon_i^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr) 
+& = & \ds \sum\limits_{i=1}^{m(l+1)}
+      w_{i,j}^{(l+1)} \cdot \varepsilon_i^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr)
 \end{array}
 $
 \\[0.2cm]
-Therefore, we have now proven equation (\ref{eq:BP2}).  We proceed to prove equation (\ref{eq:BP4}).  
+Therefore, we have now proven equation (\ref{eq:BP2}).  We proceed to prove equation (\ref{eq:BP4}).
 
 According to the chain rule we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$ \ds\frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}}  =  
-  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}} \cdot \frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}} 
-$ 
+$ \ds\frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}}  =
+  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}} \cdot \frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}}
+$
 \\[0.2cm]
-Now by definition of $\varepsilon_j^{(l)}$, the first factor on the right hand side of this equation is equal to $\varepsilon_j^{(l)}$: 
+Now by definition of $\varepsilon_j^{(l)}$, the first factor on the right hand side of this equation is equal to $\varepsilon_j^{(l)}$:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \varepsilon_j^{(l)} = \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}}$.
@@ -614,14 +614,14 @@ $\ds z_i^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l)} \cdot S\bigl(z_k^{
 Hence we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}} = S\bigl(z_k^{(l-1)}\bigr) = a_k^{(l-1)}$. 
+$\ds\frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}} = S\bigl(z_k^{(l-1)}\bigr) = a_k^{(l-1)}$.
 \\[0.2cm]
 Combining these equations we arrive at
 \\[0.2cm]
 \hspace*{1.3cm}
-$ \ds\frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}}  =  
+$ \ds\frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}}  =
   \varepsilon_j^{(l)} \cdot a_k^{(l-1)}
-$. 
+$.
 \\[0.2cm]
 Therefore, equation (\ref{eq:BP4}) has been verified.
 
@@ -644,15 +644,15 @@ then the quadratic error cost function has been previously defined as the sum
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
-     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
+     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) :=
  \frac{1}{2 \cdot n} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
 $.
 \\[0.2cm]
-In practical applications of neural networks, the number of training examples is usually big.  For example, 
+In practical applications of neural networks, the number of training examples is usually big.  For example,
 when we later develop a neural network to classify handwritten digits, we will have $60,000$ training examples.  More
 ambitious projects that use neural networks to classify objects in images use millions of training examples.
 When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a bias $b^{(l)}$ we
-have to compute the sums 
+have to compute the sums
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial w_{j,k}^{(l)}}$
@@ -660,8 +660,8 @@ $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{
 $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial b_{j}^{(l)}}$
 \\[0.2cm]
 over all training examples in order to perform a single step of gradient descent.  If $n$ is large, this is
-computationally costly.  Note that these sums can be regarded as computing average values.  In 
-\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{stochastic gradient descent}, 
+computationally costly.  Note that these sums can be regarded as computing average values.  In
+\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{stochastic gradient descent},
 we approximate these sums by randomly choosing a small subset of the training examples.  In
 order to formulate this approximation in a convenient notation, let us assume that instead of using all $n$
 training examples, we just use the first $m$ training examples.  Then we approximate the sums shown above as follows:
@@ -684,12 +684,12 @@ gradient descent.  It turns out that if we take care that eventually all trainin
 gradient descent, then the approximations given above can speed up the learning of neural networks substantially.
 
 \section{Implementation}
-Next, we will take a look at a neural network that is able to recognize handwritten digits. 
+Next, we will take a look at a neural network that is able to recognize handwritten digits.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
                   firstnumber   = 1,
                   labelposition = bottomline,
                   numbers       = left,
@@ -705,7 +705,7 @@ Next, we will take a look at a neural network that is able to recognize handwrit
     sigmoid   := [x]      |-> la_vector([1 / (1 + exp(-a)) : a in x]);
     // derivative of the sigmoid of a vector
     sigmoid_prime := procedure(x) {
-        s := sigmoid(x); 
+        s := sigmoid(x);
         return la_vector([a * (1 - a): a in s]);
     };
     hadamard := [x, y] |-> la_vector([x[i] * y[i]: i in [1 .. #x]]);
@@ -725,8 +725,8 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
                   firstnumber   = 1,
                   labelposition = bottomline,
                   numbers       = left,
@@ -742,7 +742,7 @@ Next, we will take a look at a neural network that is able to recognize handwrit
         mBiasesO    := rndVector(mOutputSize);
         mWeightsH   := rndMatrix(mHiddenSize, mInputSize);
         mWeightsO   := rndMatrix(mOutputSize, mHiddenSize);
-        ...   
+        ...
     }
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -752,8 +752,8 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
                   firstnumber   = 1,
                   labelposition = bottomline,
                   numbers       = left,
@@ -762,14 +762,14 @@ Next, we will take a look at a neural network that is able to recognize handwrit
                   xrightmargin  = 0.8cm,
                 ]
     sgd := procedure(training_data, epochs, mbs, eta, test_data) {
-        n_test := #test_data;         
+        n_test := #test_data;
         n      := #training_data;
         for (j in [1 .. epochs]) {
             training_data := shuffle(training_data);
             mini_batches  := [training_data[k .. k+mbs-1]: k in [1, mbs..n]];
             for (mini_batch in mini_batches) {
                 update_mini_batch(mini_batch, eta);
-            } 
+            }
             print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
         }
     };
@@ -784,7 +784,7 @@ Next, we will take a look at a neural network that is able to recognize handwrit
             nabla_BO += dltNbl_BO;
             nabla_WH += dltNbl_WH;
             nabla_WO += dltNbl_WO;
-        }        
+        }
         alpha := eta / #mini_batch;
         this.mBiasesH  -= alpha * nabla_BH;
         this.mBiasesO  -= alpha * nabla_BO;
@@ -799,8 +799,8 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
                   firstnumber   = 1,
                   labelposition = bottomline,
                   numbers       = left,
@@ -829,8 +829,8 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
                   firstnumber   = 1,
                   labelposition = bottomline,
                   numbers       = left,
@@ -855,8 +855,8 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
                   firstnumber   = 1,
                   labelposition = bottomline,
                   numbers       = left,
@@ -866,7 +866,7 @@ Next, we will take a look at a neural network that is able to recognize handwrit
                 ]
     load("nn-loader.stlx");
     load("nn.stlx");
-    
+
     main := procedure() {
         resetRandom();
         training_length := 60000;
@@ -892,8 +892,8 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
                   firstnumber   = 1,
                   labelposition = bottomline,
                   numbers       = left,
@@ -912,13 +912,13 @@ Next, we will take a look at a neural network that is able to recognize handwrit
         print("Reading file:\t$file$");
         csv := readFile(file);
         for (i in [1..len]) {
-            labels[i] := int(csv[i][1]);    
-            images[i] := parse_line(csv[i][3..]);    
+            labels[i] := int(csv[i][1]);
+            images[i] := parse_line(csv[i][3..]);
             if (i % 10000 == 0) {
                 print("Image $i$ of $len$ imported");
             }
         }
-        print("End reading:\t$file$");    
+        print("End reading:\t$file$");
         return [images, labels];
     };
     parse_line := procedure(s) {
@@ -934,7 +934,7 @@ Next, we will take a look at a neural network that is able to recognize handwrit
     	[tr_d, te_d] := load_data(training_length, test_length);
     	test_data := format_pixels_label_pairs(te_d[1], te_d[2], test_length);
      	training_data := format_with_unit_vectors(tr_d[1], tr_d[2], training_length);
-    	return [training_data, test_data];   
+    	return [training_data, test_data];
     };
     format_pixels_label_pairs := procedure(pixels, labels, length) {
     	return [ [la_vector(pixels[i]), labels[i]] : i in [1..length] ];
