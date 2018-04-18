@@ -718,7 +718,7 @@ This method has been outlined in the previous section.
 In order to implement logistic regression we need a data structure for tabular data.  Figure
 \ref{fig:table2.stlx} on page \pageref{fig:table2.stlx} shows the class table that can be used to
 administer this kind of data.  Figure \ref{fig:table2.stlx}  shows an example of tabular data that is
-stored in a \href{https://en.wikipedia.org/wiki/Comma-separated_values}{csv file}.  In this case,
+stored in a \href{https://en.wikipedia.org/wiki/Comma-separated_values}{\textsc{Csv}} file.  In this case,
 the data stores the hours a student has learned for a particular exam and the fact whether the
 student has passed of failed.  The first column stores pass or fail, where a pass is coded using the
 number 1, while a fail is coded as 0.  The second column stores the number of hours that the student
@@ -773,11 +773,11 @@ has learned in order to pass the exam.
 \end{figure}
 There is no need for us to discuss every detail of the implementation of the class \texttt{table}.
 The important thing to note is that the data is stored as a list of lists in the member variable
-\texttt{mData}.  Each of the inner lists corresponds to one row of the csv file.
+\texttt{mData}.  Each of the inner lists corresponds to one row of the \textsc{Csv} file.
 This member variable can be accessed using the function getData.  The function \texttt{readTable}
-has the responsibility to read a csv file and to convert it into an object of class \texttt{table}.
+has the responsibility to read a \textsc{Csv} file and to convert it into an object of class \texttt{table}.
 In order to do this, it has to be called with two arguments.  The first argument is the file name,
-the second argument is a list of the types of each column in the csv file.  For example, to read the
+the second argument is a list of the types of each column in the \textsc{Csv} file.  For example, to read the
 file ``\texttt{exam.csv}'' we would call \texttt{readTable} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}

@@ -121,7 +121,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 \item For the input layer we have
       \begin{equation}
         \label{eq:feedforward1}
-       a^{(1)}_j := x_j.
+       a^{(1)}_j(\mathbf{x}) := x_j.
        \tag{FF1}
       \end{equation}
       To put it differently, the input vector $\mathbf{x}$ is the activation of the input nodes.
@@ -341,7 +341,7 @@ where $S'(x)$ denotes the derivative of the sigmoid function.  We have shown in 
 \ref{chapter:classification} that
 \\[0.2cm]
 \hspace*{1.3cm}
-$S'(x) = \bigl(1 - S(t)\bigr) \cdot S(t)$
+$S'(t) = \bigl(1 - S(t)\bigr) \cdot S(t)$
 \\[0.2cm]
 holds.  The equation (\ref{eq:BP1}) can also be written in vectorized form using the Hadamard product:
 \begin{equation}
@@ -390,7 +390,7 @@ Next, we have to compute the partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ 
 $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
 \begin{equation}
   \label{eq:BP3}
-  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{b_j^{(l)}} = \varepsilon_j^{(l)}
+  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial b_j^{(l)}} = \varepsilon_j^{(l)}
   \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,L\}$}
   \tag{BP3}
 \end{equation}

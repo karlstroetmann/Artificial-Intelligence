@@ -294,13 +294,13 @@ The procedure $\mathtt{simple\_linear\_regression}$ take three arguments:
 \begin{enumerate}[(a)]
 \item $\mathtt{fileName}$ is the name of the file containing the data.
 
-      It is assumed that this file is a \texttt{csv}-file containing the data that need to be analyzed.
-\item $\mathtt{types}$ is a list of type names of the columns present in the \texttt{csv} file.  This is needed
+      It is assumed that this file is a \textsc{Csv} file containing the data that need to be analyzed.
+\item $\mathtt{types}$ is a list of type names of the columns present in the \texttt{\textsc{Csv}} file.  This is needed
       by \textsc{SetlX} in order to correctly interpret the data.
 
 \item $\mathtt{name}$ is the column name that is to be used for linear regression, i.e.~it specifies the column that 
       contains the values for the independent variable $x$.  The dependent variable $y$ is assumed to be given in
-      the first column of the \texttt{csv}-file.
+      the first column of the \textsc{Csv} file.
 \end{enumerate}
 The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works as follows:
 \begin{enumerate}
@@ -915,7 +915,7 @@ The file ``\texttt{advertising.csv}'', which is available at
 contains data about advertising.  Concretely, let us think that this data lists the amount of money that has
 been spent in advertising a luxury refrigerator that is able to detect the amount of food stored and that is
 able to reorder supplies with \href{https://en.wikipedia.org/wiki/AmazonFresh}{AmazonFresh}$^\mathtt{TM}$.
-Every line of this csv file has five entries:
+Every line of this \textsc{Csv} file has five entries:
 \begin{enumerate}[(a)]
 \item The first column is interpreted as the number of a store.  All together, there are 200 stores that have sold this
       refrigerator.  It is assumed that all of these stores are located in different counties.
