@@ -21,16 +21,14 @@ class network(inputSize, hiddenSize, outputSize) {
     mInputSize  := inputSize;   //        784
     mHiddenSize := hiddenSize;  //  30 .. 100
     mOutputSize := outputSize;  //         10
-    mBiasesH    := rndVector(mHiddenSize);
-    mBiasesO    := rndVector(mOutputSize);
-    mWeightsH   := rndMatrix(mHiddenSize, mInputSize);
-    mWeightsO   := rndMatrix(mOutputSize, mHiddenSize);
+    mBiasesH    := rndVector(mHiddenSize);  // biases hidden layer
+    mBiasesO    := rndVector(mOutputSize);  // biases output layer
+    mWeightsH   := rndMatrix(mHiddenSize, mInputSize);  // weights hidden layer
+    mWeightsO   := rndMatrix(mOutputSize, mHiddenSize); // weights output layer
     
-    feedforward := procedure(x) {
-        AH := sigmoid(mWeightsH * x  + mBiasesH);
-        AO := sigmoid(mWeightsO * AH + mBiasesO);
-        return AO;
-    };
+    // epochs: number of epochs
+    // mbs:    minibatch size
+    // eta:    learning rate
     sgd := procedure(training_data, epochs, mbs, eta, test_data) {
         n_test := #test_data;         
         n      := #training_data;
@@ -44,10 +42,10 @@ class network(inputSize, hiddenSize, outputSize) {
         }
     };
     update_mini_batch := procedure(mini_batch, eta) {
-        nabla_BH := 0 * mBiasesH;  
-        nabla_BO := 0 * mBiasesO;  
-        nabla_WH := 0 * mWeightsH; 
-        nabla_WO := 0 * mWeightsO; 
+        nabla_BH := 0 * mBiasesH;  // gradient biases hidden layer
+        nabla_BO := 0 * mBiasesO;  // gradient biases output layer
+        nabla_WH := 0 * mWeightsH; // gradient weights hidden layer
+        nabla_WO := 0 * mWeightsO; // gradient weights output layer
         for([x,y] in mini_batch) {
             [dltNbl_BH, dltNbl_BO, dltNbl_WH, dltNbl_WO] := backprop(x, y);
             nabla_BH += dltNbl_BH;
@@ -71,13 +69,13 @@ class network(inputSize, hiddenSize, outputSize) {
         ZO := mWeightsO * AH + mBiasesO;
         AO := sigmoid(ZO);
         // backwards pass, output layer
-        delta    := hadamard(AO - y, sigmoid_prime(ZO));
-        nabla_BO := delta;
-        nabla_WO := la_matrix(delta) * la_matrix(AH)!;
+        epsilonO := hadamard(AO - y, sigmoid_prime(ZO));
+        nabla_BO := epsilonO;
+        nabla_WO := la_matrix(epsilonO) * la_matrix(AH)!;
         // backwards pass, hidden layer
-        delta    := hadamard(mWeightsO! * delta, sigmoid_prime(ZH));
-        nabla_BH := delta;
-        nabla_WH := la_matrix(delta) * la_matrix(x)!;
+        epsilonH := hadamard(mWeightsO! * epsilonO, sigmoid_prime(ZH));
+        nabla_BH := epsilonH;
+        nabla_WH := la_matrix(epsilonH) * la_matrix(x)!;
         return [nabla_BH, nabla_BO, nabla_WH, nabla_WO];
     };
     // Returns sum of correct guesses after feedforwarding
@@ -85,5 +83,10 @@ class network(inputSize, hiddenSize, outputSize) {
         test_results := [[argmax(feedforward(x)) - 1, y]: [x, y] in test_data];
         // Return sum of correct guesses
         return #[1 : [a, b] in test_results | a == b];
+    };
+    feedforward := procedure(x) {
+        AH := sigmoid(mWeightsH * x  + mBiasesH);
+        AO := sigmoid(mWeightsO * AH + mBiasesO);
+        return AO;
     };
 }

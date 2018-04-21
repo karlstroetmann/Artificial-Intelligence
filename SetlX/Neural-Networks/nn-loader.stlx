@@ -2,7 +2,7 @@
 load_data := procedure(training_length, test_length) {
 	// training_data: 	60,000 sets, a 784 pixels
 	// test_data: 		10,000 sets, a 784 pixels
-	test_data     := parse_csv("mnist_test.csv",  test_length);
+	test_data     := parse_csv("mnist_test.csv" , test_length);
 	training_data := parse_csv("mnist_train.csv", training_length);
 	return [training_data, test_data];
 };
@@ -15,42 +15,26 @@ parse_csv := procedure(file, len) {
     csv := readFile(file);
     // Convert every line into lists    
     for (i in [1..len]) {
-        labels[i] := int(csv[i][1]);    
-        // starting at 3, because 1 and 2 are label and ","    
-        images[i] := parse_line(csv[i][3..]);    
-        // e.g. images[1] = all pixels of image1; images[1][1] = 1st pixel of image1
+        Line := split(csv[i], ",");
+        labels[i] := int(Line[1]);                                  // first column is label
+        images[i] := la_vector([double(x)/255.0 : x in Line[2..]]); // other columns are pixels
         if (i % 10000 == 0) {
             print("Image $i$ of $len$ imported");
         }
     }
     print("End reading:\t$file$");    
-    return [images, labels];
+    return [[images[i], labels[i]] : i in [1..len]];
 };
-// Read csv-string-line and parse into list
-parse_line := procedure(s) {
-    L := split(s, ",");
-    // Convert to values between 0 and 1 by dividing with 255
-    return [double(x)/255.0 : x in L];
-};
-// create 10-dimensional vector with 1 in the jth position and zeros elsewhere
-// desired Result from the neural network / label (0 to 9)
-vectorized_result := procedure(j) {
+// one hot encoding of digit j
+encode := procedure(j) {  
 	e      := la_vector([0] * 10);
 	e[j+1] := 1; // j+1, because digit zero has index 1
 	return e;
 };
 // format data sets according to their later use in the neural network
 load_data_wrapper := procedure(training_length, test_length) {
-	[tr_d, te_d] := load_data(training_length, test_length);
-	// Convert test data: [ [pixels1, lbl1], [pixels2, lbl2], ...], like key-value-pairs
-	test_data := format_pixels_label_pairs(te_d[1], te_d[2], test_length);
-	// Convert training data: list of [pixels, label_unit_vector] per image
- 	training_data := format_with_unit_vectors(tr_d[1], tr_d[2], training_length);
-	return [training_data, test_data];   
+	[train, test] := load_data(training_length, test_length);
+ 	train := [ [image, encode(label)] : [image, label] in train];
+	return [train, test];
 };
-format_pixels_label_pairs := procedure(pixels, labels, length) {
-	return [ [la_vector(pixels[i]), labels[i]] : i in [1..length] ];
-};
-format_with_unit_vectors := procedure(pixels, labels, length) {
-	return [ [la_vector(pixels[i]), vectorized_result(labels[i])] : i in [1..length] ];
-};
+
