@@ -684,7 +684,25 @@ gradient descent.  It turns out that if we take care that eventually all trainin
 gradient descent, then the approximations given above can speed up the learning of neural networks substantially.
 
 \section{Implementation}
-Next, we will take a look at a neural network that is able to recognize handwritten digits. 
+Next, we will take a look at a neural network that is able to recognize handwritten digits.  The
+\href{http://yann.lecun.com/exdb/mnist/}{\textsc{Mnist} database of handwritten digits}
+contains $70\,000$ images of handwritten digits.  These images have a size of $28 \times 28$ pixels.
+We will use the first $60\,000$ of these images to train a neural network, while the remaining $10\,000$ images
+will be used to check the accuracy of the trained network.  Since \textsc{SetlX} lacks the ability to read
+image files, the images have been converted into two large \texttt{.csv} files.  You can download the $10\,000$
+images from the test set at
+\\[0.2cm]
+\hspace*{-0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist_test.csv.gz}{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist\_test.csv.gz}
+\\[0.2cm]
+while the images from the training set are found at
+\\[0.2cm]
+\hspace*{-0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist_train.csv.gz}{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist\_train.csv.gz}
+\\[0.2cm]
+Note that these files are compressed.  In order to train the neural network with these files, these files first
+have to be decompressed.  Figure \ref{fig:nn-loader.stlx} on page \pageref{fig:nn-loader.stlx} contains the
+code that is used to read these files.
 
 \begin{figure}[!ht]
 \centering
@@ -694,22 +712,134 @@ Next, we will take a look at a neural network that is able to recognize handwrit
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
-    zeros_vec := n        |-> la_vector([0] * n);
-    zeros_mat := [m, n]   |-> la_matrix([[0] * n] * m);
+    load_data := procedure(train_length, test_length) {
+        test_data  := parse_csv("mnist_test.csv" , test_length);
+        train_data := parse_csv("mnist_train.csv", train_length);
+        train_data := [ [image, encode(label)] : [image, label] in train_data];
+        return [train_data, test_data];
+    };
+    parse_csv := procedure(file, len) {
+        images := [];
+        labels := [];
+        csv    := readFile(file);
+        for (i in [1..len]) {
+            Line := split(csv[i], ",");
+            labels[i] := int(Line[1]);                                  
+            images[i] := la_vector([double(x)/255 : x in Line[2..]]); 
+        }
+        return [[images[i], labels[i]] : i in [1..len]];
+    };
+    encode := procedure(digit) {  
+        result          := la_vector([0] * 10);
+        result[digit+1] := 1; // digit zero has index 1
+        return result;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{\textsc{SetlX} code to load the image files.}
+\label{fig:nn-loader.stlx}
+\end{figure}
+
+The function called from outside of this file is the function \texttt{load\_data}.
+\begin{enumerate}
+\item The function \texttt{load\_data} receives two parameters.
+      \begin{enumerate}[(a)]
+      \item \texttt{train\_length} is the number of images used for training.
+      \item \texttt{test\_length} is the number of images used for training.
+      \end{enumerate}
+      Usually, we will have $\texttt{train\_length} = 60\,000$ and $\texttt{test\_length} = 10\,000$.
+      However, since training the neural network takes about 15 minutes to complete when all data are used,
+      these parameters can be set to smaller values to speed up experiments.
+
+      On completion, the function \texttt{load\_data} will return a pair of the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[train\_data, test\_data]}.
+\item Both the training data and the test data are read via the function \texttt{parse\_csv}.
+      This function returns a list of pairs.  The first component of these pairs is an image of a handwritten
+      digit, while the second component is a number $d$ from the set $\{0,1,2,3,4,5,6,7,8,9\}$.
+      This number specifies the digit that is shown in the image.
+\item For the training data, the number $d$ specifying the digit needs to be encoded as a vector of dimension 10.
+      The idea is that this vector contains nine occurrences of the digit \texttt{0} and one occurrence of the
+      digit \texttt{1}.  The position of the digit \texttt{1} is given as $d+1$.  For example, $d=0$ is encoded
+      as the vector
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\langle 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 \rangle^\top$,
+      \\[0.2cm]
+      while $d=3$ is encoded as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\langle 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 \rangle^\top$.
+      \\[0.2cm]
+      The encoding of digits as vectors is done via the function \texttt{encode}.
+\end{enumerate}
+The function \texttt{parse\_csv} is responsible for reading a given \texttt{.csv} file.
+\begin{enumerate}
+\item This function is called with two parameters.
+      \begin{enumerate}[(a)]
+      \item \texttt{file} is the name of the \texttt{.csv} file that is to be read.
+      \item \texttt{len} specifies the number of lines that should be read.
+      \end{enumerate}
+      The \texttt{.csv} files containing the images of handwritten digits contain one image per row.
+      Every row contains 785 numbers.
+      \begin{enumerate}[(a)]
+      \item The first number specifies the digit that is shown in the image.
+      \item The remaining $784= 28 \times 28$ numbers specify the darkness of the pixels.
+            These numbers are elements of the set $\{0,\cdots,255\}$.  The number $0$ specifies a pixel that is
+            white, while the number $255$ specifies a pixel that is black.  Numbers in between are interpreted
+            as grey values.
+      \end{enumerate}
+      The function returns a list of pairs of the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[image, label]}
+      \\[0.2cm]
+      where \texttt{image} is a vector of dimension $784$, while \texttt{label} is a digit from the set
+      $\{0,\cdots,9\}$.
+\item The function \texttt{readFile} returns a list of strings.  Each string in this list corresponds to
+      one line in the \texttt{.csv} file and therefore it corresponds to one image.
+\item The function \texttt{split} splits the string at the occurrences of the commas and returns a list of
+      strings of length 785.
+\item The first entry of this list is the digit that is shown in the image.  These entries are converted to
+      integers and are then stored in the list \texttt{labels}.
+\item The remaining 784 entries are the pixels of the image encoded in this line.  The grey values of these
+      pixels are elements from the set $\{0,\cdots,255\}$.  In order to improve the convergence speed of stochastic
+      gradient descent, these values are transformed into real values in the range $[0,1]$. 
+\item Finally, the images and labels are mapped into one list of pairs of images and labels.
+\end{enumerate}
+The function \texttt{encode} is used to encode a digit into a vector.  First, the function creates a vector
+\texttt{responsible} of dimension $10$ that is initialized to all zeros.  Then, it inserts a one at index
+$\texttt{digit}+1$ and returns the resulting vector.  This encode technique is called
+\href{https://en.wikipedia.org/wiki/One-hot}{one-hot encoding}.  We use one hot encoding since the output layer
+of the neural network that we are going to construct contains $10$ output nodes, one node to recognize each
+digit.  The first output node will recognize the digit ``0'', the second output node will recognize the digit
+``1'', and in general the $i$-th output node will recognize the $i$+1-th digit.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                  ]
     rndVector := length   |-> la_vector([random() - 0.5: i in [1..length]]);
-    my_rnd    := []       |-> (random() - 0.5) / 14; // 14 = 28 / 2
-    rndMatrix := [rs, cs] |-> la_matrix([[my_rnd(): c in [1..cs]]: r in [1..rs]]);
-    sigmoid   := [x]      |-> la_vector([1 / (1 + exp(-a)) : a in x]);
-    // derivative of the sigmoid of a vector
+    my_rnd    := []       |-> (random() - 1/2) / 28; // 28 = sqrt(784)
+    rndMatrix := [rs, cs] |->
+                 la_matrix([[my_rnd(): c in [1..cs]]: r in [1..rs]]);
+    sigmoid   := [x] |-> la_vector([1 / (1 + exp(-a)) : a in x]);
     sigmoid_prime := procedure(x) {
         s := sigmoid(x); 
         return la_vector([a * (1 - a): a in s]);
     };
     hadamard := [x, y] |-> la_vector([x[i] * y[i]: i in [1 .. #x]]);
-    // compute the index of the biggest value in x
     argmax := procedure(x) {
         [maxValue, maxIndex] := [x[1], 1];
         for (i in [2 .. #x] | x[i] > maxValue) {
@@ -722,6 +852,49 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 \caption{Auxiliary functions.}
 \label{fig:nn.stlx:auxiliary}
 \end{figure}
+Figure \ref{fig:nn.stlx:auxiliary} on page \pageref{fig:nn.stlx:auxiliary} show some auxiliary functions.
+\begin{enumerate}
+\item \texttt{rndVector} creates a vector of random numbers that are uniformly distributed in the
+      interval $[-0.5, 0.5]$.  The argument \texttt{length} specifies the dimension of this vector.
+
+      This function is used later to initialize the biases of the neurons of the neural network.
+\item \texttt{my\_rnd} returns a random number that is uniformly distributed in the interval
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \biggl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\biggr]$. 
+      \\[0.2cm]
+      This function is used to initialize the weights of the neurons.  The reason for the upper bound of
+      $\frac{1}{28}$ is the fact that we have to avoid \blue{saturation} of the neurons.  A neuron is said to
+      be saturated if the input argument $a$ to the logistic function $S$ of the neuron is either very low or very
+      high.  In that case, if $a$ is small, $S(a)$ would be very small, while if $a$ is big, $S(a)$ would be
+      very close to $1$.  The reason is that
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds\lim\limits_{a\rightarrow-\infty} S(a) = 0$ \quad and \quad       $\ds\lim\limits_{a\rightarrow\infty} S(a) = 1$.
+      \\[0.2cm]
+      In any case, the derivative of the logistic function, which has the form
+      $S'(a)=S(a)\cdot\bigl(1-S(a)\bigr)$ would be close to $0$ because either $S(a)$ is small or $1-S(a)$ is
+      small.  But then the gradient that is used in gradient descent would be very small also and hence
+      gradient descent would require a very large number of iterations to converge.  In order to prevent this
+      from happening we need to ensure that the initial inputs of the logistic functions are are not to big.
+      In the hidden layer, the weight matrices have a size of $28 \times 28 = 728$. If we add $n$ random
+      numbers that are uniformly distributed in the interval $[-1,1]$, the expected value is $0$ but the
+      variance is $728$ times the variance of a random variable that is $\mathrm{Unif}(-1,1)$.  As the standard
+      deviation is the square root of the variance and $28 = \sqrt{28}$, choosing the weights from the interval
+      $\bigl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\bigr]$ will ensure that the
+      neurons are not saturated when initialized.
+\item $\texttt{rndMatrix}(rs, cs)$ creates a matrix of \texttt{rs} rows and \texttt{cs} columns of random
+      numbers uniformly distributed in the interval
+      $\bigl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\bigr]$.
+\item $\texttt{sigmoid}(\texttt{x})$ takes a vector \texttt{x} and computes the element-wise sigmoid function of
+      this vector.
+\item $\texttt{sigmoid\_prime}(\texttt{x})$ takes a vector \texttt{x} and computes the element-wise derivative
+      of the sigmoid function of this vector.  Remember that the derivative $S'(t)$ of the sigmoid function $S(t)$
+      satisfies the equation
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $S'(t) = S(t) \cdot \bigl(1 - S(t)\bigr)$.
+\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -731,24 +904,54 @@ Next, we will take a look at a neural network that is able to recognize handwrit
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     class network(inputSize, hiddenSize, outputSize) {
         mInputSize  := inputSize;   //        784
         mHiddenSize := hiddenSize;  //  30 .. 100
         mOutputSize := outputSize;  //         10
-        mBiasesH    := rndVector(mHiddenSize);
-        mBiasesO    := rndVector(mOutputSize);
-        mWeightsH   := rndMatrix(mHiddenSize, mInputSize);
-        mWeightsO   := rndMatrix(mOutputSize, mHiddenSize);
-        ...   
+        mBiasesH  := rndVector(mHiddenSize);  // biases hidden layer
+        mBiasesO  := rndVector(mOutputSize);  // biases output layer
+        mWeightsH := rndMatrix(mHiddenSize, mInputSize);  // weights hidden layer
+        mWeightsO := rndMatrix(mOutputSize, mHiddenSize); // weights output layer
+        ...
     }
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The constructor of the class $\mathtt{network}$.}
 \label{fig:nn.stlx:network}
 \end{figure}
+Figure \ref{fig:nn.stlx} on page \pageref{fig:nn.stlx} shows the outline of the class \texttt{network} and its
+constructor.  This class represents a neural network with one hidden layer.
+\begin{enumerate}
+\item The argument \texttt{inputSize} specifies the number of input nodes.  The neural network for the
+      recognition of handwritten digits has 784 inputs.  These inputs are the grey values of the $28 \times 28$
+      pixels that constitute the image of the handwritten digit.
+\item The argument \texttt{hiddenSize} specifies the number of neurons in the hidden layer.  I have
+      experimented with 30 neurons, 60 neurons and a hundred neurons.
+      \begin{enumerate}[(a)]
+      \item For 30 neurons, the computation took about 15 minutes and the trained neural network achieved an
+            accuracy of $96.3\symbol{37}$.
+      \item For 60 neurons, the computation took 25 minutes and the network achieved an accuracy of
+            $97.3\symbol{37}$.
+      \item If there are 100 neurons in the hidden layer, the computation took 41 minutes and achieved an
+            accuracy of $97.9\symbol{37}$.
+
+            For 100 neurons, the number of weights in the hidden layer is $784 \cdot 100 = 78\,400$.
+            Therefore, the number of weights is greater that the number training examples.  Hence,
+            we should really use \href{http://neuralnetworksanddeeplearning.com/chap3.html}{regularization} in
+            order to further increase the accuracy of the network.
+      \end{enumerate}
+\item The argument \texttt{mOutputSize} specifies the number of output neurons.  For the neural network
+      recognizing handwritten digits this number is $10$ since there is an output neuron for every digit.
+\item Besides storing the topology of the neural network, the class \texttt{network} stores the biases and
+      weights of all the neurons.  The biases and weights are initialized as random numbers.  As explained when
+      discussing the auxiliary functions in Figure \ref{fig:nn.stlx:auxiliary} on page
+      \pageref{fig:nn.stlx:auxiliary} we have to take care that these random numbers are not to big for
+      otherwise the neurons would saturate and the learning would be very slow.
+\end{enumerate}
+
 
 \begin{figure}[!ht]
 \centering
@@ -758,8 +961,8 @@ Next, we will take a look at a neural network that is able to recognize handwrit
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     sgd := procedure(training_data, epochs, mbs, eta, test_data) {
         n_test := #test_data;         
@@ -769,15 +972,15 @@ Next, we will take a look at a neural network that is able to recognize handwrit
             mini_batches  := [training_data[k .. k+mbs-1]: k in [1, mbs..n]];
             for (mini_batch in mini_batches) {
                 update_mini_batch(mini_batch, eta);
-            } 
-            print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
+             }
+             print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
         }
     };
     update_mini_batch := procedure(mini_batch, eta) {
-        nabla_BH := zeros_vec(mHiddenSize);
-        nabla_BO := zeros_vec(mOutputSize);
-        nabla_WH := zeros_mat(mHiddenSize, mInputSize);
-        nabla_WO := zeros_mat(mOutputSize, mHiddenSize);
+        nabla_BH := 0 * mBiasesH;  // gradient biases hidden layer
+        nabla_BO := 0 * mBiasesO;  // gradient biases output layer
+        nabla_WH := 0 * mWeightsH; // gradient weights hidden layer
+        nabla_WO := 0 * mWeightsO; // gradient weights output layer
         for([x,y] in mini_batch) {
             [dltNbl_BH, dltNbl_BO, dltNbl_WH, dltNbl_WO] := backprop(x, y);
             nabla_BH += dltNbl_BH;
@@ -796,6 +999,17 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 \caption{Stochastic gradient descent.}
 \label{fig:nn.stlx:sgd}
 \end{figure}
+Figure \ref{fig:nn.stlx:sgd} on page \pageref{fig:nn.stlx:sgd} shows the method \texttt{sgd} of the class
+\texttt{network}.  This method implements gradient descent.  This method receives 5 arguments.
+\begin{enumerate}
+\item \texttt{training\_data} is a list of pairs of the form $[\mathbf{x}_i, \mathbf{y}_i]$.
+      Here, $\mathbf{x}_i$ is a vector of dimension $784$.  This vector contains the pixels of an image showing
+      one of the handwritten digits from the training set.  $\mathbf{y}_i$ is the one-hot encoding of the digit
+      that is shown in the image $\mathbf{x}_i$.
+\end{enumerate}
+
+
+
 
 \begin{figure}[!ht]
 \centering
@@ -827,6 +1041,7 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 \label{fig:nn.stlx}
 \end{figure}
 
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -852,6 +1067,7 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 \caption{Evaluation functions.}
 \label{fig:nn.stlx:evaluation}
 \end{figure}
+
 
 \begin{figure}[!ht]
 \centering
@@ -888,64 +1104,6 @@ Next, we will take a look at a neural network that is able to recognize handwrit
 \vspace*{-0.3cm}
 \caption{How to start the training.}
 \label{fig:nn-start.stlx}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-    load_data := procedure(training_length, test_length) {
-    	test_data     := parse_csv("mnist_test.csv",  test_length);
-    	training_data := parse_csv("mnist_train.csv", training_length);
-    	return [training_data, test_data];
-    };
-    parse_csv := procedure(file, len) {
-        images := [0 : i in [1..len]];
-        labels := [0 : i in [1..len]];
-        print("Reading file:\t$file$");
-        csv := readFile(file);
-        for (i in [1..len]) {
-            labels[i] := int(csv[i][1]);    
-            images[i] := parse_line(csv[i][3..]);    
-            if (i % 10000 == 0) {
-                print("Image $i$ of $len$ imported");
-            }
-        }
-        print("End reading:\t$file$");    
-        return [images, labels];
-    };
-    parse_line := procedure(s) {
-        L := split(s, ",");
-        return [double(x)/255.0 : x in L];
-    };
-    vectorized_result := procedure(j) {
-    	e      := la_vector([0] * 10);
-    	e[j+1] := 1; // +1, because the Index starts with 1 in SetlX (not 0)
-    	return e;
-    };
-    load_data_wrapper := procedure(training_length, test_length) {
-    	[tr_d, te_d] := load_data(training_length, test_length);
-    	test_data := format_pixels_label_pairs(te_d[1], te_d[2], test_length);
-     	training_data := format_with_unit_vectors(tr_d[1], tr_d[2], training_length);
-    	return [training_data, test_data];   
-    };
-    format_pixels_label_pairs := procedure(pixels, labels, length) {
-    	return [ [la_vector(pixels[i]), labels[i]] : i in [1..length] ];
-    };
-    format_with_unit_vectors := procedure(pixels, labels, length) {
-    	return [ [la_vector(pixels[i]), vectorized_result(labels[i])] : i in [1..length] ];
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{Loading the data.}
-\label{fig:nn-loader.stlx}
 \end{figure}
 
 

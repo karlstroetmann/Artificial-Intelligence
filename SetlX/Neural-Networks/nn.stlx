@@ -1,5 +1,5 @@
-rndVector := length   |-> la_vector([random() - 0.5: i in [1..length]]);
-my_rnd    := []       |-> (random() - 0.5) / 14; // 14 = 28 / 2
+rndVector := length   |-> la_vector([random() - 1/2: i in [1..length]]);
+my_rnd    := []       |-> (random() - 1/2)/ 28; // 28 = sqrt(784)
 rndMatrix := [rs, cs] |-> la_matrix([[my_rnd(): c in [1..cs]]: r in [1..rs]]);
 sigmoid   := [x]      |-> la_vector([1 / (1 + exp(-a)) : a in x]);
 // derivative of the sigmoid of a vector

@@ -1,23 +1,22 @@
 // Load test and training data
-load_data := procedure(training_length, test_length) {
-	// training_data: 	60,000 sets, a 784 pixels
-	// test_data: 		10,000 sets, a 784 pixels
-	test_data     := parse_csv("mnist_test.csv" , test_length);
-	training_data := parse_csv("mnist_train.csv", training_length);
-	return [training_data, test_data];
+load_data := procedure(train_length, test_length) {
+    test_data  := parse_csv("mnist_test.csv" , test_length);
+    train_data := parse_csv("mnist_train.csv", train_length);
+    train_data := [ [image, encode(label)] : [image, label] in train_data];
+    return [train_data, test_data];
 };
 // Parse csv into lists
 parse_csv := procedure(file, len) {
-    // create empty lists for images and according labels
-    images := [0 : i in [1..len]];
-    labels := [0 : i in [1..len]];
+    // create empty lists for images and labels
+    images := []; 
+    labels := []; 
     print("Reading file:\t$file$");
     csv := readFile(file);
     // Convert every line into lists    
     for (i in [1..len]) {
         Line := split(csv[i], ",");
-        labels[i] := int(Line[1]);                                  // first column is label
-        images[i] := la_vector([double(x)/255.0 : x in Line[2..]]); // other columns are pixels
+        labels[i] := int(Line[1]);                               // first column is label
+        images[i] := la_vector([double(x)/255: x in Line[2..]]); // other columns are pixels
         if (i % 10000 == 0) {
             print("Image $i$ of $len$ imported");
         }
@@ -25,16 +24,11 @@ parse_csv := procedure(file, len) {
     print("End reading:\t$file$");    
     return [[images[i], labels[i]] : i in [1..len]];
 };
-// one hot encoding of digit j
-encode := procedure(j) {  
-	e      := la_vector([0] * 10);
-	e[j+1] := 1; // j+1, because digit zero has index 1
-	return e;
+encode := procedure(digit) {  
+    result          := la_vector([0] * 10);
+    result[digit+1] := 1; // digit zero has index 1
+    return result;
 };
-// format data sets according to their later use in the neural network
-load_data_wrapper := procedure(training_length, test_length) {
-	[train, test] := load_data(training_length, test_length);
- 	train := [ [image, encode(label)] : [image, label] in train];
-	return [train, test];
-};
+
+
 
