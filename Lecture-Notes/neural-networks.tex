@@ -379,7 +379,7 @@ This equation is more succinct in vectorized notation:
 \begin{equation}
   \label{eq:BP2v}
   \boldsymbol{\varepsilon}^{(l)} = \Bigl(\bigl(W^{(l+1)}\bigr)^\top \cdot \boldsymbol{\varepsilon}^{(l+1)}\Bigr) \odot
-  S'\bigl(z^{(l)}\bigr) \quad \mbox{for all $l \in \{2, \cdots, L-1\}$}.
+  S'\bigl(\mathbf{z}^{(l)}\bigr) \quad \mbox{for all $l \in \{2, \cdots, L-1\}$}.
   \tag{BP2v}
 \end{equation}
 Note that this equation computes $\boldsymbol{\varepsilon}^{(l)}$ in terms of  $\boldsymbol{\varepsilon}^{(l+1)}$:  The error 
@@ -431,7 +431,7 @@ $
   \ds \boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)
      & & \mbox{\hspace*{4cm}(BP1v)}  \\[0.2cm]
   \ds \boldsymbol{\varepsilon}^{(l)} = \Bigl(\bigl(W^{(l+1)}\bigr)^\top \cdot \boldsymbol{\varepsilon}^{(l+1)}\Bigr) \odot
-  S'\bigl(z^{(l)}\bigr) & \mbox{for all $l \in \{2, \cdots, L-1\}$} &
+  S'\bigl(\mathbf{z}^{(l)}\bigr) & \mbox{for all $l \in \{2, \cdots, L-1\}$} &
   \mbox{(BP2v)}  \\[0.3cm]
   \ds \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
   & \mbox{for all $l \in \{2, \cdots,L\}$}
