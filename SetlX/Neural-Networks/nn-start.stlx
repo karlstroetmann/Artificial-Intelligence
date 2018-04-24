@@ -9,7 +9,7 @@ main := procedure() {
     hiddenSize   :=    30;
     outputSize   :=    10;
     epochs       :=    30;
-    mbs          :=    20;
+    mbs          :=    10;
     eta          :=   1.0;
     [training_data, test_data] := load_data(train_length, test_length);
     print("Create Network");

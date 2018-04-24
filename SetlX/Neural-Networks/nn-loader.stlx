@@ -6,23 +6,18 @@ load_data := procedure(train_length, test_length) {
     return [train_data, test_data];
 };
 // Parse csv into lists
-parse_csv := procedure(file, len) {
-    // create empty lists for images and labels
-    images := []; 
-    labels := []; 
+parse_csv := procedure(file, length) {
+    Pairs := [0] * length;
     print("Reading file:\t$file$");
     csv := readFile(file);
-    // Convert every line into lists    
-    for (i in [1..len]) {
-        Line := split(csv[i], ",");
-        labels[i] := int(Line[1]);                               // first column is label
-        images[i] := la_vector([double(x)/255: x in Line[2..]]); // other columns are pixels
-        if (i % 10000 == 0) {
-            print("Image $i$ of $len$ imported");
-        }
+    for (i in [1..length]) {
+        Line  := split(csv[i], ",");
+        label := int(Line[1]);                               // first column is label
+        image := la_vector([double(x)/255: x in Line[2..]]); // other columns are pixels
+        Pairs[i] := [image, label];
     }
     print("End reading:\t$file$");    
-    return [[images[i], labels[i]] : i in [1..len]];
+    return Pairs;
 };
 encode := procedure(digit) {  
     result          := la_vector([0] * 10);

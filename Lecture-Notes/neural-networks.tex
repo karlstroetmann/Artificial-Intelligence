@@ -452,7 +452,7 @@ $
   & \mbox{for all $l \in \{2, \cdots,L\}$}
   & \mbox{(BP3v)}
   \\[0.2cm]
-  \nabla_{W^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top
+  \ds \nabla_{W^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top
   & \mbox{for all $l \in \{2, \cdots,L\}$}
   & \mbox{(BP4v)}
 \end{array}
@@ -736,16 +736,16 @@ code that is used to read these files.
         train_data := [ [image, encode(label)] : [image, label] in train_data];
         return [train_data, test_data];
     };
-    parse_csv := procedure(file, len) {
-        images := [];
-        labels := [];
-        csv    := readFile(file);
-        for (i in [1..len]) {
-            Line := split(csv[i], ",");
-            labels[i] := int(Line[1]);                                  
-            images[i] := la_vector([double(x)/255 : x in Line[2..]]); 
+    parse_csv := procedure(file, length) {
+        Pairs := [0] * length;
+        csv := readFile(file);
+        for (i in [1..length]) {
+            Line  := split(csv[i], ",");
+            label := int(Line[1]);                               
+            image := la_vector([double(x)/255: x in Line[2..]]); 
+            Pairs[i] := [image, label];
         }
-        return [[images[i], labels[i]] : i in [1..len]];
+        return Pairs;
     };
     encode := procedure(digit) {  
         result          := la_vector([0] * 10);
@@ -797,7 +797,7 @@ The function \texttt{parse\_csv} is responsible for reading a given \texttt{.csv
 \item This function is called with two parameters.
       \begin{enumerate}[(a)]
       \item \texttt{file} is the name of the \texttt{.csv} file that is to be read.
-      \item \texttt{len} specifies the number of lines that should be read.
+      \item \texttt{length} specifies the number of lines that should be read.
       \end{enumerate}
       The \texttt{.csv} files containing the images of handwritten digits contain one image per row.
       Every row contains 785 numbers.
@@ -816,18 +816,19 @@ The function \texttt{parse\_csv} is responsible for reading a given \texttt{.csv
       where \texttt{image} is a vector of dimension $784$, while \texttt{label} is a digit from the set
       $\{0,\cdots,9\}$.
 \item The function \texttt{readFile} returns a list of strings.  Each string in this list corresponds to
-      one line in the \texttt{.csv} file and therefore it corresponds to one image.
+      one line in the \texttt{.csv} file and therefore it corresponds to one image and the corresponding label.
 \item The function \texttt{split} splits the string at the occurrences of the commas and returns a list of
       strings of length 785.
-\item The first entry of this list is the digit that is shown in the image.  These entries are converted to
-      integers and are then stored in the list \texttt{labels}.
+\item The first entry of this list is the digit that is shown in the image.  This entry is converted to
+      an integer and is then stored in the variable \texttt{label}.
 \item The remaining 784 entries are the pixels of the image encoded in this line.  The grey values of these
       pixels are elements from the set $\{0,\cdots,255\}$.  In order to improve the convergence speed of stochastic
       gradient descent, these values are transformed into real values in the range $[0,1]$. 
-\item Finally, the images and labels are mapped into one list of pairs of images and labels.
+\item The image and its label are combined into a pair and stored in the list \texttt{Pairs}.
+      After \texttt{length} lines have been read, the list \texttt{Pairs} is returned.
 \end{enumerate}
 The function \texttt{encode} is used to encode a digit into a vector.  First, the function creates a vector
-\texttt{responsible} of dimension $10$ that is initialized to all zeros.  Then, it inserts a one at index
+\texttt{result} of dimension $10$ that is initialized to all zeros.  Then, it inserts a \texttt{1} at index
 $\texttt{digit}+1$ and returns the resulting vector.  This encode technique is called
 \href{https://en.wikipedia.org/wiki/One-hot}{one-hot encoding}.  We use one hot encoding since the output layer
 of the neural network that we are going to construct contains $10$ output nodes, one node to recognize each
@@ -892,13 +893,13 @@ Figure \ref{fig:nn.stlx:auxiliary} on page \pageref{fig:nn.stlx:auxiliary} show 
       small.  But then the gradient that is used in gradient descent would be very small also and hence
       gradient descent would require a very large number of iterations to converge.  In order to prevent this
       from happening we need to ensure that the initial inputs of the logistic functions are are not to big.
-      In the hidden layer, the weight matrices have a size of $28 \times 28 = 728$. If we add $n$ random
+      In the hidden layer, the weight matrices have a size of $28 \times 28 = 784$. If we add $n$ random
       numbers that are uniformly distributed in the interval $[-1,1]$, the expected value is $0$ but the
-      variance is $728$ times the variance of a random variable that is $\mathrm{Unif}(-1,1)$.  As the standard
-      deviation is the square root of the variance and $28 = \sqrt{28}$, choosing the weights from the interval
+      variance is $784$ times the variance of a random variable that is $\mathrm{Unif}(-1,1)$.  As the standard
+      deviation is the square root of the variance and $28 = \sqrt{784}$, choosing the weights from the interval
       $\bigl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\bigr]$ will ensure that the
       neurons are not saturated when initialized.
-\item $\texttt{rndMatrix}(rs, cs)$ creates a matrix of \texttt{rs} rows and \texttt{cs} columns of random
+\item $\texttt{rndMatrix}(\texttt{rs}, \texttt{cs})$ creates a matrix of \texttt{rs} rows and \texttt{cs} columns of random
       numbers uniformly distributed in the interval
       $\bigl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\bigr]$.
 \item $\texttt{sigmoid}(\texttt{x})$ takes a vector \texttt{x} and computes the element-wise sigmoid function of
@@ -943,8 +944,8 @@ constructor.  This class represents a neural network with one hidden layer.
 \item The argument \texttt{inputSize} specifies the number of input nodes.  The neural network for the
       recognition of handwritten digits has 784 inputs.  These inputs are the grey values of the $28 \times 28$
       pixels that constitute the image of the handwritten digit.
-\item The argument \texttt{hiddenSize} specifies the number of neurons in the hidden layer.  I have
-      experimented with 30 neurons, 60 neurons and a hundred neurons.
+\item The argument \texttt{hiddenSize} specifies the number of neurons in the hidden layer.  We assume that
+      there is only one hidden layer.  I have experimented with 30 neurons, 60 neurons and a hundred neurons.
       \begin{enumerate}[(a)]
       \item For 30 neurons, the computation took about 15 minutes and the trained neural network achieved an
             accuracy of $96.3\symbol{37}$.
@@ -954,7 +955,7 @@ constructor.  This class represents a neural network with one hidden layer.
             accuracy of $97.9\symbol{37}$.
 
             For 100 neurons, the number of weights in the hidden layer is $784 \cdot 100 = 78\,400$.
-            Therefore, the number of weights is greater that the number training examples.  Hence,
+            Therefore, the number of weights is greater than the number of training examples.  Hence,
             we should really use \href{http://neuralnetworksanddeeplearning.com/chap3.html}{regularization} in
             order to further increase the accuracy of the network.
       \end{enumerate}
@@ -964,7 +965,7 @@ constructor.  This class represents a neural network with one hidden layer.
       weights of all the neurons.  The biases and weights are initialized as random numbers.  As explained when
       discussing the auxiliary functions in Figure \ref{fig:nn.stlx:auxiliary} on page
       \pageref{fig:nn.stlx:auxiliary} we have to take care that these random numbers are not to big for
-      otherwise the neurons would saturate and the learning would be very slow.
+      otherwise the neurons would \blue{saturate} and the learning would be very slow.
 \end{enumerate}
 
 
@@ -987,8 +988,8 @@ constructor.  This class represents a neural network with one hidden layer.
             mini_batches  := [training_data[k .. k+mbs-1]: k in [1, mbs..n]];
             for (mini_batch in mini_batches) {
                 update_mini_batch(mini_batch, eta);
-             }
-             print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
+            }
+            print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
         }
     };
     update_mini_batch := procedure(mini_batch, eta) {
@@ -1015,15 +1016,57 @@ constructor.  This class represents a neural network with one hidden layer.
 \label{fig:nn.stlx:sgd}
 \end{figure}
 Figure \ref{fig:nn.stlx:sgd} on page \pageref{fig:nn.stlx:sgd} shows the method \texttt{sgd} of the class
-\texttt{network}.  This method implements gradient descent.  This method receives 5 arguments.
+\texttt{network}.  This method implements stochastic gradient descent.   It receives 5 arguments.
 \begin{enumerate}
 \item \texttt{training\_data} is a list of pairs of the form $[\mathbf{x}_i, \mathbf{y}_i]$.
       Here, $\mathbf{x}_i$ is a vector of dimension $784$.  This vector contains the pixels of an image showing
       one of the handwritten digits from the training set.  $\mathbf{y}_i$ is the one-hot encoding of the digit
       that is shown in the image $\mathbf{x}_i$.
+\item \texttt{epochs} is the number of iterations of gradient descent.  In order to train the neural network to
+      recognize handwritten digits, we will use 30 iterations.
+\item \texttt{mbs} is the size of the mini-batches that are used in stochastic gradient descent.
+      I have achieved the fastest learning when I have used a mini-batch size of 10.  Using a mini-batch size
+      of 20 was sightly slower, but this parameter seems to be quite uncritical.
+\item \texttt{eta} is the learning rate.
+\item \texttt{test\_data} is the list of test data.  These data are only used to check the accuracy, they are
+      not used to determine the weights or biases.
 \end{enumerate}
+The implementation of stochastic gradient descent executes a \texttt{for}-loop that runs \texttt{epoch} number
+of times.  At the beginning of each iteration, the training data are shuffled randomly.  Next, the data is
+chopped up into chunks of size \texttt{mbs}.  These chunks are called \blue{mini-batches}.  The inner
+\texttt{for}-loop iterates over all mini-batches and executes one step of gradient descent that only uses the
+data form the mini-batch.  At the end of each iteration of the outer \texttt{for}-loop, the accuracy of the
+current version of the neural net is printed.
 
-
+The method \texttt{update\_mini\_batch} performs one step of gradient descent for the data from one mini-batch.
+It receives two arguments.
+\begin{enumerate}
+\item \texttt{mini\_batch} is the list of training data that constitute one mini-batch.
+\item \texttt{eta} is the \blue{learning rate}.
+\end{enumerate}
+The implementation of \texttt{update\_mini\_batch} works as follows:
+\begin{enumerate}
+\item First, we initialize the vectors \texttt{nabla\_BH}, \texttt{nabla\_BO} and the matrices
+      \texttt{nabla\_WH}, \texttt{nabla\_WO} to contain only zeros.
+      \begin{enumerate}[(a)]
+      \item \texttt{nabla\_BH} will store the gradient of the bias vector of the hidden layer.
+      \item \texttt{nabla\_BO} will store the gradient of the bias vector of the output layer.
+      \item \texttt{nabla\_WH} will store the gradient of the weight matrix of the hidden layer.
+      \item \texttt{nabla\_WO} will store the gradient of the weight matrix of the output layer.
+      \end{enumerate}
+\item Next, we iterate of all training examples in the mini-batch and for every training example
+      \texttt{[x,y]} we compute the contribution of this training example to the gradients of the
+      cost function $C$, i.e.~we compute
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ \quad and \quad  $\nabla_{W^{(l)}} C_{\mathbf{x},
+        \mathbf{y}}$ 
+      \\[0.2cm]
+      for the hidden layer and the output layer.  These gradients are computed by the function
+      \texttt{backprop}.
+\item Finally, the bias vectors and the weight matrices are updated according to the learning rate and the
+      computed gradients.
+\end{enumerate}
 
 
 \begin{figure}[!ht]
@@ -1042,12 +1085,12 @@ Figure \ref{fig:nn.stlx:sgd} on page \pageref{fig:nn.stlx:sgd} shows the method 
         AH := sigmoid(ZH);
         ZO := mWeightsO * AH + mBiasesO;
         AO := sigmoid(ZO);
-        delta    := hadamard(AO - y, sigmoid_prime(ZO));
-        nabla_BO := delta;
-        nabla_WO := la_matrix(delta) * la_matrix(AH)!;
-        delta    := hadamard(mWeightsO! * delta, sigmoid_prime(ZH));
-        nabla_BH := delta;
-        nabla_WH := la_matrix(delta) * la_matrix(x)!;
+        epsilonO := hadamard(AO - y, sigmoid_prime(ZO));
+        nabla_BO := epsilonO;
+        nabla_WO := la_matrix(epsilonO) * la_matrix(AH)!;
+        epsilonH := hadamard(mWeightsO! * epsilonO, sigmoid_prime(ZH));
+        nabla_BH := epsilonH;
+        nabla_WH := la_matrix(epsilonH) * la_matrix(x)!;
         return [nabla_BH, nabla_BO, nabla_WH, nabla_WO];
     };
 \end{Verbatim}
@@ -1055,7 +1098,60 @@ Figure \ref{fig:nn.stlx:sgd} on page \pageref{fig:nn.stlx:sgd} shows the method 
 \caption{Implementation of backpropagation.}
 \label{fig:nn.stlx}
 \end{figure}
+The method \texttt{backprop} computes the gradients of the bias vectors and the weight matrices with respect to
+a single training example $\langle \texttt{x}, \texttt{y} \rangle$.  The implementation of \texttt{backprop}
+proceeds as follows:
+\begin{enumerate}
+\item First, the vector \texttt{ZH} is computed according to the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{z}^{(2)} = W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}$.
+      \\[0.2cm]
+      Here, $W^{(2)}$ is the weight matrix of the hidden layer that is stored in \texttt{mWeightsH}, while
+      $\mathbf{b}^{(2)}$ is the bias vector of the hidden layer.  This vector is stored in \texttt{mBiasesH}.
+\item The activation of the neurons in the hidden layer \texttt{AH} is computed by applying the sigmoid
+      function to the vector $\mathbf{z}^{(2)}$.
+\item Next, the vector \texttt{ZH} is computed according to the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathbf{z}^{(3)} = W^{(3)} \cdot \mathbf{x} + \mathbf{b}^{(3)}$.
+      \\[0.2cm]
+      Here, $W^{(3)}$ is the weight matrix of the output layer that is stored in \texttt{mWeightsO}, while
+      $\mathbf{b}^{(3)}$ is the bias vector of the output layer.  This vector is stored in \texttt{mBiasesO}.
+\item The activation of the neurons in the output layer \texttt{AO} is computed by applying the sigmoid
+      function to the vector $\mathbf{z}^{(3)}$.
 
+      These four step constitute the forward pass of backpropagation.
+\item Next, the error in the output layer \texttt{epsilonO} is computed using the backpropagation equation
+      (BP1v)
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \boldsymbol{\varepsilon}^{(3)} = (\mathbf{a}^{(3)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(3)}\bigr)$.
+\item According to  equation (BP3v), the gradient of the cost function with respect to the bias vector of the
+      output layer is given as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \nabla_{\mathbf{b}^{(3)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(3)}$.
+      \\[0.2cm]
+      This gradient is stored in the variable \texttt{nabla\_BO}.
+\item According to equation (BP4v), the gradient  of the cost function with respect to the weight matrix of the
+      output layer is given as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \nabla_{W^{(3)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(3)} \cdot \bigl(\mathbf{a}^{(2)}\bigr)^\top$.
+      \\[0.2cm]
+      This gradient is stored in the variable \texttt{nabla\_WO}.
+\item Next, the error in the hidden layer \texttt{epsilonH} is computed using the backpropagation equation
+      (BP2v)
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \boldsymbol{\varepsilon}^{(2)} = \Bigl(\bigl(W^{(3)}\bigr)^\top \cdot \boldsymbol{\varepsilon}^{(3)}\Bigr) \odot
+           S'\bigl(\mathbf{z}^{(2)}\bigr)
+      $.
+\item Finally, the gradients of the cost function with respect to the bias
+      vector and the weight matrix of the hidden layer are computed.  This is completely to the computation of
+      the corresponding gradients of the output layer.
+\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -1083,6 +1179,11 @@ Figure \ref{fig:nn.stlx:sgd} on page \pageref{fig:nn.stlx:sgd} shows the method 
 \label{fig:nn.stlx:evaluation}
 \end{figure}
 
+Figure \ref{fig:nn.stlx:evaluation} shows the implementation of the function \texttt{feedforward}.  This
+function receives an image $\mathbf{x}$ stored a s a vector of dimension $784$ and computes the output of the
+neural network for this image.  The code is a straightforward implementation of the equations (FF1) and (FF2).
+The function \texttt{evaluate} is used to evaluate the accuracy of the neural network on the test data.
+Finally, Figure \ref{fig:nn-start.stlx} shows how the computation can be started.
 
 \begin{figure}[!ht]
 \centering
