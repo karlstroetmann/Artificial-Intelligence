@@ -38,22 +38,22 @@ understand how networks of biological neurons, i.e.~brains, work\footnote{
 }.  
 Instead, we develop a mathematical
 abstraction of neurons that will serve as the foundation of the theory developed in this chapter.
-At the abstraction level that we are looking at neural networks, a single neuron with $n$ inputs is defined as
+At the abstraction level that we are looking at neural networks, a single neuron with $n$ inputs is specified by
 a pair $\langle \mathbf{w}, b\rangle$ where the 
 vector $\mathbf{w} \in \mathbb{R}^m$ is called the \blue{weight vector} and the number $b \in \mathbb{R}$ is called the \blue{bias}.  
-Conceptually, a neuron is a function $p$ that maps an input vector $\mathbf{x} \in \mathbb{R}^m$ into the
-interval $[0,1]$.  This function is defined as follows:
+Conceptually, a neuron is a function that maps an input vector $\mathbf{x} \in \mathbb{R}^m$ into the interval
+$[0,1]$.  This function is defined as follows: 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds p(\mathbf{x}; \mathbf{w}, b) := a(\mathbf{x} \cdot \mathbf{w} + b)$,
+$\ds \mathbf{x} \mapsto a(\mathbf{x} \cdot \mathbf{w} + b)$.
 \\[0.2cm]
-where $a$ is called the \blue{activation function}.  In our applications, we will always use the sigmoid
-function as our activation function, i.e.~we have
+Here, $a$ is called the \blue{activation function}.  In our applications, we will always use the sigmoid
+function (Definition \ref{def:sigmoid}) as our activation function, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
 \\[0.2cm]
-The function $p$ modelling the neuron can be written more explicitly using index notation.  If
+The function modelling the neuron can be written more explicitly using index notation.  If
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{w} = \langle w_1, \cdots, w_m \rangle^\top$ 
@@ -66,10 +66,9 @@ $\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
 is the input vector, then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds p(\mathbf{x}; \mathbf{w}, b) = S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
+$\ds \mathbf{x} \mapsto S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
 \\[0.2cm]
-If we compare $p(\mathbf{x}; \mathbf{w}, b)$ 
-to a similar function appearing in the last chapter, you will notice 
+If we compare this function to a similar function appearing in the last chapter, you will notice 
 that so far a neuron works just like logistic regression.  The only difference is that the bias $b$
 is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
 feature vector $\mathbf{x}$ was always equal to $1$.  This assumption enabled us to incorporate the bias $b$ into the
@@ -137,8 +136,21 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 The \blue{activation vector} of layer $l$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{a}^{(l)} := \langle a_1^{(l)}, \cdots, a_{m(l)}^{(l)} \rangle^\top$.
+$\mathbf{a}^{(l)}(\mathbf{x}) := \langle a_1^{(l)}(\mathbf{x}), \cdots, a_{m(l)}^{(l)}(\mathbf{x}) \rangle^\top$.
 \\[0.2cm]
+Using vector notation, the feed forward equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) can be
+written as follows:
+\begin{align}
+  \label{eq:feedforward1v}
+  \mathbf{a}^{(1)}(\mathbf{x}) & := \mathbf{x},
+  \tag{FF1v} \\ 
+  \label{eq:feedforward2v}
+  \mathbf{a}^{(l)}(\mathbf{x}) & := 
+  S\Bigl( W^{(l)} \cdot \mathbf{a}^{(l-1)}(\mathbf{x})\bigr) + \mathbf{b}^{(l)}\Bigr)
+  \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
+  \tag{FF2v}
+\end{align}
+
 The output of our neural network for an input $\mathbf{x}$ is given by the neurons in the output
 layer,  i.e.~the output vector 
 $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as 
@@ -182,9 +194,9 @@ $\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$ \quad for $i=1,\cdots,n$
 such that 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{x}^{(i)} \in \mathbb{R}^{m(1)}$ and $\mathbf{y}^{(i)} \in \mathbb{R}^{m(L)}$
+$\mathbf{x}^{(i)} \in \mathbb{R}^{m(1)}$ and $\mathbf{y}^{(i)} \in \mathbb{R}^{m(L)}$.
 \\[0.2cm]
-Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $b^{(l)}$ in a way such that
+Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $\mathbf{b}^{(l)}$ in a way such that
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) = \mathbf{y}^{(i)}$ \quad for all $i \in \{1,\cdots,n\}$.
@@ -199,7 +211,7 @@ $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}
  \frac{1}{2 \cdot n} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
 $.
 \\[0.2cm]
-Note that the cost function is additive in the training examples $\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$.
+Note that this cost function is additive in the training examples $\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$.
 In order to simplify the notation we define
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -229,6 +241,8 @@ find this minimum\footnote{
   we \emph{minimize} the quadratic error cost function.  Hence, instead of gradient \emph{ascent} we use
   gradient \emph{descent}.  
 }.
+Unfortunately, the cost function $C$ when regarded as a function of the weights and biases has many local 
+minima.  Hence, all we can hope for is to find a local minimum that is good enough.
 
 
 \section{Backpropagation}
@@ -239,18 +253,19 @@ There are two reasons for the recent success of neural networks.
       graphic card offers about 13.7 teraflops in single precision performance.  It consumes about 350 watt.
       Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which was the most powerful supercomputer in 2000:
       In 2000 when it topped the rankings of the supercomputers, it  offered a performance of 7.2 teraflops and 
-      needed 6 megawatt to operate.  The cost to build ASCI White where about $110,000,000\,\symbol{36}$.
-      On the contrary, the AMD RX Vega 64 Liquid costs  $699\symbol{36}$.
+      needed 6 megawatt to operate.  The cost to build ASCI White was about $110,000,000\,\symbol{36}$.
+      On the contrary, the AMD RX Vega 64 Liquid costs  $699\,\symbol{36}$.
 
-      The Nvidia \href{https://www.nvidia.com/en-us/titan/titan-v/}{Titan V} comes at $2,999\symbol{36}$ and
-      offers a stunning 110 teraflops for deep learning.
+      The Nvidia \href{https://www.nvidia.com/en-us/titan/titan-v/}{Titan V} comes at $2,999\,\symbol{36}$ and
+      offers a stunning 110 teraflops for \href{https://en.wikipedia.org/wiki/Deep_learning}{deep learning} via
+      the \href{https://en.wikipedia.org/wiki/CUDA}{\textsc{Cuda}} \textsc{Api}.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
 \end{enumerate}
-Essentially, the backpropagation  algorithm is an efficient way to compute the partial derivatives of the cost function $C$
-with respect to the weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.  
-Before we can proceed to compute these partial derivatives, we need to define some auxiliary variables.
+Essentially, the \blue{backpropagation} algorithm is an efficient way to compute the partial derivatives of the
+cost function $C$ with respect to the weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.  Before we can
+proceed to compute these partial derivatives, we need to define some auxiliary variables. 
 
 \subsection{Definition of some Auxiliary Variables}
 We start by defining the auxiliary variables $z_j^{(l)}$.
@@ -279,8 +294,8 @@ $\ds\varepsilon_j^{(l)} := \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z
 that is we regard $C_{\mathbf{x}, \mathbf{y}}$ as a function of the $z_j^{(l)}$ and take the partial
 derivatives according to these variables.  
 Note that $\varepsilon_j^{(l)}$ does depend on both $\mathbf{x}$ and $\mathbf{y}$.  Since the notation would
-get very cumbersome if we would write $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard $\mathbf{x}$ and
-$\mathbf{y}$ as fixed for now.  Next, the quantities $\varepsilon_j^{(l)}$ are combined into a vector:
+get very cumbersome if we would write $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard the training
+example $\langle\mathbf{x}, \mathbf{y}\rangle$ as fixed for now.  Next, the quantities $\varepsilon_j^{(l)}$ are combined into a vector:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\boldsymbol{\varepsilon}^{(l)} := \left(
@@ -292,7 +307,7 @@ $\boldsymbol{\varepsilon}^{(l)} := \left(
   \right)
 $.
 \\[0.2cm]
-For reasons that will be explained later, this quantity $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
+The quantity $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
 
 \subsection{The Hadamard Product}
 Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
@@ -391,37 +406,37 @@ $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
 \begin{equation}
   \label{eq:BP3}
   \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial b_j^{(l)}} = \varepsilon_j^{(l)}
-  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,L\}$}
+  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,L\}$.}
   \tag{BP3}
 \end{equation}
 In vectorized notation, this equation takes the following form:
 \begin{equation}
   \label{eq:BP3v}
   \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
-  \quad \mbox{for all $l \in \{2, \cdots,L\}$}
+  \quad \mbox{for all $l \in \{2, \cdots,L\}$.}
   \tag{BP3v}
 \end{equation}
-Here. $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ denotes the gradient of $C_{\mathbf{x},
+Here, $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ denotes the gradient of $C_{\mathbf{x},
   \mathbf{y}}$ with respect to the bias $\mathbf{b}^{(l)}$.
 Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the weights:
 \begin{equation}
   \label{eq:BP4}
   \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}} = a_k^{(l-1)} \cdot \varepsilon_j^{(l)}
-  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$, $ k \in \{1,\cdots,m(l-1)\}$, and $l \in \{2, \cdots,L\}$}
+  \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$, $ k \in \{1,\cdots,m(l-1)\}$, and $l \in \{2, \cdots,L\}$.}
   \tag{BP4}
 \end{equation}
 In vectorized notation, this equation can be written as:
 \begin{equation}
   \label{eq:BP4v}
   \nabla_{W^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top
-  \quad \mbox{for all $l \in \{2, \cdots,L\}$}
+  \quad \mbox{for all $l \in \{2, \cdots,L\}$.}
   \tag{BP4v}
 \end{equation}
 Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ denotes the matrix
 product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
 row vector $\bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ that is regarded as an $1 \times m(l-1)$ matrix.
 
-As the backpropagation equations are at the very core of neural networks, we highlight them:
+As the backpropagation equations are at the very core of training neural networks, we highlight them:
 \\[0.2cm]
 \hspace*{0.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
@@ -459,11 +474,11 @@ versions of these equations since this is more efficient for two reasons:
       operations to the graphical coprocessor which is optimized for these kinds of operations.  
 \end{enumerate}
 
-\subsection{Proof of the Backpropagation Equations}
+\subsection{The Proof of the Backpropagation Equations}
 Next, we prove the backpropagation equations.  Although the proof is a bit tedious, it should be accessible: The
 \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule}  of
 \href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariate calculus} is all that is needed to  
-understand why the backpropagation equations are true.  As a reminder, the chain rule in multivariate calculus
+understand why the backpropagation equations hold.  As a reminder, the chain rule in multivariate calculus
 works as follows: Assume that the functions $f = f(\mathbf{y})$ and $g = g(\mathbf{x})$ where $\mathbf{y} \in \mathbb{R}^k$,
 $\mathbf{x} \in \mathbb{R}^n$,  $g(\mathbf{x}) \in \mathbb{R}^k$, and $f(\mathbf{y}) \in \mathbb{R}$ are
 differentiable\footnote{
@@ -497,7 +512,7 @@ while the numbers $z_j^{(l)}$ have been defined as
 $\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-1)}(\mathbf{x})\right) + b_j^{(l)}$.
 \\[0.2cm]
 Since the quadratic error cost function $C_{\mathbf{x}, \mathbf{y}}$ for the training example $\pair(\mathbf{x}, \mathbf{y})$ has been defined 
-in terms of the activation $\mathbf{a}^{(L)}$ as 
+in terms of the activation $\mathbf{a}^{(L)}(\mathbf{x})$ as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds C_{\mathbf{x}, \mathbf{y}} = \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2$
@@ -609,7 +624,7 @@ In order to proceed, we need to evaluate the partial derivative
 $\ds\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_i^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr)\right) + b_i^{(l)}$.
+$\ds z_j^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{j,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr)\right) + b_j^{(l)}$.
 \\[0.2cm]
 Hence we have
 \\[0.2cm]
@@ -651,8 +666,8 @@ $.
 In practical applications of neural networks, the number of training examples is usually big.  For example, 
 when we later develop a neural network to classify handwritten digits, we will have $60,000$ training examples.  More
 ambitious projects that use neural networks to classify objects in images use millions of training examples.
-When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a bias $b^{(l)}$ we
-have to compute the sums 
+When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a
+bias vector $b^{(l)}$ we have to compute the sums 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial w_{j,k}^{(l)}}$
@@ -743,7 +758,7 @@ code that is used to read these files.
 \label{fig:nn-loader.stlx}
 \end{figure}
 
-The function called from outside of this file is the function \texttt{load\_data}.
+The function that is called to load both the training data and the test data is the function \texttt{load\_data}.
 \begin{enumerate}
 \item The function \texttt{load\_data} receives two parameters.
       \begin{enumerate}[(a)]
