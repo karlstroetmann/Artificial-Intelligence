@@ -701,7 +701,28 @@ gradient descent, then the approximations given above can speed up the learning 
 \section{Implementation}
 Next, we will take a look at a neural network that is able to recognize handwritten digits.  The
 \href{http://yann.lecun.com/exdb/mnist/}{\textsc{Mnist} database of handwritten digits}
-contains $70\,000$ images of handwritten digits.  These images have a size of $28 \times 28$ pixels.
+contains $70\,000$ images of handwritten digits. These images have a size of $28 \times 28$ pixels.
+Figure \ref{fig:mnist_imgs} shows the first 10 images visualized. The digits above the squares are
+only added as visual aid, they are not part of the data.\\
+\begin{figure}[h]
+  \begin{center}
+    \begin{tabular}{c c c c c}
+      \includegraphics[width=2cm]{figures/mnist/0} &
+      \includegraphics[width=2cm]{figures/mnist/1} &
+      \includegraphics[width=2cm]{figures/mnist/2} &
+      \includegraphics[width=2cm]{figures/mnist/3} &
+      \includegraphics[width=2cm]{figures/mnist/4} \\
+      \includegraphics[width=2cm]{figures/mnist/5} &
+      \includegraphics[width=2cm]{figures/mnist/6} &
+      \includegraphics[width=2cm]{figures/mnist/7} &
+      \includegraphics[width=2cm]{figures/mnist/8} &
+      \includegraphics[width=2cm]{figures/mnist/9}
+    \end{tabular}
+  \end{center}
+  \caption{The first 10 images of the MNIST Dataset visualized}
+  \label{fig:mnist_imgs}
+\end{figure}
+
 We will use the first $60\,000$ of these images to train a neural network, while the remaining $10\,000$ images
 will be used to check the accuracy of the trained network.  Since \textsc{SetlX} lacks the ability to read
 image files, the images have been converted into two large \texttt{.csv} files.  You can download the $10\,000$
