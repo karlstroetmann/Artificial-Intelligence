@@ -50,7 +50,7 @@ where the components are interpreted as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{TerminalStates} := \{ s \in \texttt{States} \mid \texttt{finished}(s) \}$.
-\item $\texttt{utility}$ is a function that takes a state $s \in \texttt{TerminalStates}$ and a player $p \in \texttt{Players}$.  If returns
+\item $\texttt{utility}$ is a function that takes a state $s \in \texttt{TerminalStates}$ and a player $p \in \texttt{Players}$.  It returns
       the \blue{value} that the game has for player $p$.  In all of our examples, this value will be an element
       from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that player $p$ has lost the game,
       if the value is $+1$ the player $p$ has won the game and if this value is $0$, then the game is drawn.
