@@ -475,7 +475,7 @@ specification given above can be shown by computational induction.
         }
         val := alpha;
         for (ns in nextStates(State, player)) {
-            val := max({ val, -value(ns, other(player), -beta, -alpha) });
+            val := max({ val, -alphaBeta(ns, other(player), -beta, -alpha) });
             if (val >= beta) {
                 return val;
             }
