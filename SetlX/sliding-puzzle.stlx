@@ -188,4 +188,4 @@ main := procedure(params) {
     }
     print("Time used: $stopTime - startTime$ milliseconds.");
 };
-main(params);
+main([]);
