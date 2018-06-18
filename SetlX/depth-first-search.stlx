@@ -12,7 +12,7 @@ search := procedure(start, goal, nextStates) {
         newStates := nextStates(state);
         for (ns in newStates | ns != start && Parent[ns] == om) { 
             Parent[ns] := state;
-            Stack      := [ns] + Stack;
+            Stack      += [ns];
             if (#Parent % 10000 == 0) {
                 print("$#Parent$ nodes reached");
             }
