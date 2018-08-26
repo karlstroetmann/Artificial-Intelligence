@@ -36,7 +36,8 @@ different answers and discuss them.
       However, with respect to the kind of Artificial Intelligence that is needed in industry, this
       approach isn't very useful.  To illustrate the point, consider an analogy with aerodynamics:
       In aerodynamics we try to build planes that fly fast and efficiently, not planes that flap
-      their wings like birds do, as the later approach has failed historically, e.g. 
+      their wings like birds do, as the later approach has failed historically, 
+      e.g.~remember what happened to 
       \href{https://en.wikipedia.org/wiki/Daedalus#Daedalus_and_Icarus}{Daedalus and Icarus}.
 \item \blue{Artificial Intelligence} is the science of creating machines that \red{\underline{think lo}g\underline{icall}y}.
 
@@ -67,11 +68,11 @@ different answers and discuss them.
                   However, if we put a penguin into a plane, it turns out the penguin will fly.
             \item Birds that have just hatched do not fly.
             \item Birds with clipped wings do not fly.
-            \item $\cdots$
             \end{enumerate}
-            Trying to model all eventualities with logic has turned out to be too unwieldy to be practical.
+            It is easy to extend this list with ever more contrived examples and counter examples.
+            This shows that trying to model all eventualities with logic is just too unwieldy to be practical.
       \item In real life situations we often deal with \blue{uncertainty}.  Classical logic does not
-            perform well when it has to deal with  uncertainties.
+            perform well when it has to deal with  uncertainties.  Instead, we need statistics.
       \end{enumerate}
 \item \blue{Artificial Intelligence} is the science of creating machines that \red{\underline{act rationall}y}.
 
@@ -87,8 +88,8 @@ different answers and discuss them.
       It has turned out that the main tool needed for this approach is not mathematical logic but
       rather \href{https://en.wikipedia.org/wiki/Numerical_analysis}{numerical analysis} and
       \href{https://en.wikipedia.org/wiki/Mathematical_statistics}{mathematical statistics}.  The shift 
-      from logic to numerical analysis and statistics has been the most important reason for the success of
-      Artificial Intelligence in the recent years.  Another important factor is the 
+      from logic to numerical analysis and statistics has been the most important reason for the spectacular
+      success of Artificial Intelligence in the recent years.  Another important factor is the 
       \blue{enhanced performance of modern hardware}. 
 \end{enumerate}
 Now that we have clarified the notion of artificial intelligence, we should set its goals.  As we
@@ -110,8 +111,65 @@ Siri gets back with a soothing announcement: \\
                                      & He is dead now.  
 \end{tabular}
 \\[0.2cm]
-May \href{https://en.wikipedia.org/wiki/The_Force_(Star_Wars)}{The Force} be with us on achieving our goals!
+My apologies to all those infidels that do not get the point.
 \pagebreak
+
+\section{Overview}
+This lecture consists of two parts.
+\begin{enumerate}
+\item The common theme of the first part is \blue{declarative programming}.  The main idea of declarative
+      programming is that we start with a \blue{problem specification}.  This is usually a short description of
+      the problem that is to be solved.  This description is then fed into an \blue{automatic problem solver}
+      that returns a solution of the problem.  Originally, 
+      \href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming} was a very general
+      approach to problem solving.  The idea was that in order to solve a problem, the problem would first be
+      formulated as a logic formula and an
+      \href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem prover} would then be
+      able to solve the problem.  Unfortunately, in this generality the idea of declarative programming has
+      turned out to be unsuitable for real world problems for two reasons:
+      \begin{enumerate}
+      \item First, it is very difficult to specify practical problems completely in a logical framework.
+      \item Second, even in those cases where a complete logic based specification of a problem is feasible,
+            automatic theorem proving is generally not powerful enough to find a solution automatically. 
+      \end{enumerate}
+      However, there are a number of domains where the approach of declarative programming has turned out to be
+      useful.  In particular, we show how declarative programming can be used to solve problems in the
+      following domains.
+      \begin{enumerate}
+      \item \blue{Search problems} are problems where the task is to find a path in a graph.  A typical example of a
+            search problem is the \href{https://en.wikipedia.org/wiki/15_puzzle}{fifteen puzzle}.
+            We discuss various state-of-the-art algorithms that can solve search problems.
+      \item \blue{Games} like \href{https://en.wikipedia.org/wiki/Chess}{chess} or
+            \href{https://en.wikipedia.org/wiki/Poker}{poker} can be specified quite easily and there are
+            various techniques for computers to find optimal strategies for playing adversarial games.
+      \item \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{Constraint satisfaction problems} 
+            have great practical importance.  Today, very efficient constraint solvers have been developed to
+            solve various constraint satisfaction problems that often occur in practice.
+      \end{enumerate}
+\item In the second part of this lecture we discuss \blue{machine learning}.  In the last ten years, a number of
+      advances in machine learning have made it into the headlines of the news.  It is fair to say that
+      currently machine learning is the hottest topic in computer science.  Among others, we discuss the following
+      algorithms:
+      \begin{enumerate}
+      \item \blue{Linear regression} is one of the most fundamental machine learning algorithms.
+            In machine learning, we are given a number of data pairs of the form  $\langle \mathbf{x}_i, y_i \rangle$ 
+            where $i \in \{1,\cdots,N\}$ and for all $i \in \{1,\cdots,N\}$ we have $\mathbf{x}_i \in \mathbb{R}^m$
+            and $y_i \in \mathbb{R}$.  We assume that there is an unknown function $f:\mathbb{R}^m \rightarrow \mathbb{R}$
+            such that $y_i \approx f(\mathbf{x}_i)$.  Our task is to find an approximation for the function
+            $f$.  When using linear regression, we assume that the function $f$ is linear in its arguments.
+            Although this sounds like a strong assumption, we will see that linear regression is surprisingly
+            powerful in practice.
+      \item In a \blue{classification problem} we again have $N$ pairs of the form $\langle \mathbf{x}_i, y_i
+        \rangle$.
+            As before,  we have $\mathbf{x}_i \in \mathbb{R}^m$, but now $y_i \in \mathbb{B}$.
+            The task is then to find a function $f:\mathbb{R}^m \rightarrow \mathbb{B}$     
+            such that $y_i \approx f(\mathbf{x}_i)$.  A typical classification problem is spam detection.  The first algorithm we introduce to
+            solve classification problems is \blue{logistic regression}.
+      \item Finally, we discuss neural networks.  We will build a neural network that is able to recognize characters.
+      \end{enumerate}
+\end{enumerate}
+\pagebreak
+
 
 \section{Literature}
 The main sources of these lecture notes are the following:
@@ -124,9 +182,9 @@ The main sources of these lecture notes are the following:
 \item The book
       \\[0.2cm]
       \hspace*{1.3cm}
-      \blue{Introduction to Artificial Intelligence}
+      \href{http://www.google.com/search?q=introduction+to+Artificial+Intelligence+RusseLl+Norvig+pdf}{Introduction to Artificial Intelligence}
       \\[0.2cm]
-      written by Stuart Russel and Peter Norvig \cite{russell:2009}.
+      written by Stuart Russell and Peter Norvig \cite{russell:2009}.
 \item A course on artificial intelligence that is offered on \href{https://www.udacity.com}{Udacity}.  The title of the
       course is
       \\[0.2cm]

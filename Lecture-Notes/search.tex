@@ -1,7 +1,7 @@
 \chapter{Search}
 In this chapter we discuss various \blue{search algorithms}.  First, we define
-the notion of a \blue{search problem}.  As one of the examples, we will discuss the
-\href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}.  Then we
+the notion of a \blue{search problem}.  We will discuss the
+\href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle} as our running example.  Then we
 introduce various algorithms for solving search problems.  In particular, we present
 \begin{enumerate}
 \item \blue{breadth first search},
@@ -22,7 +22,7 @@ introduce various algorithms for solving search problems.  In particular, we pre
   \\[0.2cm]
   where
   \begin{enumerate}
-  \item $Q$ is the set of states, also known as the \blue{state space}.
+  \item $Q$ is the set of \blue{states}, also known as the \blue{state space}.
   \item $\texttt{nextStates}$ is a function taking a state as input and returning the set of those
         states that can be reached from the given state in one step,
         i.e.~we have
@@ -41,9 +41,9 @@ introduce various algorithms for solving search problems.  In particular, we pre
   \item $\mathtt{start}$ is the \blue{start state}, hence $\mathtt{start} \in Q$.
   \item $\mathtt{goal}$ is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
 
-        Sometimes, instead of a single $\mathtt{goal}$ there is a set of goal states $G$.
+        Sometimes, instead of a single $\mathtt{goal}$ there is a set of goal states $\mathtt{Goals}$.
   \end{enumerate}
-  A \blue{path} is a list $[s_1, \cdots, s_n]$ such that $\pair(s_i, s_{i+1}) \in R$ for all $i \in
+  A \blue{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{nextStates}(s_i)$ for all $i \in
   \{1,\cdots,n-1\}$.
   The \blue{length} of this path is defined as the length of the list.
   A path $[s_1, \cdots, s_n]$ is a \blue{solution} to the search problem $P$ iff the following
@@ -51,6 +51,12 @@ introduce various algorithms for solving search problems.  In particular, we pre
   \begin{enumerate}
   \item $s_1 = \mathtt{start}$, i.e.~the first element of the path is the start state.
   \item $s_n = \mathtt{goal}$, i.e.~the last element of the path is the goal state.
+
+        If instead of a single $\mathtt{goal}$ we have a set of $\mathtt{Goals}$, then the last condition
+        is changed into
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $s_n \in \mathtt{Goals}$.
   \end{enumerate}
   A path $p = [s_1, \cdots, s_n]$ is a \blue{minimal solution} to the search problem $\mathcal{P}$
   iff it is a solution and, furthermore, the length of $p$ is minimal among all other solutions. \eoxs
@@ -63,10 +69,10 @@ notes, I will also refer to states as nodes.  \eoxs
 \example
 We illustrate the notion of a search problem with the following example, which is also known as the
 \href{https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem}{missionaries and cannibals problem}:
-Three missionaries and three infidels have to cross a river that runs from the west to the east.
-Initially, they are on the northern shore.  There is just one small boat and that boat has only room
-for at most two passengers.  Both the missionaries and the infidels can steer the boat.  However, if
-at any time the missionaries are confronted with a majority of infidels on either shore of the
+Three missionaries and three infidels have to cross a river that runs from the north to the south.
+Initially, both the missionaries and the infidels are on the western shore.  There is just one small boat and
+that boat has only room for at most two passengers.  Both the missionaries and the infidels can steer the boat.
+However, if at any time the missionaries are confronted with a majority of infidels on either shore of the
 river, then the missionaries have a problem.
 
 \begin{figure}[!ht]
@@ -86,7 +92,7 @@ river, then the missionaries have a problem.
 
     nextStates := procedure(s) {
         [m, i, b] := s;
-        if (b == 1) {  // The boat is on the northern shore.
+        if (b == 1) {  // The boat is on the western shore.
             return { [m - mb, i - ib, 0]
                    : mb in {0 .. m}, ib in {0 .. i}
                    | mb + ib in {1, 2} && noProblemAtAll(m - mb, i - ib)
@@ -102,7 +108,7 @@ river, then the missionaries have a problem.
     goal  := [0, 0, 0];
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{The missionary and cannibals problem codes as a search problem.}
+\caption{The missionary and cannibals problem coded as a search problem.}
 \label{fig:missionaries.stlx}
 \end{figure}
 \noindent
@@ -116,38 +122,38 @@ as a search problem.  We discuss this formalization line by line.
       shore.
 \item Line 3 defines the auxiliary function \texttt{noProblemAtAll}.
 
-      If $m$ is the number of missionaries on the northern shore and $i$ is the number of infidels on
+      If $m$ is the number of missionaries on the western shore and $i$ is the number of infidels on
       that shore, then the expression $\texttt{noProblemAtAll}(m, i)$ is true, if there is no problem
       for the missionaries on either shore.
 
       The implementation of this function uses the fact that if $m$ is the number of missionaries on
-      the northern shore, then $3-m$ is the number of missionaries on the southern shore.  Similarly,
-      if $i$ is the number of infidels on the northern shore, then the number of infidels on the
-      southern shore is $3 - i$.
+      the western shore, then $3-m$ is the number of missionaries on the eastern shore.  Similarly,
+      if $i$ is the number of infidels on the western shore, then the number of infidels on the
+      eastern shore is $3 - i$.
 \item Lines 5 to 18 define the function \texttt{nextStates}.  A state $s$ is represented as a triple of
       the form
       \\[0.2cm]
       \hspace*{1.3cm}
       $s = [m, i, b]$ \quad where $m \in \{0,1,2,3\}$, $i \in \{0,1,2,3\}$, $b \in\{0,1\}$.
       \\[0.2cm]
-      Here $m$ is the number of missionaries on the northern shore, $i$ is the number of infidels on
-      the northern shore, and $b$ is the number of boats on the northern shore.
+      Here $m$ is the number of missionaries on the western shore, $i$ is the number of infidels on
+      the western shore, and $b$ is the number of boats on the western shore.
       \begin{enumerate}[(a)]
       \item Line 6 extracts the components $m$, $i$, and $b$ from the state $s$.
-      \item Line 7 checks whether the boat is on the northern shore.
+      \item Line 7 checks whether the boat is on the western shore.
       \item If this is the case,  then the states reachable from the given state $s$ are those
             states where $\mathtt{mb}$ missionaries and $\mathtt{ib}$ infidels cross the river.
             After $\mathtt{mb}$ missionaries and $\mathtt{ib}$ infidels have crossed the river and
-            reached the southern shore, $\mathtt{m} - \mathtt{mb}$ missionaries and $\mathtt{i} - \mathtt{ib}$ infidels
-            remain on the northern shore.  Of course, after the crossing the boat is no longer on the
-            northern shore.  Therefore, the new state has the form
+            reached the eastern shore, $\mathtt{m} - \mathtt{mb}$ missionaries and $\mathtt{i} - \mathtt{ib}$ infidels
+            remain on the western shore.  Of course, after the crossing the boat is no longer on the
+            western shore.  Therefore, the new state has the form
             \\[0.2cm]
             \hspace*{1.3cm}
             \texttt{[m - mb, i - ib, 0]}.
             \\[0.2cm]
             This explains line 8.
-      \item Since the number $\mathtt{mb}$ of missionaries leaving the northern shore can not be greater
-            than the number $m$ of all missionaries on the northern shore, we have the condition
+      \item Since the number $\mathtt{mb}$ of missionaries leaving the western shore can not be greater
+            than the number $m$ of all missionaries on the western shore, we have the condition
             \\[0.2cm]
             \hspace*{1.3cm}
             $\mathtt{mb} \in \{0,\cdots,\mathrm{m}\}$.
@@ -172,15 +178,15 @@ as a search problem.  We discuss this formalization line by line.
             \\[0.2cm]
             These two checks are performed in line 10.
       \end{enumerate}
-\item If the boat is on the southern shore instead, then the missionaries and the infidels will be crossing
-      the river from the southern shore to the northern shore.  Therefore, the number of missionaries and
-      infidels on the northern shore is now increased.  Hence, in this case the new state has the form
+\item If the boat is on the eastern shore instead, then the missionaries and the infidels will be crossing
+      the river from the eastern shore to the western shore.  Therefore, the number of missionaries and
+      infidels on the western shore is now increased.  Hence, in this case the new state has the form
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{[m + mb, i + ib, 1]}.
       \\[0.2cm]
-      As the number of missionaries on the southern shore is $3 - \mathrm{m}$ and the number of infidels on the
-      southern shore is $3 - \mathrm{i}$, $\mathtt{mb}$ is now a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while
+      As the number of missionaries on the eastern shore is $3 - \mathrm{m}$ and the number of infidels on the
+      eastern shore is $3 - \mathrm{i}$, $\mathtt{mb}$ is now a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while
       $\mathtt{ib}$ is a member of the set $\{0,\cdots,3 - \mathtt{i}\}$.
 \item Finally the start state and the goal state are defined in line 19 and line 20.
 \end{enumerate}
@@ -191,8 +197,8 @@ define the set of states as follows:
 States := { [m,i,b] : m in {0..3}, i in {0..3}, b in {0,1} | noProblemAtAll(m, i) };
 \end{verbatim}
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
-missionaries and cannibals puzzle.  In that figure, for every state both the northern and the
-southern shore are shown.  The start state is covered with a blue ellipse, while the goal state is
+missionaries and cannibals puzzle.  In that figure, for every state both the western and the
+eastern shore are shown.  The start state is covered with a blue ellipse, while the goal state is
 covered with a green ellipse.  The figure clearly shows that the problem is solvable and that there
 is a solution involving just 11 crossings of the river.
 \eox
@@ -207,7 +213,7 @@ is a solution involving just 11 crossings of the river.
 
 \section{The Sliding Puzzle}
 The $3 \times 3$ sliding puzzle uses a
-square board of length 3.  This board is subdivided into $3 \times 3 = 9$ squares of length 1.  Of
+square board, where each side has a length of 3.  This board is subdivided into $3 \times 3 = 9$ squares of length 1.  Of
 these 9 squares, 8 are occupied with square tiles that are numbered from 1 to 8.  One square remains
 empty. Figure \ref{fig:8-puzzle.pdf} on page \pageref{fig:8-puzzle.pdf} shows two possible states of this
 sliding puzzle.  The $4 \times 4$ \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}
@@ -222,7 +228,7 @@ called the \blue{8 puzzle}.
 \label{fig:8-puzzle.pdf}
 \end{figure}
 
-In order to solve the $3 \times 3$ sliding puzzle shown in Figure \ref{fig:8-puzzle.pdf} we have to
+In order to \href{http://www.artbylogic.com/puzzles/numSlider/numberShuffle.htm?rows=3&cols=3&sqr=1}{solve} the $3 \times 3$ sliding puzzle shown in Figure \ref{fig:8-puzzle.pdf} we have to
 transform the state shown on the left of Figure \ref{fig:8-puzzle.pdf} into the state shown on the
 right of this figure.  The following operations are permitted when transforming a state of the
 sliding puzzle:
@@ -246,7 +252,7 @@ sliding puzzle is
 \hspace*{1.3cm}
 $9! / 2 = 181,440$.
 \\[0.2cm]
-This is already a big number, but $181,440$ states can still be stored in a modern computer.  However, the
+This is already a big number, but $181,440$ states can still be stored on a modern computer.  However, the
 $4 \times 4$ sliding puzzle has
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -274,27 +280,27 @@ entire state space in memory.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    findTile := procedure(number, state) {
-        n := #state;
+    findTile := procedure(number, State) {
+        n := #State;
         L := [1 .. n];
-        for (row in L, col in L | state[row][col] == number) {
+        for (row in L, col in L | State[row][col] == number) {
             return [row, col];
         }
     };
-    moveDir := procedure(state, row, col, dx, dy) {
-        state[row     ][col     ] := state[row + dx][col + dy];
-        state[row + dx][col + dy] := 0;
-        return state;
+    moveDir := procedure(State, row, col, dx, dy) {
+        State[row     ][col     ] := State[row + dx][col + dy];
+        State[row + dx][col + dy] := 0;
+        return State;
     };
-    nextStates := procedure(state) {
-        n          := #state;
-        [row, col] := findTile(0, state);
+    nextStates := procedure(State) {
+        n          := #State;
+        [row, col] := findTile(0, State);
         newStates  := [];
         directions := [ [1, 0], [-1, 0], [0, 1], [0, -1] ];
         L          := [1 .. n];
         for ([dx, dy] in directions) {
             if (row + dx in L && col + dy in L) {
-                newStates += [ moveDir(state, row, col, dx, dy) ];
+                newStates += [ moveDir(State, row, col, dx, dy) ];
             }
         }
         return newStates;
@@ -315,20 +321,20 @@ entire state space in memory.
 Figure \ref{fig:sliding-puzzle.stlx} shows how the $3 \times 3$ sliding puzzle can be formulated as
 a search problem.  We discuss this program line by line.
 \begin{enumerate}
-\item $\mathtt{findTile}$ is an auxiliary procedure that takes a $\mathtt{number}$ and a $\mathtt{state}$ and
+\item $\mathtt{findTile}$ is an auxiliary procedure that takes a $\mathtt{number}$ and a $\mathtt{State}$ and
       returns the row and column where the tile labelled with $\mathtt{number}$ can be found.
 
       Here, a state is represented as a list of lists.  For example, the states shown in Figure
       \ref{fig:8-puzzle.pdf} are represented as shown in line 26 and line 30.  The empty tile is
       coded as $0$.
-\item $\mathtt{moveDir}$ takes a $\mathtt{state}$, the $\mathtt{row}$ and the $\mathtt{col}$umn
+\item $\mathtt{moveDir}$ takes a $\mathtt{State}$, the $\mathtt{row}$ and the $\mathtt{col}$umn
       where to find the empty square and a direction in which the empty square should be moved.
       This direction is specified via the two variables $\mathtt{dx}$ and $\mathtt{dy}$.  The tile
       at the position $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ is
       moved into the position $\langle\mathtt{row}, \mathtt{col}\rangle$, while the tile at position
       $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ becomes empty.
-\item Given a $\mathtt{state}$, the procedure $\mathtt{nextStates}$ computes the set of all states
-      that can be reached in one step from $\mathtt{state}$.  The basic idea is to find the position of the
+\item Given a $\mathtt{State}$, the procedure $\mathtt{nextStates}$ computes the set of all states
+      that can be reached in one step from $\mathtt{State}$.  The basic idea is to find the position of the
       empty tile and then try to move the empty tile in all possible directions.  If the empty tile is found at
       position $[\mathtt{row}, \mathtt{col}]$ and the direction of the movement is given as $[\mathtt{dx}, \mathtt{dy}]$, then
       in order to ensure that the empty tile can be moved to the position $[\mathtt{row}+\mathtt{dx}, \mathtt{col}+\mathtt{dy}]$,
@@ -361,9 +367,10 @@ Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows:
 In order to avoid loops, an implementation of breadth first search keeps track of those states that have
 been visited.  These states are collected in a set $\mathtt{Visited}$.  Once a state has been added to
 the set $\mathtt{Visited}$,  it will never be revisited again.
-Furthermore, in order to keep track of the path leading to the goal, we have a dictionary
+Furthermore, in order to keep track of the path leading to the goal, we utilize a dictionary called
 $\mathtt{Parent}$.  For every state $s$ that is in $\mathtt{Frontier}$, $\mathtt{Parent}[s]$ is the state that
-caused $s$ to be added to the set $\mathtt{Frontier}$, i.e.~we have
+caused $s$ to be added to the set $\mathtt{Frontier}$, i.e.~for all states $s\in\mathtt{Visited}\cup\mathtt{Frontier}$ 
+we have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $s \in \mathtt{nextStates}(\mathtt{Parent}[s])$.
@@ -672,7 +679,7 @@ provided there is no shorter path to these states.  There is a shorter path to t
 states are already a member of the set $\mathtt{Visited}$.  Hence, the claim is true after $n+1$
 iterations also.
 
-Now, if there is a path form $\mathtt{start}$ to $\mathtt{goal}$, there must also be a shortest
+Now, if there is a path from $\mathtt{start}$ to $\mathtt{goal}$, there must also be a shortest
 path.  Assume this path has a length of $k$.  Then, $\mathtt{goal}$ is reached in the iteration
 number $k$ and the shortest path is returned.
 \qed
@@ -682,8 +689,7 @@ satisfying.  However, breadth first search still has a big downside that makes i
 many problems:  If the \texttt{goal} is far from the $\mathtt{start}$, breadth first search will use
 a lot of memory because it will store a large part of the state space in the set
 $\mathtt{Visited}$.  In many cases, the state space is so big that this is not possible.  For example, it is
-impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzle.
-\pagebreak
+impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzle using breadth first search.
 
 
 \section{Depth First Search}
@@ -1036,7 +1042,6 @@ $\mathcal{P} := \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \r
 Given a natural number $n$, compute the number of different solutions of this search problem and prove
 your claim.
 \eoxs
-\pagebreak
 
 \exercise
 If there is no solution, the implementation of iterative deepening that is shown in Figure
@@ -1237,7 +1242,6 @@ since the portion of the search space that needs to be computed is just too big 
 \caption{Combining two paths.}
 \label{fig:combine-paths.stlx}
 \end{figure}
-\pagebreak
 
 \section{Best First Search}
 Up to now, all the search algorithms we have discussed were essentially blind.  Given a state $s$ and
@@ -1246,7 +1250,7 @@ which of these neighbours might be more promising than the other neighbours.  If
 problem, she usually will develop a feeling that certain states are more favourable than other states because
 they seem to be closer to the solution.  In order to formalise this procedure, we next define the notion of a
 \blue{heuristic}.
-\pagebreak
+
 
 \begin{Definition}[Heuristic]
 Given a search problem
@@ -2466,7 +2470,6 @@ while the last bucket can hold 3 litres.  There are three types of action:
 \end{enumerate}
 Your goal is to measure out exactly one litre.  Write a program that computes a plan to achieve this goal.
 \eox
-\pagebreak
 
 \exercise
 The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher

@@ -25,49 +25,49 @@ stateToString := procedure(state) {
     return result;
 };
 // Find the coordinates of the given tile in state.
-findTile := procedure(tile, state) {
-    n := #state;
+findTile := procedure(tile, State) {
+    n := #State;
     L := [1 .. n]; 
-    for (row in L, col in L | state[row][col] == tile) {
+    for (row in L, col in L | State[row][col] == tile) {
         return [row, col];
     }
 };
-moveDir := procedure(state, row, col, dx, dy) {
-    state[row     ][col     ] := state[row + dx][col + dy];
-    state[row + dx][col + dy] := 0;
-    return state;
+moveDir := procedure(State, row, col, dx, dy) {
+    State[row     ][col     ] := State[row + dx][col + dy];
+    State[row + dx][col + dy] := 0;
+    return State;
 };
-nextStates := procedure(state) {
-    n          := #state;
-    [row, col] := findTile(0, state);
+nextStates := procedure(State) {
+    n          := #State;
+    [row, col] := findTile(0, State);
     newStates  := {};
     directions := [ [1, 0], [-1, 0], [0, 1], [0, -1] ];
     L          := [1 .. n];
     for ([dx, dy] in directions) {
         if (row + dx in L && col + dy in L) {
-            newStates += { moveDir(state, row, col, dx, dy) };
+            newStates += { moveDir(State, row, col, dx, dy) };
         }
     }
     return newStates;
 };
 // Compute the manhattan distance between two states of the sliding puzzle.
-manhattan := procedure(stateA, stateB) {
-    n := #stateA;
+manhattan := procedure(StateA, StateB) {
+    n := #StateA;
     L := [1 .. n];
     result := 0;
-    for (rowA in L, colA in L | stateA[rowA][colA] != 0) {
-        [rowB, colB] := findTile(stateA[rowA][colA], stateB);
+    for (rowA in L, colA in L | StateA[rowA][colA] != 0) {
+        [rowB, colB] := findTile(StateA[rowA][colA], StateB);
         result += abs(rowA - rowB) + abs(colA - colB);
     }
     return result;
 };
 // Compute the number of misplaced tiles.
-numberMisplaced := procedure(stateA, stateB) {
-    n := #stateA;
+numberMisplaced := procedure(StateA, StateB) {
+    n := #StateA;
     L := [1 .. n];
     result := 0;
-    for (row in L, col in L | stateA[row][col] != 0) {
-        if (stateA[row][col] != stateB[row][col]) {
+    for (row in L, col in L | StateA[row][col] != 0) {
+        if (StateA[row][col] != StateB[row][col]) {
             result += 1;
         }
     }
@@ -75,11 +75,11 @@ numberMisplaced := procedure(stateA, stateB) {
 };
 // Given a state and a dictionary Parent that contains the predecessor of
 // each state, this function computes the path leading to the given state.
-pathTo := procedure(state, Parent) {
+pathTo := procedure(State, Parent) {
     Path := [];
-    while (state != om) {
-        Path  += [state];
-        state := Parent[state];
+    while (State != om) {
+        Path  += [State];
+        State := Parent[State];
     }
     return reverse(Path);
 };
@@ -177,8 +177,8 @@ main := procedure(params) {
         print("number of steps to solve the puzzle: $#Path-1$");
         if (#Path < 1000) {
             print("The solution is:\n");
-            for (state in Path) {
-                print(stateToString(state));
+            for (State in Path) {
+                print(stateToString(State));
             }
         } else {
             print("In order to save some virtual trees, the solution is not printed.");
