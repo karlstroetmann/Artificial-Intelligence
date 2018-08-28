@@ -1996,11 +1996,11 @@ $[e, \mathtt{state}]$,
 then the pairs that are added to \texttt{Frontier} in this iteration either have the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$[e, \mathtt{ns}]$ \quad or \quad $[e+1, \mathtt{ns}]$,
+$[e, \mathtt{ns}]$ \quad,  $[e+1, \mathtt{ns}]$, \quad or \quad $[e+2, \mathtt{ns}]$,
 \quad where $\mathtt{ns} \in \texttt{neighbour}(\mathtt{state})$.
 \\[0.2cm]
-Hence, all the pairs on the priority queue \texttt{Frontier} either have the priority $e$ or the priority
-$e+1$.  There can be only finitely many states with priority $e$.  Once these will have been removed, the
+Hence, all the pairs on the priority queue \texttt{Frontier} either have the priority $e$, $e+1$, or $e+2$.
+There can be only finitely many states with priority $e$.  Once these have been removed, the
 search will carry on to inspect those states with priority $e+1$, then those with priority $e+2$ and so on.
 Therefore, eventually all states with a priority less than the priority of the state \texttt{goal} will be
 visited.  After that, eventually the \texttt{goal} is reached.
