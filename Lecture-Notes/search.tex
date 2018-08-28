@@ -1978,46 +1978,33 @@ $s$ that have been explored.   Hence the validity of Claim Two has been establis
 Claim Two implies that if the $\textrm{A}^*$ algorithm finds a path from $\texttt{start}$ to $\texttt{goal}$, then this
 path must be optimal.  This follows from the fact that before we check whether the search has reached the
 $\texttt{goal}$, the $\texttt{state}$ that is compared to $\texttt{goal}$ has been explored and, according to
-Claim Two, must therefore be optimal.  
+Claim Two, must therefore have $\mathtt{Distance}[\mathtt{goal}] = g(\mathtt{goal})$.  As $g(\mathtt{goal})$ is
+the true distance of the state $\texttt{goal}$ form the state $\texttt{start}$, this implies that the path that
+has been found is optimal.  
 
-In order to finish the proof we still need to show that we will find a path provided a path exists.  Let us
-therefore assume that there is a path $P$ from $\texttt{start}$ to $\texttt{goal}$.  Let us assume that this path has the form 
+The reason that we will always find a path to the goal, provided such a path exists is the following:
+Initially, the priority queue \texttt{Frontier} will just contain the pair $[d, \mathtt{start}]$ where 
 \\[0.2cm]
 \hspace*{1.3cm}
-$P = [s_0, s_1, \cdots, s_{n-1}, s_n]$ \quad where $s_0 = \texttt{start}$ and $s_n = \texttt{goal}$.
+$d := \mathtt{heuristic}(\mathtt{start}, \mathtt{goal})$.
 \\[0.2cm]
-The proof proceeds by contradiction.  We assume that the search never discovers the state \texttt{goal}.
-Let $k$ be the smallest index such that the state $s_k$ is explored but the state $s_{k+1}$ is not
-explored.  Since we have
-\begin{enumerate}[(a)]
-\item $s_0 = \texttt{start}$,
-\item the state \texttt{start} is explored at the beginning of the search,
-\item $s_n = \texttt{goal}$,
-\item the state \texttt{goal} is never explored by our assumption,
-\end{enumerate}
-an index $k$ such that  $s_k$ is explored but the state $s_{k+1}$ is never explored must exist.  Now
-when $s_k$ is explored, $s_{k+1}$ is a neighbour of $s_k$ and is put on the \texttt{Frontier}.
-Define $d$ to be the estimated total distance of $s_k$, i.e.~define
+Now if at any time the pair removed the priority queue \texttt{Frontier} has the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$d := g(s_k)$.
+$[e, \mathtt{state}]$,
 \\[0.2cm]
-Since \texttt{heuristic} is assumed to be consistent, the estimated total distance of $s_{k+1}$ is
-at most $d+2$ because
+then the pairs that are added to \texttt{Frontier} in this iteration either have the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{Distance}[s_{k+1}] = \texttt{Distance}[s_k] + 1$ \quad and \quad 
-$\texttt{heuristic}[s_{k+1}] \leq 1 + \texttt{heuristic}[s_k]$,
+$[e, \mathtt{ns}]$ \quad or \quad $[e+1, \mathtt{ns}]$,
+\quad where $\mathtt{ns} \in \texttt{neighbour}(\mathtt{state})$.
 \\[0.2cm]
-provided we assume that $s_{k+1} \in \texttt{neighbour}(s_k)$ also implies $s_{k} \in
-\texttt{neighbour}(s_{k+1})$.  
-
-There are only finite number of states that have an estimated total distance less or
-equal than $d+2$.  Only these states have a priority that is as least as high as the priority of
-$s_{k+1}$.   Once all these states have been explored and removed from the priority queue
-\texttt{Frontier}, $s_{k+1}$ will be explored contrary to our 
-assumption that it is never explored.  This contradiction proves that \texttt{goal} is eventually
-explored and therefore $\mathrm{A}^*$ search is complete.  \qed
+Hence, all the pairs on the priority queue \texttt{Frontier} either have the priority $e$ or the priority
+$e+1$.  There can be only finitely many states with priority $e$.  Once these will have been removed, the
+search will carry on to inspect those states with priority $e+1$, then those with priority $e+2$ and so on.
+Therefore, eventually all states with a priority less than the priority of the state \texttt{goal} will be
+visited.  After that, eventually the \texttt{goal} is reached.
+\qed
 
 
 
