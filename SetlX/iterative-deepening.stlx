@@ -21,8 +21,12 @@ depthLimitedSearch := procedure(start, goal, nextStates, limit) {
         if (#Path >= limit) {
             continue;
         }
-        for (ns in nextStates(state) | !(ns in Path)) {  
-            Stack += [ Path + [ns] ];
+        for (ns in nextStates(state) | !(ns in Path)) {
+            NewPath := Path + [ ns ];
+            if (#NewPath > limit) {
+                continue;
+            }
+            Stack += [ NewPath ];
         }
     }
 };

@@ -1012,9 +1012,9 @@ However, when we run this program to solve the $3 \times 3$ sliding puzzle, the 
 about 25 minutes.  There are two reasons for this:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
-      to 31.  Essentially, all the computations done with a limit less than $31$ are essentially wasted.
-\item Given a state $s$ that is reachable from the $\mathtt{start}$, there often is a huge number of
-      different paths that lead from start to $s$.  The version of iterative deepening presented in
+      to 31.  Essentially, all the computations done with a limit less than $31$ are wasted.
+\item Given a state $s$ that is reachable from the $\mathtt{start}$, there often are a huge number of
+      different paths that lead from $\texttt{start}$ to $s$.  The version of iterative deepening presented in
       this section tries all of these paths and hence needs a large amount of time.
 \end{enumerate}
 
@@ -1040,8 +1040,17 @@ Finally, the search problem $\mathcal{P}$ is defined as
 $\mathcal{P} := \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \rangle$.
 \\[0.2cm]
 Given a natural number $n$, compute the number of different solutions of this search problem and prove
-your claim.
-\eoxs
+your claim.  
+
+\hint
+The expression giving the number of different solutions contains factorials.  In order to get a better feeling
+for the asymptotic growth of this expression we can use 
+\href{https://en.wikipedia.org/wiki/Stirling%27s_approximation}{Stirling's approximation} of the factorial.
+Stirling's approximation of $n!$ is given as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds n! \sim \sqrt{2 \cdot \pi \cdot n\,} \cdot \Bigl(\frac{n}{e}\Bigr)^n$.
+\eox
 
 \exercise
 If there is no solution, the implementation of iterative deepening that is shown in Figure
@@ -1264,12 +1273,13 @@ a \blue{heuristic} is a function
 $h: Q \rightarrow \mathbb{R}$
 \\[0.2cm]
 that computes an approximation of the distance of a given state $s$ to the goal state $\mathtt{goal}$.
-The heuristic is \blue{admissible} if it always \underline{underestimates} the true distance, i.e.~if the function
+The heuristic is \blue{admissible} if it always \underline{\color{red}{underestimates}} the true distance,
+i.e.~if the function 
 \\[0.2cm]
 \hspace*{1.3cm}
 $d:Q \rightarrow \mathbb{R}$
 \\[0.2cm]
-computes the true distance of a state $s$ to the goal, then we must have
+computes the \blue{true distance} from a state $s$ to the goal, then we must have
 \\[0.2cm]
 \hspace*{1.3cm}
 $h(s) \leq d(s)$ \quad for all $s \in Q$.
@@ -1284,8 +1294,8 @@ $h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s
 \end{Definition}
 
 Let us explain the idea behind the notion of consistency.  First, if we are already at the goal, the heuristic
-should notice this and hence return $h(\mathtt{goal}) = 0$.  Secondly, assume we are at the state $s_1$ and $s_2$ is a
-neighbour of $s_1$, i.e.~we have that
+should notice this and therefore we need to have $h(\mathtt{goal}) = 0$.  Secondly, assume we are at the state
+$s_1$ and $s_2$ is a neighbour of $s_1$, i.e.~we have that
 \\[0.2cm]
 \hspace*{1.3cm}
 $s_2 \in \mathtt{nextStates}(s_1)$.
@@ -1293,14 +1303,14 @@ $s_2 \in \mathtt{nextStates}(s_1)$.
 Now if our heuristic $h$ assumes that the distance of $s_2$ from the $\mathtt{goal}$ is $h(s_2)$, then the distance of
 $s_1$ from the $\mathtt{goal}$ can be at most $1 + h(s_2)$ because starting from $s_1$ we can first go to $s_2$
 in one step and then from $s_2$ to $\mathtt{goal}$ in $h(s_2)$ steps for a total of $1 + h(s_2)$ steps.  Of
-course, it is possible that there exists a cheaper path from $s_1$ leading to the $\mathtt{goal}$ than the one
-that visits $s_2$ first.  Hence we have the inequality
+course, it is possible that there exists a shorter path from $s_1$ leading to the $\mathtt{goal}$ than the one
+that visits $s_2$ first.  Hence, we have the inequality
 \\[0.2cm]
 \hspace*{1.3cm}
 $h(s_1) \leq 1 + h(s_2)$.
 
 \begin{Theorem}
-  Every consistent heuristic is also admissible.
+  Every consistent heuristic is an admissible heuristic.
 \end{Theorem}
 
 \proof
@@ -1310,7 +1320,7 @@ path $p$ from $s$ to the $\mathtt{goal}$.  Assume this path has the form
 \hspace*{1.3cm}
 $p = [s_n, s_{n-1}, \cdots, s_1, s_0]$, \quad where $s_n = s$ and $s_0 = \mathtt{goal}$.
 \\[0.2cm]
-Then the length of $p$ is $n$ and we have to show that $h(s) \leq n$.  In order to prove this claim, we show
+Then the length of the path $p$ is $n$ and we have to show that $h(s) \leq n$.  In order to prove this claim, we show
 that we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1328,13 +1338,12 @@ This claim is shown by induction on $k$.
              \\[0.2cm]
              \hspace*{1.3cm}
              $
-             \begin{array}{lcll}
-               h(s_{k+1}) & \leq & 1 + h(s_k) & \mbox{because $s_k \in \mathtt{nextStates}(s_{k+1})$ and $h$ is consistent} \\[0.2cm]
-                         & \leq & 1 + k      & \mbox{because $h(s_k) \leq k$ by induction hypotheses}
+             \begin{array}[b]{lcll}
+               h(s_{k+1}) & \leq & 1 + h(s_k) & \mbox{because $s_k \in \mathtt{nextStates}(s_{k+1})$ and $h$ is consistent,} \\[0.2cm]
+                         & \leq & 1 + k      & \mbox{because $h(s_k) \leq k$ by induction hypotheses.} 
              \end{array}
-             $
-             \\[0.2cm]
-             This concludes the proof.  \qed
+             $ 
+             \qed
 \end{enumerate}
 
 It is natural to ask whether the last theorem can be reversed, i.e.~whether every admissible heuristic is also
@@ -1375,6 +1384,8 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       \hspace*{1.3cm}
       $d_1\bigl(\langle x_1, y_1\rangle, \langle x_2, y_2\rangle\bigr) := |x_1 - x_2| + |y_1 - y_2|$.
       \\[0.2cm]
+      The Manhattan distance is also called the \href{https://en.wikipedia.org/wiki/Taxicab_geometry}{$L_1$ norm}
+      of the difference vector $\langle x_2 - x_1, y_2 - y_1 \rangle$.
       If we associate \href{https://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Cartesian coordinates} with
       the tiles of the sliding puzzle such that the tile in the upper left corner has coordinates
       $\pair(1, 1)$ and the coordinates of the tile in the lower right corner is $\pair(3, 3)$, then
@@ -1382,7 +1393,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       the first position to the second position if we are allowed to move the tile horizontally
       or vertically regardless of the fact that the intermediate positions might be blocked by
       other tiles.  To compute the Manhattan heuristic for a state $s$ with respect to the
-      $\mathtt{goal}$, we first define the position $\mathtt{pos}(t, s)$ for all tiles
+      $\mathtt{goal}$, we first define the function $\mathtt{pos}(t, s)$ for all tiles
       $t \in \{1,\cdots, 8\}$ in a given state $s$ as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1391,7 +1402,8 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       $,
       \\[0.2cm]
       i.e.~given a state $s$, the expression $\mathtt{pos}(t, s)$ computes the Cartesian coordinates of
-      the tile $t$ with respect to $s$.  Then we can define the Manhattan heuristic $h$ for the $3 \times 3$ puzzle
+      the tile $t$ with respect to the state $s$.  Then we can define the Manhattan heuristic $h$ for the $3
+      \times 3$ puzzle 
       as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1473,8 +1485,7 @@ We always expand the path next that seems to be closest to the goal.
             [_, Path] := fromB(PrioQueue);
             state     := Path[-1];
             if (state == goal) { return Path; }
-            newStates := nextStates(state);
-            for (ns in newStates | !(ns in Path)) {
+            for (ns in nextStates(state) | !(ns in Path)) {
                 PrioQueue += { [heuristic(ns, goal), Path + [ns]] };
             }
         }
@@ -1486,7 +1497,7 @@ We always expand the path next that seems to be closest to the goal.
 \end{figure}
 
 The procedure $\mathtt{bestFirstSearch}$ shown in \myFig{best-first-search.stlx} takes four parameters.  The
-first three of these parameters are the same as in the previous search algorithm.  The last parameter
+first three of these parameters are the same as in the previous search algorithms.  The last parameter
 $\mathtt{heuristic}$ is a function that takes to states and then estimates the distance between these states.
 Later, we will use the Manhattan distance to serve as this $\mathtt{heuristic}$.  The details of the
 implementation are as follows:
@@ -1509,11 +1520,14 @@ implementation are as follows:
       \\[0.2cm]
       i.e.~$\mathtt{estimate}$ is the estimated distance between $\mathtt{state}$ and $\mathtt{goal}$ and hence
       an estimate of the number of steps needed to complete $\mathtt{Path}$ into a solution.  This ensures,
-      that the best $\mathtt{Path}$, i.e.~the path whose end state is nearest to the $\mathtt{goal}$ is at the
+      that the best path, i.e.~the path whose last state is nearest to the $\mathtt{goal}$ is at the
       beginning of the set $\mathtt{PrioQueue}$.
 \item As long as $\mathtt{PrioQueue}$ is not empty, we take the $\mathtt{Path}$ from the beginning of this
       priority queue and remove it from the queue.  The state at the end of $\mathtt{Path}$ is named $\mathtt{state}$.
-\item If this $\mathtt{state}$ is the $\mathtt{goal}$, a solution has been found and is returned.
+
+      In \textsc{SetlX}, a function call of the form $\texttt{fromB}(S)$ returns the smallest element from the
+      set $S$.  Furthermore, this element is removed from the set $S$.
+\item If $\mathtt{state}$ is the $\mathtt{goal}$, a solution has been found and is returned.  
 \item Otherwise, the states reachable from $\mathtt{state}$ are inserted into the priority queue.
       When these states are inserted, we have to compute their estimated distance to $\mathtt{goal}$ since this
       distance is used as the priority in $\mathtt{PrioQueue}$.
@@ -1636,8 +1650,9 @@ algorithm.
       estimated that a path leading from $\mathtt{start}$ to $\mathtt{goal}$ and passing through $s$ would have
       a length of $d$.
 \end{enumerate}
-Now that we have established the key variables, the $\mathrm{A}^*$ algorithm runs in a \texttt{while} loop that
-does only terminate if either a solution is found or the priority queue $\mathtt{Frontier}$ is exhausted.
+After the variables described above have been initialized, the $\mathrm{A}^*$ algorithm runs in a
+\texttt{while} loop that does only terminate if either a solution is found or the priority queue
+$\mathtt{Frontier}$ is exhausted. 
 \begin{enumerate}
 \item First, the $\mathtt{state}$ with the smallest estimated distance for a path running from $\mathtt{start}$
       to $\mathtt{goal}$ and passing through $\mathtt{state}$ is chosen from the priority queue
@@ -1675,7 +1690,7 @@ does only terminate if either a solution is found or the priority queue $\mathtt
             the $\mathtt{Parent}$ dictionary, the $\mathtt{Distance}$ dictionary, and the $\mathtt{Estimate}$
             dictionary.  Furthermore, we have to update the priority queue $\mathtt{Frontier}$.
             Here, we have to take care to remove the previous entry for the state
-            $\mathtt{neighbour}$ if it exists, which is the case if $\mathtt{oldEstimate}$ is not $\mathtt{om}$.
+            $\mathtt{neighbour}$ if it exists, which is the case if $\mathtt{oldEstimate}$ is different from $\mathtt{om}$.
       \end{enumerate}
 \end{enumerate}
 The $\mathrm{A}^*$ algorithm has been discovered by Hart, Nilsson, and Raphael and was first published in
@@ -1683,12 +1698,16 @@ The $\mathrm{A}^*$ algorithm has been discovered by Hart, Nilsson, and Raphael a
 in 1972 \cite{hart:1972}.
 
 When we run $\mathrm{A}^*$ on the $3 \times 3$ sliding puzzle, it takes about 17 seconds to solve the instance
-shown in \myFig{8-puzzle.pdf}.  If we just look at the time, this seems to be disappointing.  However, the good
-news is that now only $10,061$ states are touched in the search for a solution.  This is more than a tenfold
-reduction when compared with breadth first search.  The fact that the running time
-is, nevertheless, quite high results from the complexity of computing the Manhattan distance.
-
-
+shown in \myFig{8-puzzle.pdf}.  If we just look at the time, this seems to be disappointing.  However, 
+the good news is that:
+\begin{enumerate}
+\item The path which is found is optimal.
+\item Only $10,061$ states are touched in the search for a solution.  This is more than a tenfold 
+      reduction when compared with breadth first search.  
+\end{enumerate}
+The fact that the running time is, nevertheless, quite high results from the complexity of computing the
+Manhattan distance. 
+<
 \subsection{Completeness and Optimality of $\textrm{A}^*$ Search}
 In order to prove the completeness and the optimality of the $\textrm{A}^*$ search algorithm it is convenient to
 reformulate the algorithm:  In particular, we replace the dictionary $\texttt{Parent}$ by a dictionary
@@ -1871,7 +1890,12 @@ $P_2 = [\texttt{start},x_1,\cdots,x_k, y_{k+1},\cdots,y_{m-1},s]$ \quad
 where $x_{k+1} \not= y_{k+1}$.  Here, $x_k$ is the state at which the paths $P_1$ and $P_2$ \blue{diverge}. The
 number $k$ could be $0$.  In that case the two paths would already diverge at the state \texttt{start}, but in
 general $k$ will be some non-negative integer.  Since we assume that $P_1$ is longer than $P_2$ we will have
-$m < n$.  Now it is time to make use of the fact that the heuristic $h$ is consistent.  First, since
+$m < n$.  Furthermore, according to Claim One we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{Distance}[s] = n$.
+\\[0.2cm]
+Now it is time to make use of the fact that the heuristic $h$ is consistent.  First, since
 $s \in \texttt{nextStates}(y_{m-1})$  we have that 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1934,8 +1958,11 @@ of the state $s$ and hence it is explored prior to $s$.  Since all states of the
 $y_j$ \quad for $j \in \{k+1, \cdots, m-1\}$
 \\[0.2cm]
 have a priority that is higher than the state $s$, these states would all have been explored prior to the state
-$s$.  In particular, once the state $y_{m-1}$ is explored, the estimated total distance of $s$ would be
- $m + \texttt{heuristic}(s)$ contradicting the fact that it is $n + \texttt{heuristic}(s)$.
+$s$.  In particular, once the state $y_{m-1}$ is explored, we will have 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{Distance}[s] = m$ \quad instead of \quad $\mathtt{Distance}[s] = n$.
+\\[0.2cm]
 This contradiction proves that our assumption 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1970,9 +1997,13 @@ explored.  Since we have
 \end{enumerate}
 an index $k$ such that  $s_k$ is explored but the state $s_{k+1}$ is never explored must exist.  Now
 when $s_k$ is explored, $s_{k+1}$ is a neighbour of $s_k$ and is put on the \texttt{Frontier}.
-Define $d$ to be the estimated total distance of $s_k$.
+Define $d$ to be the estimated total distance of $s_k$, i.e.~define
+\\[0.2cm]
+\hspace*{1.3cm}
+$d := g(s_k)$.
+\\[0.2cm]
 Since \texttt{heuristic} is assumed to be consistent, the estimated total distance of $s_{k+1}$ is
-at most $d+2$.  The reason is that 
+at most $d+2$ because
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Distance}[s_{k+1}] = \texttt{Distance}[s_k] + 1$ \quad and \quad 
@@ -2003,11 +2034,11 @@ explored and therefore $\mathrm{A}^*$ search is complete.  \qed
                   xrightmargin  = 0.0cm,
                 ]
     aStarSearch := procedure(start, goal, nextStates, heuristic) {
-        ParentA    := {};                    ParentB    := {};                    
-        DistanceA  := { [start, 0] };        DistanceB  := { [goal,  0] };
-        estimate   := heuristic(start, goal);
-        EstimateA  := { [start, estimate] }; EstimateB  := { [goal,  estimate] };  
-        FrontierA  := { [estimate, start] }; FrontierB  := { [estimate, goal ] };  
+        estimate  := heuristic(start, goal);
+        ParentA   := {};                     ParentB   := {};                    
+        DistanceA := { [start, 0] };         DistanceB := { [goal,  0] };
+        EstimateA := { [start, estimate] };  EstimateB := { [goal,  estimate] };  
+        FrontierA := { [estimate, start] };  FrontierB := { [estimate, goal ] };  
         while (FrontierA != {} && FrontierB != {}) {
             [guessA, stateA] := first(FrontierA); stateADist := DistanceA[stateA];
             [guessB, stateB] := first(FrontierB); stateBDist := DistanceB[stateB];

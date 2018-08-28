@@ -91,9 +91,10 @@ combinePaths := procedure(node, ParentA, ParentB) {
 main := procedure(params) {
     if (params == []) {
         print("Press a number to select the algorithm:                ");
-        print("  1: breadth first search                              ");
-        print("  2: breadth first search (queue based implementation) ");
-        print("  3: depth first search                                ");
+        print("  0: breadth first search                              ");
+        print("  1: breadth first search (queue based implementation) ");
+        print("  2: depth first search                                ");
+        print("  3: depth first search (path based)                   ");
         print("  4: depth first search (recursive implementation)     ");
         print("  5: iterative deepening                               ");
         print("  6: iterative deepening (recursive implementation)    ");
@@ -115,9 +116,11 @@ main := procedure(params) {
         choice := int(params[1]);
     }
     match (choice) {
-        case  1: load("breadth-first-search.stlx"         );
-        case  2: load("breadth-first-search-queue.stlx"   );
-        case  3: load("depth-first-search.stlx"           );
+
+        case  0: load("breadth-first-search.stlx"         );
+        case  1: load("breadth-first-search-queue.stlx"   );
+        case  2: load("depth-first-search.stlx"           );
+        case  3: load("depth-first-search-path.stlx"      );
         case  4: load("depth-first-search-recursive.stlx" );
         case  5: load("iterative-deepening.stlx"          );
         case  6: load("iterative-deepening-recursive.stlx");

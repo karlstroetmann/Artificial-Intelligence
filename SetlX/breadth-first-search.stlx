@@ -5,7 +5,9 @@ search := procedure(start, goal, nextStates) {
     while (Frontier != {}) {
         print("$#Visited$ nodes expanded");
         NewFrontier := {};
-        for (s in Frontier, ns in nextStates(s) | !(ns in Visited) && !(ns in Frontier)) {
+        for ( s in Frontier, ns in nextStates(s)
+            | !(ns in Visited) && !(ns in Frontier))
+        {
             NewFrontier += { ns };
             Parent[ns]  := s;
             if (ns == goal) {

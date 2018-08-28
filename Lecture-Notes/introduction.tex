@@ -161,11 +161,14 @@ This lecture consists of two parts.
             powerful in practice.
       \item In a \blue{classification problem} we again have $N$ pairs of the form $\langle \mathbf{x}_i, y_i
         \rangle$.
-            As before,  we have $\mathbf{x}_i \in \mathbb{R}^m$, but now $y_i \in \mathbb{B}$.
-            The task is then to find a function $f:\mathbb{R}^m \rightarrow \mathbb{B}$     
-            such that $y_i \approx f(\mathbf{x}_i)$.  A typical classification problem is spam detection.  The first algorithm we introduce to
-            solve classification problems is \blue{logistic regression}.
-      \item Finally, we discuss neural networks.  We will build a neural network that is able to recognize characters.
+            As before,  we have $\mathbf{x}_i \in \mathbb{R}^m$, but now $y_i \in \mathbb{B}$, where
+            $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} = \{\mathtt{true}, \mathtt{false}\}$.
+            The task is then to find a function $f:\mathbb{R}^m \rightarrow \mathbb{B}$
+            such that the equation $y_i = f(\mathbf{x}_i)$ is true for most $i\in\{1,\cdots,N\}$.  A typical
+            classification problem is \href{https://en.wikipedia.org/wiki/Email_spam}{spam detection}.  The
+            first algorithm we introduce to solve classification problems is \blue{logistic regression}.
+      \item Finally, we discuss neural networks.  As an example, we will build a neural network that is able to
+            recognize digits. 
       \end{enumerate}
 \end{enumerate}
 \pagebreak
