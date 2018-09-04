@@ -1,8 +1,8 @@
 // This procedure implements the A* search algorithm.
 aStarSearch := procedure(start, goal, nextStates, heuristic) {
+    estGoal  := heuristic(start, goal);
     Parent   := {};                    // back pointers, represented as dictionary
     Distance := { [start, 0] };
-    estGoal  := heuristic(start, goal);
     Estimate := { [start, estGoal] };  // dictionary for estimated distance
     Frontier := { [estGoal, start] };  // priority queue
     while (Frontier != {}) {
