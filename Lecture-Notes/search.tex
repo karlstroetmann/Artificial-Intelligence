@@ -1994,28 +1994,16 @@ Claim Two, must therefore have $\mathtt{Distance}[\mathtt{goal}] = g(\mathtt{goa
 the true distance of the state $\texttt{goal}$ form the state $\texttt{start}$, this implies that the path that
 has been found is optimal.  
 
-The reason that we will always find a path to the goal, provided such a path exists is the following:
-Initially, the priority queue \texttt{Frontier} will just contain the pair $[d, \mathtt{start}]$ where 
-\\[0.2cm]
-\hspace*{1.3cm}
-$d := \mathtt{heuristic}(\mathtt{start}, \mathtt{goal})$.
-\\[0.2cm]
-Now if at any time the pair removed the priority queue \texttt{Frontier} has the form
-\\[0.2cm]
-\hspace*{1.3cm}
-$[e, \mathtt{state}]$,
-\\[0.2cm]
-then the pairs that are added to \texttt{Frontier} in this iteration either have the form
-\\[0.2cm]
-\hspace*{1.3cm}
-$[e, \mathtt{ns}]$ \quad,  $[e+1, \mathtt{ns}]$, \quad or \quad $[e+2, \mathtt{ns}]$,
-\quad where $\mathtt{ns} \in \texttt{neighbour}(\mathtt{state})$.
-\\[0.2cm]
-Hence, all the pairs on the priority queue \texttt{Frontier} either have the priority $e$, $e+1$, or $e+2$.
-There can be only finitely many states with priority $e$.  Once these have been removed, the
-search will carry on to inspect those states with priority $e+1$, then those with priority $e+2$ and so on.
-Therefore, eventually all states with a priority less than the priority of the state \texttt{goal} will be
-visited.  After that, eventually the \texttt{goal} is reached.
+Finally, we have to show that the algorithm is \blue{complete}, i.e.~we have to show that if there is a path
+connecting $\mathtt{start}$ and $\mathtt{goal}$, then we will find a path.  Therefore, let us assume that there
+is a path $P$ connecting $\mathtt{start}$ and $\mathtt{goal}$ and that, furthermore, this path is shorter than
+any other such path and has length $n$.  By reasoning analogously to the proof of Claim Two it can be shown
+that the states making up this path $P$ all have a priority less or equal than $n$.  Therefore, these states
+will all be explored before a state with a priority greater than $n$ is explored.  However, the set of states
+that have a priority of at most $n$ is finite, because it is a subset of the set of states that have a distance
+from $\mathtt{start}$ that is at most $n$ and this latter set is obviously finite.  Therefore, unless the
+$\mathtt{goal}$ is reached before, all the states on the path $P$ will eventually be explored and this implies that
+the $\mathtt{goal}$ is eventually found. 
 \qed
 
 
