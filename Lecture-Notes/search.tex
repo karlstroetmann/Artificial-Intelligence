@@ -2470,9 +2470,9 @@ is allowed to visit at most $3\,000$ states, the algorithm takes less than $5$ s
 The \href{https://en.wikipedia.org/wiki/Eight_queens_puzzle}{eight queens puzzle} is the problem of  placing
 eight chess queens on a chessboard so that no two queens can attack each other.  In
 \href{https://en.wikipedia.org/wiki/Chess}{chess}, a \href{https://en.wikipedia.org/wiki/Queen_(chess)}{queen}
-can attack my moving horizontally, vertically, or diagonally.  Reformulate the \blue{eight queens puzzle} and
-solve the puzzle via breadth first search.  For extra credit, compute all 92 solutions of the eight queens
-puzzle.  
+can attack by moving horizontally, vertically, or diagonally.  Reformulate the \blue{eight queens puzzle} as a
+search problem and solve this puzzle via breadth first search.  For extra credit, compute all 92 solutions of
+the eight queens puzzle.  
 
 \hint
 It is easiest to encode states as lists.  For example, the solution of the eight queens puzzle that is shown in
@@ -2482,14 +2482,13 @@ Figure \ref{fig:queens.pdf} would be represented as the list
 $[6, 4, 7, 1, 8, 2, 5, 3]$
 \\[0.2cm]
 because the queen in the first row is positioned in column 6, the queen in the second row is positioned in
-column 4, and so on.  The start state would then be the empty list and given a state $L$ all states form the
+column 4, and so on.  The start state would then be the empty list and given a state $L$, all states from the
 set $\mathtt{nextState}(L)$ would be lists of the form $L + [c]$.  If $\#L = k$, then the state $l + [c]$ has
 $k+1$ queens, where the queen in row $k+1$ has been placed in column $c$.
 A frame containing a function that can be used to print a board can be found at:
 \\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{\footnotesize
-    https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/queens-frame.stlx}}
+\hspace*{0.0cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/queens-frame.stlx}}
 \\[0.2cm]
 
 
@@ -2500,7 +2499,7 @@ A frame containing a function that can be used to print a board can be found at:
 \label{fig:queens.pdf}
 \end{figure}
 
-
+\pagebreak
 
 
 
@@ -2544,7 +2543,7 @@ Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do n
 character in the state, for we only want to ensure that the first two tiles are positioned correctly.  Once we have reached a
 state specified by the pattern given above, we could the proceed to reach a state that is described by the
 following pattern:
-\pagebreak
+
 
 \begin{verbatim}
                  +---+---+---+---+
@@ -2559,14 +2558,13 @@ following pattern:
 \end{verbatim}
 This way, slowly but surely we will reach the goal.  I have prepared a framework for taoistic search.  The file
 \\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{\footnotesize
-    https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
+\hspace*{0cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
 \\[0.2cm]
 contains a framework for the sliding puzzle where some functions are left unimplemented.  The file
 \\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}{\texttt{\footnotesize
+\hspace*{0cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}{\texttt{
     https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}}
 \\[0.2cm]
 is also required.  It contains an adapted form of $\mathrm{A}^*$ search.  More details will be given in the
