@@ -1,14 +1,10 @@
-// This procedure implements the A* search algorithm.
+// This implements the A* search algorithm.
 aStarSearch := procedure(start, goal, nextStates, heuristic) {
-    ParentA    := {};
-    ParentB    := {};                    
-    DistanceA  := { [start, 0] };
-    DistanceB  := { [goal,  0] };
+    ParentA    := {};                       ParentB    := {};                    
+    DistanceA  := { [start, 0] };           DistanceB  := { [goal,  0] };
     estimate   := heuristic(start, goal);
-    EstimateA  := { [start, estimate] };  
-    EstimateB  := { [goal,  estimate] };  
-    FrontierA  := { [estimate, start] };
-    FrontierB  := { [estimate, goal ] };  
+    EstimateA  := { [start, estimate] };    EstimateB  := { [goal,  estimate] };  
+    FrontierA  := { [estimate, start] };    FrontierB  := { [estimate, goal ] };  
     while (FrontierA != {} && FrontierB != {}) {
         [guessA, stateA] := first(FrontierA);
         stateADist       := DistanceA[stateA];

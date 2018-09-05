@@ -80,18 +80,17 @@ create_intermediate := procedure(State, Tiles)  {
     Pattern      := State;
     Pattern_List := [ State ];
     for (L in reverse(Tiles)) {
-        for (t in L) {
-            Pattern := replace_number(Pattern, t);
-        }
+        Pattern := replace_numbers(Pattern, L);
         Pattern_List += [ Pattern ];
     }
     return reverse(Pattern_List)[2..];
 };
-// Take the given tile and replace it in Pattern by "*".  The resulting
+// Take the given Tiles and replace them in Pattern by "*".  The resulting
 // pattern is returned.
-replace_number := procedure(Pattern, tile) {
+replace_numbers := procedure(Pattern, Tiles) {
     // Your code here.
 };
+
 main := procedure() {
     Start := [ [ 15, 14, 8, 12 ],
                [ 10, 11, 13, 9 ],

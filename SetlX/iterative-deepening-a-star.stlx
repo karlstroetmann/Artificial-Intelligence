@@ -14,12 +14,8 @@ search := procedure(Path, goal, nextStates, limit, heuristic) {
     state    := Path[-1];
     distance := #Path - 1;
     total    := distance + heuristic(state, goal);
-    if (total > limit) {
-        return total;
-    }
-    if (state == goal) {
-        return Path;
-    }
+    if (total > limit) { return total; }
+    if (state == goal) { return Path;  }
     smallest := mathConst("Infinity");
     for (ns in nextStates(state) | !(ns in Path) ) {
         result := search(Path+[ns], goal, nextStates, limit, heuristic);

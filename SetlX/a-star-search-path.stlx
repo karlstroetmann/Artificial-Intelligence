@@ -2,7 +2,7 @@
 aStarSearch := procedure(start, goal, nextStates, heuristic) {
     estGoal  := heuristic(start, goal);
     Estimate := { [start, estGoal] }; // estimated total distance
-    Frontier := { [estGoal, start] }; // priority queue, ordered by estimated total distance
+    Frontier := { [estGoal, start] }; // priority queue
     PathDict := { [start, [start]] }; // PathDict[s] is a path from start to s 
     Distance := { [start, 0]       }; // Distance[s] is the length of this path
     Explored := {};                   

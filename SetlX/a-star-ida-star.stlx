@@ -6,9 +6,6 @@ aStarIdaStarSearch := procedure(start, goal, nextStates, heuristic, size) {
     Estimate := { [start, est] };  // dictionary: state |-> distance(start, state, goal)
     Frontier := { [est, start] };  // priority queue
     while (#Distance < size && Frontier != {}) {
-        if (#Distance % 1000 == 0) {
-            print("#Distance = $#Distance$");
-        }
         [_, state] := fromB(Frontier);
         if (state == goal) {
             print("Number of states touched: $#Distance$");
@@ -46,12 +43,8 @@ deepeningSearch := procedure(goal, start, nextStates, heuristic, Distance) {
 search := procedure(Path, start, nextStates, limit, heuristic, Distance) {
     state := Path[-1];
     total := #Path - 1 + heuristic(state, start);
-    if (total > limit) {
-        return total;
-    }
-    if (Distance[state] != om) {
-        return Path;
-    }
+    if (total > limit) { return total; }
+    if (Distance[state] != om) { return Path; }
     smallest := mathConst("Infinity");
     for (ns in nextStates(state) | !(ns in Path) ) {
         result := search(Path+[ns], start, nextStates, limit, heuristic, Distance);
