@@ -2166,7 +2166,7 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
         }
         smallest := mathConst("Infinity");
         for (ns in nextStates(state) | !(ns in Path) ) {
-            result := search(Path+[ns], goal, nextStates, limit, heuristic);
+            result := search(Path + [ns], goal, nextStates, limit, heuristic);
             if (isList(result)) {
                 return result;
             }
@@ -2316,13 +2316,9 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
         Estimate := { [start, est] }; // dictionary: state |-> distance(start,state,goal)
         Frontier := { [est, start] }; // priority queue
         while (#Distance < size && Frontier != {}) {
-            if (#Distance % 1000 == 0) {
-                print("#Distance = $#Distance$");
-            }
             [_, state] := fromB(Frontier);
             if (state == goal) {
-                print("Number of states touched: $#Distance$");
-                return pathTo(state, Parent);
+                 return pathTo(state, Parent);
             }
             stateDist := Distance[state];
             for (neighbour in nextStates(state)) {
@@ -2449,7 +2445,7 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
         }
         smallest := mathConst("Infinity");
         for (ns in nextStates(state) | !(ns in Path) ) {
-            result := search(Path+[ns], start, nextStates, limit, heuristic, Distance);
+            result := search(Path + [ns], start, nextStates, limit, heuristic, Distance);
             if (isList(result)) {
                 return result;
             }
@@ -2461,12 +2457,12 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
 \vspace*{-0.3cm}
 \caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{II}.}
 \label{fig:a-star-ida-star.stlx-2}
-\end{figure}
+\end{figure}5
 
 Iterative deepening $\mathrm{A}^*$-$\mathrm{IDA}^*$ is a complete search algorithm.
 On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}, this
 algorithm takes about $0.8$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
-is allowed to visit at most $3\,000$ states, the algorithm takes less than $6$ seconds.
+is allowed to visit at most $3\,000$ states, the algorithm takes less than $5$ seconds.
 % However, there is one caveat:
 % I do not know whether $\mathrm{A}^*$-$\mathrm{IDA}^*$ search finds an optimal path, although in practise it often does.
 
@@ -2543,17 +2539,17 @@ following pattern:
 \end{verbatim}
 This way, slowly but surely we will reach the goal.  I have prepared a framework for taoistic search.  The file
 \\[0.2cm]
-\hspace*{-0.5cm}
+\hspace*{1.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{\footnotesize
     https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
 \\[0.2cm]
 contains a framework for the sliding puzzle where some functions are left unimplemented.  The file
 \\[0.2cm]
-\hspace*{0.5cm}
+\hspace*{1.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}{\texttt{\footnotesize
     https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}}
 \\[0.2cm]
-is also required.  It contains an adapted form of $\mathrm{A}^*$ search.  More Details will be given in the
+is also required.  It contains an adapted form of $\mathrm{A}^*$ search.  More details will be given in the
 lecture.  Your task is to implement the missing functions in the file \texttt{sliding-puzzle-frame.stlx}.
 \eox
 
