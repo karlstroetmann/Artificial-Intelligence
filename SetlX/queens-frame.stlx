@@ -1,0 +1,20 @@
+printBoard := procedure(Queens) {
+    if (Queens == om) {
+        print("no solution found");
+        return;
+    }
+    n := #Queens;
+    print((4 * n + 1) * "-");
+    for (row in [1..n]) {
+        line := "|";
+        for (col in [1..n]) {
+            if (Queens[row] == col) {
+                line += " Q |";
+            } else {
+                line += "   |";
+            }
+        }
+        print(line);
+        print((4*n+1) * "-");
+    }
+};
