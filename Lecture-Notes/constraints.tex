@@ -1,26 +1,30 @@
 \chapter{Constraint Satisfaction}
 In this chapter we discuss algorithms for solving 
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problems}.
-These problems can be seen as a refinement of the search problems discussed in the previous chapter:  In a
-search problem, the states are abstract and therefore have no structure that can be exploited to guide the
-search.  In a \blue{constraint satisfaction problem}, the states have a structure that can be exploited to
-guide the search.  This chapter is structured as follows:
+In a constraint satisfaction problem we have been given a number of \blue{formul\ae} and search for values that can be
+assigned to the \blue{variables} occurring in these formul\ae\  so that the formul\ae\  evaluate as true.
+Constraint satisfaction problems can be seen as a refinement of the search problems discussed in the previous
+chapter:  In a search problem, the states are abstract and therefore have no structure that can be exploited to
+guide the search, while in a \blue{constraint satisfaction problem}, the states have a structure, as these
+states are \blue{variable assignments}.  This structure can be exploited to guide the search.  This chapter is
+structured as follows: 
 \begin{enumerate}
 \item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
-      concept, two examples of constraint satisfaction problems are presented.  After that, we discuss
+      notion, two examples of constraint satisfaction problems are presented.  After that, we discuss
       applications of constraint satisfaction problems.
 \item The simplest algorithm to solve a constraint satisfaction problem is via \blue{brute force search}.
-      The idea behind brute force search is to test all possible variable assignments.
-\item In most cases, the search space is too big to be enumerated completely.
+      The idea behind brute force search is to test all possible \blue{variable assignments}.
+\item In most cases, the search space is so large that it is not possible to enumerate all potential solutions.
       \blue{Backtracking search} improves on brute force search by mixing the generation
-      of assignments with the testing of the constraints.  In many cases, this approach can
+      of variable assignments with the testing of the constraints.  In many cases, this approach can
       drastically improve the performance of the search algorithm.
 \item Backtracking search can be refined by using \blue{constraint propagation} and by
       using the \blue{most restricted variable} heuristic.
 \item Furthermore, checking the \blue{consistency} of the values assigned to different variables
       can reduce the size of the search space considerably. 
 \item Finally, \blue{local search} is a completely different approach to solve
-      constraint satisfaction problems.
+      constraint satisfaction problems.  This approach is especially useful if the constraint satisfaction
+      problem is big, but the problem is not too complicated.
 \end{enumerate}
 
 \section{Formal Definition of Constraint Satisfaction Problems}
@@ -61,7 +65,11 @@ a \blue{variable assignment} for $\mathcal{P}$ is a function
 $A: \mathtt{Vars} \rightarrow \mathtt{Values}$.
 \\[0.2cm]
 A variable assignment $A$ is a \blue{solution} of the \textsc{Csp} $\mathcal{P}$ 
-if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied.
+if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{eval}(f, A) = \mathtt{true}$ \quad for all $f \in \mathtt{Constraints}$.
+\\[0.2cm]
 Finally, a \blue{partial variable assignment} $B$ for $\mathcal{P}$ is a function
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -74,7 +82,7 @@ set of those variables that are assigned a value different from $\Omega$, i.e.~w
 \hspace*{1.3cm}
 $\mathtt{dom}(B) := \bigl\{ x \in \mathtt{Vars} \mid B(x) \not= \Omega \bigr\}$.
 \\[0.2cm]
-We proceed to illustrate the definitions given so far with two examples.
+We proceed to illustrate the definitions given so far by presenting two examples.
 
 
 \begin{figure}[!ht]
@@ -297,33 +305,32 @@ was one of the main ideas incorporated in the programming language
 \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to the promisses
 made in declarative programming as a viable general purpose programming method, constraint programming has
 proven to be very useful in a number of domains. 
-\pagebreak
 
-\exercise
-Formulate the $n$ queens puzzle as a search problem.  Represent states as lists of the form
-\\[0.2cm]
-\hspace*{1.3cm}
-$[Q_1,\cdots,Q_k]$ \quad where $k \in \{0,\cdots,n\}$ and $Q_i \in \{1,\cdots,n\}$.
-\\[0.2cm]
-Here, $Q_i$ specifies the column of the queen positioned in the $i$-th row.  If we assume that every row has at
-most one queen, the set of all states is then defined as
-\\[0.2cm]
-$\mathcal{Q}:=\bigl\{ [Q_1,\cdots,Q_k] \bigm| 
-         k \el \{0,\cdots,n\} \wedge \forall i \el \{1,\cdots,n\}:Q_i \el \{1,\cdots,n\} \wedge 
-         \forall i,j\el\{1,\cdots,k\}:(i \not=j \rightarrow Q_i \not= Q_j)
-\bigr\}$.
-\begin{enumerate}[(a)]
-\item Derive a mathematical expression that returns the number of states for a given value of $n$.  
-      What is the number of states if $n=8$?
-\item Which of the search algorithms presented in the previous chapter could be used to solve the 8
-      queens puzzle?  Which of these algorithms will work best?
-\item Solve the 8 queens puzzle using an appropriate search algorithm.
+% \exercise
+% Formulate the $n$ queens puzzle as a search problem.  Represent states as lists of the form
+% \\[0.2cm]
+% \hspace*{1.3cm}
+% $[Q_1,\cdots,Q_k]$ \quad where $k \in \{0,\cdots,n\}$ and $Q_i \in \{1,\cdots,n\}$.
+% \\[0.2cm]
+% Here, $Q_i$ specifies the column of the queen positioned in the $i$-th row.  If we assume that every row has at
+% most one queen, the set of all states is then defined as
+% \\[0.2cm]
+% $\mathcal{Q}:=\bigl\{ [Q_1,\cdots,Q_k] \bigm| 
+%          k \el \{0,\cdots,n\} \wedge \forall i \el \{1,\cdots,n\}:Q_i \el \{1,\cdots,n\} \wedge 
+%          \forall i,j\el\{1,\cdots,k\}:(i \not=j \rightarrow Q_i \not= Q_j)
+% \bigr\}$.
+% \begin{enumerate}[(a)]
+% \item Derive a mathematical expression that returns the number of states for a given value of $n$.  
+%       What is the number of states if $n=8$?
+% \item Which of the search algorithms presented in the previous chapter could be used to solve the 8
+%       queens puzzle?  Which of these algorithms will work best?
+% \item Solve the 8 queens puzzle using an appropriate search algorithm.
 
-      Note that we do not know the goal of this search problem.  Instead, you have to adapt the
-      search algorithm so that it takes a function $\texttt{isGoal}$ instead of a state $\texttt{goal}$.  For a given
-      state $s$, the function $\texttt{isGoal}(s)$ returns true iff $s$ is a solution of the $n$ queens puzzle.
-      \eoxs
-\end{enumerate}
+%       Note that we do not know the goal of this search problem.  Instead, you have to adapt the
+%       search algorithm so that it takes a function $\texttt{isGoal}$ instead of a state $\texttt{goal}$.  For a given
+%       state $s$, the function $\texttt{isGoal}(s)$ returns true iff $s$ is a solution of the $n$ queens puzzle.
+%       \eoxs
+% \end{enumerate}
 
 
 \subsection{Applications}
