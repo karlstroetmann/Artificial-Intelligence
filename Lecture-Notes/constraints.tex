@@ -283,8 +283,7 @@ the eight queens problem to the problem of putting $n$ queens on a board of size
         Constraints := {};
         for (i in [2..n], j in [1..i-1]) {
             Constraints += { "V$i$ != V$j$" };
-            Constraints += { "$i$ + V$i$ != $j$ + V$j$" };
-            Constraints += { "$i$ - V$i$ != $j$ - V$j$" };
+            Constraints += { "abs($i$ - $j$) != abs(V$i$ - V$j$)" }; 
         }
         return [Variables, Values, Constraints];
     };
@@ -397,7 +396,7 @@ search is shown in \myFig{csp-brute-force.stlx}.
 \end{figure}
 
 The procedure $\texttt{solve}$ gets a constraint satisfaction problem $\texttt{CSP}$ as its input.  
-This $\texttt{CSP}$ is given a triple of the form  
+This $\texttt{CSP}$ is given as a triple of the form  
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{CSP} = [\texttt{Variables}, \texttt{Values}, \texttt{Constraints}]$.
@@ -567,6 +566,8 @@ satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.
       This procedure is enclosed in a \texttt{check}-block.  Conceptually, this \texttt{check}-block is the
       same as if we had enclosed the call to $\texttt{bt\_search}$ in a \texttt{try}-\texttt{catch}-block as
       shown below:
+      \pagebreak
+      
 \begin{verbatim}
       try {
           return bt_search({}, csp);

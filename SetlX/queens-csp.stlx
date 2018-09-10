@@ -51,12 +51,9 @@ createCSP := procedure(n) {
     Constraints := {};
     for (i in [2..n], j in [1..i-1]) {
         // no queens in the same column:
-        // Vi != Vj 
         Constraints += { "V$i$ != V$j$" };
-        // i + Vi != j + Vj 
-        Constraints += { "$i$ + V$i$ != $j$ + V$j$" };
-        // i - Vi != j - Vj 
-        Constraints += { "$i$ - V$i$ != $j$ - V$j$" };
+        // no queens in the same diagonal
+        Constraints += { "abs($i$ - $j$) != abs(V$i$ - V$j$)" }; 
     }
     return [Variables, Values, Constraints];
 };

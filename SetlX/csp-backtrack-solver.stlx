@@ -2,9 +2,6 @@ loadLibrary("termUtilities");
 load("queens-csp.stlx");
 
 // This function collects all variables occurring in the formula f.
-// To simplify things it is asssumed that f is either an equation or
-// a negated equation and that the terms occurring in this equations
-// only contain the arithmetical operators.
 collectVars := procedure(f) {
     return varsTerm(parseTerm(f));
 };
