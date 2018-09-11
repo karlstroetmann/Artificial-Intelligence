@@ -46,16 +46,12 @@
 
 // Create a constraint satisfacton problem for the n queens problem.
 createCSP := procedure(n) {
-    Variables   := { "V$i$" : i in {1..n} };
-    Values      := { 1 .. n };
-    Constraints := {};
-    for (i in [2..n], j in [1..i-1]) {
-        // no queens in the same column:
-        Constraints += { "V$i$ != V$j$" };
-        // no queens in the same diagonal
-        Constraints += { "abs($i$ - $j$) != abs(V$i$ - V$j$)" }; 
-    }
-    return [Variables, Values, Constraints];
+    S            := { 1 .. n };           // used as indices
+    Variables    := { "V$i$" : i in S };
+    Values       := { 1 .. n };
+    SameRow      := { "V$i$ != V$j$" : i in S, j in S | i < j };
+    SameDiagonal := { "abs($i$-$j$)!=abs(V$i$-V$j$)" : i in S, j in S | i < j };
+    return [Variables, Values, SameRow + SameDiagonal];
 };
 
 // This procedure prints the chessboard that iis specified by Queens. Queens is
