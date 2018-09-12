@@ -30,10 +30,10 @@ solve := procedure(CSP) {
         return bt_search({}, ValuesPerVar, OtherConstrs);
     }
 };
-// Given a constraint containing only variable, find the values that satisfy
-// this constraint.
+// Given a constraint f containing only a single variable, find all possible values 
+// for this variable that do not violate f.
 solve_unary := procedure(f, var, Values) {
-    Legal := {value : value in Values | eval_constraint({[var,value]}, f)};
+    Legal := { value : value in Values | eval_constraint({ [var, value] }, f )};
     if (Legal == {}) { backtrack; } // game over
     return Legal;
 };

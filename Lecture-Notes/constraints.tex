@@ -720,12 +720,18 @@ If we use backtracking, we can solve the 8 queens problem in less than a second.
 
 \section{Constraint Propagation}
 Once we choose a value for a variable, this choice influences the values that are still available for other variables.
-For example, suppose we place the queen in row 1 in the second column, then no other queen can be placed in
+For example, suppose that in order to solve the $n$ queens problem we place the queen in row 1 in the second
+column, then no other queen can be placed in 
 that column.   Additionally, the queen in row 2 can then not be placed in any of the first three columns.
 Abstractly, constraint propagation works as follows.
 \begin{enumerate}
 \item Before the search is started, we create a dictionary $\texttt{ValuesPerVar}$.  For every variable
-      $\texttt{x}$,  the set $\texttt{ValuesPerVar[x]}$ contains those values that can be assigned to
+      $\texttt{x}$,  the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{ValuesPerVar[x]}$ 
+      \\[0.2cm]
+      contains those values that can be assigned to
       $\texttt{x}$ without violating a constraint. 
 \item As long as the problem is not solved,  we choose a variable $\texttt{x}$. 
       This variable is chosen using the \blue{most constrained variable} heuristic:  We choose a variable
@@ -738,7 +744,7 @@ Abstractly, constraint propagation works as follows.
       find values for all variables.  If the current partial variable assignment can not be completed into a
       solution, then we want to find out this fact as soon as possible.  Therefore, we try to find the values
       for the most difficult variables first.  A variable is more difficult to get right if it has only a few
-      values that can be used to instantiate the variable.
+      values left that can be used to instantiate it.
 \item Once we have picked a variable $\texttt{x}$, we next iterate over all values $\texttt{v}$ in
       $\texttt{ValuesPerVar[x]}$.  If assigning the value $\texttt{v}$ to the variable $\texttt{x}$ does not
       violate a constraint, we \blue{propagate} the consequences of this assignment:
@@ -1037,8 +1043,15 @@ In order to solve the puzzle, we also have to know the following facts:
 \item they smoke {\color{blue}different} brands of cigarettes. 
 \end{enumerate}
 Formulate the zebra puzzle as a constraint satisfaction problem and solve the puzzle using the program
-discussed in this section.  You should also try to solve the puzzle using the program given in the previous
-section.  Compare the results.
+discussed in this section.  You should also try to solve the puzzle using the constraint solver discussed in
+the previous section that uses only backtracking.  Compare the results.  A framework for solving the zebra
+puzzle can be found at 
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/zebra-csp.stlx}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/zebra-csp.stlx}
+\\[0.2cm]
+When coding the zebra puzzle as a \textsc{Csp} you should be careful to name the variables correctly.  A single
+spelling error in one of the constraints can easily result in an unsolvable problem.
 \eoxs
 
 \begin{table}[h]

@@ -81,3 +81,8 @@ printSolution := procedure(Assignment) {
         print((4*n+1) * "-");
     }
 };
+
+main := procedure() {
+    print(createCSP(3));
+};
+main();
