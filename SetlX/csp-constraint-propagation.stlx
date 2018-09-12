@@ -3,9 +3,6 @@ load("queens-csp.stlx");
 // load("send-more-money.stlx");
 
 // This function collects all variables occurring in the formula f.
-// To simplify things it is asssumed that f is either an equation or
-// a negated equation and that the terms occurring in this equations
-// only contain the arithmetical operators.
 collectVars := procedure(f) {
     return varsTerm(parseTerm(f));
 };
@@ -30,7 +27,7 @@ solve := procedure(CSP) {
             var               := arb(V);
             ValuesPerVar[var] := solve_unary(f, var, ValuesPerVar[var]);
         }
-        return bt_search({}, Variables, ValuesPerVar, OtherConstrs);
+        return bt_search({}, ValuesPerVar, OtherConstrs);
     }
 };
 // Given a constraint containing only variable, find the values that satisfy
@@ -42,8 +39,8 @@ solve_unary := procedure(f, var, Values) {
 };
 // Given a partial assignment of variables, this procedure tries to complete
 // this assignment so that the given CSP is solved.
-bt_search := procedure(Assignment, Variables, Values, Constraints) {
-    if (#Assignment == #Variables) {
+bt_search := procedure(Assignment, Values, Constraints) {
+    if (#Assignment == #Values) {
         return Assignment;
     }
     x := most_constrained_variable(Assignment, Values);
@@ -51,8 +48,7 @@ bt_search := procedure(Assignment, Variables, Values, Constraints) {
         check {
             if (is_consistent(x, val, Assignment, Constraints)) {
                 NewVals := propagate(x, val, Assignment, Constraints, Values);
-                return bt_search(Assignment + { [x, val] },
-                                 Variables, NewVals, Constraints);
+                return bt_search(Assignment + {[x, val]}, NewVals, Constraints);
             }
         }
     }
@@ -72,7 +68,7 @@ propagate := procedure(x, v, Assignment, Constraints, Values) {
     Values[x] := { v };
     // constraint propagation is only done for binary constraints
     for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
-        y := arb(Vars - { x });
+        y := arb(Vars - { x });  // y is the other variable
         if (!(y in domain(Assignment))) {
             Legal := { w : w in Values[y] | eval_constraint({[x,v], [y,w]}, F) };
             if (Legal == {}) { backtrack; }

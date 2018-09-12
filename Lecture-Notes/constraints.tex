@@ -725,8 +725,8 @@ that column.   Additionally, the queen in row 2 can then not be placed in any of
 Abstractly, constraint propagation works as follows.
 \begin{enumerate}
 \item Before the search is started, we create a dictionary $\texttt{ValuesPerVar}$.  For every variable
-      $\texttt{x}$, the dictionary entry $\texttt{ValuesPerVar[x]}$ is the set of values that can be assigned to $\texttt{x}$
-      without violating a constraint.
+      $\texttt{x}$,  the set $\texttt{ValuesPerVar[x]}$ contains those values that can be assigned to
+      $\texttt{x}$ without violating a constraint. 
 \item As long as the problem is not solved,  we choose a variable $\texttt{x}$. 
       This variable is chosen using the \blue{most constrained variable} heuristic:  We choose a variable
       $\texttt{x}$ such that the number of values in the set
