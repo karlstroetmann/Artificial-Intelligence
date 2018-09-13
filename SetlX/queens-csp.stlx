@@ -44,7 +44,7 @@
 //     -----------------------------------------------------------------
 //
 
-// Create a constraint satisfacton problem for the n queens problem.
+// Create a constraint satisfaction problem for the n queens problem.
 createCSP := procedure(n) {
     S            := { 1 .. n };           // used as indices
     Variables    := { "V$i$" : i in S };
@@ -54,7 +54,7 @@ createCSP := procedure(n) {
     return [Variables, Values, SameRow + SameDiagonal];
 };
 
-// This procedure prints the chessboard that iis specified by Queens. Queens is
+// This procedure prints the chessboard that is specified by Queens. Queens is
 // a list of length n. For all i in [1..n], Queens[i] specifies the column of
 // the queen that is positioned in row i.
 printSolution := procedure(Assignment) {
