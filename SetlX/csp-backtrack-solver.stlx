@@ -18,6 +18,14 @@ varsTerm := procedure(f) {
 // This is a very basic constraints solver that is based on backtracking.
 solve := procedure(CSP) {
     [Vars, Vals, Constrs] := CSP;
+    VarsInConstrs  := +/ { collectVars(f) : f in Constrs };
+    MisspelledVars := (VarsInConstrs - Vars) + (Vars - VarsInConstrs);
+    if (MisspelledVars != {}) {
+        print("Did you misspell any of the following Variables?");
+        for (v in MisspelledVars) {
+            print(v);
+        }
+    }
     CSP := [Vars, Vals, { [f, collectVars(f)] : f in Constrs }];
     check {
         return bt_search({}, CSP);
