@@ -85,4 +85,4 @@ printSolution := procedure(Assignment) {
 main := procedure() {
     print(createCSP(3));
 };
-main();
+// main();

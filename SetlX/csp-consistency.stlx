@@ -23,14 +23,21 @@ varsTerm := procedure(f) {
 // propagation, and maintaining arc-consistency.
 solve := procedure(CSP) {
     [Variables, Values, Constrs] := CSP;
+    VarsInConstrs  := +/ { collectVars(f) : f in Constrs };
+    MisspelledVars := (VarsInConstrs - Variables) + (Variables - VarsInConstrs);
+    if (MisspelledVars != {}) {
+        print("Did you misspell any of the following Variables?");
+        for (v in MisspelledVars) {
+            print(v);
+        }
+    }
     ValuesPerVar := { [x, Values] : x in Variables };
     Annotated    := { [f, collectVars(f)] : f in Constrs };
     UnaryConstrs := { [f, V] : [f, V] in Annotated | #V == 1 };
     OtherConstrs := { [f, V] : [f, V] in Annotated | #V >= 2 };
     Connected    := {};
     for (x in Variables) {
-        Vars := +/ { V : [f, V] in Annotated | x in V } - { x };
-        Connected +={ [x, Vars] };
+        Connected[x] := +/ { V : [f, V] in Annotated | x in V } - { x };
     }
     check {
         for ([f, V] in UnaryConstrs) {

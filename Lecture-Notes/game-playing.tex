@@ -119,7 +119,7 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
         }
         return Result;
     };
-    empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col]==" "};
+    empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col] == " "};
     utility := procedure(State, player) {
         Lines := all_lines(State);
         for (Line in Lines) {
@@ -190,10 +190,10 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
       \\[0.2cm]
       is the set of entries in a diagonal line.  The game is decided if all entries in this set are either
       ``$\texttt{X}$'' or ``$\texttt{O}$''.  In this case, the set has exactly one element which is different
-      from the blank.  If this element is the same as $\texttt{player}$, then the game is won by
-      $\texttt{player}$, otherwise it is lost.
+      from the blank.  If this element is the same as $\texttt{player}$, then the game is \blue{won} by
+      $\texttt{player}$, otherwise it is \blue{lost} for him.
 
-      Finally, if there are no empty squares left, then the game is a draw.
+      Finally, if there are no empty squares left, then the game is a \blue{draw}.
 \item The auxiliary procedure $\texttt{all\_lines}$ takes a $\texttt{State}$ and computes the set $\texttt{Lines}$ of all
       \blue{line-sets}. 
       \begin{enumerate}
@@ -231,7 +231,7 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
 
 \section{The Minimax Algorithm}
 Having defined the notion of a game, our next task is to come up with an algorithm that can play a game.  The
-easiest algorithm that works is the \href{https://en.wikipedia.org/wiki/Minimax}{minimax algorithm}.  This
+algorithm that is easiest to explain is the \href{https://en.wikipedia.org/wiki/Minimax}{minimax algorithm}.  This
 algorithm is based on the notion of the \blue{value} of a state.  To this end, we define a function
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -279,12 +279,12 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
         if (finished(State)) {
             return utility(State, player);
         }
-        return max({-value(ns,other(player)):ns in nextStates(State,player)});
+        return max({ -value(ns, other(player)): ns in nextStates(State,player) });
     };
     best_move := procedure(State, player) {
         NS      := nextStates(State, player);
         bestVal := value(State, player);
-        return [bestVal, rnd({ns:ns in NS|-value(ns,other(player))==bestVal})];
+        return [bestVal, rnd({ ns : ns in NS | -value(ns, other(player)) == bestVal })];
     };
     play_game := procedure() {
         State := startState();
@@ -294,10 +294,16 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
             [val, State] := best_move(State, firstPlayer);
             print("For me, the game has the value $val$. My move:");
             print(stateToString(State));
-            if (final_msg(State)) { return; }
+            if (finished(State)) { 
+                final_msg(State); 
+                break;
+            }
             State := getMove(State);
             print(stateToString(State));
-            if (final_msg(State)) { return; }
+            if (finished(State)) { 
+                final_msg(State);
+                break;
+            }
         }
     };
 \end{Verbatim}
@@ -369,9 +375,8 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
       \item Next, we have to check whether the game is finished after the  move of the user has been executed.
       \item The \texttt{while}-loop keeps iterating until the game is finished.
             We do not have to put a test into the condition of this \texttt{while}-loop as we call the function
-            $\texttt{final\_msg}(\texttt{State})$ every time that a new $\texttt{State}$ has been reached.
-            This function returns $\texttt{true}$ iff $\texttt{finished}(\texttt{State})$ is true.
-            Additionally, it prints a message when the game has finished.
+            $\texttt{finished}(\texttt{State})$ every time that a new $\texttt{State}$ has been reached.
+            If the game is finished, a message giving the result of the game is printed.
       \end{enumerate}
 \end{enumerate}
 In order to better understand the reason for using memoization in the implementation of the function

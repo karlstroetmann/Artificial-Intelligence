@@ -1,6 +1,6 @@
 loadLibrary("termUtilities");
 load("queens-csp.stlx");
-// load("send-more-money.stlx");
+load("send-more-money.stlx");
 
 // This function collects all variables occurring in the formula f.
 collectVars := procedure(f) {
@@ -128,5 +128,5 @@ mainMoney := procedure() {
     printSolution(solution);
     print("The computation took $total$ seconds.");
 };
-main();
-// mainMoney();
+// main();
+mainMoney();

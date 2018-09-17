@@ -1173,9 +1173,10 @@ $   (\texttt{S} \cdot 10^3 + \texttt{E} \cdot 10^2 + \texttt{N} \cdot 10 + \text
   = \texttt{M} \cdot 10^4 + \texttt{O} \cdot 10^3 + \texttt{N} \cdot 10^2 + \texttt{E} \cdot 10 + \texttt{Y}
 $.
 \\[0.2cm]
- The problem with this constraint is that it involves far too many variables.  As this constraint can only be
- checked when all the variables have values assigned to them, the backtracking search would essentially
- boil down to a mere brute force search.  In order to do better, we have to perform the addition in Figure
+The problem with this constraint is that it involves far too many variables.  As this constraint can only be
+checked when all the variables have values assigned to them, the backtracking search would essentially
+boil down to a mere brute force search.  We would have 8 variables and hence we would have to test $8^{10}$
+possible assignments. In order to do better, we have to perform the addition in Figure
  \ref{fig:send-more-money.pdf} column by column, just as it is taught in elementary school.
  \myFig{send-more-money.stlx} shows how this can be implemented in \textsc{SetlX}.
 
@@ -1235,13 +1236,13 @@ variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
 \texttt{"C1 < 2", "C2 < 2", "C3 < 2"}.
 \\[0.2cm]
 Although these constraints are certainly true, the problem with this approach is that we would prefer if our
-constraint solver would be able to figure out these constraints by itself.  After all, since $\texttt{D}$ and
+constraint solver could figure out these constraints by itself.  After all, since $\texttt{D}$ and
 $\texttt{E}$ are both less than $10$, there sum is obviously less than $20$ and hence the carry $\texttt{C1}$
 has to be less than $2$.  This line of reasoning is known as \blue{consistency maintenance}:
 Assume that the formula $f$ is a constraint and the set of variables occurring in $f$ has the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{Var}(f) = \{ x \} + R$ \quad where $x \not\in R$,
+$\texttt{Var}(f) = \{ x \} \cup R$ \quad where $x \not\in R$,
 \\[0.2cm]
 i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R$ is the set of all variables occurring
 in $f$ that are different from $x$.  Furthermore, assume that we have a dictionary $\texttt{ValuesPerVar}$ such that
@@ -1306,9 +1307,7 @@ variable from this set and hence the algorithm terminates eventually.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    enforceConsistency := procedure(rw ValuesPerVar,
-                                    Var2Formulas, Annotated, Connected)
-    {
+    enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connected) {
         UncheckedVars := domain(Var2Formulas);
         while (UncheckedVars != {}) {
             variable    := from(UncheckedVars);
@@ -1318,7 +1317,7 @@ variable from this set and hence the algorithm terminates eventually.
             for (f in Constraints) {
                 OtherVars := Annotated[f] - { variable };
                 for (value in Values) {
-                    if(!existsValue(variable,value,f,OtherVars,ValuesPerVar)) {
+                    if(!existsValue(variable, value, f, OtherVars, ValuesPerVar)) {
                         RemovedVals   += { value };
                         UncheckedVars += Connected[variable];
                     }
@@ -1344,7 +1343,7 @@ The procedure $\texttt{enforceConsistency}$ takes four arguments.
       the set of those constraints $f$ such that $v$ occurs in $f$.
 \item $\texttt{Annotated}$ is the set of annnotated constraints, i.e. this set contains
       pairs of the form $\pair(f, V)$ where $f$ is a constraint and $V$ is the set of all variables occurring
-      in $f$.  This last argument is needed only for efficiency: In order to avoid computing the set $V$ of
+      in $f$.  This argument is needed only for efficiency: In order to avoid computing the set $V$ of
       variables occurring in a constraint $f$ every time the constraint $f$ is encountered, we compute these
       sets at the beginning of our computation and store them in the dictionary $\texttt{Annnotated}$.
 \item $\texttt{Connected}$ is a dictionary that takes a variable $x$ and returns the set $V$ of all variables
@@ -1438,7 +1437,7 @@ $\texttt{Vars}$ the set of values that might be assigned to $\texttt{var}$.
 \end{enumerate}
 On one hand, consistency checking creates a lot of overhead.\footnote{
   To be fair, the implementation shown in this section is far from optimal.  In particular, by remembering which
-  combinations of variables and values work for a given formula, the overhead can be reduced greatly.  I have
+  combinations of variables and values work for a given formula, the overhead can be reduced significantly.  I have
   refrained from implementing this optimization because I did not want the code to get too complex.
 }
 Therefore, it might actually slow down the
@@ -1534,7 +1533,7 @@ this program line by line.
       solution has been found.
 \item The variable $\texttt{Conflicts}$ is a set of pairs of the form $[c, r]$, where $c$ is the number of
       times the queen in row $r$ is attacked by other queens.  Hence, $c$ is the same as the number of
-      unsatisfied conflicts for the variable specifying the column of the queen in row $r$.
+      unsatisfied constraints for the variable specifying the column of the queen in row $r$.
 \item $\texttt{maxNum}$ is the maximum of the number of conflicts for any row.
 \item If this number is $0$, then all constraints are satisfied and the list $\texttt{Queens}$ is a solution to the
       $\texttt{n}$ queens problem.
@@ -1606,7 +1605,7 @@ discussed previously.  However, we have to note that local search is \blue{incom
 constraint satisfaction problem $\mathcal{P}$ has no solution, then local search loops forever.  Therefore, in
 practise a dual approach is used to solve a constraint satisfaction problem.  The constraint solver starts two
 threads: The first search does local search, the second thread tries to solve the problem via some refinement
-of backtracking.  the first thread that terminates wins.  The resulting algorithm is complete and, for a
+of backtracking.  The first thread that terminates wins.  The resulting algorithm is complete and, for a
 solvable problem, will have similar performance as local search.  If the problem is unsolvable, this will
 \blue{eventually} be discovered by backtracking.  Note, however, that the constraint satisfaction
 problem is NP-complete.  Hence, it is unlikely that there is an efficient algorithm that works always.
