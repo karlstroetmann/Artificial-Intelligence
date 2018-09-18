@@ -1,5 +1,5 @@
 loadLibrary("termUtilities");
-load("queens-csp.stlx");
+// load("queens-csp.stlx");
 load("send-more-money.stlx");
 
 // This function collects all variables occurring in the formula f.
@@ -75,10 +75,14 @@ most_constrained_variable := procedure(Assignment, ValuesPerVar) {
 propagate := procedure(x, v, Assignment, Constraints, ValuesPerVar) {
     ValuesPerVar[x] := { v };
     // constraint propagation is only done for binary constraints
-    for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
-        y := arb(Vars - { x });  // y is the other variable
-        if (!(y in domain(Assignment))) {
-            Legal := { w : w in ValuesPerVar[y] | eval_constraint({[x,v], [y,w]}, F) };
+    BoundVars := domain(Assignment);
+    for ([F, Vars] in Constraints | x in Vars) {
+        UnboundVars := Vars - BoundVars - { x };
+        if (#UnboundVars == 1) {
+            y := arb(UnboundVars);  // y is the remaining unbound variable
+            Legal := { w : w in ValuesPerVar[y]
+                         | eval_constraint({[x,v], [y,w]} + Assignment, F)
+                     };
             if (Legal == {}) { backtrack; }
             ValuesPerVar[y] := Legal;
         }

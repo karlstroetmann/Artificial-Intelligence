@@ -27,9 +27,7 @@ solve := procedure(CSP) {
     MisspelledVars := (VarsInConstrs - Variables) + (Variables - VarsInConstrs);
     if (MisspelledVars != {}) {
         print("Did you misspell any of the following Variables?");
-        for (v in MisspelledVars) {
-            print(v);
-        }
+        for (v in MisspelledVars) { print(v); }
     }
     ValuesPerVar := { [x, Values] : x in Variables };
     Annotated    := { [f, collectVars(f)] : f in Constrs };

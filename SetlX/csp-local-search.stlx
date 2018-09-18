@@ -24,10 +24,7 @@ solve := procedure(CSP) {
     iteration := 0;
     lastVar   := first(Vars);
     while (true) {
-        Conflicts := { [numConflicts(x, Assign, Annotated), x]
-                     : x in Vars
-                     | x != lastVar
-                     };
+        Conflicts := {[numConflicts(x, Assign, Annotated), x] : x in Vars | x!=lastVar};
         maxNum := last(Conflicts)[1];
         if (maxNum == 0) { // no conflicts, solution found
             print("Number of iterations: $iteration$");
