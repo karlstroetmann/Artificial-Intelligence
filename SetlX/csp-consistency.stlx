@@ -46,7 +46,7 @@ solve := procedure(CSP) {
         }
         Var2Formulas := variables2Formulas(OtherConstrs);
         enforceConsistency(ValuesPerVar, Var2Formulas, Annotated, Connected);
-        print(ValuesPerVar);
+        for ([v, Values] in ValuesPerVar) { print("$v$: $Values$"); }
         return bt_search({}, Variables, ValuesPerVar, OtherConstrs);
     }
 };
