@@ -949,8 +949,8 @@ solution of the $\texttt{CSP}$.
 \caption{Finding a most constrained variable.}
 \label{fig:csp-constraint-propagation.stlx-2}
 \end{figure}
-\myFig{csp-constraint-propagation.stlx-2} show the implementation of the procedure $\texttt{most\_constrained\_variable}$
-and the procedure $\texttt{propagate}$.  The procedure $\texttt{most\_constrained\_variable}$ takes a partial
+\myFig{csp-constraint-propagation.stlx-2} show the implementation of the procedure
+$\texttt{most\_constrained\_variable}$.  The procedure $\texttt{most\_constrained\_variable}$ takes a partial 
 $\texttt{Assignment}$ and a dictionary $\texttt{ValuesPerVar}$ returning for all variables the set of values
 that are still admissible for this variable.
 \begin{enumerate}
@@ -982,10 +982,14 @@ that are still admissible for this variable.
                 ]
     propagate := procedure(x, v, Assignment, Constraints, ValuesPerVar) {
         ValuesPerVar[x] := { v };
-        for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
-            y := arb(Vars - { x });
-            if (!(y in domain(Assignment))) {
-                Legal := {w : w in ValuesPerVar[y] | eval_constraint({[x,v], [y,w]}, F)};
+        BoundVars := domain(Assignment);
+        for ([F, Vars] in Constraints | x in Vars) {
+            UnboundVars := Vars - BoundVars - { x };
+            if (#UnboundVars == 1) {
+                y := arb(UnboundVars);  // y is the remaining unbound variable
+                Legal := { w : w in ValuesPerVar[y]
+                             | eval_constraint({[x,v], [y,w]} + Assignment, F)
+                         };
                 if (Legal == {}) { backtrack; }
                 ValuesPerVar[y] := Legal;
             }
@@ -998,38 +1002,39 @@ that are still admissible for this variable.
 \label{fig:csp-constraint-propagation.stlx-3}
 \end{figure}
 
-
-The function $\texttt{propagate}$ show in \myFig{csp-constraint-propagation.stlx-3} takes the following inputs:
+\noindent
+The function $\texttt{propagate}$ shown in \myFig{csp-constraint-propagation.stlx-3} takes the following inputs:
 \begin{enumerate}[(a)]
-\item $\texttt{x}$ is a variable.
-\item $\texttt{v}$ is a value that is assigned to the variable $\texttt{x}$.
-\item $\texttt{Assignment}$ is a partial assignment that contains only assignments for variables that are
+\item $\texttt{x}$ is a variable and $\texttt{v}$ is a value that is assigned to the variable $\texttt{x}$.
+      The purpose of the function  $\texttt{propagate}$ is to restrict the values of variables different from
+      $\texttt{x}$ that result from setting $\texttt{x}$ to the value $\texttt{v}$.
+\item $\texttt{Assignment}$ is a partial assignment that contains some assignments for variables that are
       different from $\texttt{x}$.
 \item $\texttt{Constraints}$ is a set of annotated constraints, i.e.~this set contains pairs of the form 
       $\texttt{[F, Vars]}$, where $\texttt{F}$ is a constraint and $\texttt{Vars}$ is the set of
       variables occurring in $\texttt{F}$.
-\item $\texttt{ValuesPerVar}$ is a dictionary assigning sets of values to the different variables.
+\item $\texttt{ValuesPerVar}$ is a dictionary assigning sets of values to all variables.
 \end{enumerate}
 The function $\texttt{propagate}$ updates the dictionary $\texttt{ValuesPerVar}$ by taking into account the
-consequences of assigning the value $\texttt{v}$ to the variable $\texttt{x}$.
+consequences of assigning the value $\texttt{v}$ to the variable $\texttt{x}$.  The implementation of
+$\texttt{propagate}$ proceeds as follows.
 \begin{enumerate}
 \item As $\texttt{x}$ is assigned the value $\texttt{v}$, the corresponding entry in the dictionary
       $\texttt{ValuesPerVar}$ is changed accordingly. 
-\item Next, $\texttt{propagate}$ iterates over all binary constraints $\texttt{F}$ such that
-      \begin{enumerate}
-      \item $\texttt{x}$ occurs in $\texttt{F}$ and
-      \item $\texttt{F}$ is a binary constraint.
-      \end{enumerate}
-\item As $\texttt{F}$ is a binary constraint, there is one other variable besides the variable $\texttt{x}$
-      that occurs in $\texttt{F}$.  This other variable is called $\texttt{y}$.  
-\item If the variable $\texttt{y}$ has already been assigned a value, then there is nothing to do because
-      we already know that $\texttt{Assignment}$ is consistent.  This is ensured by the
-      previous call to the function $\texttt{is\_consistent}$ in the body of the procedure $\texttt{bt\_search}$.
-
-      However, if $\texttt{y}$ is still unassigned, it is necessary to update $\texttt{ValuesPerVar[y]}$.
-\item To this end, all values $\texttt{w}$ in $\texttt{ValuesPerVar[y]}$ are tested.  
-      The set $\texttt{Legal}$ contains all values $\texttt{w}$ that can be assigned to the variable $\texttt{y}$
-      without violating the constraint $\texttt{F}$.
+\item $\texttt{BoundVars}$ is the set of those variable that already have a value assigned.
+\item Next, $\texttt{propagate}$ iterates over all  constraints $\texttt{F}$ such that the variable
+      $\texttt{x}$ occurs in $\texttt{F}$.
+\item $\texttt{UnboundVars}$ is the set of those variables occurring in $\texttt{F}$ that are different from
+      $\texttt{x}$ and that do not yet have a value assigned.  These variables are called \emph{unbound variables} 
+      since we still need to assign values for these variables.
+\item If there is exactly one unbound variable $\texttt{y}$ in the constraint $\texttt{F}$, then the possible values for this
+      variable will be restricted by $\texttt{F}$.  Hence, in this case we need to recompute the set
+      $\texttt{ValuesPerVar[x]}$.
+\item As the set $\texttt{UnboundVars}$ contains just a single variable in line 7,
+      the function $\texttt{arb}$ returns this variable.
+\item In order to recompute the set $\texttt{ValuesPerVar[x]}$,  all values $\texttt{w}$ in
+      $\texttt{ValuesPerVar[y]}$ are tested.  The set $\texttt{Legal}$ contains all values $\texttt{w}$ that can
+      be assigned to the variable $\texttt{y}$ without violating the constraint $\texttt{F}$.
 \item If it turns out that $\texttt{Legal}$ is the empty set, then this means that the constraint
       $\texttt{F}$ is inconsistent with assigning the value $\texttt{v}$ to the variable
       $\texttt{x}$.  Hence, in this case the  search has to  $\texttt{backtrack}$.

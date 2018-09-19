@@ -146,18 +146,21 @@ most_constrained_variable := procedure(Assignment, Values) {
 };
 // Given a variable x and a value v, extend the Assignment so that x is bound to v
 // and compute the Values that can still be assigned to the unassigned variables.
-propagate := procedure(x, v, Assignment, Constraints, Values) {
-    Values[x] := { v };
-    // constraint propagation is only done for binary constraints
-    for ([F, Vars] in Constraints | x in Vars && #Vars == 2) {
-        y := arb(Vars - { x });
-        if (!(y in domain(Assignment))) {
-            Legal := { w : w in Values[y] | eval_constraint({[x,v], [y,w]}, F) };
+propagate := procedure(x, v, Assignment, Constraints, ValuesPerVar) {
+    ValuesPerVar[x] := { v };
+    BoundVars := domain(Assignment);
+    for ([F, Vars] in Constraints | x in Vars) {
+        UnboundVars := Vars - BoundVars - { x };
+        if (#UnboundVars == 1) {
+            y := arb(UnboundVars);  // y is the remaining unbound variable
+            Legal := { w : w in ValuesPerVar[y]
+                         | eval_constraint({[x,v], [y,w]} + Assignment, F)
+                     };
             if (Legal == {}) { backtrack; }
-            Values[y] := Legal;
+            ValuesPerVar[y] := Legal;
         }
     }
-    return Values;
+    return ValuesPerVar;
 };
 // Check, whether the extended assignment
 //     Assignment + { [var, value] };

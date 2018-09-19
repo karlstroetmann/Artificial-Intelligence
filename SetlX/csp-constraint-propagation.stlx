@@ -74,7 +74,6 @@ most_constrained_variable := procedure(Assignment, ValuesPerVar) {
 // and compute the Values that can still be assigned to the unassigned variables.
 propagate := procedure(x, v, Assignment, Constraints, ValuesPerVar) {
     ValuesPerVar[x] := { v };
-    // constraint propagation is only done for binary constraints
     BoundVars := domain(Assignment);
     for ([F, Vars] in Constraints | x in Vars) {
         UnboundVars := Vars - BoundVars - { x };
