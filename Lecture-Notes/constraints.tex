@@ -1142,7 +1142,8 @@ So far, the constraints in the constraints satisfaction problems discussed are e
 or \blue{binary constraints}:  A \blue{unary} constraint is a constraint $\texttt{f}$
 such that the formula $\texttt{f}$ contains only one variable, while a \blue{binary} constraint
 contains two variables.  If we have a constraint satisfaction problem that involves also constraints that
-mention more than two variables, then the constraint propagation shown in the previous section does not apply.
+mention more than two variables, then the constraint propagation shown in the previous section is not
+as effective as it is only used for a constraint $\texttt{f}$ if all but one variable of $\texttt{f}$ have been assigned.
 For example, consider the \href{https://en.wikipedia.org/wiki/Verbal_arithmetic}{cryptarithmetic puzzle} shown
 in \myFig{send-more-money.pdf}.  The idea is that the letters 
 ``$\texttt{S}$'', ``$\texttt{E}$'', ``$\texttt{N}$'', ``$\texttt{D}$'', ``$\texttt{M}$'', ``$\texttt{O}$'', ``$\texttt{R}$'', ``$\texttt{Y}$'' 
@@ -1155,7 +1156,7 @@ $\texttt{S} \cdot 10^3 + \texttt{E} \cdot 10^2 + \texttt{N} \cdot 10^1 + \texttt
 \\[0.2cm]
 The strings ``$\texttt{MORE}$ and ``$\texttt{MONEY}$'' are interpreted similarly. To make the problem
 interesting, the assumption is that different variables have different values.  Furthermore, the
-decimals at the beginning of a number should be different from $0$.
+digits at the beginning of a number should be different from $0$.
 
 
 \begin{figure}[!ht]
@@ -1232,10 +1233,10 @@ $(\texttt{D} + \texttt{E}) \;\texttt{\symbol{92}}\; 10 = \texttt{C1}$.
 Here, the symbol ``$\texttt{\symbol{92}}$'' denotes 
 \href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, e.g.~we have $7 \texttt{\symbol{92}} 3 = 2$.
 If we try to solve the cryptarithmetic puzzle as coded in \myFig{send-more-money.stlx} using the
-constraint solver developed in the previous section, we will be disappointed as it takes about 17 seconds on my
-computer.  The reason is that most constraints involve three or four variables and therefore the effects of
-constraint propagation kick only in when many variables have already been initialized.  However, we can solve
-the problem in a few seconds if we add the following constraints for the 
+constraint solver developed in the previous section, we will be disappointed: Solving the puzzle takes about 17
+seconds on my computer.  The reason is that most constraints involve either three or four variables and
+therefore the effects of constraint propagation kick only in when many variables have already been initialized.
+However, we can solve the problem in a few seconds if we add the following constraints for the 
 variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1323,7 +1324,7 @@ variable from this set and hence the algorithm terminates eventually.
             for (f in Constraints) {
                 OtherVars := Annotated[f] - { variable };
                 for (value in Values) {
-                    if(!existsValue(variable, value, f, OtherVars, ValuesPerVar)) {
+                    if(!existValues(variable, value, f, OtherVars, ValuesPerVar)) {
                         RemovedVals   += { value };
                         UncheckedVars += Connected[variable];
                     }
@@ -1374,7 +1375,7 @@ $\texttt{ValuesPerVar}[x]$ is consistent with the constraints for $x$.  The impl
 \item We iterate over all $\texttt{value} \in \texttt{Values}$ that can be substituted for $\texttt{variable}$
       and check whether $\texttt{value}$ is consistent with $\texttt{f}$.   To this end, we need to find values
       that can be assigned to the variables in the set $\texttt{OtherVars}$ such that $\texttt{f}$ evaluates as
-      $\texttt{true}$.  This is checked using the function $\texttt{existsValue}$.
+      $\texttt{true}$.  This is checked using the function $\texttt{existValues}$.
 \item If we do not find such values, then $\texttt{value}$ is inconsistent for
       $\texttt{variable}$ w.r.t.~$\texttt{f}$ and needs to be removed from the set 
       $\texttt{ValuesPerVar}[\texttt{variable}]$.  Furthermore, all variables that are connected to
@@ -1395,7 +1396,7 @@ $\texttt{ValuesPerVar}[x]$ is consistent with the constraints for $x$.  The impl
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                   ]
-    existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
+    existValues := procedure(var, val, f, Vars, ValuesPerVar) {
         return exists( A in createAllAssignments(Vars, ValuesPerVar) 
                      | eval_constraint(A + { [var, val] }, f)        );
     };
@@ -1410,12 +1411,12 @@ $\texttt{ValuesPerVar}[x]$ is consistent with the constraints for $x$.  The impl
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{The implementation of $\texttt{existsValue}$.}
-\label{fig:csp-consistency.stlx:existsValue}
+\caption{The implementation of $\texttt{existValues}$.}
+\label{fig:csp-consistency.stlx:existValues}
 \end{figure}
 
 \noindent
-\myFig{csp-consistency.stlx:existsValue} shows the implementation of the function $\texttt{existsValue}$ that
+\myFig{csp-consistency.stlx:existValues} shows the implementation of the function $\texttt{existValues}$ that
 is used in the implementation of $\texttt{enforceConsistency}$.  This procedure is called with five arguments.
 \begin{enumerate}[(a)]
 \item $\texttt{var}$ is variable.
@@ -1465,7 +1466,7 @@ local search works as follows:
 \item If all $\texttt{Constraints}$ are satisfied, return the solution.
 \item For every  $x \in \texttt{Variables}$, count the number of \underline{unsatisfied} constraints that involve the
       variable $x$. 
-\item Set $\texttt{maxNum}$ to be the maximum of these numbers, i.e.~$\texttt{maxNum}$ is maximal number of
+\item Set $\texttt{maxNum}$ to be the maximum of these numbers, i.e.~$\texttt{maxNum}$ is the maximal number of
       unsatisfied constraints for any variable.
 \item Compute the set $\texttt{maxVars}$ of those variables that have $\texttt{maxNum}$ unsatisfied constraints.
 \item Randomly choose a variable $x$ from the set $\texttt{maxVars}$.
@@ -1485,35 +1486,39 @@ local search works as follows:
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
     solve := procedure(n) {
         Queens := [];
-        for (row in [1 .. n]) {
+        for (row in [1 .. n]) {    // randomly place n queens
             Queens[row] := rnd({1 .. n});
         }
         iteration := 0;
-        while (true) {
-            Conflicts   := { [numConflicts(Queens, row), row] : row in [1 ..n] };
-            [maxNum, _] := last(Conflicts);
-            if (maxNum == 0) {
+        lastRow   := 0;
+        while (n > 3) {  // there is no solution for n <= 3
+            // printBoard(Queens);
+            Conflicts := { [numConflicts(Queens, row), row] : row in {1..n} - {lastRow} };
+            [maxNum, _] := last(Conflicts);  // select queen with most conflicts
+            if (maxNum == 0) { // no conflicts, solution found 
                 return Queens;
             }
-            if (iteration % 10 != 0) { // avoid infinite loops
-                row := rnd({ row : [num, row] in Conflicts | num == maxNum });
+            if (iteration % 30 != 0) { // avoid infinite loops
+                row := rnd({ row : [num,row] in Conflicts | num == maxNum });
             } else {
                 row := rnd({ 1 .. n });
             }
+            lastRow   := row;
             Conflicts := {};
-            for (col in [1 .. n]) {
+            for (col in [1 .. n]) {  
                 Board      := Queens;
                 Board[row] := col;
                 Conflicts  += { [numConflicts(Board, row), col] };
             }
-            [minNum, _] := first(Conflicts);
-            Queens[row] := rnd({ col : [num, col] in Conflicts | num == minNum });
-            iteration   += 1;
+            [minNum, _] := first(Conflicts); 
+            newColumn   := rnd({ col : [num, col] in Conflicts | num == minNum });
+            Queens[row] := newColumn;
+            iteration += 1;
         }
     };
 \end{Verbatim}
@@ -1534,17 +1539,24 @@ this program line by line.
 \item The \texttt{for} loop initializes the positions of the queens to random values from the set
       $\{1, \cdots, \texttt{n}\}$.  Effectively, for every row on the chess board, this puts a queen in a
       random column.
-\item The variable $\texttt{iteration}$ counts the number of times that we need to reassign a queen in a given row.
+\item The variable $\texttt{iteration}$ counts the number of times that we need to reassign a queen in a given
+      row.
+\item The variable $\texttt{lastRow}$ remembers the row that was changed in the last iteration.
+      We have to remember this value as it would not make sense to reposition a queen in the same row twice
+      without changing any other queen in between.
 \item All the remaining statements are surrounded by a \texttt{while} loop that is only terminated once a
-      solution has been found.
+      solution has been found.  The \texttt{while} loop checks that \texttt{n} is bigger than $3$ since
+      otherwise the problem is unsolvable and local search can not figure out that a problem is unsolvable.
 \item The variable $\texttt{Conflicts}$ is a set of pairs of the form $[c, r]$, where $c$ is the number of
       times the queen in row $r$ is attacked by other queens.  Hence, $c$ is the same as the number of
       unsatisfied constraints for the variable specifying the column of the queen in row $r$.
-\item $\texttt{maxNum}$ is the maximum of the number of conflicts for any row.
+\item $\texttt{maxNum}$ is the maximum of the number of conflicts for any row.  The computation of
+      \texttt{maxNum} rests on the fact that sets are ordered in \textsc{SetlX} and therefore the last element
+      of the set \texttt{Conflicts} contains the pair $[c, r]$ such that the number of conflicts is maximal. 
 \item If this number is $0$, then all constraints are satisfied and the list $\texttt{Queens}$ is a solution to the
       $\texttt{n}$ queens problem.
 \item Otherwise, we compute those rows that exhibit the maximal number of conflicts.  From these rows
-      we select one $\texttt{row}$ arbitrarily.
+      we select one $\texttt{row}$ randomly.
 \item The reason for enclosing the assignment to $\texttt{row}$ in an \texttt{if} statement is explained later. 
       On a first reading of  this program,  this \texttt{if} statement should be ignored.
 \item Now that we have identified the $\texttt{row}$ where the number of conflicts is biggest, we need to
@@ -1562,7 +1574,7 @@ this program line by line.
 There is a technical issue, that must be addressed:  It is possible there is just one row that exhibits the
 maximum number of conflicts.  It is further possible that, given the placements of the other queens, there is
 just one optimal column for this row.  In this case, the procedure $\texttt{solve}$ would loop forever.  To
-avoid this case, every 10 iterations we pick a random row to change.
+avoid this case, every 30 iterations we pick a random row to change.
 
 \begin{figure}[!ht]
 \centering
@@ -1579,9 +1591,8 @@ avoid this case, every 10 iterations we pick a random row to change.
         n      := #Queens;
         result := 0;
         for (r in {1 .. n} | r != row) {
-            if ( Queens[r] == Queens[row]           ||
-                 r - Queens[r] == row - Queens[row] ||
-                 r + Queens[r] == row + Queens[row]
+            if ( Queens[r] == Queens[row]                     ||
+                 abs(row - r) == abs(Queens[row] - Queens[r])
                )
             { result += 1; }
         }
@@ -1601,22 +1612,21 @@ that a queen can be attacked by another queen.
 \begin{enumerate}
 \item The queen in row $\texttt{r}$ could be positioned in the same column as the queen in $\texttt{row}$.
 \item The queen in row $\texttt{r}$ could be positioned in the same falling or rising diagonal as the queen in
-      $\texttt{row}$.  These diagonals are specified by the linear equations given in line 6 and 7 of Figure
-      \ref{fig:numConficts.stlx}.
+      $\texttt{row}$.  These diagonals are specified in line 6 of Figure \ref{fig:numConficts.stlx}.
 \end{enumerate}
 Using the program discussed in this section, the n queens problem can be solved for a $\texttt{n} = 1000$ in
 30 minutes.  As the memory requirements for local search are small, even much higher problem sizes can be
 tackled if sufficient time is available.  Hence, it seems that local search is much better than the algorithms
 discussed previously.  However, we have to note that local search is \blue{incomplete}:  If a
 constraint satisfaction problem $\mathcal{P}$ has no solution, then local search loops forever.  Therefore, in
-practise a dual approach is used to solve a constraint satisfaction problem.  The constraint solver starts two
-threads: The first search does local search, the second thread tries to solve the problem via some refinement
-of backtracking.  The first thread that terminates wins.  The resulting algorithm is complete and, for a
-solvable problem, will have similar performance as local search.  If the problem is unsolvable, this will
-\blue{eventually} be discovered by backtracking.  Note, however, that the constraint satisfaction
-problem is NP-complete.  Hence, it is unlikely that there is an efficient algorithm that works always.
-However, many practically occurring constraint satisfaction problems can be solved today in a reasonably short
-time. 
+practise a \blue{dual approach} is used to solve a constraint satisfaction problem.  The constraint solver
+starts two threads: The first search does local search, the second thread tries to solve the problem via some
+refinement of backtracking.  The first thread that terminates wins.  The resulting algorithm is complete and,
+for a solvable problem, will have a performance that is similar to the performance of local search.  If the
+problem is unsolvable, this will  \blue{eventually} be discovered by backtracking.  Note, however, that the
+constraint satisfaction problem is \href{https://en.wikipedia.org/wiki/NP-completeness}{NP-complete}.  Hence,
+it is unlikely that there is an efficient algorithm that works \blue{always}.  However, today many practically
+relevant constraint satisfaction problems can be solved in a reasonably short time. 
 
 %%% Local Variables:
 %%% mode: latex

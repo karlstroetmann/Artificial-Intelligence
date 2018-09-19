@@ -69,7 +69,7 @@ enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connec
         for (f in Constraints) {
             OtherVars := Annotated[f] - { variable };
             for (value in Values) {
-                if(!existsValue(variable, value, f, OtherVars, ValuesPerVar)) {
+                if(!existValues(variable, value, f, OtherVars, ValuesPerVar)) {
                     RemovedVals   += { value };
                     UncheckedVars += Connected[variable];
                 }
@@ -84,7 +84,7 @@ enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connec
 // variables in f that are different from v and a dictionary associating values
 // with variables.  It checks whether there is a value for var such that the
 // constraint f can be satisfied.
-existsValue := procedure(var, val, f, Vars, ValuesPerVar) {
+existValues := procedure(var, val, f, Vars, ValuesPerVar) {
     return exists( A in createAllAssignments(Vars, ValuesPerVar)
                  | eval_constraint(A + { [var, val] }, f)        );
 };

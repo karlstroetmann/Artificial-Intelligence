@@ -80,13 +80,13 @@ solve := procedure(n) {
     lastRow   := 0;
     while (n > 3) {  // there is no solution for n <= 3
         // printBoard(Queens);
-        Conflicts := { [numConflicts(Queens, row), row] : row in {1..n}-{lastRow} };
+        Conflicts := { [numConflicts(Queens, row), row] : row in {1..n} - {lastRow} };
         [maxNum, _] := last(Conflicts);  // select queen with most conflicts
         if (maxNum == 0) { // no conflicts, solution found 
             print("number of iterations: $iteration$");
             return Queens;
         }
-        if (iteration % 10 != 0) { // avoid infinite loops
+        if (iteration % 30 != 0) { // avoid infinite loops
             row := rnd({ row : [num,row] in Conflicts | num == maxNum });
         } else {
             row := rnd({ 1 .. n });
@@ -114,9 +114,8 @@ numConflicts := procedure(Queens, row) {
     n      := #Queens;
     result := 0;
     for (r in {1 .. n} | r != row) {
-        if ( Queens[r] == Queens[row]           ||
-             r - Queens[r] == row - Queens[row] ||
-             r + Queens[r] == row + Queens[row]
+        if ( Queens[r] == Queens[row]                     ||
+             abs(row - r) == abs(Queens[row] - Queens[r])
            )
         { result += 1; }
     }
