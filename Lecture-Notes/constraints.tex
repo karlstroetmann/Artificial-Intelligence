@@ -749,7 +749,7 @@ Abstractly, constraint propagation works as follows.
       $\texttt{ValuesPerVar[x]}$.  If assigning the value $\texttt{v}$ to the variable $\texttt{x}$ does not
       violate a constraint, we \blue{propagate} the consequences of this assignment:
       \begin{enumerate}
-      \item For every binary constraint $\texttt{F}$ that mentions only the variable $\texttt{x}$ and one other variable
+      \item For every constraint $\texttt{F}$ that mentions only the variable $\texttt{x}$ and one other variable
             $\texttt{y}$ that has not yet been instantiated, we compute the set $\texttt{Legal}$ of those values from 
             $\texttt{ValuesPerVar[y]}$ that can be assigned to $\texttt{y}$ without violating the constraint
             $\texttt{F}$.
@@ -1232,9 +1232,10 @@ $(\texttt{D} + \texttt{E}) \;\texttt{\symbol{92}}\; 10 = \texttt{C1}$.
 Here, the symbol ``$\texttt{\symbol{92}}$'' denotes 
 \href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, e.g.~we have $7 \texttt{\symbol{92}} 3 = 2$.
 If we try to solve the cryptarithmetic puzzle as coded in \myFig{send-more-money.stlx} using the
-constraint solver developed in the previous section, we will be disappointed.  The reason is that most
-constraints involve three variables and therefore the constraint propagation developed in the previous section
-is of no help.  However, we can solve the problem in a few seconds if we add the following constraints for the
+constraint solver developed in the previous section, we will be disappointed as it takes about 17 seconds on my
+computer.  The reason is that most constraints involve three or four variables and therefore the effects of
+constraint propagation kick only in when many variables have already been initialized.  However, we can solve
+the problem in a few seconds if we add the following constraints for the 
 variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
 \\[0.2cm]
 \hspace*{1.3cm}
