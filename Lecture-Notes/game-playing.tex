@@ -359,9 +359,9 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
       \begin{enumerate}
       \item Initially, $\texttt{State}$ is the $\texttt{startState}$.
       \item As long as the game is not finished, the procedure keeps running.
-      \item We compute the player \texttt{firstPlayer} that starts the game and assume that the computer goes first.
-            Hence, the function $\texttt{best\_move}$ is used to compute the state that results from the best
-            move of $\texttt{firstPlayer}$.
+      \item We assume that the computer goes first and therefore define  \texttt{firstPlayer} as the first
+            element of the list $\texttt{players}()$.  Next, the function $\texttt{best\_move}$ is used to
+            compute the state that results from the best move of $\texttt{firstPlayer}$.
       \item After that, it is checked whether the game is finished.
       \item If the game is not  yet finished, the user is asked to make its move via the function
             $\texttt{getMove}$ that takes a $\texttt{State}$, displays it, and asks the user to enter a move.
@@ -395,7 +395,7 @@ In order to better understand the reason for using memoization in the implementa
 \end{Definition}
 
 \noindent
-The following exercise yields a better understanding of the effects of memoization.
+The following exercise shows why memoization is important.
 
 \exercise
 In \blue{simplified tic-tac-toe} the game only ends when there are no more empty squares left.
