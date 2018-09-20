@@ -72,14 +72,12 @@ printBoard := procedure(L) {
 // n specifies the size of the board.
 solve := procedure(n) {
     Queens := [];
-    // randomly place n queens
     for (row in [1 .. n]) {
         Queens[row] := rnd({1 .. n});
     }
     iteration := 0;
     lastRow   := 0;
     while (n > 3) {  // there is no solution for n <= 3
-        // printBoard(Queens);
         Conflicts := { [numConflicts(Queens, row), row] : row in {1..n} - {lastRow} };
         [maxNum, _] := last(Conflicts);  // select queen with most conflicts
         if (maxNum == 0) { // no conflicts, solution found 
@@ -99,9 +97,7 @@ solve := procedure(n) {
             Conflicts  += { [numConflicts(Board, row), col] };
         }
         [minNum, _] := first(Conflicts); 
-        // randomly choose any column with minimum number of conflicts
         newColumn := rnd({ col : [num, col] in Conflicts | num == minNum });
-        // print("Move queen in row $row$ to column $newColumn$.");
         Queens[row] := newColumn;
         iteration += 1;
     }

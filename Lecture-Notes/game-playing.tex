@@ -9,11 +9,12 @@ on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo
 To compare, according to the
 \href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of March 2018, the current 
 World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
-just 2843.  Hence, he wouldn't stand a chance to win a game against Stockfish.  More recently, the computer program
+just 2843.  Hence, he wouldn't stand a chance to win a game against Stockfish.  In 2017, at the 
+\href{https://en.wikipedia.org/wiki/Future_of_Go_Summit}{Future of Go Summit},  the computer program
 \href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} was able to beat
 \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie}, who is currently\footnote{This assessment is of March 2018.} 
-considered to be the best human \href{https://en.wikipedia.org/wiki/Go_(game)}{go} player in the world.
-Besides go and chess, there are many other games where today the performance of a computer exceeds the
+considered to be the best human \href{https://en.wikipedia.org/wiki/Go_(game)}{Go} player in the world.
+Besides Go and chess, there are many other games where today the performance of a computer exceeds the
 performance of human players.  To name just one more example, at the beginning of 2017 the program
 \href{https://en.wikipedia.org/wiki/Libratus}{Libratus} was able to  
 \href{https://www.engadget.com/2017/01/31/libratus-the-poker-playing-ai-destroyed-its-four-human-rivals/}{beat}
@@ -30,7 +31,8 @@ where the components are interpreted as follows:
 \item $\texttt{States}$ is the set of all possible \blue{states} of the game.
 \item $s_0 \in \texttt{States}$ is the \blue{start state}.
 \item $\texttt{Players}$ is  the list of \blue{players} of the game.  The first element in \texttt{Players} is
-      the player to start the game and after that the players take turns.
+      the player to start the game and after that the players take turns.  As we only consider \blue{two person}
+      games, we assume that \texttt{Players} is a list of length two.
 \item $\texttt{nextStates}$ is a function that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the set of
       states that can be reached if the player $p$ has to make a move in the state $s$.  Hence, the signature of
       $\texttt{nextStates}$ is given as follows:
@@ -51,27 +53,16 @@ where the components are interpreted as follows:
       \hspace*{1.3cm}
       $\texttt{TerminalStates} := \{ s \in \texttt{States} \mid \texttt{finished}(s) \}$.
 \item $\texttt{utility}$ is a function that takes a state $s \in \texttt{TerminalStates}$ and a player $p \in \texttt{Players}$.  It returns
-      the \blue{value} that the game has for player $p$.  In all of our examples, this value will be an element
-      from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that player $p$ has lost the game,
-      if the value is $+1$ the player $p$ has won the game and if this value is $0$, then the game is drawn.
-      Hence the signature of $\texttt{utility}$ is
+      the \blue{value} that the game has for player $p$.  In general, a value is a real number,  but in all of
+      our examples, this value will be an element from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that
+      player $p$ has lost the game, if the value is $+1$ the player $p$ has won the game, and if this value is
+      $0$, then the game is a draw.  Hence the signature of $\texttt{utility}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{utility}: \texttt{TerminalStates} \times \texttt{Players} \rightarrow \{ -1, 0, +1\}$.
 \end{enumerate}
-
-\exercise
-The definition given above does not capture all types of games.  In particular, the definition only captures 
-\blue{deterministic games}:  A game is called \blue{deterministic} iff there is no randomness
-involved.  Games like chess and go are certainly deterministic.  However, other games like 
-\href{https://en.wikipedia.org/wiki/Dice_chess}{dice chess} involve randomness.  In dice chess a pair of dice is
-rolled at the beginning of each turn.  The outcome of this roll determines which pieces may be moved.
-Extend the definition of a
-game so that also a games like \blue{dice chess} can be described. 
-\eox
-
-In this chapter we will only consider so called \blue{two person zero sum games}.  This means that the list $\texttt{Players}$
-has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
+In this chapter we will only consider so called \blue{two person, zero sum games}.  
+This means that the list $\texttt{Players}$ has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Players} = \bigl[ \mathrm{A}, \mathrm{B} \bigr]$,
@@ -82,18 +73,17 @@ then the game is called a \blue{zero sum game} iff we have
 $\forall s \in \texttt{TerminalStates}:\texttt{utility}(s, \texttt{A}) + \texttt{utility}(s, \texttt{B}) = 0$,
 \\[0.2cm]
 i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\texttt{B}$ and vice versa.
-Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{go} and 
-\href{https://en.wikipedia.org/wiki/Chess}{chess} are two person zero sum games.
-We proceed to discuss an example of a game.
+Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{Go} and 
+\href{https://en.wikipedia.org/wiki/Chess}{chess} are two person, zero sum games.
+We proceed to discuss an example.
 
 \section{Tic-Tac-Toe}
 The game \href{https://en.wikipedia.org/wiki/Tic-tac-toe}{tic-tac-toe} is played on a square board of size 
 $3 \times 3$.  On every turn, one player puts an ``\texttt{X}'' on one of the free squares of the board, while
 the other player puts an ``$\texttt{O}$'' onto a free square when it is his turn.  If the first player manages
-to place three \texttt{X}s in a 
-row, column, or diagonal, she has won the game.  Similarly, if the other player manages to put three \texttt{O}s in a
-row, column, or diagonal, this player is the winner.  Otherwise, the game is drawn.
-\myFig{ttt.stlx} shows a \textsc{SetlX} implementation of tic-tac-toe.
+to place three \texttt{X}s in a row, column, or diagonal, she has won the game.  Similarly, if the second
+player manages to put three \texttt{O}s in a row, column, or diagonal, this player is the winner.  Otherwise,
+the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of tic-tac-toe.
 
 
 \begin{figure}[!ht]
@@ -149,12 +139,13 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
  
 
 \begin{enumerate}
-\item The function $\texttt{players}$ returns the set $\texttt{Players}$.  Traditionally, the players in
-      tic-tac-toe are called \texttt{X} and \texttt{O}.
+\item The function $\texttt{players}$ returns the list $\texttt{Players}$.  Traditionally, the players in
+      tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.
 \item The function $\texttt{startState}$ returns the start state, which is an empty board.
       States are represented as list of lists.  The entries in these lists are the characters 
-      ``\texttt{X}'', ``\texttt{O}'', and ``\texttt{ }''.
-      As the  $\texttt{StartState}$ is the empty board, it is represented as as follows:
+      ``\texttt{X}'', ``\texttt{O}'', and the blank character ``\texttt{ }''.
+      As the  $\texttt{StartState}$ is the empty board, it is represented as a list of three lists
+      containing three blanks each:
       \begin{Verbatim}
       [ [" ", " ", " "], 
         [" ", " ", " "], 
@@ -165,10 +156,11 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
       of states that can be reached from $\texttt{State}$ if $\texttt{player}$ is to move next.
       To this end, it first computes the set of \blue{empty} positions.  Every position is represented as pair of the
       form $[\texttt{row}, \texttt{col}]$ where $\texttt{row}$ specifies the row and $\texttt{col}$ specifies
-      the column of the position.  A position is \blue{empty} iff
+      the column of the position.  The position $[\texttt{row}, \texttt{col}]$ is \blue{empty} in
+      $\texttt{State}$ iff
       \\[0.2cm]
       \hspace*{1.3cm}
-      $[\texttt{row}, \texttt{col}] = \texttt{\symbol{34}\;\;\symbol{34}}$.
+      $\texttt{State}[\texttt{row}][\texttt{col}] = \texttt{\symbol{34}\;\;\symbol{34}}$.
       \\[0.2cm]
       The computation of the empty position has been sourced out to the function $\texttt{empty}$.
       The function $\texttt{nextStates}$ then iterates over the set of empty positions. For every 
@@ -179,10 +171,11 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
       in this state.
 \item The function $\texttt{utility}$ takes a $\texttt{State}$ and a $\texttt{player}$.  If the game is 
       finished in the given $\texttt{State}$, it returns the value that this $\texttt{State}$ has for the
-      current $\texttt{player}$.  If the game is not yet decided, $\Omega$ is returned instead.
+      current $\texttt{player}$.  If the outcome of the game is not yet decided, the undefined value $\Omega$
+      is returned instead. 
  
       In order to achieve its goal, the procedure first computes the set of all \blue{line-sets}.
-      Given a $\texttt{State}$, a \blue{line-set} is a set of those markers that either form a horizontal,
+      Given a $\texttt{State}$, a \blue{line-set} is a set of those positions that either form a horizontal,
       vertical, or diagonal line in $\texttt{State}$, e.g.~the set 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -218,9 +211,13 @@ row, column, or diagonal, this player is the winner.  Otherwise, the game is dra
       \item Finally, the set
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{\{ State[idx][n - (idx - 1) ] : idx in [1..3] \}}
+            \texttt{\{ State[idx][-idx] : idx in [1..3] \}}
             \\[0.2cm]
-            is the rising diagonal.
+            is the rising diagonal.  This works, because for a list $\texttt{L}$ and a number $k$,
+            the expression $\texttt{L}[-k]$ returns the $k$-th last element of $\texttt{L}$,
+            i.e.~$\texttt{L}[-1]$ is the last element of $\texttt{L}$, $\texttt{L}[-2]$ is the second last
+            element of $L$, and in general we have $\texttt{L}[-k] = \texttt{L}[\#\texttt{L} - (k-1)]$ for all 
+            $k \in \{1,\cdots,\#\texttt{L}\}$.
       \end{enumerate}
 \item The procedure $\texttt{finished}$ takes a $\texttt{State}$ and checks whether the game is finished.
       To this end it computes the $\texttt{utility}$ of the state for the player ``$\texttt{X}$''.  
@@ -253,8 +250,8 @@ $\neg \texttt{finished}(s) \rightarrow
 $.
 \\[0.2cm]
 The reason is that, if the game is not finished yet, the player $p$ has to evaluate all possible moves.  
-From these, the player $p$ will choose the move that maximizes the value of the game.  In order to do so, the
-player $p$ computes the set 
+From these, the player $p$ will choose the move that maximizes the value of the game for herself.  In order to
+do so, the player $p$ computes the set 
 $\texttt{nextStates}(s, p)$ of all states that can be reached from the state $s$ in any one move of the player $p$.
 Now if $n$ is a state that results from player $p$ making some move, then it is the turn of the other player
 $o$ to make a move.  Hence, in order to evaluate the state $n$, we have to call the function $\texttt{value}$
@@ -436,12 +433,12 @@ related by the following requirements:
       \\[0.2cm]
       \hspace*{0.3cm}
       $\texttt{value}(s, p) \leq \alpha \;\rightarrow\; \texttt{alphaBeta}(s, p, \alpha, \beta) \leq
-      \mathtt{value}(s, p)$.
+      \texttt{value}(s, p)$.
 \item Similarly, if $\texttt{value}(s, p) \geq \beta$, we require that the value
       returned by $\texttt{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\beta \leq \texttt{value}(s, p) \;\rightarrow\; \mathtt{value}(s, p) \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
+      $\beta \leq \texttt{value}(s, p) \;\rightarrow\; \texttt{value}(s, p) \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
 \end{enumerate}
 Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an approximation of
 $\texttt{value}(\texttt{State}, \texttt{player})$.  However, it turns out that this approximation is all that

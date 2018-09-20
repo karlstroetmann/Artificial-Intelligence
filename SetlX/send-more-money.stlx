@@ -13,6 +13,7 @@ createCSP := procedure() {
                      '(S + M + C3) % 10 == O', '(S + M + C3) \ 10 == M'
                    };
     Constraints += { "S != 0", "M != 0" };
+    Constraints += { "C1 < 2", "C2 < 2", "C3 < 2", "M < 2" };
     return [Variables, Values, Constraints];
 };
 allDifferent := procedure(Vars) {
