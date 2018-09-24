@@ -96,8 +96,8 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
-                  ]
-    players    := [] |-> [ "X", "O" ];
+                ]
+    players    := [] |-> [ "X", "O" ];  
     startState := [] |-> [ [ " " : col in [1..3]] : row in [1..3] ];
     nextStates := procedure(State, player) {
         Empty  := empty(State);
@@ -111,21 +111,21 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
     };
     empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col] == " "};
     utility := procedure(State, player) {
-        Lines := all_lines(State);
-        for (Line in Lines) {
-            if (#Line == 1 && Line != { " " }) {
-                if (Line == { player }) { return  1; } else { return -1; }
+        for (Pairs in all_lines()) {
+            Marks := { State[row][col] : [row, col] in Pairs };
+            if (#Marks == 1 && Marks != { " " }) {
+                if (Marks == { player }) { return  1; } else { return -1; }
             }
         }
         if (forall(row in [1..3], col in [1..3] | State[row][col] != " ")) {
             return 0;   
         }
     };
-    all_lines := procedure(State) {
-        Lines := { { State[row][ col] : col in [1..3] } : row in [1..3] };
-        Lines += { { State[row][ col] : row in [1..3] } : col in [1..3] };
-        Lines += { { State[idx][ idx] : idx in [1..3] } };
-        Lines += { { State[idx][-idx] : idx in [1..3] } };
+    all_lines := closure() {
+        Lines := { { [row, col] : col in [1..3] } : row in [1..3] };
+        Lines += { { [row, col] : row in [1..3] } : col in [1..3] };
+        Lines += { { [idx, idx] : idx in [1..3] } };
+        Lines += { { [1, 3], [2, 2], [3, 1] } };
         return Lines;
     };
     finished := procedure(State) {
@@ -140,7 +140,16 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
 
 \begin{enumerate}
 \item The function $\texttt{players}$ returns the list $\texttt{Players}$.  Traditionally, the players in
-      tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.
+      tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.  As this function does not take any arguments, 
+      you might well ask why we use a function to define the list of players.  The reason is that
+      \textsc{SetlX} does  not provide global variables.  Therefore, the definition
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{players := [ "X", "O" ];}
+      \\[0.2cm]
+      would not work, as the variable \texttt{players} would be undefined inside of the function
+      \texttt{play\_game} where it is needed later.   This function is defined in Figure \ref{fig:game.stlx}
+      and will be discussed in Section \ref{sec:minimax}.
 \item The function $\texttt{startState}$ returns the start state, which is an empty board.
       States are represented as list of lists.  The entries in these lists are the characters 
       ``\texttt{X}'', ``\texttt{O}'', and the blank character ``\texttt{ }''.
@@ -154,7 +163,8 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
       \end{Verbatim}
 \item The function $\texttt{nextStates}$ takes a $\texttt{State}$ and a $\texttt{player}$ and computes the set
       of states that can be reached from $\texttt{State}$ if $\texttt{player}$ is to move next.
-      To this end, it first computes the set of \blue{empty} positions.  Every position is represented as pair of the
+      To this end, it first computes the set of \blue{empty} positions, i.e. those positions that have not yet
+      been marked by either player..  Every position is represented as pair of the
       form $[\texttt{row}, \texttt{col}]$ where $\texttt{row}$ specifies the row and $\texttt{col}$ specifies
       the column of the position.  The position $[\texttt{row}, \texttt{col}]$ is \blue{empty} in
       $\texttt{State}$ iff
@@ -174,50 +184,77 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
       current $\texttt{player}$.  If the outcome of the game is not yet decided, the undefined value $\Omega$
       is returned instead. 
  
-      In order to achieve its goal, the procedure first computes the set of all \blue{line-sets}.
-      Given a $\texttt{State}$, a \blue{line-set} is a set of those positions that either form a horizontal,
-      vertical, or diagonal line in $\texttt{State}$, e.g.~the set 
+      In order to achieve its goal, the procedure first computes the set of all sets of coordinate pairs that 
+      either specify a horizontal, vertical, or diagonal line on a $3 \times 3$ tic-tac-toe board.  Concretely,
+      the function \texttt{all\_lines} returns the following set:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\{\, \texttt{State}[1,1],\, \texttt{State}[2,2],\, \texttt{State}[3,3]\, \}$
+      $
+      \begin{array}{ll}
+      \Bigl\{ & \bigl\{[1, 1], [1, 2], [1, 3]\bigr\}, \;
+                \bigl\{[2, 1], [2, 2], [2, 3]\bigr\}, \;
+                \bigl\{[3, 1], [3, 2], [3, 3]\bigr\},   \\
+              & \bigl\{[1, 1], [2, 1], [3, 1]\bigr\}, \;
+                \bigl\{[1, 2], [2, 2], [3, 2]\bigr\}, \;
+                \bigl\{[1, 3], [2, 3], [3, 3]\bigr\},   \\
+              & \bigl\{[1, 1], [2, 2], [3, 3]\bigr\}, \;
+                \bigl\{[3, 1], [2, 2], [1, 3]\bigr\}    \\
+      \Bigr\}
+      \end{array}
+      $
       \\[0.2cm]
-      is the set of entries in a diagonal line.  The game is decided if all entries in this set are either
-      ``$\texttt{X}$'' or ``$\texttt{O}$''.  In this case, the set has exactly one element which is different
-      from the blank.  If this element is the same as $\texttt{player}$, then the game is \blue{won} by
-      $\texttt{player}$, otherwise it is \blue{lost} for him.
+      The first line in this expression gives the set of pairs defining the rows, the second line defines 
+      the columns, and the last line yields the diagonals.  Given a state $\texttt{State}$ and a set
+      $\texttt{Pairs}$, the set 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Marks := \{ State[row][col] : [row, col] in Pairs \}}
+      \\[0.2cm]
+      is the set of all marks in the line specified by $\texttt{Pairs}$.  For example, if 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Pairs := \{ [1, 1], [2, 2], [3, 3] \}},
+      \\[0.2cm]
+      then $\texttt{Marks}$ is the set of marks on the falling diagonal.
+      The game is decided if all entries in a set of the form 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Marks := \{ State[row][col] : [row, col] in Pairs \}}
+      \\[0.2cm]
+      where \texttt{Pairs} is a set from \texttt{all\_lines} either have the value
+      ``$\texttt{X}$'' or the value ``$\texttt{O}$''.  In this case, the set \texttt{Marks} has exactly one
+      element which is different from the blank.  If this element is the same as $\texttt{player}$, then the
+      game is \blue{won} by $\texttt{player}$, otherwise it must be the mark of his opponent and hence the game
+      is \blue{lost} for him. 
 
-      Finally, if there are no empty squares left, then the game is a \blue{draw}.
-\item The auxiliary procedure $\texttt{all\_lines}$ takes a $\texttt{State}$ and computes the set $\texttt{Lines}$ of all
-      \blue{line-sets}. 
+      Finally, if there are no more empty squares left, then the game is a \blue{draw}.
+\item The auxiliary procedure $\texttt{all\_lines}$ computes the sets of coordinate pairs that 
+      either specify a horizontal, vertical, or diagonal line.
       \begin{enumerate}
       \item For any $\mathrm{row} \in \{1,2,3\}$ the set 
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{\{ State[row][col] : col in [1..3]\}} 
+            \texttt{\{ [row, col] : col in [1..3]\}} 
             \\[0.2cm]
             forms a horizontal line. 
       \item Likewise, for any $\mathrm{col} \in \{1,2,3\}$ the set 
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{\{ State[row][col] : row in [1..3]\}} 
+            \texttt{\{ [row, col] : row in [1..3]\}} 
             \\[0.2cm]
             forms a vertical line. 
       \item Given that the top row is indexed with 1, and the bottom row is row number 3, the set
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{\{ State[idx][idx] : idx in [1..3] \}};
+            \texttt{\{ [idx, idx] : idx in [1..3] \}};
             \\[0.2cm]
             is the falling diagonal.
       \item Finally, the set
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{\{ State[idx][-idx] : idx in [1..3] \}}
+            \texttt{\{ [3, 1], [2, 2], [1, 3] \}}
             \\[0.2cm]
-            is the rising diagonal.  This works, because for a list $\texttt{L}$ and a number $k$,
-            the expression $\texttt{L}[-k]$ returns the $k$-th last element of $\texttt{L}$,
-            i.e.~$\texttt{L}[-1]$ is the last element of $\texttt{L}$, $\texttt{L}[-2]$ is the second last
-            element of $L$, and in general we have $\texttt{L}[-k] = \texttt{L}[\#\texttt{L} - (k-1)]$ for all 
-            $k \in \{1,\cdots,\#\texttt{L}\}$.
+            is the rising diagonal.  
       \end{enumerate}
 \item The procedure $\texttt{finished}$ takes a $\texttt{State}$ and checks whether the game is finished.
       To this end it computes the $\texttt{utility}$ of the state for the player ``$\texttt{X}$''.  
@@ -226,7 +263,7 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
       ``$\texttt{O}$'': If the game is finished for  ``$\texttt{X}$'', then it is also finished for ``$\texttt{O}$'' and vice versa.
 \end{enumerate}
 
-\section{The Minimax Algorithm}
+\section{The Minimax Algorithm \label{sec:minimax}}
 Having defined the notion of a game, our next task is to come up with an algorithm that can play a game.  The
 algorithm that is easiest to explain is the \href{https://en.wikipedia.org/wiki/Minimax}{minimax algorithm}.  This
 algorithm is based on the notion of the \blue{value} of a state.  To this end, we define a function
@@ -404,13 +441,13 @@ The player \texttt{X} wins if she has more rows, columns, or diagonals of three 
 if he has more rows, columns, or diagonals of three \texttt{O}s than the player \texttt{X} has rows, columns,
 or diagonals of three \texttt{X}s.  Otherwise, the game is a draw. 
 \begin{enumerate}[(a)]
+\item Derive a formula to compute the size of the game tree of simplified tic-tac-toe.
+\item Write a short program to evaluate the formula derived in part (c) of this exercise.
 \item Derive a formula that gives the number of all states of simplified tic-tac-toe.  
 
       \textbf{Notice} that this question does not ask for the number of all terminal states but rather asks for
       all states. 
 \item Write a short program to evaluate the formula derived in part (a) of this exercise.
-\item Derive a formula to compute the size of the game tree of simplified tic-tac-toe.
-\item Write a short program to evaluate the formula derived in part (c) of this exercise.
 \end{enumerate}
 
 \section{$\alpha$-$\beta$-Pruning}
