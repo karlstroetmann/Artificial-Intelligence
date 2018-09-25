@@ -465,23 +465,22 @@ related by the following requirements:
       $\alpha \leq \texttt{value}(s, p) \leq \beta \;\rightarrow\;
          \texttt{alphaBeta}(s, p, \alpha, \beta) = \texttt{value}(s,p)
       $.
-\item If $\texttt{value}(s, p) \leq \alpha$, we require that the value returned by
+\item If $\texttt{value}(s, p) < \alpha$, we require that the value returned by
       $\texttt{alphaBeta}$ is less than or equal to $\alpha$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\texttt{value}(s, p) \leq \alpha \;\rightarrow\; \texttt{alphaBeta}(s, p, \alpha, \beta) \leq
-      \texttt{value}(s, p)$.
-\item Similarly, if $\texttt{value}(s, p) \geq \beta$, we require that the value
+      $\texttt{value}(s, p) < \alpha \;\rightarrow\; \texttt{alphaBeta}(s, p, \alpha, \beta) \leq \alpha$.
+\item Similarly, if $\texttt{value}(s, p) > \beta$, we require that the value
       returned by $\texttt{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\beta \leq \texttt{value}(s, p) \;\rightarrow\; \texttt{value}(s, p) \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
+      $\beta < \texttt{value}(s, p) \;\rightarrow\; \beta \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
 \end{enumerate}
 Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an approximation of
 $\texttt{value}(\texttt{State}, \texttt{player})$.  However, it turns out that this approximation is all that
-is needed.  \myFig{game-alpha-beta.stlx} shows an implementation of $\texttt{alphaBeta}$ that achieves this
-specification.  Once the function $\texttt{alphaBeta}$ is implemented, the function $\texttt{value}$ can then
-be realized as follows: 
+is needed.  \myFig{game-alpha-beta.stlx} shows an implementation of the function $\texttt{alphaBeta}$ that
+satisfies this specification.  Once the function $\texttt{alphaBeta}$ is implemented, the function $\texttt{value}$ can then
+be implemented as follows: 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{value}(s, p ) := \texttt{alphaBeta}(s, p, -1, +1)$.
@@ -494,7 +493,8 @@ $\texttt{value}(s,p) = \texttt{alphaBeta}(s,p,-1,+1)$
 \\[0.2cm]
 holds.  Since $\texttt{alphaBeta}$ is implemented as a recursive procedure, 
 the fact that the implementation of $\texttt{alphaBeta}$ shown in \myFig{game-alpha-beta.stlx} satisfies the
-specification given above can be shown by computational induction.  
+specification given above can be established by computational induction.  The next exercise asks for
+this proof. 
 
 
 \begin{figure}[!ht]
@@ -528,6 +528,7 @@ specification given above can be shown by computational induction.
 \label{fig:game-alpha-beta.stlx}
 \end{figure}
 
+\noindent
 We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
 \begin{enumerate}
 \item If $\texttt{State}$ is a terminal state, the function returns the $\texttt{utility}$ of the given
@@ -535,7 +536,7 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
 \item The variable $\texttt{val}$ is supposed to store the maximum of the values of all states
       that can be reached from the given $\texttt{State}$ if $\texttt{player}$ makes one move.
       
-      According to the specification of $\texttt{alphaBeta}$,  we are not interested in values that are below
+      According to the specification of $\texttt{alphaBeta}$,  we are not interested in values that are less than
       $\texttt{alpha}$.  Hence, it suffices to initialize $\texttt{val}$ with $\texttt{alpha}$.   This way, in the case that we have
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -550,12 +551,13 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
       sign.
 \item As the specification of $\texttt{alphaBeta}$ ask us to compute the value of $\texttt{State}$ only in
       those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
-      value that is at least as big a $\beta$ we can stop the evaluation and return this value.
+      value $\texttt{val}$ that is at least as big as $\beta$ we can \blue{stop any further evaluation} of the successor
+      states and return the value $\texttt{val}$.
 
-      \blue{In practice, this shortcut results in significant savings of computation time!}
+      \underline{In }p\underline{ractice},\underline{ this shortcut results in si}g\underline{nificant savin}g\underline{s of com}p\underline{utation time!}
 \item Once we have found a successor state that has a value $\texttt{val}$ greater than $\texttt{alpha}$,
       we can increase $\texttt{alpha}$ to the value $\texttt{val}$.  The reason is, that once we know we can
-      achieve a value of $\texttt{val}$ we are no longer interested in any values less than $\texttt{val}$.
+      achieve a value of $\texttt{val}$ we are no longer interested in any values that are less than $\texttt{val}$.
       This is the reason for assigning to $\texttt{alpha}$ the maximum of $\texttt{val}$ and $\texttt{alpha}$.
 \end{enumerate}
 
@@ -571,14 +573,24 @@ $\texttt{alphaBeta}(s, p, -1, 1) = \texttt{value}(s, p)$.
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
 $\texttt{States}$ is so big that even the fastest computer does not stand a chance to explore this set
-completely.  For example, it is impossible to consider all possible states in chess.  Instead, we have to limit
+completely.  For example, it is believed\footnote{
+  For reference, compare the wikipedia article on the so-called
+  \href{https://en.wikipedia.org/wiki/Shannon_number}{Shannon number}.
+  The Shannon number estimates that there are at most $10^{120}$ different states in chess.  However, if we
+  discount those states where any of the player has made an obviously ridiculous move, we are left with
+  approximately $10^{40}$ different states.
+} that in chess there are about $10^{40}$ different states that could occur in a reasonable game.
+Hence, it is impossible to explore all possible states in chess.  Instead, we have to limit
 the exploration in a way that is similar to the way professional players evaluate their game:  Usually, a
 player considers all variations of the game for, say, the next three moves.  After a given number of moves, the
-value of a position is estimated using an evaluation function.  In order to implement this idea, we add a
-parameter $\texttt{limit}$ to the procedure $\texttt{value}$.  On every recursive invocation 
-of the function $\texttt{value}$, the function $\texttt{limit}$ is decreased.  Once the limit reaches $0$,
+value of a position is estimated using an \blue{evaluation function}.  This function \blue{approximates} the true
+value of a given state via a heuristic.
+
+In order to implement this idea, we add a parameter $\texttt{limit}$ to the procedure $\texttt{value}$.  On
+every recursive invocation of the function $\texttt{value}$, the function $\texttt{limit}$ is decreased.  Once the limit reaches $0$,
 instead of invoking the function $\texttt{value}$ again recursively, we try to estimate the value of
-the given $\texttt{State}$ using a \blue{heuristic function}.  This leads to the code shown in \myFig{game-limit.stlx}.
+the given $\texttt{State}$ using our \blue{evaluation function}.  This leads to the code shown in
+\myFig{game-limit.stlx}. 
 
 
 \begin{figure}[!ht]
@@ -596,10 +608,10 @@ the given $\texttt{State}$ using a \blue{heuristic function}.  This leads to the
         if (finished(State)) {
             return utility(State, player);
         }
-        if (limit == 0) { return 0; }
+        if (limit == 0) { return heuristic(State, player); }  
         val := alpha;
         for (ns in nextStates(State, player)) {
-            val := max({val, -value(ns, other(player), limit-1, -beta, -alpha)});
+            val := max({val, -value(ns, other(player), limit - 1, -beta, -alpha)});
             if (val >= beta) {
                 return val;
             }
