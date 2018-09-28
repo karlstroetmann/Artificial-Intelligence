@@ -450,9 +450,9 @@ or diagonals of three \texttt{X}s.  Otherwise, the game is a draw.
 \item Write a short program to evaluate the formula derived in part (a) of this exercise.
 \end{enumerate}
 
-\section{$\alpha$-$\beta$-Pruning}
+\section{\href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-Pruning}}
 The efficiency of the minimax algorithm can be improved if we provide two additional arguments to the function
-$\texttt{value}$.  Traditionally, these arguments are called $\alpha$ and $\beta$.  In order to be able to
+$\texttt{value}$.  Traditionally, these arguments are called $\blue{\alpha}$ and $\blue{\beta}$.  In order to be able to
 distinguish between the old function $\texttt{value}$ and its improved version, we call the improved version 
 $\texttt{alphaBeta}$.  The idea is that the function $\texttt{alphaBeta}$ and the function $\texttt{value}$ are
 related by the following requirements: 
@@ -476,11 +476,11 @@ related by the following requirements:
       \hspace*{0.3cm}
       $\beta < \texttt{value}(s, p) \;\rightarrow\; \beta \leq \texttt{alphaBeta}(s, p, \alpha, \beta)$.
 \end{enumerate}
-Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an approximation of
+Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an \blue{approximation} of
 $\texttt{value}(\texttt{State}, \texttt{player})$.  However, it turns out that this approximation is all that
 is needed.  \myFig{game-alpha-beta.stlx} shows an implementation of the function $\texttt{alphaBeta}$ that
-satisfies this specification.  Once the function $\texttt{alphaBeta}$ is implemented, the function $\texttt{value}$ can then
-be implemented as follows: 
+satisfies the specification given above.  Once the function $\texttt{alphaBeta}$ is implemented, the function
+$\texttt{value}$ can then be computed as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{value}(s, p ) := \texttt{alphaBeta}(s, p, -1, +1)$.
@@ -493,8 +493,11 @@ $\texttt{value}(s,p) = \texttt{alphaBeta}(s,p,-1,+1)$
 \\[0.2cm]
 holds.  Since $\texttt{alphaBeta}$ is implemented as a recursive procedure, 
 the fact that the implementation of $\texttt{alphaBeta}$ shown in \myFig{game-alpha-beta.stlx} satisfies the
-specification given above can be established by computational induction.  The next exercise asks for
-this proof. 
+specification given above can be established by computational induction.  A proof by computational induction
+can be found in an
+\href{https://pdfs.semanticscholar.org/dce2/6118156e5bc287bca2465a62e75af39c7e85.pdf}{article} by Donald
+E.~Knuth and Ronald W.~Moore \cite{knuth:1975}. 
+
 
 
 \begin{figure}[!ht]
@@ -561,14 +564,6 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
       This is the reason for assigning to $\texttt{alpha}$ the maximum of $\texttt{val}$ and $\texttt{alpha}$.
 \end{enumerate}
 
-\exercise
-Prove that for any state $s$ and player $p$ we have
-\\[0.2cm]
-\hspace*{1.3cm}
-$\texttt{alphaBeta}(s, p, -1, 1) = \texttt{value}(s, p)$.
-\\[0.2cm]
-\textbf{Hint}:  This claim is best shown using \blue{computational induction}.
-\eox
 
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
