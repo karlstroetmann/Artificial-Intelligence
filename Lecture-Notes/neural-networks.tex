@@ -7,7 +7,7 @@ networks:
       pages is called 
       ``\href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine
         Translation}''
-      and,  as the name suggests, is based on neural networks.
+      and,  as the name suggests, is based on neural networks. 
 \item \href{https://www.deepl.com/translator}{DeepL} is another translator that is based on deep neural networks.      
 \item \href{https://de.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
       \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Ke_Jie}{beaten} 
@@ -16,8 +16,9 @@ networks:
 \item \href{https://www.tensorflow.org/tutorials/image_recognition}{Image recognition} is best done via neural networks.
 \item \href{https://en.wikipedia.org/wiki/Autonomous_car}{Autonomous driving} makes heavy use of neural networks.
 \end{enumerate}
-The list given above is far from being complete.  In this chapter, we will only discuss \blue{feedforward} 
-neural networks.  Although recently 
+The list given above is far from being complete.  In this chapter, we will only discuss 
+\href{https://en.wikipedia.org/wiki/Feedforward_neural_network}{feedforward neural networks}.  Although recently both 
+\href{https://en.wikipedia.org/wiki/Convolutional_neural_network}{convolutional neural networks} and
 \href{https://en.wikipedia.org/wiki/Recurrent_neural_network}{recurrent neural networks} have gotten a lot of
 attention, these type of neural networks are more difficult to train and are therefore beyond the scope of this
 introduction.  The rest of this chapter is strongly influenced by the online book 
@@ -27,7 +28,9 @@ introduction.  The rest of this chapter is strongly influenced by the online boo
 \\[0.2cm]
 that has been written by Michael Nielsen \cite{nielsen:2015}.  This book is easy to read, carefully written, and
 free to access.  I recommend this book to anybody who wants to dive deeper into the fascinating topic of neural
-networks.
+networks.  Furthermore, I can recommend the specialization
+\href{https://www.coursera.org/specializations/deep-learning}{Deep Learning} that is offered by 
+\href{https://www.coursera.org/}{Coursera}.
 
 \section{Feedforward Neural Networks}
 A neural network is built from \blue{neurons}.  Neural networks are inspired by biological 
@@ -246,7 +249,7 @@ minima.  Hence, all we can hope for is to find a local minimum that is good enou
 
 
 \section{Backpropagation}
-There are two reasons for the recent success of neural networks.
+There are three reasons for the recent success of neural networks.
 \begin{enumerate}
 \item The computing power that is available today has vastly increased in the last 20 years.
       For example, today the \href{https://en.wikipedia.org/wiki/AMD_RX_Vega_series}{AMD RX Vega 64 Liquid}
@@ -262,7 +265,11 @@ There are two reasons for the recent success of neural networks.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
-      The backpropagation algorithm had first been discovered by Arthur E.~Bryson, Jr.~and Yu-Chi Ho \cite{bryson:1969}.
+      The backpropagation algorithm had first been discovered by Arthur E.~Bryson, Jr.~and Yu-Chi Ho
+      \cite{bryson:1969}.  In recent years, there have been a number of other theoretical advances that have
+      helped in speeding up the learning algorithms for neural networks.
+\item Lastly, as neural networks have large sets of parameters, they need large sets of training examples.  The
+      recent digitization of our society has made these large data sets available.
 \end{enumerate}
 Essentially, the \blue{backpropagation} algorithm is an efficient way to compute the partial derivatives of the
 cost function $C$ with respect to the weights $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$.  Before we can
@@ -285,7 +292,7 @@ i.e.~we have
 \hspace*{1.3cm}
 $a_j^{(l)} = S\Bigl(z_j^{(l)}\Bigr)$.
 \\[0.2cm]
-We will see that the partial derivatives of the cost function $C_{\mathbf{x}, \mathbf{y}}$ with respect to both the weights
+We will later see that the partial derivatives of the cost function $C_{\mathbf{x}, \mathbf{y}}$ with respect to both the weights
 $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$ can be computed easily if we first compute the partial derivatives
 of $C_{\mathbf{x}, \mathbf{y}}$ with respect to $z_j^{(l)}$.  Therefore we define
 \\[0.2cm]
@@ -295,7 +302,7 @@ $\ds\varepsilon_j^{(l)} := \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z
 that is we regard $C_{\mathbf{x}, \mathbf{y}}$ as a function of the $z_j^{(l)}$ and take the partial
 derivatives according to these variables.  
 Note that $\varepsilon_j^{(l)}$ does depend on both $\mathbf{x}$ and $\mathbf{y}$.  Since the notation would
-get very cumbersome if we would write $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard the training
+get too cumbersome if we would write $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard the training
 example $\langle\mathbf{x}, \mathbf{y}\rangle$ as fixed for now.  Next, the quantities $\varepsilon_j^{(l)}$ are combined into a vector:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -313,7 +320,7 @@ The quantity $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer
 \subsection{The Hadamard Product}
 Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
 of two vectors.  Assume that $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$.  The \blue{Hadamard product} of
-$\mathbf{x}$ and $\mathbf{y}$ is a vector that is defined by multiplying the vectors $\mathbf{x}$ and $\mathbf{y}$ elementwise:
+$\mathbf{x}$ and $\mathbf{y}$ is a \blue{vector} that is defined by multiplying the vectors $\mathbf{x}$ and $\mathbf{y}$ elementwise:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\left(
@@ -343,7 +350,9 @@ $\left(
 $,
 \\[0.2cm]
 i.e.~the $i$-th component of the Hadamard product $\mathbf{x} \odot \mathbf{y}$ is the product of the $i$-th
-component of $\mathbf{x}$ with the $i$-th component of $\mathbf{y}$.
+component of $\mathbf{x}$ with the $i$-th component of $\mathbf{y}$.  Do not confuse the Hadamard product with
+the \href{https://en.wikipedia.org/wiki/Dot_product}{dot product}!  Although both multiply the vectors
+componentwise, the Hadamard product returns a vector, while the dot product returns a number.
 
 \subsection{Backpropagation: The Equations}
 Now we are ready to state the \blue{backpropagation equations}.  The first of these four equations reads as follows:
@@ -437,7 +446,7 @@ Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-
 product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
 row vector $\bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ that is regarded as an $1 \times m(l-1)$ matrix.
 
-As the backpropagation equations are at the very core of training neural networks, we highlight them:
+As the backpropagation equations are at the very core of the theory of neural networks, we highlight them:
 \\[0.2cm]
 \hspace*{0.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
@@ -523,7 +532,7 @@ can be computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $
-\begin{array}{lcl}
+\begin{array}{lcll}
 \varepsilon_j^{(L)} 
 & = & \ds \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(L)}} \\[0.5cm]
 & = & \ds \frac{\partial \quad}{\partial z_j^{(L)}}  \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2
@@ -544,6 +553,7 @@ $
       \\[0.5cm]
 & = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
       S'\bigl(z_i^{(L)}\bigr) \cdot \delta_{i,j}
+      & \mbox{$\delta_{i,j}$ denotes the \href{https://en.wikipedia.org/wiki/Kronecker\_delta}{Kronecker delta}}
       \\[0.5cm]
 & = & \ds \Bigl(S\bigl(z_j^{(L)}\bigr) - y_j\Bigr) \cdot S'\bigl(z_j^{(L)}\bigr) 
       \\[0.5cm]
