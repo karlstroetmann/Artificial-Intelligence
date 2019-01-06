@@ -61,7 +61,7 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)    
             print(f"Epoch {j}: {self.evaluate(test_data)} / {n_test}")
-        
+
     def update_mini_batch(self, mini_batch, eta):
         nabla_BH = np.zeros((self.mHiddenSize, 1))  # gradient of biases  of hidden layer
         nabla_BO = np.zeros((self.mOutputSize, 1))  # gradient of biases  of output layer
