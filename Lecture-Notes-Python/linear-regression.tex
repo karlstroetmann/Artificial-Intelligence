@@ -438,13 +438,13 @@ number $p$ is called the number of \blue{features}, while the pairs are called t
 Our goal is to compute a function 
 \\[0.2cm]
 \hspace*{1.3cm}
-$F:\mathbb{R}^p \rightarrow \mathbb{R}$
+$\ds F:\mathbb{R}^p \rightarrow \mathbb{R}$
 \\[0.2cm]  
 such that $F\bigl(\mathbf{x}^{(i)}\bigr)$ approximates  $y^{(i)}$ as precisely as posssible
 for all $i\in\{1,\cdots,m\}$, i.e.~we want to have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\forall i\in\{1,\cdots,m\}:F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$.
+$F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ \quad for all $i\in\{1,\cdots,m\}$.
 \\[0.2cm]
 In order to make the notation $F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ more precise, we
 define the \blue{mean squared error} 
@@ -461,7 +461,8 @@ model, i.e.~we assume that $F$ is given as
 $\ds F(\mathbf{x}) = \sum\limits_{j=1}^p w_j \cdot x_j + b = \mathbf{x}^\top \cdot \mathbf{w} + b$ \quad where $\mathbf{w} \in \mathbb{R}^p$ and $b\in\mathbb{R}$.
 \\[0.2cm]
 Here, the expression $\mathbf{x}^\top \cdot \mathbf{w}$ denotes the matrix product of the vector
-$\mathbf{x}^\top$, which is viewed as a $1$-by-$m$ matrix, and the vector $\mathbf{w}$.  Alternatively, this
+$\mathbf{x}^\top$, which is viewed as a $1$-by-$m$ matrix, and the vector $\mathbf{w}$, where $\mathbf{w}$ is
+viewed as a $m$-by-1 matrix.  Alternatively, this
 expression could be interpreted as the dot product of the vector $\mathbf{x}$ and the vector $\mathbf{w}$.
 At this point you might wonder why it is useful to introduce matrix notation here.  The reason is
 that this notation shortens the formula and, furthermore, is more efficient to implement since most
@@ -482,20 +483,21 @@ $x_j' := x_j$ \quad for all $j\in\{1,\cdots,p\}$ \quad and \quad $x_{m+1}' := 1$
 To put it in words, the vector $\mathbf{x}'$ results from the vector $\mathbf{x}$ by appending the number $1$:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{x}' = \langle x_1, \cdots, x_p, 1 \rangle^\top$ \quad where $\langle x_1, \cdots, x_p \rangle = \mathbf{x}^\top$.
+$\mathbf{x}'^\top = \langle x_1, \cdots, x_p, 1 \rangle^\top$ \quad where $\langle x_1, \cdots, x_p \rangle = \mathbf{x}^\top$.
 \\[0.2cm]
 Furthermore, we define 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{w}' := \langle w_1, \cdots, w_p, b \rangle^\top$ \quad where $\langle w_1, \cdots, w_p \rangle = \mathbf{w}^\top$.
+$\mathbf{w}'^\top := \langle w_1, \cdots, w_p, b \rangle^\top$ \quad where $\langle w_1, \cdots, w_p \rangle = \mathbf{w}^\top$.
 \\[0.2cm]
 Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$F(\mathbf{x}) = \mathbf{w} \cdot \mathbf{x} + b = \mathbf{w}' \cdot \mathbf{x}'$.
+$F(\mathbf{x}) = \mathbf{w} \cdot \mathbf{x} + b = \mathbf{w}' \cdot \mathbf{x}'$,
 \\[0.2cm]
+where $\mathbf{w}' \cdot \mathbf{x}'$ denotes the dot product of the vectors $\mathbf{w}'$ and $\mathbf{x}'$.
 Hence, the bias has been incorporated into the weight vector at the cost of appending the number $1$ at the end of
-input vector.  As we want to use this simplification, from now on we assume that the input vectors
+input vector $\mathbf{x}$.  As we want to use this simplification, from now on we assume that the input vectors
 $\mathbf{x}^{(i)}$ have all been extended so that their last component is $1$.  Using this
 assumption,  we define the
 function $F$ as
@@ -512,7 +514,7 @@ Our aim is to rewrite the sum appearing in this equation as a scalar product of 
 itself.  To this end, we first define the vector $\mathbf{y}$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{y} := \langle y^{(1)}, \cdots, y^{(m)} \rangle^\top$.
+$\mathbf{y}^\top := \langle y^{(1)}, \cdots, y^{(m)} \rangle^\top$.
 \\[0.2cm]
 Note that $\mathbf{y} \in \mathbb{R}^m$ since it has a component for all of the $m$ training
 examples.  Next, we define the \blue{design matrix} $X$ as follows:
@@ -718,22 +720,11 @@ advisable to rewrite the normal equation as
 \hspace*{1.3cm}
 $\mathbf{w} = \bigl(X^\top \cdot X)^{-1} \cdot X^\top \cdot \mathbf{y}$.
 \\[0.2cm]
-Instead, when solving the normal equation we will use the \textsc{SetlX} function $\mathtt{la\_solve}(A,b)$, which
+Instead, when solving the normal equation we will use the \textsl{Python} function $\texttt{numpy.linalg.solve}(A,b)$, which
 takes a matrix $A \in \mathbb{R}^{n \times n}$ and a vector $\mathbf{b} \in \mathbb{R}^n$ and solves the equation
 \\[0.2cm]
 \hspace*{1.3cm}
 $A \cdot \mathbf{x} = \mathbf{b}$.  \eox
-
-
-\subsection{Testing the Statistical Significance}
-The $\mathrm{F}$-statistic is defined according to the following formula:
-\begin{equation}
-  \label{eq:F-statistic}
-  \mathrm{F} = \frac{\mathtt{TSS} - \mathtt{RSS}}{\mathtt{RSS}} \cdot \frac{m - p - 1}{p}
-\end{equation}
-The $\mathtt{F}$-statistic is distributed according to the
-\href{https://en.wikipedia.org/wiki/F-distribution}{Fisher-Snedecor-distribution} with $p-1$ degrees of freedom
-in the nominator and $m - p$ degrees of freedom in the denominator. 
 
 \subsection{Implementation}
 \myFig{linear-regression.stlx} shows an implementation of general linear regression.

@@ -20,22 +20,31 @@ def simple_linear_regression(X, Y):
 import csv
 import numpy as np
 
-
-
-if __name__ == '__main__':
+def test(col):
+    """
+    Compute the coefficient of determination for the specified column
+    of the csv file 'cars.csv'.
+    """
     with open('cars.csv') as input_file:
-        reader       = csv.reader(input_file, delimiter=',')
-        line_count   = 0
-        kpl          = []
-        displacement = []
+        reader     = csv.reader(input_file, delimiter=',')
+        line_count = 0
+        mpg        = []
+        cause      = []
+        colNames   = {}
         for row in reader:
-            if line_count != 0:  # skip header of file
-                kpl         .append(float(row[0]) * 0.00425144) # miles per gallon is in first column 
-                displacement.append(float(row[2]) * 0.0163871)  # engine displacement is in third column
+            if line_count == 0:  
+                colNames = { col:row[col] for col in range(len(row)) }
+            else:
+                mpg  .append(float(row[0]))  
+                cause.append(float(row[col])) 
             line_count += 1
-    m  = len(displacement)
-    X  = np.array([displacement[i] for i in range(m)])
-    Y  = np.array([1 / kpl[i] for i in range(m)])
+    m  = len(mpg)
+    X  = np.array(cause)
+    Y  = np.array([1 / mpg[i] for i in range(m)])
     R2 = simple_linear_regression(X, Y)
-    print(f'The explained variance is {R2}%')
-        
+    return colNames[col], R2
+     
+if __name__ == '__main__':
+    for col in range(1, 6+1):
+        name, R2 = test(col)
+        print(f'The explained variance of {name} is {R2}%')
