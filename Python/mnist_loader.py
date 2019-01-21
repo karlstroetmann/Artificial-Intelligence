@@ -56,6 +56,6 @@ def vectorized_result(j):
     position and zeroes elsewhere.  This is used to convert a digit
     (0...9) into a corresponding desired output from the neural
     network."""
-    e = np.zeros((10, 1))
+    e = np.zeros((10, 1), dtype=np.float32)
     e[j] = 1.0
     return e

@@ -28,8 +28,8 @@ class Network(object):
         self.mInputSize  = 28 * 28
         self.mHiddenSize = hiddenSize
         self.mOutputSize = 10
-        self.mBiasesH    = np.zeros((self.mHiddenSize, 1))          # biases hidden layer
-        self.mBiasesO    = np.zeros((self.mOutputSize, 1))          # biases output layer
+        self.mBiasesH    = np.zeros((self.mHiddenSize, 1))   # biases hidden layer
+        self.mBiasesO    = np.zeros((self.mOutputSize, 1))   # biases output layer
         self.mWeightsH   = rndMatrix(self.mHiddenSize, self.mInputSize)  # weights hidden layer
         self.mWeightsO   = rndMatrix(self.mOutputSize, self.mHiddenSize) # weights output layer
         
@@ -37,8 +37,8 @@ class Network(object):
         """
         Compute the output of the NN if the input is the vector x.
         """
-        AH = sigmoid(np.dot(self.mWeightsH, x ) + self.mBiasesH) # hidden layer
-        AO = sigmoid(np.dot(self.mWeightsO, AH) + self.mBiasesO) # output layer
+        AH = sigmoid(self.mWeightsH @ x  + self.mBiasesH) # hidden layer
+        AO = sigmoid(self.mWeightsO @ AH + self.mBiasesO) # output layer
         return AO
     
     def sgd(self, training_data, epochs, mbs, eta, test_data):
@@ -86,18 +86,18 @@ class Network(object):
           y: correct result for inputs x
         """
         # feedforward pass
-        ZH = np.dot(self.mWeightsH, x) + self.mBiasesH
+        ZH = self.mWeightsH @ x  + self.mBiasesH
         AH = sigmoid(ZH)
-        ZO = np.dot(self.mWeightsO, AH) + self.mBiasesO
+        ZO = self.mWeightsO @ AH + self.mBiasesO
         AO = sigmoid(ZO)
         # backwards pass, output layer
         epsilonO = (AO - y) # * sigmoid_prime(ZO)
         nabla_BO = epsilonO
-        nabla_WO = np.dot(epsilonO, AH.transpose())
+        nabla_WO = epsilonO @ AH.transpose()
         # backwards pass, hidden layer
-        epsilonH = np.dot(self.mWeightsO.transpose(), epsilonO) * sigmoid_prime(ZH)
+        epsilonH = (self.mWeightsO.transpose() @ epsilonO) * sigmoid_prime(ZH)
         nabla_BH = epsilonH
-        nabla_WH = np.dot(epsilonH, x.transpose())
+        nabla_WH = epsilonH @ x.transpose()
         return (nabla_BH, nabla_BO, nabla_WH, nabla_WO)
     
     # Returns sum of correct guesses after feedforwarding
