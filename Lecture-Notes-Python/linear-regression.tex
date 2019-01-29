@@ -847,98 +847,37 @@ The file ``\texttt{trees.csv}'', which is available at
 \hspace*{0.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/trees.csv}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/trees.csv}},
 \\[0.2cm]
-contains data about cherry trees.
-
-advertising.  Concretely, let us think that this data lists the amount of money that has
-been spent in advertising a luxury refrigerator that is able to detect the amount of food stored and that is
-able to reorder supplies with \href{https://en.wikipedia.org/wiki/AmazonFresh}{AmazonFresh}$^\mathtt{TM}$.
-Every line of this \textsc{Csv} file has five entries:
-\begin{enumerate}[(a)]
-\item The first column is interpreted as the number of a store.  All together, there are 200 stores that have sold this
-      refrigerator.  It is assumed that all of these stores are located in different counties.
-\item The second column gives the amount of money spent in TV advertising in thousands of dollar for the store in
-      that county.
-\item The third column gives the amount of money spent in radio advertising in thousands of dollar.
-\item The fourth column gives the amount of money spent in newspaper advertising in thousands of dollar.
-\item The fifth column gives the number of refrigerators in thousands that have been sold in the corresponding store.
-\end{enumerate}
-With the exception of the first column, all columns contain floating point numbers.
-Assume you are the marketing manager that is responsible for the advertising campaign.  Your task is to
-evaluate the effectiveness of the different type of advertisements.  To this end, answer the following questions.
+contains data about 31 lovely cherry trees from the Allegheny National Forest in Pennsylvania that have fallen
+prey to a \href{https://en.wikipedia.org/wiki/The_Texas_Chain_Saw_Massacre}{chainsaw massacre}.  I have taken this data from
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{http://www.statsci.org/data/general/cherry.txt}{\texttt{http://www.statsci.org/data/general/cherry.txt}}.
 \begin{enumerate}
-\item Should you spend more money on newspaper adds and less on TV adds or is it the other way around?  Or are radio
-      advertisements the way to go? Assume that your advertising budget is fixed and that you want to sell as many
-      refrigerators as possible.  
-
-      Use linear regression to solve this question.
-\item At this point, you will have discovered that only two of the three different types of advertisements 
-      contribute to the number of sales.  Check, whether there is an interaction between these two types of
-      advertisements.  For example, check whether TV adds have a positive or negative effect on the
-      effectiveness of radio adds. 
-
-      You can use a product term as a new features in your linear regression model to answer this question.
-      For example, you can include the product of money spend in TV adds and money spend in radio adds as a new
-      feature.
-\item In order to further increase the accuracy of our model, we can use a \blue{quadratic model}.
-      If we have only two independent features $x$ and $y$, a quadratic model has the following form:
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $f(x,y) = w_1 \cdot x^2 + w_2 \cdot x \cdot y + w_3 \cdot y^2 + w_4 \cdot x + w_5 \cdot y + w_6$.
-      \\[0.2cm]
-      Compute the fraction of the explained variance that is achieved if a quadratic model is used to predict
-      the sales.
-\item In the previous part of the exercise you will have discovered that for a quadratic model, the fraction of
-      the explained variance is quite high.  Hence, the quadratic model seems to be accurate.  Now that you
-      have found an accurate model, by how much can you increase the sales by optimizing the strategy?
-      Assume that for every county the company wants to spend the same amount of money for advertisement that
-      has been spent previously for that county.  
+\item The first column of this \textsc{Csv} file contains the diameter of these trees at a height of 54 inches above
+      the ground.
+\item The second column lists the heights of these trees in inches.
+\item The third column list the volume of wood that has been harvested from these trees.  This volume is given
+      in cubic inches.
 \end{enumerate}
-\vspace*{0.2cm}
-
-\noindent
-\textbf{Note}:  I have stolen the file ``\texttt{advertising.csv}'' from the data set accompanying the book
-``\href{http://www-bcf.usc.edu/~gareth/ISL/index.html}{Introduction to Statistical Learning}''
-\cite{james:2014}.  As far as I understand it, the data contained in this file is fictional data, i.e.~it
-has been made up. 
+Try to derive a model that estimates the volume of the trees from the diameter and the height.
 \eox
 
-\noindent
-\textbf{Partial Solution to part 4:}  
-The total budget for advertising in a given county is fixed.  Assume
-this total budget is called $b$.  If $x$ is the amount of money spent for TV advertisements and $y$ is the
-amount of money spent for radio advertisements, then we must have
+\exercise
+The file ``\texttt{nba.csv}'', which is available at
 \\[0.2cm]
-\hspace*{1.3cm}
-$x + y = b$ \quad and therefore \quad $y = b - x$.
+\hspace*{0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/nba.csv}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/nba.csv}},
 \\[0.2cm]
-Hence the number of units sold is given by the formula
-\\[0.2cm]
-\hspace*{1.3cm}
-$g(x) := f(x, b - x) = w_1 \cdot x^2 + w_2 \cdot x \cdot (b - x) + w_3 \cdot (b - x)^2 + w_4 \cdot x + w_5 \cdot (b - x) + w_6$.
-\\[0.2cm]
-In order to compute the value $x$ that maximizes $g$ we have to compute the derivative of $g(x)$:
-\\[0.2cm]
-\hspace*{1.3cm}
-$
-\begin{array}[t]{lcl}
-\ds \frac{\mathrm{d} g}{\mathrm{d}x}(x) 
-& = & 2 \cdot w_1 \cdot x + w_2 \cdot b - 2 \cdot w_2 \cdot x + 2 \cdot w_3 \cdot (x - b) + w_4 - w_5 \\[0.2cm]
-& = & 2 \cdot \bigl(w_1 - w_2 + w_3\bigr) \cdot x + w_2 \cdot b - 2 \cdot w_3 \cdot b + w_4 - w_5  
-\end{array}
-$
-\\[0.2cm]
-This expression is $0$ if and only if
-\\[0.2cm]
-\hspace*{1.3cm}
-$\ds x = \frac{- w_2 \cdot b + 2 \cdot w_3 \cdot b - w_4 + w_5}{2 \cdot (w_1 - w_2 + w_3)}$.
-\\[0.2cm]
-It turns out that when the advertising strategy is optimized as outline above,  the quadratic model predicts a
-sale of $5\,511\,887$ units, while the number of units sold previously was $2\,804\,500$ units.  Hence, the
-optimized strategy is expected to sell about $97\,\mathtt{\symbol{37}}$ units more than the strategy applied previously. 
-\qed
-
-
-
+contains various data about professional basket ball players.
+\begin{enumerate}
+\item The first column gives the name of the player.
+\item The second column specifies the position of the player.
+\item The third column lists the height of the player.
+\item The fourth column contains the weight of the player.
+\item The fifth column shows the age of each player.
+\end{enumerate}
+To what extend can you predict the weight of a player given his height and his age?
+\eox
 
 %%% Local Variables:
 %%% mode: latex
