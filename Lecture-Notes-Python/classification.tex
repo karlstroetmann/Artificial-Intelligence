@@ -8,7 +8,7 @@ likely to be spam.  For example, a possible feature would be the number of occur
 ``\texttt{pharmacy}'' in the text of the email.
 
 \section{Introduction}
-Formally, the classification problem in machine learning can be stated as follows:  We are given a
+Formally, the \blue{classification problem} in machine learning can be stated as follows:  We are given a
 set of objects $S := \{ o_1, \cdots, o_n \}$ and a set of classes $C := \{ c_1, \cdots, c_k \}$.  Furthermore, there exists a function 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -24,8 +24,8 @@ $C = \{ \mathtt{spam}, \mathtt{ham} \}$.
 If $\mathtt{classify}(o) = \mathtt{spam}$, we consider the email $o$ to be spam, while we would consider it a
 genuine message otherwise.  Our goal is to compute the function
 \texttt{classify}.  In order to do this, we use an approach known as
-\href{https://en.wikipedia.org/wiki/Supervised_learning}{supervised learning}:  We take a subset $S_\textsl{Train} \subseteq S$ of
-emails where we already know whether the emails are spam or not.  This set $S_\textsl{Train}$ is called the \blue{training set}.
+\href{https://en.wikipedia.org/wiki/Supervised_learning}{supervised learning}:  We take a subset $S_\textsl{train} \subseteq S$ of
+emails where we already know whether the emails are spam or not.  This set $S_\textsl{train}$ is called the \blue{training set}.
 Next, we define a set of $D$ \blue{features} for every $o \in S$.  These features have to be \blue{computable},
 i.e.~we must have a function
 \\[0.2cm]
@@ -66,8 +66,8 @@ As the value of
  $\mathtt{count}(\texttt{"pharmacy"}, o)$ 
 \\[0.2cm]
 is always a natural number, in this case the first feature would be a
- \blue{discrete} feature.  However, we can be even more precise than just counting the number of occurrences of
- ``\texttt{pharmacy}''.  After all, there is a difference if the string ``\texttt{pharmacy}'' occurs once in an email
+ \blue{discrete} feature.  However, we can be even more precise: Instead of just counting the number of occurrences of
+ ``\texttt{pharmacy}'' we can compute its frequency.  After all, there is a difference if the string ``\texttt{pharmacy}'' occurs once in an email
  containing but a hundred characters or whether is occurs once in an email with a length of several thousand
  characters.  To this end, we would then define the first feature as
 \\[0.2cm]
@@ -116,11 +116,12 @@ The function $\mathtt{model}$ is usually determined by a set of \blue{parameters
 this case, we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{model}(\mathbf{x}) = \mathtt{model}(\mathbf{x};\mathbf{w})$
+$\mathtt{model}(\mathbf{x}) = \mathtt{model}(\mathbf{x},\,\mathbf{w})$
 \\[0.2cm]
 where $\mathbf{x}$ is the vector of features, while $\mathbf{w}$ is the vector of weights.  Later, when we
-introduce \blue{logistic regression}, we will assume that the number of weights is the same as the number of
-features.  Then, the weights specify the relative importance of the different features.
+introduce \blue{logistic regression}, we will assume that the number of weights is one more than the number of
+features.  Then, the weights specify the relative importance of the different features. Furthermore, there will
+be a weight that is interpreted as a \blue{bias term}.
 
 When it comes to the choice of model, it is important to understand that, at least in practical applications,
 \underline{all} models are wrong.  Nevertheless, \underline{some} models are useful.  There are two reasons for this:
@@ -155,21 +156,21 @@ using certain \blue{features} of our objects.  The function $\mathtt{classify}$ 
 \texttt{model} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{model}\bigl(\mathtt{feature}(o,1), \cdots, \mathtt{feature}(o,D); \mathbf{w}\bigr) \approx \mathtt{classify}(o)$.
+$\mathtt{model}\bigl(\mathtt{feature}(o,1), \cdots, \mathtt{feature}(o,D), \mathbf{w}\bigr) \approx \mathtt{classify}(o)$.
 \\[0.2cm]
 The model depends on a vector of parameters $\mathbf{w}$.  In order to \blue{learn} these parameters, we are given a 
-\blue{training set} $S_\textsl{Train}$ that is a subset of $S$.  As we are dealing with \blue{supervised learning}, the function 
-$\mathtt{classify}$ is known for all objects $o \in S_\textsl{Train}$.   Our goal is to determine the parameters $\mathbf{w}$ such that the
+\blue{training set} $S_\textsl{train}$ that is a subset of $S$.  As we are dealing with \blue{supervised learning}, the function 
+$\mathtt{classify}$ is known for all objects $o \in S_\textsl{train}$.   Our goal is to determine the parameters $\mathbf{w}$ such that the
 number of mistakes we make on the training set is minimized.  
 
 \subsection{Notation}
-We conclude this introductory section by fixing some notation.  Let us assume that the objects $o \in S_\textsl{Train}$
+We conclude this introductory section by fixing some notation.  Let us assume that the objects $o \in S_\textsl{train}$
 are numbered 
 from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we define
 \begin{enumerate}
-\item $\textbf{x}_i := [\mathtt{feature}(o_i, 1), \cdots, \mathtt{feature}(o_i, D)]$ \quad for all $i \in \{1, \cdots, N\}$.
+\item $\textbf{x}_i := \langle\mathtt{feature}(o_i, 1), \cdots, \mathtt{feature}(o_i, D)\rangle$ \quad for all $i \in \{1, \cdots, N\}$.
   
-      i.e.~$\mathbf{x}_i$ is a $D$-dimensional vector that collects the features of the $i$-th training object.
+      i.e.~$\mathbf{x}_i$ is a $D$-dimensional row vector that collects the features of the $i$-th training object.
 \item $x_{i,j} := \mathtt{feature}(o_i, j)$ \quad for all $i \in \{1, \cdots, N\}$ and $j \in \{1, \cdots, D\}$.
 
       i.e.~$x_{i,j}$ is the $j$-th feature of the $i$-th object.
