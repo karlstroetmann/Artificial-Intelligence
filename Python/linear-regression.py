@@ -29,9 +29,9 @@ def linear_regression(fileName, target, explaining, f):
     R2    = 1 - RSS / TSS
     return R2
 
-def test():
+def main():
     explaining = [1, 2, 3, 4, 5, 6]
     R2 = linear_regression("cars.csv", 0, explaining, lambda x: 1/x)
     print(f'portion of explained variance : {R2}')
 
-test()
+main()

@@ -368,19 +368,19 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
 In order to use the function we can use the code that is shown in 
 \myFig{simple_linear_regression.py:test}.
 \begin{enumerate}
-\item We import the module \texttt{csv} in order to be able to read the \texttt{CSV} file ``\texttt{cars.csv}''
+\item We import the module \texttt{csv} in order to be able to read the \textsc{Csv} file ``\texttt{cars.csv}''
       conveniently.
 \item We import the module \texttt{numpy} in order to use \texttt{NumPy} arrays.
 \item We open the file ``\texttt{cars.csv}''.
-\item This file is processed as a \texttt{CSV} file where different columns are separated by the character 
+\item This file is processed as a \textsc{Csv} file where different columns are separated by the character 
       ``\texttt{,}''.
-\item \texttt{kpl} is a list of the numbers that appear in the first column of the \texttt{CSV} file.
-      The numbers in the \texttt{CSV} file are interpreted as the \emph{miles per gallon} of a car.
+\item \texttt{kpl} is a list of the numbers that appear in the first column of the \textsc{Csv} file.
+      The numbers in the \textsc{Csv} file are interpreted as the \emph{miles per gallon} of a car.
       These numbers are converted into metric units, i.e. how many kilometer a car can run on a litre.
 \item \texttt{displacement} is a list the numbers appearing in the third column of the \textsc{CSV} file.
       These numbers are interpreted as the \emph{engine displacement} in cubic inches.
       These numbers are converted to litres.
-\item The first line of the \texttt{CSV} file contains a header.  This header is skipped.
+\item The first line of the \textsc{Csv} file contains a header.  This header is skipped.
       In order to do so we use the variable \texttt{line\_count}.
 \item \texttt{m} is the number of data pairs that have been read.
 \item The independent variable \texttt{X} is given by the engine displacement. 
@@ -731,9 +731,28 @@ $A \cdot \mathbf{x} = \mathbf{b}$.  \eox
 The procedure
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{run\_linear\_regression}(f, t)$
+$\mathtt{linear\_regression}(\mathtt{fileName},\; \mathtt{target},\; \mathtt{explaining},\; \mathtt{f})$
 \\[0.2cm]
-takes a file name $f$ and a list of types $t$ as its input.
+takes four arguments:
+\begin{enumerate}
+\item \texttt{fileName} is a string that is interpreted as the name of a \textsc{Csv} file containing the data.
+\item \texttt{target} is an integer that specifies the column that contains the dependent variable. 
+\item \texttt{explaining} is a list of integers.  These integers specify the columns of the \textsc{Csv} file
+      that contain the independent variables.  These are also called the \blue{explaining variables}.
+\item \texttt{f} is a function that takes one floating point argument and outputs one floating point function.
+      This function is used to modify the dependent variable.
+
+      Later, when we call the function \texttt{linear\_regression} to investigate the fuel consumption, we will
+      use the function
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds x \mapsto \frac{1}{x}$
+      \\[0.2cm]
+      to transform the variable \textsl{miles per gallon} into a variable expressing the fuel consumption.  The
+      reason is that there is reciprocal relation between the number of miles that a car drives on one gallon
+      of gasoline and the fuel consumption:  If you drive only a few miles with one gallon of gas, then your
+      fuel consumption is high.
+\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -746,65 +765,91 @@ takes a file name $f$ and a list of types $t$ as its input.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    run_linear_regression := procedure(fileName, types) {
-        csv    := readTable(fileName, types);
-        data   := csv.getData();
-        number := #data;
-        xList  := [];
-        yList  := [];
-        for (i in [1 .. number]) {
-            yList[i] := 1 / data[i][1];
-            xList[i] := la_vector(data[i][2..-2] + [1.0]);
-        }
-        X := la_matrix(xList);
-        y := la_vector(yList);
-        w := la_solve(X! * X, X! * y);
-        d := X * w - y;
-        RSS   := d * d;
-        yMean := +/ yList / number;
-        TSS   := +/ [(yList[i] - yMean) ** 2 : i in [1 .. number]];
-        R2    := 1 - RSS / TSS;
-        return R2;
-    };
+    import csv
+    import numpy as np
+    
+    def linear_regression(fileName, target, explaining, f):
+        with open(fileName) as input_file:
+            reader     = csv.reader(input_file, delimiter=',')
+            line_count = 0
+            goal       = []
+            Causes     = []
+            for row in reader:
+                if line_count != 0:  
+                    goal  .append(f(float(row[target])))  
+                    Causes.append([float(row[i]) for i in explaining] + [1.0]) 
+                line_count += 1
+        m = len(goal)
+        X = np.array(Causes)
+        y = np.array(goal)
+        w = np.linalg.solve(X.T @ X, X.T @ y)
+        RSS   = np.sum((X @ w - y) ** 2)
+        yMean = np.sum(y) / m
+        TSS   = sum((y - yMean) ** 2)
+        R2    = 1 - RSS / TSS
+        return R2
+    
+    def main():
+        explaining = [1, 2, 3, 4, 5, 6]
+        R2 = linear_regression("cars.csv", 0, explaining, lambda x: 1/x)
+        print(f'portion of explained variance : {R2}')
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{General linear regression.}
 \label{fig:linear-regression.stlx}
 \end{figure}
+
+\noindent
+The function \texttt{linear\_regression} works as follows:
 \begin{enumerate}
-\item It reads the file and stores the resulting $\mathtt{Table}$ object in the variable $\mathtt{csv}$.
-\item The data from this object is stored as a list of lists in the variable $\mathtt{data}$.
-\item $\mathtt{number}$ is the number of training examples.
-\item $\mathtt{xList}$ stores the data of the independent variable $x$.  Therefore, $\mathtt{xList}$ is a list
-      of vectors.  Note that we have extended the data vectors by putting the number $1.0$ at the end of every vector.  
-\item $\mathtt{yList}$ stores the data of the depend variable $y$.
-\item The data in $\mathtt{xList}$ is then stored in the matrix $\mathtt{X}$.  
-\item The data in $\mathtt{yList}$ is stored in the vector $\mathtt{y}$.
-\item The normal equation is formulated and solved using the function $\mathtt{la\_solve}$.
-      Note that the postfix-operator ``\texttt{!}'' computes the transpose of a matrix when applied to a matrix.
-\item The variable $\mathtt{d}$ is the difference between the predictions of the linear model and the observed
-      values $\mathtt{y}$.
-\item $\mathtt{RSS}$ is the residual sum of squares.
-\item $\mathtt{yMean}$ is the mean value of the variable $y$.
+\item It reads the specified \textsc{Csv} file line by line and stores the data in the variables \texttt{goal} and
+      \texttt{Causes}.  This is done by creating a \texttt{csv} reader in line 6.  This reader returns the
+      entries in the specified input file line by line in the for loop in line 10. 
+      \begin{enumerate}
+      \item \texttt{goal} is a list containing the data of the dependent variable that was specified by
+            \texttt{target}.  This list is initialized in line 8.  It is filled with data in line 12.
+            Note that the values stored in \texttt{goal} are transformed by the function \texttt{f}.
+      \item \texttt{Causes} is a list of lists containing the data of the explaining variables.
+            Every row in the \textsc{Csv} file corresponds to one list in the list Causes.
+            Note also that we append the number $1.0$ to each of these lists.  This corresponds to adding a
+            constant feature to our data and it enables us to use the normal equations as we have derived them.
+      \end{enumerate}
+\item \texttt{m} is the number of data pairs and is computed in line 15.
+\item \texttt{Causes} is transformed into the \texttt{NumPy} matrix \texttt{X} in line 16. 
+\item \texttt{goal} is transformed into the \texttt{NumPy} array \texttt{y} in line 17.
+\item The normal equation $(X^\top \cdot X) \cdot \mathbf{w} = X^\top \cdot \mathbf{y}$ is formulated and
+      solved using the function $\mathtt{np.linalg.solve}$ in line 18.
+     
+      Note that \texttt{X.T} is the transpose of the matrix \texttt{X}.  The operator \texttt{@} computes the
+      matrix product.  Hence the expression \texttt{X.T @ X} is interpreted as 
+      $X^\top \cdot X$.  Similarly, the expression \texttt{X.T @ y} is interpreted as $X^\top \cdot \mathbf{y}$.
+\item The expression $\texttt{(X @ w - y)}$ is the difference between the predictions of the linear model and the observed
+      values $\mathtt{y}$.  By squaring it and the summing over all entries of the resulting vector we compute
+      is the residual sum of squares $\texttt{RSS}$ in line 19.
+\item $\mathtt{yMean}$ is the mean value of the variable $\mathbf{y}$.
 \item $\mathtt{TSS}$ is the total sum of squares.
 \item $\mathtt{R2}$ is the proportion of the explained variance.
 \end{enumerate}
-
-
-
 When we run the program shown in \myFig{linear-regression.stlx} with the data stored in \texttt{cars.csv},
-which had been discussed previously, then the proportion of explained variance is $81 \mathtt{\symbol{37}}$.  Considering that our data does
-not take account of the aerodynamics of the cars, this seems like a reasonable result.
+which had been discussed previously, then the proportion of explained variance is $88 \mathtt{\symbol{37}}$.  Considering that our data does
+not take the aerodynamics of the cars into take account, this seems like a reasonable result.  A Jupyter notebook
+containing a similar program is available at
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Linear-Regression.ipynb}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/\\
+\hspace*{2.2cm}
+ blob/master/Python/Linear-Regression.ipynb}}.
 
 
 \exercise
-The file ``\texttt{advertising.csv}'', which is available at
+The file ``\texttt{trees.csv}'', which is available at
 \\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/advertising.csv}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/\\
-\hspace*{1.22cm} blob/master/SetlX/advertising.csv}},
+\hspace*{0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/trees.csv}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/trees.csv}},
 \\[0.2cm]
-contains data about advertising.  Concretely, let us think that this data lists the amount of money that has
+contains data about cherry trees.
+
+advertising.  Concretely, let us think that this data lists the amount of money that has
 been spent in advertising a luxury refrigerator that is able to detect the amount of food stored and that is
 able to reorder supplies with \href{https://en.wikipedia.org/wiki/AmazonFresh}{AmazonFresh}$^\mathtt{TM}$.
 Every line of this \textsc{Csv} file has five entries:

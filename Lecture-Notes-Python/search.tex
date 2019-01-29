@@ -1263,7 +1263,7 @@ a \blue{heuristic} is a function
 $h: Q \rightarrow \mathbb{R}$
 \\[0.2cm]
 that computes an approximation of the distance of a given state $s$ to the goal state $\mathtt{goal}$.
-The heuristic is \blue{admissible} if it always \underline{\color{red}{underestimates}} the true distance,
+The heuristic is \blue{admissible} if it never \underline{\color{red}{overestimates}} the true distance,
 i.e.~if the function 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1274,7 +1274,7 @@ computes the \blue{true distance} from a state $s$ to the goal, then we must hav
 \hspace*{1.3cm}
 $h(s) \leq d(s)$ \quad for all $s \in Q$.
 \\[0.2cm]
-Hence, the heuristic is admissible iff it is \blue{optimistic}:  An admissible heuristic must never overestimate the
+Hence, the heuristic is admissible iff it is \blue{optimistic}:  It must never overestimate the
 distance to the goal, but it is free to underestimate this distance.
 
 Finally, the  heuristic $h$ is called \blue{consistent} iff we have
