@@ -308,12 +308,13 @@ $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$ \quad f
 \\[0.2cm]
 Here, $\alpha$ is called the \blue{step size} also known as the \blue{learning rate}.  It determines by how
 much we move in the direction of the gradient.  In practise, it is best to adapt the step size dynamically
-during the iterations.  Figure \ref{fig:gradient-ascent.stlx} on page \pageref{fig:gradient-ascent.stlx} shows
+during the iterations.  Figure \ref{fig:gradient-ascent.py} on page \pageref{fig:gradient-ascent.py} shows
 how this is done. 
 The function \texttt{findMaximum} takes four arguments:
 \begin{enumerate}
 \item \texttt{f} is the function that is to be maximized.  It is assumed that \texttt{f} takes a vector
-      $\texttt{x}\in \mathbb{R}^n$ as its input and that it returns a real number.
+      $\texttt{x}\in \mathbb{R}^n$ as its input and that it returns a real number.  Note that $n$ might be
+      $1$.  In that case the input to $f$ is a real number.
 \item \texttt{gradF} is the gradient of \texttt{f}.  It takes a vector
       $\texttt{x}\in \mathbb{R}^n$ as its input and returns the vector $\nabla \mathtt{f}(\mathtt{x})$.
 \item \texttt{start} is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
@@ -329,18 +330,19 @@ Next, let us discuss the implementation of gradient ascent.
 \item \texttt{fx} is the value that the function $f$ takes for the argument \texttt{x}.
 \item \texttt{alpha} is the \blue{learning rate}.  We initialize \texttt{alpha} as $1.0$.  The learning rate
       will be adapted dynamically. 
-\item The body of the \texttt{while} loop starting in line 5 executes one iteration of gradient ascent.
+\item The body of the \texttt{while} loop starting in line 6 executes one iteration of gradient ascent.
 \item In each iteration, we store the values of $\mathbf{x}_n$ and $f(\mathbf{x}_n)$ in the variables
       \texttt{xOld} and \texttt{fOld}.  This is needed since we need to ensure that the values of
       $f(\mathbf{x}_n)$ are increasing.
-\item Next, we compute $\mathbf{x}_{n+1}$ in line 7 using the formula
+\item Next, we compute $\mathbf{x}_{n+1}$ in line 8 using the formula
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$.
-\item The corresponding value $f(\mathbf{x}_{n+1})$ is computed in line 8.
-\item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$.  This happens if the step
-      size $\alpha$ is too large.  Hence, in this case we decrease the value of $\alpha$, discard 
-      both $\mathbf{x}_{n+1}$ and $f(\mathbf{x}_{n+1})$ and start over again.
+\item The corresponding value $f(\mathbf{x}_{n+1})$ is computed in line 9.
+\item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$.  This happens if the learning
+      rate $\alpha$ is too large.  Hence, in this case we decrease the value of $\alpha$, discard 
+      both $\mathbf{x}_{n+1}$ and $f(\mathbf{x}_{n+1})$ and start over again via the \texttt{continue}
+      statement in line 13.
 \item Otherwise, $\mathbf{x}_{n+1}$ is a better approximation of the maximum than $\mathbf{x}_n$.  
       In order to increase the speed of the convergence of our algorithm we will then increase the learning rate
       $\alpha$ by $20\%$.    
@@ -371,31 +373,29 @@ Next, let us discuss the implementation of gradient ascent.
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
-    findMaximum := procedure(f, gradF, start, eps) {
-        x     := start;
-        fx    := f(x);
-        alpha := 1.0;
-        while (true) {
-            [xOld, fOld] := [x, fx];
-            x  += alpha * gradF(x);
-            fx := f(x);
-            if (fx < fOld) {   
-                alpha   *= 0.5;
-                [x, fx] := [xOld, fOld];  // reset values and
-                continue;                 // start over
-            } else {
-                alpha *= 1.2;
-            }
-            if (abs(fx - fOld) <= abs(fx) * eps) {
-                return [x, fx];
-            } 
-        }
-    };
+                  ]
+    def findMaximum(f, gradF, start, eps):
+        x     = start
+        fx    = f(x)
+        alpha = 1.0
+        cnt   = 1  # number of iterations
+        while True:
+            xOld, fOld = x, fx
+            x  += alpha * gradF(x)
+            fx  = f(x)
+            if fx <= fOld:   
+                alpha *= 0.5
+                x, fx = xOld, fOld
+                continue
+            else:
+                alpha *= 1.2
+            if abs(fx - fOld) <= abs(fx) * eps:
+                return x, fx
+            cnt += 1                  
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The gradient ascent algorithm.}
-\label{fig:gradient-ascent.stlx}
+\label{fig:gradient-ascent.py}
 \end{figure}
 
 The implementation of gradient ascent given above is not the most sophisticated variant of this algorithm.
