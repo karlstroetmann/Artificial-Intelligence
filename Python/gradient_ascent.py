@@ -16,7 +16,7 @@ def findMaximum(f, gradF, start, eps, verbose=False):
     """
     x     = start
     fx    = f(x)
-    alpha = 1.0
+    alpha = 0.1
     cnt   = 1  # number of iterations
     while True:
         xOld, fOld = x, fx
@@ -25,6 +25,8 @@ def findMaximum(f, gradF, start, eps, verbose=False):
         if verbose:
             print(f'cnt = {cnt}, f({x}) = {fx}')
             print(f'gradient = {gradF(x)}')
+        if abs(fx - fOld) <= abs(fx) * eps and cnt > 1:
+            return x, fx, cnt
         if fx <= fOld:   
             alpha *= 0.5
             if verbose:
@@ -35,18 +37,22 @@ def findMaximum(f, gradF, start, eps, verbose=False):
             alpha *= 1.2
             if verbose:
                 print(f'incrementing: alpha = {alpha}')
-        if abs(fx - fOld) <= abs(fx) * eps:
-            return x, fx, cnt
         cnt += 1
 
-import math
-
 if __name__ == '__main__':
+    import math
+    import numpy as np
+    # one dimensional example
     f  = lambda x: math.sin(x) - x**2 / 2
     fs = lambda x: math.cos(x) - x
     start = 0
     x, fx, cnt = findMaximum(f, fs, start, 10**-15, True)
     print(f'maximum at {x}, value {fx}, {cnt} iterations')
-
+    # two dimensional example
+    f  = lambda x: 3 - (x[0] - 1.5) ** 2 - (x[1] + 2.0) ** 4
+    fs = lambda x: - np.array([2 * (x[0] - 1.5), 4 * (x[1] + 2.0) ** 3])
+    start = np.array([0.0, 0.0])
+    x, fx, cnt = findMaximum(f, fs, start, 10**-11, True)
+    print(f'maximum at {x}, value {fx}, {cnt} iterations')
 
 

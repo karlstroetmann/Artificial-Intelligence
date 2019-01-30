@@ -493,12 +493,12 @@ The proof of this fact runs as follows:
 \hspace*{1.3cm}
 $
 \begin{array}{lcll}
-1 - S(t) & = & \ds 1 - \frac{1}{1 + \exp(-t)}             & \mbox{by definition of $S(t)$}           \\[0.5cm]
-         & = & \ds \frac{1 + \exp(-t) - 1}{1 + \exp(-t)}  & \mbox{common denominator}                \\[0.5cm]
-         & = & \ds \frac{\exp(-t)}{1 + \exp(-t)}          & \mbox{simplify}                          \\[0.5cm]
-         & = & \ds \frac{1}{\exp(+t) + 1}                 & \mbox{expand fraction by $\exp(t)$}      \\[0.5cm]
+1 - S(t) & = & \ds 1 - \frac{1}{1 + \exp(-t)}             & \mbox{(by definition of $S(t)$)}           \\[0.5cm]
+         & = & \ds \frac{1 + \exp(-t) - 1}{1 + \exp(-t)}  & \mbox{(common denominator)}                \\[0.5cm]
+         & = & \ds \frac{\exp(-t)}{1 + \exp(-t)}          &                                          \\[0.5cm]
+         & = & \ds \frac{1}{\exp(+t) + 1}                 & \mbox{(expand fraction by $\exp(t)$)}      \\[0.5cm]
          & = & \ds \frac{1}{1 + \exp(+t)}                 &                                          \\[0.5cm]
-         & = & S(-t). \qquad _\Box                         & \mbox{by definition of $S(-t)$}
+         & = & S(-t)                                      & \mbox{(by definition of $S(-t)$)}. \qquad _\Box
 \end{array}
 $
 \\[0.2cm]
@@ -573,10 +573,10 @@ Then we have
 \hspace*{1.3cm}
 $
 \begin{array}{lcll}
-  L'(t) & = & \ds \frac{S'(t)}{S(t)}                  & \mbox{by the chain rule} \\[0.5cm]
-        & = & \ds \frac{(1 - S(t)) \cdot S(t)}{S(t)}  \\[0.5cm]
-        & = & \ds 1 - S(t)                            & \mbox{simplify} \\[0.2cm]
-        & = & \ds S(-t)                               & \mbox{by the symmetry} 
+  L'(t) & = & \ds \frac{S'(t)}{S(t)}                  & \mbox{(by the chain rule)} \\[0.5cm]
+        & = & \ds \frac{(1 - S(t)) \cdot S(t)}{S(t)}                               \\[0.5cm]
+        & = & \ds 1 - S(t)                                                         \\[0.2cm]
+        & = & \ds S(-t)                               & \mbox{(by symmetry)} 
 \end{array}
 $
 \\[0.2cm]
@@ -594,13 +594,15 @@ As this is our most important result, we highlight it:
 
 \subsection{The Model of Logistic Regression}
 In logistic regression we deal with \blue{binary classification}, i.e.~we assume that we just need to decide
-whether a given object has a fixed class or not.  We use the following model to compute the \blue{probability} that an
-object with features $\mathbf{x}$ will be of the given class: 
+whether a given object is a member of a given class or not.  We use the following model to compute the \blue{probability} that an
+object $o$ with features $\mathbf{x}$ will be of the given class: 
 \\[0.2cm]
 \hspace*{1.3cm}
-$P(y=+1\;|\;\mathbf{x};\mathbf{w}) = S(\mathbf{x} \cdot \mathbf{w})$.
+$P(y=+1\;|\;\mathbf{x},\mathbf{w}) = S(\mathbf{x} \cdot \mathbf{w})$.
 \\[0.2cm]
-Here $\mathbf{x} \cdot \mathbf{w}$ denotes the dot product of the vectors $\mathbf{x}$ and $\mathbf{w}$,
+Note that $P(y=+1\;|\;\mathbf{x},\mathbf{w})$ is the \blue{conditional probability} that $o$ has the given
+class, given its features $\mathbf{x}$ and the weights $\mathbf{w}$.  The expression $\mathbf{x}
+\cdot \mathbf{w}$ denotes the \blue{dot product} of the vectors $\mathbf{x}$ and $\mathbf{w}$,  
 i.e. we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -615,36 +617,39 @@ We assume that $y$ can only take the values $+1$ or $-1$,  e.g.~in the example o
 email is spam and $y = -1$ otherwise.  Since complementary probabilities add up to $1$, we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$P(y=-1\;|\;\mathbf{x};\mathbf{w}) = 1 - P(y=+1\;|\;\mathbf{x};\mathbf{w}) 
+$P(y=-1\;|\;\mathbf{x},\mathbf{w}) = 1 - P(y=+1\;|\;\mathbf{x},\mathbf{w}) 
   = 1 - S(\mathbf{x} \cdot \mathbf{w}) = S(-\mathbf{x} \cdot \mathbf{w})
 $.
 \\[0.2cm]
-Hence, we can combine the equations for $P(y=-1\;|\;\mathbf{x};\mathbf{w})$ and $P(y=+1\;|\;\mathbf{x};\mathbf{w})$ into a
+Hence, we can combine the equations for $P(y=-1\;|\;\mathbf{x},\mathbf{w})$ and $P(y=+1\;|\;\mathbf{x},\mathbf{w})$ into a
 single equation
 \\[0.2cm]
 \hspace*{1.3cm}
-\colorbox{red}{\framebox{\colorbox{orange}{$P(y\;|\;\mathbf{x};\mathbf{w}) = S\bigl(y \cdot(\mathbf{x} \cdot \mathbf{w})\bigr)$.}}}
+\colorbox{red}{\framebox{\colorbox{orange}{$P(y\;|\;\mathbf{x},\mathbf{w}) = S\bigl(y \cdot(\mathbf{x} \cdot \mathbf{w})\bigr)$.}}}
 \\[0.2cm]
-Given $N$ objects $o_1, \cdots, o_n $ with feature vectors $\mathbf{x}_1, \cdots, \mathbf{x}_n$ we
-want to determine the weight vector $\mathbf{w}$ such that the likelihood $\ell(\mathbf{X}, \mathbf{y})$ of all of our
+Given $N$ objects $o_1, \cdots, o_n $ with feature vectors $\mathbf{x}_1, \cdots, \mathbf{x}_n$ and classes
+$y_1,\cdots,y_n$, we
+want to determine the weight vector $\mathbf{w}$ such that the \blue{likelihood} $\ell(\mathbf{X}, \mathbf{y})$ of all of our
 observations is maximized.  This approach is called the 
 \href{https://en.wikipedia.org/wiki/Maximum_likelihood_estimation}{maximum likelihood estimation} of the weights.
-As we assume the probabilities of different observations are independent, the individual
-probabilities have to be multiplied to compute the overall likelihood $\ell(\mathbf{X}, \mathbf{y};\mathbf{w})$ 
+As we assume that the probabilities of different observations are independent, the individual
+probabilities have to be multiplied to compute the overall likelihood $\ell(\mathbf{X}, \mathbf{y},\mathbf{w})$ 
 of a given training set:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \ell(\mathbf{X},\mathbf{y};\mathbf{w}) = \prod\limits_{i=1}^N P(y_i \;|\;\mathbf{x}_i;\mathbf{w})$.
+$\ds \ell(\mathbf{X},\mathbf{y},\mathbf{w}) = \prod\limits_{i=1}^N P(y_i \;|\;\mathbf{x}_i,\mathbf{w})$.
 \\[0.2cm]
 Here, we have combined the different attribute vectors $\mathbf{x}_i$ into the matrix $\mathbf{X}$ such that
 $\mathbf{x}_i$ is the $i$-th row of the matrix $\mathbf{X}$.  Since it is
-easier to work with sums than with products, instead of maximizing the function $\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ we maximize the function
+easier to work with sums than with products, instead of maximizing the function
+$\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ we instead maximize the logarithm of
+$\ell(\mathbf{X},\mathbf{y},\mathbf{w})$.  This logarithm is called the \blue{log-likelihood} and is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) := \ln\bigl(\ell(\mathbf{X},\mathbf{y};\mathbf{w})\bigr)$. 
+$\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) := \ln\bigl(\ell(\mathbf{X},\mathbf{y},\mathbf{w})\bigr)$. 
 \\[0.2cm]
 As the natural logarithm is a \href{https://en.wikipedia.org/wiki/Monotonic_function}{monotonically increasing}
-function, the functions $\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ and  $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ take their maximum at the same value of $\mathbf{w}$.  As we have
+function, the functions $\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ and  $\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ take their maximum at the same value of $\mathbf{w}$.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ln(a \cdot b) = \ln(a) + \ln(b)$,
@@ -653,18 +658,18 @@ the natural logarithm of the likelihood is
 \\[0.2cm]
 \hspace*{1.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
-$\ds \ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) = 
+$\ds \ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) = 
  \sum\limits_{i=1}^N \ln\Bigl(S\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)\Bigr) =
  \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
 $.}}}
 \\[0.2cm]
-Our goal is to maximize the likelihood.  Since this is the same as maximizing the log-likelihood, we
+Our goal is to choose the weights $\mathbf{w}$ such that the likelihood is maximized.  Since this is the same as maximizing the log-likelihood, we
 need to determine those values of the coefficients $\mathbf{w}$ that satisfy
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) = 0$.
+$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) = 0$.
 \\[0.2cm]
-In order to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ with respect to the
+In order to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ with respect to the
 coefficients $\mathbf{w}$ we need to compute the partial derivative of the dot product $\mathbf{x}_i \cdot
 \mathbf{w}$ with respect to the weights $w_j$.
 We define
@@ -681,12 +686,12 @@ $\ds \frac{\partial\quad}{\partial\, w_j} h(\mathbf{w})
    = \sum\limits_{k=1}^D x_{i,k} \cdot \delta_{j,k} =  x_{i,j}
 $.
 \\[0.2cm]
-Now we are ready to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w})$ with respect to $\mathbf{w}$:
+Now we are ready to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ with respect to $\mathbf{w}$:
 \\[0.2cm]
 \hspace*{1.3cm}
 $
 \begin{array}{cll}
-  & \ds \frac{\partial\quad}{\partial\, w_j} \ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) \\[0.5cm]
+  & \ds \frac{\partial\quad}{\partial\, w_j} \ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) \\[0.5cm]
 = & \ds \frac{\partial\quad}{\partial\, w_j} 
     \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr) 
     \\[0.5cm]
@@ -699,7 +704,7 @@ Hence, the partial derivative of the log-likelihood function is given as follows
 \\[0.2cm]
 \hspace*{1.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
-$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) =
+$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) =
  \ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w})
 $}}} 
 \\[0.2cm]
@@ -711,9 +716,8 @@ $\ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot
 \\[0.2cm]
 These are $D$ equations for the $D$ variables $w_1, \cdots, w_D$.  Due to the occurrence of the sigmoid function, these
 equations are nonlinear.  We can not solve these equations explicitly.  Nevertheless, our computation of the
-gradient of the log-likelihood was not for nought:  We will use gradient ascent in order to find the value of
-$\mathbf{w}$ that maximizes the log-likelihood.
-This method has been outlined in the previous section.
+gradient of the log-likelihood was not for in vain:  We will use the method of gradient ascent in order to find
+the value of $\mathbf{w}$ that maximizes the log-likelihood.  This method has been outlined in the previous section.
 
 \subsection{Implementing Logistic Regression}
 In order to implement logistic regression we need a data structure for tabular data.  Figure
