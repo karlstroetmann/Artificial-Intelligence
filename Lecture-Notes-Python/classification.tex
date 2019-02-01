@@ -720,74 +720,14 @@ gradient of the log-likelihood was not for in vain:  We will use the method of g
 the value of $\mathbf{w}$ that maximizes the log-likelihood.  This method has been outlined in the previous section.
 
 \subsection{Implementing Logistic Regression}
-In order to implement logistic regression we need a data structure for tabular data.  Figure
-\ref{fig:table2.stlx} on page \pageref{fig:table2.stlx} shows the class table that can be used to
-administer this kind of data.  Figure \ref{fig:table2.stlx}  shows an example of tabular data that is
-stored in a \href{https://en.wikipedia.org/wiki/Comma-separated_values}{\textsc{Csv}} file.  In this case,
-the data stores the hours a student has learned for a particular exam and the fact whether the
-student has passed of failed.  The first column stores pass or fail, where a pass is coded using the
-number 1, while a fail is coded as 0.  The second column stores the number of hours that the student
-has learned in order to pass the exam.
 
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-   class table(columnNames, types, data) {
-       mColumnNames := columnNames;
-       mTypes       := types;
-       mData        := data;
-   
-     static {
-         getColumnNames := [ ] |-> mColumnNames;
-         getTypes       := [ ] |-> mTypes;
-         getData        := [ ] |-> mData;
-         getRow         := [r] |-> mData[r];
-         getLength      := []  |-> #mData;
-         
-         head := procedure(limit := 10) {
-             print(mColumnNames);
-             print(mTypes);
-             for (i in [1 .. limit]) {
-                 print(mData[i]);
-             }
-         };
-     }
-   }
-   readTable := procedure(fileName, types) {
-       all         := readFile(fileName);
-       columnNames := split(all[1], ',\s*');
-       data        := [];
-       for (i in [2 .. #all]) {
-           row := split(all[i], ',\s*');
-           data[i-1] := [eval("$type$($s$)") : [type, s] in types >< row];
-       }
-       return table(columnNames, types, data);
-   };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{A class to represent tabular data.}
-\label{fig:table2.stlx}
-\end{figure}
-There is no need for us to discuss every detail of the implementation of the class \texttt{table}.
-The important thing to note is that the data is stored as a list of lists in the member variable
-\texttt{mData}.  Each of the inner lists corresponds to one row of the \textsc{Csv} file.
-This member variable can be accessed using the function getData.  The function \texttt{readTable}
-has the responsibility to read a \textsc{Csv} file and to convert it into an object of class \texttt{table}.
-In order to do this, it has to be called with two arguments.  The first argument is the file name,
-the second argument is a list of the types of each column in the \textsc{Csv} file.  For example, to read the
-file ``\texttt{exam.csv}'' we would call \texttt{readTable} as follows:
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{readTable("exam.csv", ["int", "double"])}.
-
+In this section we will give a simple implementation of logistic regression.  We will use our implementation of
+logistic regression to predict whether a student will pass or fail a given exam.  Figure \ref{fig:exam.csv}
+shows a \href{https://en.wikipedia.org/wiki/Comma-separated_values}{\textsc{Csv}} file that contains the data
+we are going to explore.  Concretely, this file stores the hours a student has learned for a particular exam
+and the fact whether the student has passed the exam or has failed.  A passed exam is encoded as the number
+$1$, while a failed exam is encoded as $0$.  The first column of the file stores these numbers.  The second
+column stores the number of hours that the student has learned in order to pass the exam.
 
 
 \begin{figure}[!ht]
@@ -828,8 +768,8 @@ file ``\texttt{exam.csv}'' we would call \texttt{readTable} as follows:
 \label{fig:exam.csv}
 \end{figure}
 
-The program shown in Figure \ref{fig:logistic-regression.stlx} on page
-\pageref{fig:logistic-regression.stlx} implements logistic regression.  As there are a number of
+The program shown in Figure \ref{fig:logistic_regression.py} on page
+\pageref{fig:logistic_regression.py} implements logistic regression.  As there are a number of
 subtle points that might easily be overlooked otherwise, we proceed to discuss this program line by line. 
 
 
@@ -841,63 +781,59 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
                 ]
-    load("table.stlx");
-    load("gradient-ascent.stlx");
+    import numpy as np
     
-    sigmoid := procedure(x) { return 1.0 / (1.0 + exp(-x)); };
-    logSigmoid := procedure(x) {
-        if (x >= -100) {
-            return -log(1.0 + exp(-x));
-        } else {  
-            return x;
-        }
-    };
-    ll := procedure(X, y, w) {
-        return +/ [ logSigmoid(y[i] * (X[i] * w)) : i in [1 .. #X] ];
-    };
-    gradLL := procedure(X, y, w) {
-        result := [];
-        for (j in [1 .. #X[1]]) {
-            result[j] := +/ [y[i]*X[i][j]*sigmoid(-y[i]*(X[i]*w)) : i in [1..#X]];
-        }
-        return la_vector(result);
-    };
-    logisticRegressionFile := procedure(fileName, types) {
-        csv    := readTable(fileName, types);
-        data   := csv.getData();
-        number := #data;
-        dmnsn  := #data[1];    
-        yList  := [];
-        xList  := [];
-        for (i in [1 .. number]) {
-            yList[i] := data[i][1];
-            xList[i] := la_vector([1.0] + data[i][2..]);
-        }
-        X := la_matrix(xList);
-        y := la_vector([2 * y - 1 : y in yList]);
-        start := la_vector([0.0 : i in [1 .. dmnsn]]);
-        eps   := 10 ** -15;
-        f     := w |=> ll(X, y, w);
-        gradF := w |=> gradLL(X, y, w);
-        return findMaximum(f, gradF, start, eps)[1];
-    };
+    def sigmoid(t):
+        "compute the sigmoid of t"
+        return 1.0 / (1.0 + np.exp(-t))
+    
+    def logSigmoid(t):
+        "compute the sigmoid of t, avoid overflow"
+        if t > -100:
+            return -np.log(1.0 + np.exp(-t))
+        else:
+            return t
+    
+    def ll(X, y, w):
+        """
+        given the matrix X and the observations y,
+        return the log likelihood for the weight vector w
+        """
+        return np.sum([logSigmoid(y[i] * (X[i] @ w)) for i in range(len(X))])
+    
+    def gradLL(X, y, w):
+        """
+        Compute the gradient ofthe log-likelihood with respect to w 
+        """
+        Gradient = []
+        for j in range(len(X[1])):
+            L = [y[i]*X[i][j]*sigmoid(-y[i] * (X[i] @ w)) for i in range(len(X))]
+            Gradient.append(sum(L))
+        return np.array(Gradient)
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{An implementation of logistic regression.}
-\label{fig:logistic-regression.stlx}
+\label{fig:logistic_regression.py}
 \end{figure}
 
+
+
 \begin{enumerate}
-\item First, we have to load both the class \texttt{table} and our implementation of gradient ascent 
-      that has already been discussed in Section \ref{section:gradient-ascent}.
-\item Line 4 implements the sigmoid function
-      \\[0.2cm]
+\item First, we \texttt{import} the module \texttt{numpy}.  This module provides us with the 
+      functions \texttt{log} and \texttt{exp} for computing the logarithm and the exponential of a number or
+      vector.  Furthermore, we need this module because the gradient of the log-likelihood is a vector and for
+      efficiency reasons this vector should be stored as a NumPy array.
+\item Line 3 implements the sigmoid function
+
       \hspace*{1.3cm}
       $\ds S(x) = \frac{1}{1 + \exp(-x)}$.
-\item Line 5 starts the implementation of the natural logarithm of the sigmoid function, i.e.~we implement
+      \\[0.2cm]
+      Since we are using NumPy to compute the exponential function, the parameter $t$ that is used in our
+      implementation can also be a vector.
+\item Line 7 starts the implementation of the natural logarithm of the sigmoid function, i.e.~we implement
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds L(x) = \ln\bigl(S(X)\bigr) = \ln\left(\frac{1}{1 + \exp(-x)}\right) =- \ln\bigl(1 + \exp(-x)\bigr)$.
@@ -909,15 +845,11 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       finally \texttt{log(1 + exp(1000))} is \texttt{Infinity}.  However, in reality we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ln\bigl(1 + \exp(1000)\bigr) \approx 1000$.
+      $\ln\bigl(1 + \exp(1000)\bigr) \approx 1000$
       \\[0.2cm] 
-      The argument works as follows:
-      \pagebreak
-      \vspace*{\fill}
-
-      \pagebreak
-
-      \noindent
+      because $\exp(1000)$ is so big that adding $1$ to it does not make much of a difference.
+      The precise argument works as follows:
+      \\[0.2cm]
       \hspace*{1.3cm}
       $
       \begin{array}{lcll}
@@ -932,7 +864,9 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       \\[0.2cm]
       This is the reason that \texttt{logSigmoid} returns \texttt{x} if the value of \texttt{x} is less than
       $-100$.
-\item The function $\mathtt{ll}(\mathbf{x}, \mathbf{y}, \mathbf{w})$ computes the log-lokelihood
+\item The function $\mathtt{ll}(\mathbf{X}, \mathbf{y}, \mathbf{w})$ defined in line 14 computes the
+      log-lokelihood of the parameter $\mathbf{w}$ given the available data $\mathbf{X}$ and $\mathbf{y}$.
+      We have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds \ell\ell(\mathbf{X},\mathbf{y};\mathbf{w}) = 
@@ -944,7 +878,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       matrix, i.e.~the vector $\mathbf{x}_i$ is the feature vector containing the features of the
       $i$-th observation.  $\mathbf{y}$ is a vector describing the outcomes, i.e.~the elements
       of this vector are either $+1$ or $-1$.  Finally, $\mathbf{w}$ is the vector of coefficients.
-\item The function $\mathtt{gradLL}(\mathbf{x}, \mathbf{y}, \mathbf{w})$ computes the gradient of
+\item The function $\mathtt{gradLL}(\mathbf{x}, \mathbf{y}, \mathbf{w})$ in line 21 computes the gradient of
       the log-lokelihood according to the formula
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -954,40 +888,91 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       \\[0.2cm]
       The different components of this gradient are combined into a vector.
       The arguments are the same as the arguments to the log-lokelihood.
-\item Finally, the function \texttt{logisticRegressionFile} takes two arguments.  The first argument
-      is the name of the \texttt{.csv} file containing the data, while the second argument is a list specifying the types
-      of the columns.  The elements of this list have to be either \texttt{"int"} or \texttt{"double"}.
-      The task of this function is to read the \texttt{.csv} file, convert the data in the matrix $\mathbf{X}$
-      and the vector $\mathbf{y}$, and then use the method of gradient ascent to find the weight vector
-      $\mathbf{w}$ that maximize the likelihood.
-
-      As we assume that the entries of the vector $\mathbf{y}$ are either $+1$ or $-1$ but the data provided in
-      the file are instead $1$ or $0$, we need to apply a function that maps $1$ to $+1$ and $0$ to $-1$.
-      The function
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $y \mapsto 2 \cdot y - 1$
-      \\[0.2cm]
-      is used for this mapping in the construction of the vector $\mathbf{y}$.
-
-      Next, we define the functions $\texttt{f}$ and $\texttt{gradF}$ as \blue{closures} using the operator 
-      ``\texttt{|=>}''.  This operator ensures that the values of the matrix $\texttt{X}$ and the vector
-      $\texttt{y}$ are available on invocations of $\texttt{f}$ and $\texttt{gradF}$.
-
-      Finally, the function $\texttt{findMaximum}$ computes the maximum of the log-likelihood using gradient
-      ascent. 
+\item Finally, the function \texttt{logisticRegressionFile} that is shown in Figure
+      \ref{fig:logistic_regression.py:2} takes one argument.  This argument
+      is the name of the \texttt{.csv} file containing the data that are to be analysed.  
+      The task of this function is to read the \textsc{Csv} file, convert the data in the feature matrix
+      $\mathbf{X}$ and the vector $\mathbf{y}$, and then to use the method of gradient ascent to find the weight vector
+      $\mathbf{w}$ that maximize the likelihood.  In detail this function works as follows.
+      \begin{enumerate}
+      \item The \texttt{with} statement that extends from line 34 to line 43 reads the data in the file that
+            is specified by the parameter \texttt{name}.
+      \item After the data has been read, the list \texttt{Pass} contains a list of floating point numbers that
+            are either $0$ or $1$ specifying whether the student has passed the exam, while the list
+            \texttt{Hours} contains the numbers of hours that the students have spend studying.
+      \item These data are converted into the NumPy arrays \texttt{x} and \texttt{y} in line 44 and 45.
+      \item \texttt{n} is the number of data points we have, i.e.~it is the number of students.
+      \item We reshape the vector \texttt{x} into a matrix \texttt{X} in line 47.
+            As there is only a single feature, namely the hours a student has studied, all rows of this matrix
+            have a length of $1$. 
+      \item Next, we prepend a column of ones to this matrix.  This is done in line 48.
+      \item In logistic regression we assume that the entries of the vector $\mathbf{y}$ are either $+1$ or
+            $-1$.  As the data provided in our input file contains $1$ and $0$, we need to apply a function that maps $1$ to $+1$ and $0$ to $-1$.
+            The function
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $y \mapsto 2 \cdot y - 1$
+            \\[0.2cm]
+            fits this job description and is applied to transform the vector $\mathbf{y}$ appropriately in line
+            49.
+      \item Now we are ready to run gradient ascent.  As the start vector we use a vector containing only
+            zeros.  This vector is defined in line 50.  The precision we use is $10^{-8}$.
+            We want to maximize the log-lokelihood of a given weight vector $\mathtt{w}$.  Hence we define the
+            function $\texttt{f}(\texttt{w})$ as $\mathtt{ll}(\mathtt{X}, \mathtt{y}, \mathtt{w})$ in line 52,
+            while the gradient of this function is defined in line 53.
+            Line 54 call the function \texttt{gradient\_ascent} that computes the value of \texttt{w} that
+            maximizes the log-lokelihood.            
+      \end{enumerate}
 \end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = last,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    import csv
+    import gradient_ascent
+
+    def logisticRegression(name):
+        with open(name) as file:
+            reader = csv.reader(file, delimiter=',')
+            count  = 0  # line count
+            Pass   = []
+            Hours  = []
+            for row in reader:
+                if count != 0:  # skip header
+                    Pass .append(float(row[0]))
+                    Hours.append(float(row[1]))
+                count += 1
+        y = np.array(Pass)
+        x = np.array(Hours)
+        n = len(y)
+        X = np.reshape(x, (n,1))
+        X = np.append(np.ones((n, 1)), X, axis=-1)
+        y = 2 * y - 1
+        start   = np.zeros((2,))
+        eps     = 10 ** -8
+        f       = lambda w: ll(X, y, w)
+        gradF   = lambda w: gradLL(X, y, w)
+        w, _, _ = gradient_ascent.findMaximum(f, gradF, start, eps)
+        return w
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The function \texttt{logisticRegression}.}
+\label{fig:logistic_regression.py:2}
+\end{figure}
+
 If we run the function \texttt{logisticRegressionFile} using the data shown in Figure
-\ref{fig:exam.csv} via
-the command
+\ref{fig:exam.csv} the resulting values of the weight vector \texttt{w} are
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{logisticRegressionFile("exam.csv", ["int", "double"]);}
-\\[0.2cm]
-the resulting coefficients are:
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{<<-4.077649741107752 1.5046211108850898>>}
+\texttt{[-4.0746468959343405, 1.5033787070592017]}
 \\[0.2cm]
 This shows that the probability $P(h)$ that a student who has studied for $h$ hours will pass the
 exam is given approximately as follows:
@@ -995,20 +980,17 @@ exam is given approximately as follows:
 \hspace*{1.3cm}
 $\ds P(h) \approx \frac{1}{1 + \exp(4.1 - 1.5 \cdot h)}$
 \\[0.2cm]
-Figure \ref{fig:exam-pass.eps} shows a plot of the probability $P(x)$.  This
-figure has been taken from the
-\href{https://en.wikipedia.org/wiki/Logistic_regression#Fields_and_example_applications}{Wikipedia article on logistic regression}. 
-It has been created by \href{https://commons.wikimedia.org/w/index.php?curid=42442194}{Michaelg2015}.
-
+Figure \ref{fig:exam-probability.pdf} shows a plot of this probability $P(x)$.  
 
 \begin{figure}[!th]
-\centering
-\epsfig{file=Figures/exam-pass.eps, scale=0.6}
-\vspace*{-0.3cm}
+\epsfig{file=Figures/exam-probability.pdf, scale=0.7}
 \caption{Probability of passing an exam versus hours of studying.}
-\label{fig:exam-pass.eps}
+\label{fig:exam-probability.pdf}
 \end{figure}
 
+
+\exercise 
+The file \href{https://github.com/karlstroetmann/Artificial-Intelligence/Python/iris.csv}{iris.csv}
 
 %\section{Decision Tree Learning}
 

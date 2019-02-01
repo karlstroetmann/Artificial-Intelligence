@@ -30,9 +30,9 @@ def gradLL(X, y, w):
         Gradient.append(sum(L))
     return np.array(Gradient)
 
-def main(name):
+def logisticRegressionFile(name):
     with open(name) as file:
-        reader = csv.reader(file, delimiter=',')
+        reader = csv.reader(file, delimiter=',', skipinitialspace=True)
         count  = 0  # line count
         Pass   = []
         Hours  = []
@@ -41,19 +41,19 @@ def main(name):
                 Pass .append(float(row[0]))
                 Hours.append(float(row[1]))
             count += 1
-        y = np.array(Pass)
-        x = np.array(Hours)
-        n = len(y)
-        X = np.reshape(x, (n,1))
-        X = np.append(np.ones((n, 1)), X, axis=-1)
-        y = 2 * y - 1
-        start   = np.zeros((2,))
-        eps     = 10 ** -8
-        f       = lambda w: ll(X, y, w)
-        gradF   = lambda w: gradLL(X, y, w)
-        w, _, _ = gradient_ascent.findMaximum(f, gradF, start, eps)
-        return w
+    y = np.array(Pass)
+    x = np.array(Hours)
+    n = len(y)
+    X = np.reshape(x, (n,1))
+    X = np.append(np.ones((n, 1)), X, axis=-1)
+    y = 2 * y - 1
+    start   = np.zeros((2,))
+    eps     = 10 ** -8
+    f       = lambda w: ll(X, y, w)
+    gradF   = lambda w: gradLL(X, y, w)
+    w, _, _ = gradient_ascent.findMaximum(f, gradF, start, eps)
+    return w
 
 if __name__ == '__main__':
-    w = main('exam.csv')
+    w = logisticRegressionFile('exam.csv')
     print(f'model: P(pass|hours) = S({w[0]} + {w[1]} * hours)')
