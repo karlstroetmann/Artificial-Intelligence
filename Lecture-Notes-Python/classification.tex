@@ -999,7 +999,7 @@ divide the data randomly into a \blue{training dataset}, which is used for compu
 logistic regression and a \blue{test dataset}, which you should only use to predict the accuracy of your model.
 \eox
 
-\section{The Naive Bayes Classifier}
+\section{Naive Bayes Classifiers}
 In this section we discuss \href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{naive Bayes classifiers}.
 Naive Bayes classifiers are an alternative method for classification which is appropriate in cases where the
 features are not numerical but categorical.  It starts with \href{https://en.wikipedia.org/wiki/Bayes%27_theorem}{Bayes' theorem}:
@@ -1110,7 +1110,7 @@ Bayes classifier can be rewritten as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \texttt{NaiveBayes}(f_1,\cdots,f_m) :=
-  \arg\max\limits_{C \in \mathcal{C}}  \left(\prod\limits_{i=1}^m P(f_i \;|\; C)\bigr)\right) \cdot P(C) 
+  \arg\max\limits_{C \in \mathcal{C}}  \left(\prod\limits_{i=1}^m P(f_i \;|\; C)\right) \cdot P(C) 
 $
 \\[0.2cm]
 This equation can be implemented once we have a training set $T$ of objects with known classes:  
@@ -1205,8 +1205,54 @@ different values.
 \label{fig:gender_prediction.py}
 \end{figure}
 
+Figure \ref{fig:gender_prediction.py} on page \pageref{fig:gender_prediction.py} shows a \textsl{Python} script
+that implements a naive Bayes classifier for gender prediction.   In order to train our classifier, we need a
+training set of names that are marked as being either male. We happen to have two text files, ``\texttt{names-female.txt}''
+and ``\texttt{names-male.txt}'' containing female and male first names.
+\begin{enumerate}
+\item We start by defining the function \texttt{read\_names}. This
+      function takes a file name as its argument and reads the specified file one line at a time.  It returns a
+      list of all the names given in the file. Care is taken that the newline character at the end of each line
+      is discarded. 
+\item We use this function to read bot the female names and the male names and store these names in the lists
+      \texttt{FemaleNames} and \texttt{MaleNames}.
+\item Next, we compute the \blue{prior probabilities} $P(\texttt{Female})$ and $P(\texttt{Male})$ for the classes
+      $\texttt{Female}$ and $\texttt{Male}$.  Previously, we have shown that the prior probability of a class $C$
+      in a training set $T$ is given as: 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds P(C) \approx  \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)}{\mathtt{card}(T)}$.
+      \\[0.2cm]
+      Therefore, these prior probability that a name is female is the fraction of the number of female names in
+      the set of all names.  Similarly, the prior probability that a name is male is the fraction of the number
+      of male names in  the set of all names.  These probabilities are stored as \texttt{pFemale} and \texttt{pMale}.
+\item The formula to compute the conditional probability of a feature $f$ given a class $C$ is as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds P(f\;|\;C) \approx 
+         \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \wedge \mathtt{has}(t, f) \}\bigr)}{
+         \mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)} 
+      $
+      \\[0.2cm]
+      The function $\texttt{conditional\_prop}(c,g)$ takes a character $c$ and a gender $g$ and determines the conditional
+      probability of seeing $c$ as a last character of a name that has the gender $g$. 
+\item Next, we define the dictionary \texttt{Conditional\_Probability}.  For every character $c$ and every
+      gender $g \in \{\texttt{'f'}, \texttt{'m'}\}$, the entry $\texttt{Conditional\_Probability}[(c,g)]$ is the
+      conditional probability of observing the last character $c$ if the gender of the name is known to be $g$. 
+\item The dictionary \texttt{Conditional\_Probability} can now be used to define the function
+      $\mathtt{classify}(\mathtt{name})$ that takes a $\mathtt{name}$ as its input and outputs the estimated
+      gender.
+\item Finally, we check the accuracy of this classifier on the training set.  When we run the program, we see
+      that the accuracy attained is about $76\%$.  Since we are using only a single feature here, this is a
+      reasonable result.
+\end{enumerate}
+The file
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/NLTK-Introduction.ipynb}{NLTK-Introduction.ipynb}
+contains a \blue{Jupyter notebook} that uses the \href{https://www.nltk.org}{Natural Language Toolkit}
+(\textsc{Nltk}) to implement a more sophisticated classifier for gender estimation.
 
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "artificial-intelligence"
 %%% End:
+ 
