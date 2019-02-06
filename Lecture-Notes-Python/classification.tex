@@ -999,7 +999,152 @@ divide the data randomly into a \blue{training dataset}, which is used for compu
 logistic regression and a \blue{test dataset}, which you should only use to predict the accuracy of your model.
 \eox
 
-%\section{Decision Tree Learning}
+\section{The Naive Bayes Classifier}
+In this section we discuss \href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{naive Bayes classifiers}.
+Naive Bayes classifiers are an alternative method for classification which is appropriate in cases where the
+features are not numerical but categorical.  It starts with \href{https://en.wikipedia.org/wiki/Bayes%27_theorem}{Bayes' theorem}:
+Assume we have some evidence $E$ about an object $o$ and want to know whether $o$ belongs to some class $C$.
+Bayes' theorem tell us that the conditional probability $P(C|E)$, i.e the probability that $o$ has class $C$
+given that we have observed the evidence $E$, is related to the conditional probability $P(E|C)$, which is the probability that we
+observe the evidence $E$ given that $o$ has class $C$, in the following way:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds P(C|E) = \frac{P(E|C) \cdot P(C)}{P(E)}$.
+\\[0.2cm]
+This theorem is useful because often the conditional probability $P(E|C)$ that we observe some evidence $E$ in an object
+$o$ of class $C$ is readily available, but the conditional probability $P(C|E)$ that an object has class $C$ if
+we have observed the evidence $E$ is unknown.  In the context of machine learning the evidence $E$ is often
+given as a list of features $f_1$, $\cdots$, $f_m$ that we are able to observe or compute.  In this case we
+have to rewrite Bayes' theorem as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds P(C\;|\;f_1 \wedge \cdots \wedge f_m) = \frac{P(f_1 \wedge \cdots \wedge f_m\;|\;C) \cdot P(C)}{P(f_1 \wedge \cdots \wedge f_m)}$.
+\\[0.2cm]
+In order to apply this form of Bayes' theorem to the problem of classification, we have to rewrite the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+$P(f_1 \wedge \cdots \wedge f_m\;|\;C)$.
+\\[0.2cm]
+The conditional probability $P(A|B)$ that an event $A$ happens when it is already known that $B$ has happened is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds P(A|B) = \frac{P(A \wedge B)}{P(B)}$.
+\\[0.2cm]
+This equation can be rewritten as
+\\[0.2cm]
+\hspace*{1.3cm}
+$P(A \wedge B) = P(A|B) \cdot P(B)$.
+\\[0.2cm]
+This equation is also true for conditional probabilities:
+\\[0.2cm]
+\hspace*{1.3cm}
+$P(A \wedge B\;|\;C) = P(A\;|\;B \wedge C) \cdot P(B\;|\;C)$.
+\\[0.2cm]
+It can be generalized to the so called \href{https://en.wikipedia.org/wiki/Chain_rule_(probability)}{chain rule of probability}:
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[t]{lcl}
+       P(A_1 \wedge \cdots \wedge A_m \;|\;C) 
+ & = & P(A_1 \wedge  \cdots \wedge A_{m-1}\;|\;A_{m} \wedge C) \cdot P(A_{m}\;|\;C) \\[0.2cm]
+ & = & P(A_1 \wedge  \cdots \wedge A_{m-2}\;|\;A_{m-1} \wedge A_{m} \wedge C) \cdot P(A_{m-1} \;|\;A_m \wedge C)\cdot P(A_{m}\;|\;C) \\
+ & = & \cdots \\
+ & = &  P(A_1 \;|\; A_2 \wedge  \cdots \wedge A_{m} \wedge C) \cdot \,\dots\, \cdot P(A_{m-1} \;|\;A_m \wedge C)\cdot P(A_{m}\;|\;C) \\[0.2cm]
+ & = & \prod\limits_{i=1}^m P(A_i \;|\; A_{i+1} \wedge  \cdots \wedge A_{m} \wedge C) 
+\end{array}
+$
+\\[0.2cm]
+Two events $A$ and $B$ are defined to be \href{https://en.wikipedia.org/wiki/Conditional_independence}{conditional independent}
+given an event $C$ if and only if we have.
+\\[0.2cm]
+\hspace*{1.3cm}
+$P(A \;|\; C) = P(A \;|\; B \wedge C)$,
+\\[0.2cm]
+
+To put it differently, Once we known that $C$ holds, when it comes to the estimating the probability of $A$,
+then it does not matter whether $B$ holds or not.  Now the important assumption that a \blue{naive Bayes classifier} 
+makes is that in order to estimate the class $C$ of an object $o$ that has features $f_1$, $\cdots$, $f_m$ it
+is assumed that the features $f_1, \cdots, f_m$ are conditionally independent once the class is known.  In
+most applications of naive Bayes classifiers this assumption is actually wrong.  That explains why these
+classifiers are called \blue{naive}.  Still, in practise the conditional independence of the features given
+the class is often approximately true and therefore these classifiers are often useful.  If we make this
+assumption of conditional independence, then the probability $P(C\;|\; f_1 \wedge \cdots \wedge f_m)$ of an
+object $o$ with features $f_1$, $\cdots$, $f_m$ to be of class $C$ is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[t]{lcll}
+      P(C\;|\; f_1 \wedge \cdots \wedge f_m) 
+& = & \ds \frac{P(f_1 \wedge \cdots f_m \;|\; C) \cdot P(C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
+& = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; f_{i+1} \wedge \cdots \wedge f_m \wedge C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
+& = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) 
+\end{array}
+$
+\\[0.2cm]
+In the last line of the previous chain of equations we have used the fact that the features $f_1$, $\cdots$,
+$f_m$ are conditionally independent given $C$.  Now a naive Bayes classifier works as follows: 
+Assume we have a set of $n$ classes $\mathcal{C} = \{ C_1, \cdots, C_n \}$ from which we have to choose the
+class of an object $o$ given the features  $f_1$, $\cdots$, $f_m$.  Now $o$ is assumed to have class $C_k$ if
+and only if the probability $P(C_k\;|\; f_1 \wedge \cdots \wedge f_m)$ is maximal with respect to all classes
+of $\mathcal{C}$.  In order to be able to describe this in a more formal
+way, we define the $\arg\max$ function: Given a set $S$ and a function $f:S \rightarrow \mathbb{R}$ that has
+exactly one maximum, we define
+\\[0.2cm]
+\hspace*{1.3cm}
+$\arg\max\limits_{x \in S} f(x) := \mathtt{extract}\Bigl(\bigl\{ x \in S \mid \forall y \in S: f(y) \leq f(x)\bigr\}\Bigr)$,
+\\[0.2cm]
+where the function $\mathtt{extract}(M)$ returns the element from a set $M$ that has exactly one element.  To
+put the definition of  $\arg\max\limits_{x \in S} f(x)$ differently, the idea is that
+$\arg\max\limits_{x \in S} f(x)$ computes the value of $x$ that maximizes $f$.  Given the features  $f_1$, $\cdots$,
+$f_m$, the naive Bayes classifier computes the most probable class as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \texttt{NaiveBayes}(f_1,\cdots,f_m) :=
+  \arg\max\limits_{C \in \mathcal{C}}  \frac{\prod\limits_{i=1}^m P(f_i \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) 
+$
+\\[0.2cm]
+It is important to observe that the denominator $P(f_1 \wedge \cdots \wedge f_m)$ does not depend on the class
+$C$.  As we only need to determine the class with the maximal probability, not the exact probability of the
+class, we can simplify the definition by dropping this denominator.  Therefore the definition of the naive
+Bayes classifier can be rewritten as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \texttt{NaiveBayes}(f_1,\cdots,f_m) :=
+  \arg\max\limits_{C \in \mathcal{C}}  \left(\prod\limits_{i=1}^m P(f_i \;|\; C)\bigr)\right) \cdot P(C) 
+$
+\\[0.2cm]
+This equation can be implemented once we have a training set $T$ of objects with known classes:  
+The probability $P(C)$ is the probability that an object $o$ has class $C$
+if nothing else is know about this object.  $P(C)$ is estimated as the proportion of objects in $T$ that are
+of class $C$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$ \ds P(C) \approx \frac{\mathtt{card}(T)}{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)}$.
+\\[0.2cm]
+In this equation, given an object $t\in T$ the function $\mathtt{class}(t)$ determines the class of the object
+$t$, while $\mathtt{card}(M)$ returns the number of elements of the set $M$.
+
+Next, given a feature $f$ and a class $C$, we have to determine the conditional probability $P(f_i \;|\; C)$.
+This probability can be estimated as the proportion of those objects of class $C$ in the training set $T$ that
+possess the feature $f$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds P(f\;|\;C) \approx 
+ \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \wedge \mathtt{has}(t, f) \}\bigr)}{
+       \mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)} 
+$
+\\[0.2cm]
+Here, for an object $t$ and a feature $f$ the expression $\mathtt{has}(t, f)$ is true if and only if $t$ has
+the feature $f$.
+
+\section{Example: Gender Estimation}
+In order to clarify the theory of naive Bayes classifiers, this section presents an example that shows how a
+naive Bayes classifier can be used.  In this example, our goal is to estimate the gender of a first name.  For
+example, the string ``Bianca'' is a female first name, while the string ``Michael'' is a male first name.
+A crude first attempt to distinguish female names from male ones is to look at the last character.  Hence, our
+first classifier to solve this problem will use just a single feature.  This feature can have one of 26
+different values.
+ 
 
 %%% Local Variables:
 %%% mode: latex
