@@ -1119,7 +1119,7 @@ if nothing else is know about this object.  $P(C)$ is estimated as the proportio
 of class $C$:
 \\[0.2cm]
 \hspace*{1.3cm}
-$ \ds P(C) \approx \frac{\mathtt{card}(T)}{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)}$.
+$ \ds P(C) \approx \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)}{\mathtt{card}(T)}$.
 \\[0.2cm]
 In this equation, given an object $t\in T$ the function $\mathtt{class}(t)$ determines the class of the object
 $t$, while $\mathtt{card}(M)$ returns the number of elements of the set $M$.
@@ -1145,6 +1145,66 @@ A crude first attempt to distinguish female names from male ones is to look at t
 first classifier to solve this problem will use just a single feature.  This feature can have one of 26
 different values.
  
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    def read_names(file_name):
+        Result = []
+        with open(file_name, 'r') as file:
+            for name in file:
+                Result.append(name[:-1]) # discard newline
+        return Result
+    
+    FemaleNames = read_names('names-female.txt')
+    MaleNames   = read_names('names-male.txt'  )
+    pFemale     = len(FemaleNames) / (len(FemaleNames) + len(MaleNames))
+    pMale       = len(MaleNames)   / (len(FemaleNames) + len(MaleNames))
+    
+    def conditional_prop(c, g):
+        if g == 'f':
+            return len([n for n in FemaleNames if n[-1] == c]) / len(FemaleNames)
+        else:
+            return len([n for n in MaleNames   if n[-1] == c]) / len(MaleNames)
+    
+    Conditional_Probability = {}
+    for c in 'abcdefghijklmnopqrstuvwxyz':
+        for g in ['f', 'm']:
+            Conditional_Probability[(c, g)] = conditional_prop(c, g)
+    
+    def classify(name):
+        last   = name[-1]
+        female = Conditional_Probability[(last, 'f')] / pFemale
+        male   = Conditional_Probability[(last, 'm')] / pMale
+        if female >= male:
+            return 'f'
+        else:
+            return 'm'
+        
+    total, correct = 0, 0
+    for n in FemaleNames:
+        if classify(n) == 'f':
+            correct += 1
+        total += 1
+    for n in MaleNames:
+        if classify(n) == 'm':
+            correct += 1
+        total += 1
+    accuracy = correct / total
+    print(f'The accuracy of our estimator is {accuracy}.')
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A naive Bayes classifier for predicting the gender of a name.}
+\label{fig:gender_prediction.py}
+\end{figure}
+
 
 %%% Local Variables:
 %%% mode: latex

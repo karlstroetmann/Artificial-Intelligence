@@ -1,5 +1,3 @@
-
-
 def read_names(file_name):
     Result = []
     with open(file_name, 'r') as file:
@@ -28,25 +26,23 @@ for c in 'abcdefghijklmnopqrstuvwxyz':
     Conditional_Probability[(c, 'f')] = conditional_prop(c, 'f')
     Conditional_Probability[(c, 'm')] = conditional_prop(c, 'm')
 
-def estimate(name):
+def classify(name):
     last   = name[-1]
-    female = Conditional_Probability[(last, 'f')] / pFemale
-    male   = Conditional_Probability[(last, 'm')] / pMale
+    female = Conditional_Probability[(last, 'f')] * pFemale
+    male   = Conditional_Probability[(last, 'm')] * pMale
     if female >= male:
         return 'f'
     else:
         return 'm'
 
-print(Conditional_Probability)
-
 total   = 0
 correct = 0
 for n in FemaleNames:
-    if estimate(n) == 'f':
+    if classify(n) == 'f':
         correct += 1
     total += 1
 for n in MaleNames:
-    if estimate(n) == 'm':
+    if classify(n) == 'm':
         correct += 1
     total += 1
 accuracy = correct / total
