@@ -1,5 +1,5 @@
 \chapter{Neural Networks}
-In this chapter, we discuss \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
+In this chapter, we discuss \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{artificial neural networks}.
 Many of the most visible breakthroughs in artificial intelligence have been achieved through the use of neural
 networks: 
 \begin{enumerate}
@@ -28,9 +28,9 @@ introduction.  The rest of this chapter is strongly influenced by the online boo
 \\[0.2cm]
 that has been written by Michael Nielsen \cite{nielsen:2015}.  This book is easy to read, carefully written, and
 free to access.  I recommend this book to anybody who wants to dive deeper into the fascinating topic of neural
-networks.  Furthermore, I can recommend the specialization
-\href{https://www.coursera.org/specializations/deep-learning}{Deep Learning} that is offered by 
-\href{https://www.coursera.org/}{Coursera}.
+networks.  Furthermore, the online learning platform \href{https://www.coursera.org/}{Coursera} offers a
+\blue{specialization} called \href{https://www.coursera.org/specializations/deep-learning}{Deep Learning} that
+is exclusively devoted to neural networks.
 
 \section{Feedforward Neural Networks}
 A neural network is built from \blue{neurons}.  Neural networks are inspired by biological 
@@ -39,19 +39,19 @@ networks it is not necessary to know how biological neurons work and it is defin
 understand how networks of biological neurons, i.e.~brains, work\footnote{
   Actually, when it comes to brains, although there are many speculations, surprisingly little is known for a fact.  
 }.  
-Instead, we develop a mathematical
-abstraction of neurons that will serve as the foundation of the theory developed in this chapter.
-At the abstraction level that we are looking at neural networks, a single neuron with $n$ inputs is specified by
-a pair $\langle \mathbf{w}, b\rangle$ where the 
-vector $\mathbf{w} \in \mathbb{R}^m$ is called the \blue{weight vector} and the number $b \in \mathbb{R}$ is called the \blue{bias}.  
-Conceptually, a neuron is a function that maps an input vector $\mathbf{x} \in \mathbb{R}^m$ into the interval
-$[0,1]$.  This function is defined as follows: 
+Instead, we will use a mathematical abstraction of neurons that will serve as the foundation of the theory
+developed in this chapter.  At the abstraction level that we are looking at neural networks, a single neuron
+with $n$ inputs is specified by a pair $\langle \mathbf{w}, b\rangle$ where the vector $\mathbf{w} \in \mathbb{R}^m$ is called the \blue{weight vector} and 
+the number $b \in \mathbb{R}$ is called the \blue{bias}.   
+Conceptually, a neuron is a function that maps an input vector $\mathbf{x} \in \mathbb{R}^m$ into the set
+$\mathbb{R}$ of the real numbers.  This function is defined as follows: 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathbf{x} \mapsto a(\mathbf{x} \cdot \mathbf{w} + b)$.
 \\[0.2cm]
 Here, $a$ is called the \blue{activation function}.  In our applications, we will always use the sigmoid
-function (Definition \ref{def:sigmoid}) as our activation function, i.e.~we have
+function as our activation function.  This function has been defined previously in Definition \ref{def:sigmoid}
+on page \pageref{def:sigmoid} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
@@ -72,10 +72,17 @@ is the input vector, then we have
 $\ds \mathbf{x} \mapsto S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
 \\[0.2cm]
 If we compare this function to a similar function appearing in the last chapter, you will notice 
-that so far a neuron works just like logistic regression.  The only difference is that the bias $b$
+that so far a neuron works just like a classifier in logistic regression.  The only difference is that the bias $b$
 is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
 feature vector $\mathbf{x}$ was always equal to $1$.  This assumption enabled us to incorporate the bias $b$ into the
 weight vector $\mathbf{w}$.
+
+\begin{figure}[!h]
+  \centering
+   \epsfig{file=Figures/nn1.pdf,scale=1.5}
+   \caption{A neural network with topology $[3, 6, 4, 2]$.}
+  \label{fig:nn1.pdf}
+\end{figure}
 
 A \blue{feedforward neural network} is a layered network of neurons.  Formally, the \blue{topology} of a neural network is
 given by a number $L \in \mathbb{N}$ and a list $[m(1), \cdots, m(L)]$ of $L$ natural numbers.  The number
@@ -84,21 +91,26 @@ neurons in the $l$-th layer.  The first layer is called the \blue{input layer}. 
 neurons but instead just contains \blue{input nodes}.  The last layer (i.e.~the
 layer with index $L$) is called the \blue{output layer} and the remaining layers are called 
 \blue{hidden layers}.  If there is more than one hidden layer, the neural network is called a
-\blue{deep neural network}.  Figure \ref{fig:neural-network.png} on page \pageref{fig:neural-network.png} shows
+\blue{deep neural network}.  Figure \ref{fig:nn1.pdf} on page \pageref{fig:nn1.pdf} shows
 a small neural network with two hidden layers.
+A larger neural network with three hidden layers is shown
+Figure \ref{fig:nn2.pdf} on page \pageref{fig:nn2.pdf}.
+I have written a small Jupyter notebook that can be used to draw diagrams of this kind.
+This notebook is available at \href{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/Python/NN-Architecture}{Python/NN-Architecture}.
+
 
 \begin{figure}[!h]
   \centering
-   \epsfig{file=Figures/neural-network.png,scale=0.8}
-   \caption{A neural network taken from the book by
-     \href{http://neuralnetworksanddeeplearning.com}{Michael Nielsen}\cite{nielsen:2015}.}
-  \label{fig:neural-network.png}
+   \epsfig{file=Figures/nn2.pdf,scale=1.5}
+   \caption{A neural network with topology $[8, 12, 8, 6, 3]$.}
+  \label{fig:nn2.pdf}
 \end{figure}
 
 
-As the first layer is the input layer, the \blue{input dimension} is defined as
+If the topology of a neural network is  $[m(1), \cdots, m(L)]$, then  the \blue{input dimension} is defined as
 $m(1)$.  Similarly, the \blue{output dimension} is defined as $m(L)$.
-Every node in the $l$-th layer is connected to every node in the $(l+1)$-th layer via a \blue{weight}.
+In the neural networks that we discuss in this chapter, every node in the $l$-th layer is connected to every
+node in the $(l+1)$-th layer via a \blue{weight}. 
 The weight $w_{j,k}^{(l)}$ is the weight of the connection from the $k$-th neuron in layer $l-1$ to
 the $j$-th neuron in layer $l$.  The weights in layer $l$ are combined into the \blue{weight matrix} $W^{(l)}$ of
 the layer $l$: This matrix is defined as
