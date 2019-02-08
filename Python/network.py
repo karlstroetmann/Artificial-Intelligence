@@ -56,7 +56,7 @@ class Network(object):
         n_test = len(test_data)
         n      = len(training_data)
         for j in range(epochs):
-            random.shuffle(training_data);
+            random.shuffle(training_data)
             mini_batches = [training_data[k : k+mbs] for k in range(0, n, mbs)]
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)    
@@ -74,10 +74,10 @@ class Network(object):
             nabla_WH += dltNbl_WH
             nabla_WO += dltNbl_WO      
         alpha = eta / len(mini_batch)
-        self.mBiasesH  -= alpha * nabla_BH;
-        self.mBiasesO  -= alpha * nabla_BO;
-        self.mWeightsH -= alpha * nabla_WH;
-        self.mWeightsO -= alpha * nabla_WO;
+        self.mBiasesH  -= alpha * nabla_BH
+        self.mBiasesO  -= alpha * nabla_BO
+        self.mWeightsH -= alpha * nabla_WH
+        self.mWeightsO -= alpha * nabla_WO
     
     def backprop(self, x, y):
         """

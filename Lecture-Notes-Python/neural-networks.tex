@@ -32,6 +32,21 @@ networks.  Furthermore, the online learning platform \href{https://www.coursera.
 \blue{specialization} called \href{https://www.coursera.org/specializations/deep-learning}{Deep Learning} that
 is exclusively devoted to neural networks.
 
+We proceed to give an overview of the content of this chapter.
+\begin{enumerate}
+\item We start with the definition of \blue{feed forward} neural networks and discuss their \blue{topology}.
+\item We introduce \blue{forward propagation}, which is the way a neural network computes its predictions.
+\item Similarly to our treatment of logistic regression, we define a cost function that measure the quality of
+      the predictions of a neural network on a training set.  In order to minimize this cost function using
+      gradient descent, we have to compute the \blue{gradient} of the cost function with respect to the weights of the
+      neural network.  The algorithm which is used to compute this gradient is called \blue{back propagation}.
+\item In order to efficiently find the minimum of he cost function, we need an improved version of
+      \blue{gradient descent}.  This improved version is known as \blue{stochastic gradient descent}.
+\item Next, we implement a simple neural network that is able to recognize digits.
+\item Finally, we discuss \href{https://www.tensorflow.org}{TensorFlow}, which is an open source software
+      library for machine learning in general and neural networks in particular.
+\end{enumerate}
+
 \section{Feedforward Neural Networks}
 A neural network is built from \blue{neurons}.  Neural networks are inspired by biological 
 \href{https://en.wikipedia.org/wiki/Neuron}{neurons}.  However, in order to understand artificial neural
@@ -49,7 +64,7 @@ $\mathbb{R}$ of the real numbers.  This function is defined as follows:
 \hspace*{1.3cm}
 $\ds \mathbf{x} \mapsto a(\mathbf{x} \cdot \mathbf{w} + b)$.
 \\[0.2cm]
-Here, $a$ is called the \blue{activation function}.  In our applications, we will always use the sigmoid
+Here, $a$ is called the \blue{activation function}.  In our applications, we will use the sigmoid
 function as our activation function.  This function has been defined previously in Definition \ref{def:sigmoid}
 on page \pageref{def:sigmoid} as follows:
 \\[0.2cm]
@@ -72,7 +87,7 @@ is the input vector, then we have
 $\ds \mathbf{x} \mapsto S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
 \\[0.2cm]
 If we compare this function to a similar function appearing in the last chapter, you will notice 
-that so far a neuron works just like a classifier in logistic regression.  The only difference is that the bias $b$
+that a neuron works just like a classifier in logistic regression.  The only difference is that the bias $b$
 is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
 feature vector $\mathbf{x}$ was always equal to $1$.  This assumption enabled us to incorporate the bias $b$ into the
 weight vector $\mathbf{w}$.
@@ -92,11 +107,11 @@ neurons but instead just contains \blue{input nodes}.  The last layer (i.e.~the
 layer with index $L$) is called the \blue{output layer} and the remaining layers are called 
 \blue{hidden layers}.  If there is more than one hidden layer, the neural network is called a
 \blue{deep neural network}.  Figure \ref{fig:nn1.pdf} on page \pageref{fig:nn1.pdf} shows
-a small neural network with two hidden layers.
-A larger neural network with three hidden layers is shown
-Figure \ref{fig:nn2.pdf} on page \pageref{fig:nn2.pdf}.
-I have written a small Jupyter notebook that can be used to draw diagrams of this kind.
-This notebook is available at \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/NN-Architecture.ipynb}{Python/NN-Architecture.ipynb}.
+a small neural network with two hidden layers.  Including the input layer it has four layers and its topology
+is given by the list $[3, 6, 4, 2]$.  A larger neural network with three hidden layers is shown in Figure
+\ref{fig:nn2.pdf} on page \pageref{fig:nn2.pdf}.  I have written a small Jupyter notebook that can be used to
+draw diagrams of this kind. This notebook is available at
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/NN-Architecture.ipynb}{Python/NN-Architecture.ipynb}. 
 
 
 \begin{figure}[!h]
@@ -109,8 +124,8 @@ This notebook is available at \href{https://github.com/karlstroetmann/Artificial
 
 If the topology of a neural network is  $[m(1), \cdots, m(L)]$, then  the \blue{input dimension} is defined as
 $m(1)$.  Similarly, the \blue{output dimension} is defined as $m(L)$.
-In the neural networks that we discuss in this chapter, every node in the $l$-th layer is connected to every
-node in the $(l+1)$-th layer via a \blue{weight}. 
+The feedforward neural networks discussed in this chapter are \blue{fully connected}:  Every node in the $l$-th
+layer is connected to every node in the $(l+1)$-th layer via a \blue{weight}. 
 The weight $w_{j,k}^{(l)}$ is the weight of the connection from the $k$-th neuron in layer $l-1$ to
 the $j$-th neuron in layer $l$.  The weights in layer $l$ are combined into the \blue{weight matrix} $W^{(l)}$ of
 the layer $l$: This matrix is defined as
@@ -199,7 +214,8 @@ through the neural network:
       \hspace*{1.3cm}
       $\mathbf{o}(\mathbf{x}) := \mathbf{a}^{(L)}(\mathbf{x})$
       \\[0.2cm]
-      has been computed.  Note that every neuron of the neural network performs logistic regression.
+      has been computed.  As long as we use the sigmoid function as our activation function, every neuron of
+      the neural network performs logistic regression. 
 \end{enumerate}
 Next, we assume that we have $n$ \blue{training examples} 
 \\[0.2cm]
@@ -264,12 +280,12 @@ minima.  Hence, all we can hope for is to find a local minimum that is good enou
 There are three reasons for the recent success of neural networks.
 \begin{enumerate}
 \item The computing power that is available today has vastly increased in the last 20 years.
-      For example, today the \href{https://en.wikipedia.org/wiki/AMD_RX_Vega_series}{AMD RX Vega 64 Liquid}
-      graphic card offers about 13.7 teraflops in single precision performance.  It consumes about 350 watt.
+      For example, today the \href{https://en.wikipedia.org/wiki/AMD_RX_Vega_series}{AMD Radeon Vega \texttt{VII}}
+      graphic card offers about 13.8 teraflops in single precision performance.  It consumes about 300 watt.
       Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which was the most powerful supercomputer in 2000:
-      In 2000 when it topped the rankings of the supercomputers, it  offered a performance of 7.2 teraflops and 
-      needed 6 megawatt to operate.  The cost to build ASCI White was about $110,000,000\,\symbol{36}$.
-      On the contrary, the AMD RX Vega 64 Liquid costs  $699\,\symbol{36}$.
+      According to the article ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
+      it  offered a performance of 7.2 teraflops.  It needed 6 megawatt to operate.  The cost to build ASCI White was about $110,000,000\,\symbol{36}$.
+      To compare, the AMD RX Vega \texttt{VII} costs $699\,\symbol{36}$.
 
       The Nvidia \href{https://www.nvidia.com/en-us/titan/titan-v/}{Titan V} comes at $2,999\,\symbol{36}$ and
       offers a stunning 110 teraflops for \href{https://en.wikipedia.org/wiki/Deep_learning}{deep learning} via
@@ -313,8 +329,10 @@ $\ds\varepsilon_j^{(l)} := \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z
 \\[0.2cm]
 that is we regard $C_{\mathbf{x}, \mathbf{y}}$ as a function of the $z_j^{(l)}$ and take the partial
 derivatives according to these variables.  
-Note that $\varepsilon_j^{(l)}$ does depend on both $\mathbf{x}$ and $\mathbf{y}$.  Since the notation would
-get too cumbersome if we would write $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard the training
+Note that $\varepsilon_j^{(l)}$ does depend on both $\mathbf{x}$ and $\mathbf{y}$.  
+We call  $\varepsilon_j^{(l)}$ the \blue{error in the $j$th neuron in the $l$th layer}. 
+Since the notation would
+get too cumbersome if we would write this as $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard the training
 example $\langle\mathbf{x}, \mathbf{y}\rangle$ as fixed for now.  Next, the quantities $\varepsilon_j^{(l)}$ are combined into a vector:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -327,7 +345,7 @@ $\boldsymbol{\varepsilon}^{(l)} := \left(
   \right)
 $.
 \\[0.2cm]
-The quantity $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
+The vector $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
 
 \subsection{The Hadamard Product}
 Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
@@ -364,7 +382,9 @@ $,
 i.e.~the $i$-th component of the Hadamard product $\mathbf{x} \odot \mathbf{y}$ is the product of the $i$-th
 component of $\mathbf{x}$ with the $i$-th component of $\mathbf{y}$.  Do not confuse the Hadamard product with
 the \href{https://en.wikipedia.org/wiki/Dot_product}{dot product}!  Although both multiply the vectors
-componentwise, the Hadamard product returns a vector, while the dot product returns a number.
+componentwise, the Hadamard product returns a vector, while the dot product returns a number.  Later, we will
+use the \href{http://www.numpy.org}{NumPy} package to represent vectors.  In NumPy, the Hadamard product of two
+vectors $\mathtt{x}$ and $\mathtt{y}$ is computed by the expression $\mathtt{x} * \mathtt{y}$.
 
 \subsection{Backpropagation: The Equations}
 Now we are ready to state the \blue{backpropagation equations}.  The first of these four equations reads as follows:
@@ -375,12 +395,12 @@ Now we are ready to state the \blue{backpropagation equations}.  The first of th
   \tag{BP1}
 \end{equation}
 where $S'(x)$ denotes the derivative of the sigmoid function.  We have shown in Chapter
-\ref{chapter:classification} that
+\ref{chapter:classification} that this derivative satisfies the equation
 \\[0.2cm]
 \hspace*{1.3cm}
-$S'(t) = \bigl(1 - S(t)\bigr) \cdot S(t)$
+$S'(t) = \bigl(1 - S(t)\bigr) \cdot S(t)$.
 \\[0.2cm]
-holds.  The equation (\ref{eq:BP1}) can also be written in vectorized form using the Hadamard product:
+The equation (\ref{eq:BP1}) can also be written in vectorized form using the Hadamard product:
 \begin{equation}
   \label{eq:BP1s}
 \boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)  
@@ -419,9 +439,10 @@ This equation is more succinct in vectorized notation:
   S'\bigl(\mathbf{z}^{(l)}\bigr) \quad \mbox{for all $l \in \{2, \cdots, L-1\}$}.
   \tag{BP2v}
 \end{equation}
-Note that this equation computes $\boldsymbol{\varepsilon}^{(l)}$ in terms of  $\boldsymbol{\varepsilon}^{(l+1)}$:  The error 
+Note that this equation computes the error in layer $l$ for $l < L$ in terms
+of the error in layer $l+1$:  The error 
 $\boldsymbol{\varepsilon}^{(l+1)}$ at layer $l+1$ is \blue{propagated backwards} through the neural network to produce the
-error $\boldsymbol{\varepsilon}^{(l)}$ at layer $l$.  This is the reason for calling the algorithm \blue{backpropagation}.
+error $\boldsymbol{\varepsilon}^{(l)}$ at layer $l$.  This is the reason for calling the associated algorithm \blue{backpropagation}.
 
 Next, we have to compute the partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the bias of the
 $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
@@ -431,6 +452,7 @@ $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
   \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,L\}$.}
   \tag{BP3}
 \end{equation}
+This equation shows the reason for defining the error terms $\varepsilon_j^{(l)}$.
 In vectorized notation, this equation takes the following form:
 \begin{equation}
   \label{eq:BP3v}
@@ -439,7 +461,7 @@ In vectorized notation, this equation takes the following form:
   \tag{BP3v}
 \end{equation}
 Here, $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ denotes the gradient of $C_{\mathbf{x},
-  \mathbf{y}}$ with respect to the bias $\mathbf{b}^{(l)}$.
+  \mathbf{y}}$ with respect to the bias vector $\mathbf{b}^{(l)}$.
 Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the weights:
 \begin{equation}
   \label{eq:BP4}
@@ -458,7 +480,8 @@ Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-
 product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
 row vector $\bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ that is regarded as an $1 \times m(l-1)$ matrix.
 
-As the backpropagation equations are at the very core of the theory of neural networks, we highlight them:
+As the backpropagation equations are at the very core of the theory of neural networks, we highlight the
+vectorized form of these equations:
 \\[0.2cm]
 \hspace*{0.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
@@ -483,21 +506,28 @@ $
 }}}
 \\[0.2cm]
 The equations (\ref{eq:BP3}) and (\ref{eq:BP4}) show why it was useful to introduce the
-numbers $\varepsilon_j^{(l)}$: These numbers enable us to compute the partial derivatives of the cost function
-with respect to both the biases and the weights.  Furthermore, the equations (\ref{eq:BP1}) and (\ref{eq:BP2})
-show how these numbers can be computed.  An implementation of backpropagation should use the vectorized
+vectors $\boldsymbol{\varepsilon}^{(l)}$: These vectors enable us to compute the partial derivatives of the cost function
+with respect to both the biases and the weights.  The equations (\ref{eq:BP1}) and (\ref{eq:BP2})
+show how the vectors $\boldsymbol{\varepsilon}^{(l)}$ can be computed.  An implementation of backpropagation should use the vectorized
 versions of these equations since this is more efficient for two reasons:
 \begin{enumerate}
-\item Interpreted languages like \textsc{SetlX}, \textsl{Python}, or \textsl{Octave} take much more time to
+\item Interpreted languages like \textsl{Python} or \textsl{Octave} take much more time to
       execute a loop than to execute a simple matrix-vector multiplication.  The reason is that in a loop, in
       addition to executing the statement a given number of times, the statement has to be interpreted 
       every time it is executed.
 \item Languages that are optimized for machine learning often take care to delegate the execution of matrix
-      operations to the graphical coprocessor which is optimized for these kinds of operations.  
+      operations to highly optimized function that have been written in more efficient low level languages like
+      \texttt{C} or assembler.  Often, these optimized function are able to utilize all cores of the processor
+      simultaneously.  Furthermore, sometimes these optimized function can even use the graphical coprocessor
+      which, because of parallelization,  can do a matrix multiplication much faster than the floating unit of
+      a conventional processor.
 \end{enumerate}
 
-\subsection{The Proof of the Backpropagation Equations}
-Next, we prove the backpropagation equations.  Although the proof is a bit tedious, it should be accessible: The
+\subsection{A Proof of the Backpropagation Equations}
+Since we are living in a time of fake news and alternative facts where
+\href{https://www.theguardian.com/us-news/2018/aug/19/truth-isnt-truth-rudy-giuliani-trump-alternative-facts-orwellian}{truth isn't truth} 
+and not even a president can be trusted,  you should not lightly believe the validity of the backpropagation equations.  Instead, 
+we have to prove the backpropagation equations.  Although the proof is a bit tedious, it should be accessible: The
 \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule}  of
 \href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariate calculus} is all that is needed to  
 understand why the backpropagation equations hold.  As a reminder, the chain rule in multivariate calculus
@@ -573,7 +603,7 @@ $
 \end{array}
 $
 \\[0.2cm]
-Thus we have proved equation \ref{eq:BP1}.  Next, let us compute $\varepsilon_j^{(l)}$ for $l < L$.  We have
+Thus we have proven equation \ref{eq:BP1}.  Next, let us compute $\varepsilon_j^{(l)}$ for $l < L$.  We have
 \\[0.2cm]
 \hspace*{1.3cm}
 $
@@ -725,25 +755,13 @@ gradient descent, then the approximations given above can speed up the learning 
 Next, we will take a look at a neural network that is able to recognize handwritten digits.  The
 \href{http://yann.lecun.com/exdb/mnist/}{\textsc{Mnist} database of handwritten digits}
 contains $70\,000$ images of handwritten digits. These images have a size of $28 \times 28$ pixels.
-Figure \ref{fig:mnist_imgs} shows the first 10 images visualized. 
-% The digits above the squares are only added as visual aid, they are not part of the data.
+Figure \ref{fig:mnist_imgs} shows the first 18 images. 
 
 \begin{figure}[h]
   \begin{center}
-    \begin{tabular}{c c c c c}
-      \includegraphics[width=2cm]{figures/mnist/0.png} &
-      \includegraphics[width=2cm]{figures/mnist/1.png} &
-      \includegraphics[width=2cm]{figures/mnist/2.png} &
-      \includegraphics[width=2cm]{figures/mnist/3.png} &
-      \includegraphics[width=2cm]{figures/mnist/4.png} \\
-      \includegraphics[width=2cm]{figures/mnist/5.png} &
-      \includegraphics[width=2cm]{figures/mnist/6.png} &
-      \includegraphics[width=2cm]{figures/mnist/7.png} &
-      \includegraphics[width=2cm]{figures/mnist/8.png} &
-      \includegraphics[width=2cm]{figures/mnist/9.png}
-    \end{tabular}
+    \epsfig{file=Figures/digits.pdf,scale=0.8} 
   \end{center}
-  \caption{The first 10 images of the \textsc{Mnist} dataset visualized}
+  \caption{The first 18 images of the \textsc{Mnist} dataset.}
   \label{fig:mnist_imgs}
 \end{figure}
 
