@@ -26,8 +26,8 @@ $i$-th car.  We call $x$ the \blue{independent variable}, while $y$ is the
 $\mathbf{x} := \langle x_1, \cdots, x_m \rangle^\top$ \quad and \quad
 $\mathbf{y} := \langle y_1, \cdots, y_m \rangle^\top$.
 \\[0.2cm]
-Here, the operator $^\top$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transpose} operator,
-i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.  By using the transpose operator I am
+Here, the operator $^\top$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transposition operator},
+i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.  By using the transposition operator I am
 able to write these vectors in a single line.
 
 In linear regression, we use a \blue{linear hypothesis} 
@@ -35,7 +35,7 @@ and assume that the dependent variable $y_i$ is related to the independent varia
 equation of the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$y_i := \vartheta_1 \cdot x_i + \vartheta_0$.
+$y_i = \vartheta_1 \cdot x_i + \vartheta_0$.
 \\[0.2cm]
 We do not expect this equation to hold exactly.  The reason is that there are many other factors besides the
 engine displacement that influence the fuel consumption.  For example, both the weight of a car and its 
@@ -59,7 +59,7 @@ define the \blue{sample mean values} $\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ o
 $\ds \bar{\mathbf{x}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
 $\ds \bar{\mathbf{y}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m y_i$.
 \\[0.2cm]
-Furthermore, $s_x$ and $s_y$ are the \blue{sample standard deviations} of $\mathbf{x}$ and $y$, i.e.~we have
+Furthermore, $s_x$ and $s_y$ are the \blue{sample standard deviations} of $\mathbf{x}$ and $\mathbf{y}$, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds s_x = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\;}$ \quad and \quad
@@ -123,7 +123,8 @@ If we compare this formula to the formula for the mean squared error
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds\mathtt{MSE}(\vartheta_0, \vartheta_1) := 
-  \frac{1}{m-1} \cdot\sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2
+    \frac{1}{m-1} \cdot\sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2
+=   \frac{1}{m-1} \cdot\sum\limits_{i=1}^m \bigl(y_i - \vartheta_1 \cdot x_i - \vartheta_0\bigr)^2
 $,
 \\[0.2cm]
 we see that the sample variance of $\mathbf{y}$ is an upper bound for the mean squared error since we have
@@ -196,7 +197,7 @@ which I have adapted from the file
 \href{http://www-bcf.usc.edu/~gareth/ISL/Auto.csv}{\texttt{http://www-bcf.usc.edu/\symbol{126}gareth/ISL/Auto.csv}}.
 \\[0.2cm]
 \myFig{cars.csv} shows the column headers and the first ten data entries contained in this file.  
-Altogether, this file contains data about 392 different car models.
+Altogether, this file contains data 392 different car models.
 
 \begin{figure}[!ht]
 \centering
