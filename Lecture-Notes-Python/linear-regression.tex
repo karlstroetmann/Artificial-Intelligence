@@ -406,20 +406,20 @@ of the fuel consumption.
   \centering
   \begin{tabular}{|l|r|}
   \hline
-  dependent variable      & explained variance   \\
+  dependent variable  & explained variance   \\
   \hline
   \hline
-  $\mathtt{displacement}$ & 0.75                 \\
+  displacement        & 0.75                 \\
   \hline
-  $\mathtt{cyl}$          & 0.70                 \\
+  number of cylinders & 0.70                 \\
   \hline
-  $\mathtt{hp}$           & 0.73                 \\
+  horse power         & 0.73                 \\
   \hline
-  $\mathtt{weight}$       & 0.78                 \\
+  weight              & 0.78                 \\
   \hline
-  $\mathtt{acc}$          & 0.21                 \\
+  acceleration        & 0.21                 \\
   \hline
-  $\mathtt{year}$         & 0.31                 \\
+  year of build       & 0.31                 \\
   \hline
   \end{tabular}
   \caption[explained variance]{Explained variance for various dependent variables.}
@@ -430,8 +430,9 @@ of the fuel consumption.
 \section{General Linear Regression}
 In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
 To take the example of the fuel consumption of a car further, in general we would expect that the fuel consumption
-of a car depends not only on the mass of the car but is also related to the other parameters.  
-To this end, we present the theory of   
+of a car depends not only on the mass of the car but is also related to the other parameters.
+For example, it seems reasonable to assume that the mass of the car should influence its fuel consumption.
+To be able to model this kind of behaviour,  we present the theory of   
 \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
 In a \blue{general regression problem} we are given a list of $m$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
 where $\mathbf{x}^{(i)} \in \mathbb{R}^p$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1,\cdots,m\}$.  The
@@ -455,7 +456,7 @@ define the \blue{mean squared error}
 \end{equation}
 Then, given the list of training examples $[\langle \mathbf{x}^{(1)}, y^{(1)} \rangle, \cdots, \langle
 \mathbf{x}^{n}, y^{(n)} \rangle]$, our goal is to minimize $\mathtt{MSE}$.  
-In order to proceed, we need to have a model for the function $F$.  The simplest model is a linear
+In order to proceed, we need to have a \blue{model} for the function $F$.  The simplest model is a linear
 model, i.e.~we assume that $F$ is given as 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -476,7 +477,7 @@ The definition of $F$ given above is the model used in
 \href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression}. 
 Here, $\mathbf{w}$ is called the \blue{\color{blue}weight vector} and $b$ is called the \blue{\color{blue}bias}.  It turns
 out that the notation can be simplified if we extend the $p$-dimensional feature vector $\mathbf{x}$ to an
-$p+1$-dimensional vector $\mathbf{x}'$ such that
+$(p+1)$-dimensional vector $\mathbf{x}'$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
 $x_j' := x_j$ \quad for all $j\in\{1,\cdots,p\}$ \quad and \quad $x_{m+1}' := 1$.
@@ -530,8 +531,9 @@ $X := \left(
   \right)   
 $
 \\[0.2cm]
-Defined this way, the row vectors of the matrix $X$ are the vectors $\mathbf{x}^{(i)}$ transposed.
-Now we have the following:
+In the literature, $X$ is also called the \blue{feature matrix}.
+If $X$ is defined in this way, the row vectors of the matrix $X$ are the transpositions of the vectors $\mathbf{x}^{(i)}$.
+Then we have the following:
 \\[0.2cm]
 \hspace*{1.3cm}
 $X \cdot \mathbf{w} - \mathbf{y} = \left(
