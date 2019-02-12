@@ -1,3 +1,6 @@
+import csv
+import numpy as np
+
 def simple_linear_regression(X, Y):
     """
     This function implements linear regression.
@@ -8,17 +11,14 @@ def simple_linear_regression(X, Y):
     Output: The R2 value of the linear regression.
     """
     m     = len(X)
-    xMean = sum(X) / m;
-    yMean = sum(Y) / m;
-    ϑ1    = sum( (X - xMean) * (Y - yMean) ) / sum((X - xMean) ** 2)
+    xMean = np.mean(X);
+    yMean = np.mean(Y);
+    ϑ1    = np.sum( (X - xMean) * (Y - yMean) ) / np.sum((X - xMean) ** 2)
     ϑ0    = yMean - ϑ1 * xMean;
-    TSS   = sum((Y - yMean) ** 2)
-    RSS   = sum((ϑ1 * X + ϑ0 - Y) ** 2)
+    TSS   = np.sum((Y - yMean) ** 2)
+    RSS   = np.sum((ϑ1 * X + ϑ0 - Y) ** 2)
     R2    = 1 - RSS / TSS;
     return R2
-
-import csv
-import numpy as np
 
 def test(col):
     """
@@ -47,4 +47,6 @@ def test(col):
 if __name__ == '__main__':
     for col in range(1, 6+1):
         name, R2 = test(col)
-        print(f'The explained variance of {name} is {R2}%')
+        padded   = '%15s' % ('"' + name + '"')
+        R2       = str(round(1000 * R2)/10) + '%'
+        print('The explained variance of the variable %s is %s.' % (padded, R2))

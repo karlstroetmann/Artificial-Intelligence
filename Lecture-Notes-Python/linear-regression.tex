@@ -232,15 +232,15 @@ The file ``\texttt{cars.csv}'' is part of the data set accompanying the excellen
 Daniela Witten, Trevor Hastie, and Robert Tibshirani \cite{james:2014}.  The file 
 ``\texttt{cars.csv}''  contains the fuel consumption of a number of different cars that were in widespread use during
 the seventies and early eighties of the last century.  The first column of this data set gives the 
-\blue{miles per gallon}of a car, i.e.~the number of miles a car can go with one gallon of gas.  Note that
-this number is inverse to the fuel consumption:  If a car $\mathrm{A}$ can go twice as many miles per gallon
-than another car $\mathrm{B}$, then the fuel consumption of $\mathrm{A}$ is half of the fuel consumption of
+\blue{miles per gallon} of a car, i.e.~the number of miles a car can drive with one gallon of gas.  Note that
+this number is in \blue{reciprocal} relation to the fuel consumption:  If a car $\mathrm{A}$ can drive \textbf{twice} as many miles per gallon
+than another car $\mathrm{B}$, then the fuel consumption of $\mathrm{A}$ is \textbf{half} of the fuel consumption of
 $\mathrm{B}$. Furthermore, besides the miles per gallon, for every car the following other parameters are listed:
 \begin{enumerate}
 \item $\mathtt{cyl}$ is the number of cylinders,
 \item $\mathtt{displacement}$ is the engine displacement in cubic inches, 
 \item $\mathtt{hp}$ is the engine power given in units of \href{https://en.wikipedia.org/wiki/Horsepower}{horsepower},
-\item $\mathtt{weight}$ is the weight in pounds,
+\item $\mathtt{weight}$ is the weight in pounds (1 pound is the same as $0.453592$ kg),
 \item $\mathtt{acc}$ is the acceleration given as the time in seconds needed to accelerate from 0 miles per
       hour to 60 miles per hour,
 \item $\mathtt{year}$ is the year in which the model was introduced, and
@@ -271,12 +271,12 @@ To this end, I have written the function \texttt{simple\_linear\_regression} sho
         Output: The R2 value of the linear regression.
         """
         m      = len(X)
-        xMean  = sum(X) / m;
-        yMean  = sum(Y) / m;
-        theta1 = sum((X - xMean) * (Y - yMean)) / sum((X - xMean) ** 2)
-        theta0 = yMean - theta1 * xMean;
-        TSS    = sum((Y - yMean) ** 2)
-        RSS    = sum((theta1 * X + theta0 - Y) ** 2)
+        xMean  = np.mean(X);
+        yMean  = np.mean(Y);
+        theta1 = np.sum( (X - xMean) * (Y - yMean) ) / np.sum((X - xMean) ** 2)
+        theta0 = yMean - ϑ1 * xMean;
+        TSS    = np.sum((Y - yMean) ** 2)
+        RSS    = np.sum((theta1 * X + theta0 - Y) ** 2)
         R2     = 1 - RSS / TSS;
         return R2
 \end{Verbatim}
@@ -431,7 +431,7 @@ of the fuel consumption.
 In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
 To take the example of the fuel consumption of a car further, in general we would expect that the fuel consumption
 of a car depends not only on the mass of the car but is also related to the other parameters.
-For example, it seems reasonable to assume that the mass of the car should influence its fuel consumption.
+For example, it seems reasonable to assume that the engine displacement of the car should influence its fuel consumption.
 To be able to model this kind of behaviour,  we present the theory of   
 \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
 In a \blue{general regression problem} we are given a list of $m$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
