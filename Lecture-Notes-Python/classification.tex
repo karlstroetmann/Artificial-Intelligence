@@ -2,7 +2,8 @@
 One of the earliest application of artificial intelligence is 
 \href{https://en.wikipedia.org/wiki/Statistical_classification}{classification}.  A good
 example of classification is \href{https://en.wikipedia.org/wiki/Anti-spam_techniques#Detecting_spam}{spam detection}.
-A system for spam detection classifies an email as either spam or not spam.  To do so, it first
+A system for spam detection classifies an email as either spam or not spam, where ``not spam'' is often
+abbreviated as ``ham''.  To do so, it first
 computes various \blue{features} of the email and then uses these features to determine whether the email is
 likely to be spam.  For example, a possible feature would be the number of occurrences of the word
 ``\texttt{pharmacy}'' in the text of the email.
@@ -16,14 +17,12 @@ $\mathtt{classify}: S \rightarrow C$
 \\[0.2cm]
 that assigns a class $\texttt{classify}(o)$ to every object $o \in S$.  The set $S$ is called the \blue{sample space}.
 In the example of spam detection, the sample space $S$ is the set of all emails that we might receive, i.e.~$S$
-is the set of all strings, while  
+is the set of all strings, while the set of classes $C$ is given as
 \\[0.2cm]
 \hspace*{1.3cm}
 $C = \{ \mathtt{spam}, \mathtt{ham} \}$.
 \\[0.2cm]
-If $\mathtt{classify}(o) = \mathtt{spam}$, we consider the email $o$ to be spam, while we would consider it a
-genuine message otherwise.  Our goal is to compute the function
-\texttt{classify}.  In order to do this, we use an approach known as
+Our goal is to compute the function \texttt{classify}.  In order to do this, we use an approach known as
 \href{https://en.wikipedia.org/wiki/Supervised_learning}{supervised learning}:  We take a subset $S_\textsl{train} \subseteq S$ of
 emails where we already know whether the emails are spam or not.  This set $S_\textsl{train}$ is called the \blue{training set}.
 Next, we define a set of $D$ \blue{features} for every $o \in S$.  These features have to be \blue{computable},
@@ -67,9 +66,9 @@ As the value of
 \\[0.2cm]
 is always a natural number, in this case the first feature would be a
  \blue{discrete} feature.  However, we can be even more precise: Instead of just counting the number of occurrences of
- ``\texttt{pharmacy}'' we can compute its frequency.  After all, there is a difference if the string ``\texttt{pharmacy}'' occurs once in an email
- containing but a hundred characters or whether is occurs once in an email with a length of several thousand
- characters.  To this end, we would then define the first feature as
+ ``\texttt{pharmacy}'' we can compute its \blue{frequency}.  After all, there is a difference whether the
+ string ``\texttt{pharmacy}'' occurs once in an email  containing but a hundred characters or whether is occurs
+ once in an email with a length of several thousand  characters.  To this end, we would then define the first feature as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \texttt{feature}(o, 1) := \frac{\mathtt{count}(\texttt{"pharmacy"}, o)}{\cnt o}$, 
@@ -89,7 +88,7 @@ such that
 \hspace*{1.3cm}
 $\mathtt{model}\bigl(\mathtt{feature}(o,1), \cdots, \mathtt{feature}(o,D)\bigr) \approx \mathtt{classify}(o)$.
 \\[0.2cm]
-Using the function \texttt{model}, we can than approximate the function classify using a function \texttt{guess} that is
+Using the function \texttt{model}, we can then approximate the function classify using a function \texttt{guess} that is
 defined as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -100,14 +99,14 @@ Most of the time, the function \texttt{guess} will only \blue{approximate} the f
 \hspace*{1.3cm}
 $\mathtt{guess}(o) = \mathtt{classify}(o)$
 \\[0.2cm]
-for most objects of $o \in S$ but not for all of them.  The \blue{accuracy} of our model is then defined as the fraction
+for most objects of $o \in S$ but not for all of them.  The \blue{accuracy} of our model is defined as the fraction
 of those objects that are classified correctly, i.e.~
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathtt{accuracy} := \frac{\;\cnt \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\;}{\cnt S}$.
 \\[0.2cm]
 If the set $S$ is infinite, this equation has to be interpreted as a limit, i.e.~we can define
-$S_n$ as the set of strings that have a length of at most $n$.  Then, the accuracy can be defined as follows:
+$S_n$ as the set of strings that have a length of at most $n$.  Then, the accuracy can be defined as a limit:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathtt{accuracy} := \lim\limits_{n\rightarrow\infty}\frac{\;\cnt \{ o \in S_n \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\;}{\cnt S_n}$.
@@ -138,7 +137,7 @@ hundred percent accurate would have to include the following forces:
 \item tidal forces, i.e.~the effects that the rotation of the earth has on moving objects,
 \item celestial forces, i.e.~the gravitational acceleration caused by celestial objects like the moon or the
       sun.
-\item In case we have a metallic object we have to be aware of the magnetic forces
+\item In the case of a metallic object we have to be aware of the magnetic forces
       caused by the \href{https://www.britannica.com/science/geomagnetic-field}{geomagnetic field}.
 \item To be fully accurate, we might have to include corrections from relativistic physics and even quantum
       physics.   
@@ -178,11 +177,11 @@ from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we defin
 
       i.e.~$y_i$ is the class of the $i$-th object.
 \end{enumerate}
-Mathematically, our goal is now to maximize the accuracy of our model as a function of the parameters $\mathbf{w}$.
+Mathematically, our goal is to maximize the accuracy of our model as a function of the parameters $\mathbf{w}$.
 
 \subsection{Applications of Classification}
 Besides spam detection, there are many other classification problems that can be solved using machine learning.  To give
-just one more example, imagine a general practitioner that receives a patient and examines his symptoms.  In this case,
+just one more example, imagine a general practitioner that receives a patient and examines her symptoms.  In this case,
 the symptoms can be seen as the features of the patient.  For example, these features could be
 \begin{enumerate}[(a)]
 \item body temperature,
@@ -200,10 +199,11 @@ $\{ \mathtt{commonCold}, \mathtt{pneumonia}, \mathtt{asthma}, \mathtt{flu}, \cdo
 \\[0.2cm]
 Hence, the task of disease diagnosis is a classification problem.  This was one of the earliest problem that was tackled
 by artificial intelligence.  As of today, 
-\href{https://en.wikipedia.org/wiki/Computer-aided_diagnosis}{computer-aided diagnosis} has been used for more than 40
-years in many hospitals.  There are a number of diseases that today can be diagnosed more accurately by a
-computer than by a specialist.  One such example is the  \href{http://www.ultromics.com}{diagnosis of heart disease}.
-Other examples of classifications are the following:
+\href{https://en.wikipedia.org/wiki/Computer-aided_diagnosis}{computer-aided diagnosis} and 
+\href{https://en.wikipedia.org/wiki/Clinical_decision_support_system}{clinical decision support systems}
+have been used for more than 40 years in many hospitals.  Today, there are a number of diseases that can be
+diagnosed more accurately by a computer than by a specialist.  One such example is the
+\href{http://www.ultromics.com}{diagnosis of heart disease}.  Other applications of classification are the following:
 \begin{enumerate}
 \item image recognition,
 \item speech recognition,
@@ -212,31 +212,32 @@ Other examples of classifications are the following:
 \end{enumerate}
 
 \section{Digression: The Method of Gradient Ascent \label{section:gradient-ascent}}
-In machine learning, it is often the case that we have to find either the maximum or the minimum of a function
+In machine learning, it is often the case that we have to find either the \blue{maximum} or the \blue{minimum}
+of a function 
 \\[0.2cm]
 \hspace*{1.3cm}
 $f: \mathbb{R}^n \rightarrow \mathbb{R}$.
 \\[0.2cm]
-For example, when we discuss \blue{logistic regression} in the next section, we will have to find the maximum of a
-function.  First, let us introduce the $\arg\max$ function.  The idea is that
+For example, when we discuss \blue{logistic regression} in the next section, we will have to find the maximum
+of the likelihood function.  To proceed, let us introduce the \blue{$\arg\max$} function.  The idea is that
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f(\mathbf{x})$
+$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f$
 \\[0.2cm]
 is that value of $\mathbf{x} \in \mathbb{R}^n$ that maximizes $ f(\mathbf{x})$.  Formally, we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\forall \mathbf{x} \in \mathbb{R}^n : f(\mathbf{x}) \leq f\Bigl(\arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f(\mathbf{x})\Bigr)$.
+$\forall \mathbf{x} \in \mathbb{R}^n : f(\mathbf{x}) \leq f\Bigl(\arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f\Bigr)$.
 \\[0.2cm]
-Of course, the function $\arg\!\max$ is only defined when the maximum is unique.
-If the function $f$ is differentiable, we know that a necessary condition for a vector $\mathbf{\widehat{x}} \in \mathbb{R}^n$
-to satisfy
+Of course, the expression $\arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f$ is only defined when the maximum of
+$f$ is unique.  If the function $f$ is differentiable, we know that a necessary condition for a vector
+$\mathbf{\widehat{x}} \in \mathbb{R}^n$ to satisfy
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f(\mathbf{x})$ \quad is that we must have \quad $\nabla f(\mathbf{\widehat{x}}) = \mathbf{0}$,
+$\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f$ \quad is that we must have \quad $\nabla f(\mathbf{\widehat{x}}) = \mathbf{0}$,
 \\[0.2cm]
 i.e.~the \href{https://en.wikipedia.org/wiki/Gradient}{gradient} of $f$, which we will write as $\nabla f$,
-vanishes at the maximum.  Remember that the gradient of $f$ is defined as
+vanishes at the maximum.  Remember that the gradient of $f$ is defined as the vector
 \\[0.2cm]
 \hspace*{1.3cm}
 $\nabla f := \left(
@@ -251,10 +252,11 @@ $
 
 \begin{figure}[!th]
 \centering
-\epsfig{file=Figures/sin-minus-square.eps, scale=0.6}
+\hspace*{-1.3cm}
+\epsfig{file=Figures/sin-minus-square.pdf, scale=0.5}
 \vspace*{-0.3cm}
 \caption{The function $x \mapsto \sin(x) - \frac{1}{2} \cdot x^2$.}
-\label{fig:sin-minus-square.eps}
+\label{fig:sin-minus-square.pdf}
 \end{figure}
 
 \noindent
@@ -263,13 +265,14 @@ Unfortunately, in many cases the equation
 \hspace*{1.3cm}
 $\nabla f(\mathbf{\widehat{x}}) = \mathbf{0}$
 \\[0.2cm]
-cannot be solved explicitly.  This is already true in the one-dimensional case, i.e.~if $n=1$.  For example, consider
+cannot be solved in \href{https://en.wikipedia.org/wiki/Closed-form_expression}{closed terms}.  This is already
+true in the one-dimensional case, i.e.~if $n=1$.  For example, consider 
 the function $f:\mathbb{R} \rightarrow \mathbb{R}$ that is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds f(x) := \sin(x) - \frac{1}{2} \cdot x^2$.
 \\[0.2cm]
-This function is shown in Figure \ref{fig:sin-minus-square.eps} on page \pageref{fig:sin-minus-square.eps}.
+This function is shown in Figure \ref{fig:sin-minus-square.pdf} on page \pageref{fig:sin-minus-square.pdf}.
 From the graph of the function it is obvious that this function has a maximum somewhere between $0.6$ and
 $0.8$.  In order to compute this maximum, we can compute the derivative of $f$.   This derivative is given as 
 \\[0.2cm]
