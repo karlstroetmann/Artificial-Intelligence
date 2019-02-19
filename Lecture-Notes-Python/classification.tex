@@ -300,7 +300,7 @@ vectors $\bigl(\mathbf{x}_n\bigr)_{n\in\mathbb{N}}$ such that we have
 \hspace*{1.3cm}
 $f(\mathbf{x}_{n+1}) \geq f(\mathbf{x}_{n})$ \quad for all $n\in\mathbb{N}$.
 \\[0.2cm]
-Hopefully, this sequence will converge against $\widehat{\mathbf{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n}f(\mathbf{x})$.
+Hopefully, this sequence will converge against $\widehat{\mathbf{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n}f$.
 If we do not really know where to start our search, we define $\mathbf{x}_0 := \mathbf{0}$.  In order to
 compute $\mathbf{x}_{n+1}$ given $\mathbf{x}_{n}$, the idea is to move from $\mathbf{x}_n$ in that direction
 where we have the biggest change in the values of $f$.   This direction happens to be the gradient of $f$ at $\mathbf{x}_n$.
@@ -315,14 +315,14 @@ during the iterations.  Figure \ref{fig:gradient-ascent.py} on page \pageref{fig
 how this is done. 
 The function \texttt{findMaximum} takes four arguments:
 \begin{enumerate}
-\item \texttt{f} is the function that is to be maximized.  It is assumed that \texttt{f} takes a vector
+\item $\texttt{f}$ is the function that is to be maximized.  It is assumed that \texttt{f} takes a vector
       $\texttt{x}\in \mathbb{R}^n$ as its input and that it returns a real number.  Note that $n$ might be
       $1$.  In that case the input to $f$ is a real number.
-\item \texttt{gradF} is the gradient of \texttt{f}.  It takes a vector
+\item $\texttt{gradF}$ is the gradient of \texttt{f}.  It takes a vector
       $\texttt{x}\in \mathbb{R}^n$ as its input and returns the vector $\nabla \mathtt{f}(\mathtt{x})$.
-\item \texttt{start} is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
+\item $\texttt{start}$ is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
       practice, we will often use $\mathbf{0} \in \mathbb{R}^n$ as the start vector.
-\item \texttt{eps} is the precision that we need for the maximum.  We will have to say more on how \texttt{eps}
+\item $\texttt{eps}$ is the precision that we need for the maximum.  We will have to say more on how \texttt{eps}
       is related to the precision later.  As we are using double precision floating point arithmetic, 
       it won't make sense to use a value for \texttt{eps} that is smaller than $10^{-15}$.
 \end{enumerate}
@@ -342,12 +342,13 @@ Next, let us discuss the implementation of gradient ascent.
       \hspace*{1.3cm}
       $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$.
 \item The corresponding value $f(\mathbf{x}_{n+1})$ is computed in line 9.
-\item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$.  This happens if the learning
+\item If we are unlucky, $f(\mathbf{x}_{n+1})$ is smaller than $f(\mathbf{x}_{n})$ instead of bigger.  This might happen if the learning
       rate $\alpha$ is too large.  Hence, in this case we decrease the value of $\alpha$, discard 
       both $\mathbf{x}_{n+1}$ and $f(\mathbf{x}_{n+1})$ and start over again via the \texttt{continue}
       statement in line 13.
-\item Otherwise, $\mathbf{x}_{n+1}$ is a better approximation of the maximum than $\mathbf{x}_n$.  
-      In order to increase the speed of the convergence of our algorithm we will then increase the learning rate
+\item Otherwise, if  $f(\mathbf{x}_{n+1})$ is indeed bigger than $f(\mathbf{x}_{n})$, the vector
+  $\mathbf{x}_{n+1}$ is a better approximation of the maximum than the vector $\mathbf{x}_n$.  
+      In this case, in order to increase the speed of the convergence of our algorithm we will then increase the learning rate
       $\alpha$ by $20\%$.    
 \item The idea of our implementation is to stop the iteration when the relative difference  of 
       $f(\mathbf{x}_{n+1})$ and $f(\mathbf{x}_{n})$ is less than $\varepsilon$ or, to be more precise, if
@@ -361,7 +362,7 @@ Next, let us discuss the implementation of gradient ascent.
       \hspace*{1.3cm}
       $f(\mathbf{x}_{n+1}) \geq f(\mathbf{x}_{n})$ \quad for all $n\in\mathbb{N}$,
       \\[0.2cm]
-      the condition given above is sufficient.  Now, if the increase of  $f(\mathbf{x}_{n+1})$ is less than $f(\mathbf{x}_{n}) \cdot (1 + \varepsilon)$ 
+      the condition given above is sufficient.  Now, if the increment of  $f(\mathbf{x}_{n+1})$ is less than $f(\mathbf{x}_{n}) \cdot (1 + \varepsilon)$ 
       we assume that we have reached the maximum with the required precision.  In this case we return both the
       value of \texttt{x} and the corresponding function value $f(\mathtt{x})$.
 \end{enumerate}
@@ -407,7 +408,7 @@ Furthermore, there are algorithms that are more powerful than gradient ascent.  
 refinement of this method is the
 \href{https://en.wikipedia.org/wiki/Broyden-Fletcher-Goldfarb-Shanno_algorithm}{BFGS-algorithm} that
 has been invented by Broyden, Fletcher, Goldfarb, and Shanno.  Unfortunately, we do not have the
-time to discuss this algorithm.
+time to discuss these algorithms.
 However, our implementation of gradient ascent is sufficient for our applications and as this is not a course on numerical
 analysis but rather on artificial intelligence we will not delve deeper into this topic but, instead, we refer
 readers interested in more efficient algorithms to the literature \cite{snyman:2005}.  If you ever need to find
@@ -429,10 +430,10 @@ $\ds \mathtt{accuracy}(\mathbf{w}) :=
 \frac{\;\cnt \bigl\{ \mathbf{o} \in S \bigm| \mathtt{model}(\mathtt{feature}\bigl(\mathbf{o}),\mathbf{w}\bigr) = \mathtt{classify}(\mathbf{o})\bigr\}\;}{\cnt S}$
 \\[0.2cm]
 is maximized.  However, there is a snag:  The accuracy is not a smooth function of the weight vector
-$\mathbf{w}$.  It can't be because the number of errors of our model is a natural number and not a real number
+$\mathbf{w}$.  It can't be a smooth function because the number of errors of our model is a natural number and not a real number
 that could change smoothly when the weight vector $\mathbf{w}$ is changed.  Hence, the accuracy is not differentiable as a function
 of the weight vector.  The way to proceed is to work with \blue{probabilities} instead.  Instead of assigning a
-class to an object $\mathbf{o}$ we rather assign a probability $p$ to the object $\mathbf{o}$ that measures how
+class to an object $\mathbf{o}$ we rather assign a \blue{probability} $p$ to the object $\mathbf{o}$ that measures how
 probable it is that object $\mathbf{o}$ has a given class $c$.  Then we try to maximize this probability.  In
 \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} we use a linear model that is 
 combined with the \blue{sigmoid function}.  Before we can discuss the details of logistic regression we need to
