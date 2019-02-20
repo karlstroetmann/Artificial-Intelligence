@@ -529,10 +529,10 @@ $
 $
 \\[0.2cm]
 We highlight this formula, as we need it later
-\\[0.2cm]
-\hspace*{1.3cm}
-\colorbox{red}{\framebox{\colorbox{orange}{$\ds \exp(-t) = \frac{1 - S(t)}{S(t)}$.}}}
-\\[0.2cm]
+\begin{equation}
+\label{eq:1}
+ \colorbox{red}{\framebox{\colorbox{orange}{\mbox{$\ds\exp(-t) = \frac{1 - S(t)}{S(t)}$.}}}}
+\end{equation}
 If we take the reciprocal of both sides of this equation, we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -554,19 +554,19 @@ Next, let us compute the derivative of $S(t)$, i.e.~$\ds S'(t) =\frac{\mathrm{d}
 \\[0.2cm]
 \hspace*{1.3cm}
 $
-\begin{array}{lcl}
+\begin{array}{lcll}
  S'(t) & = & \ds -\frac{-\exp(-t)}{\bigr(1+\exp(-t)\bigr)^2}   \\[0.5cm]
-       & = & \ds \exp(-t) \cdot S(t)^2                       \\[0.2cm]
-       & = & \ds \frac{1-S(t)}{S(t)} \cdot S(t)^2            \\[0.4cm]
+       & = & \ds \exp(-t) \cdot S(t)^2                         \\[0.2cm]
+       & = & \ds \frac{1-S(t)}{S(t)} \cdot S(t)^2  & \mbox{(by Equation \ref{eq:1})} \\[0.4cm]
        & = & \ds \bigl(1 - S(t)\bigr) \cdot S(t)            
 \end{array}
 $
 \\[0.2cm]
 We have shown
-\\[0.2cm]
-\hspace*{1.3cm}
-\colorbox{red}{\framebox{\colorbox{orange}{$S'(t) = \bigl(1 - S(t)\bigr) \cdot S(t)$.}}}
-\\[0.2cm]
+\begin{equation}
+  \label{eq:2}
+  \colorbox{red}{\framebox{\colorbox{orange}{\mbox{$\ds S'(t) = \bigl(1 - S(t)\bigr) \cdot S(t)$.}}}}
+\end{equation}
 We will later need the derivative of the natural logarithm of the logistic function.  We define
 \\[0.2cm]
 \hspace*{1.3cm}
