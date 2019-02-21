@@ -21,3 +21,5 @@ SetlX/Neural-Networks/mnist_train.csv
 SetlX/Neural-Networks/mnist_test.csv
 Literature/*
 Exercises/*
+Python/.ipynb_checkpoints/
+Python/__pycache__/

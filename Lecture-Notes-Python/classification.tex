@@ -1003,34 +1003,24 @@ Use logistic regression to predict whether a given plant is of the species
 \href{https://en.wikipedia.org/wiki/Iris_virginica}{iris virginica}\footnote{
 This plant is native to North America and hence has no German name.}, or
 \href{https://en.wikipedia.org/wiki/Iris_versicolor}{iris versicolor} (Deutsch: Verschiedenfarbige Schwertlilie).
-As logistic regression is only able to distinguish between two different classes, you should use 
-\href{https://en.wikipedia.org/wiki/Multiclass_classification#One-vs.-rest}{one-versus-rest} classification:
-You have to build three different classifiers:
+As logistic regression is only able to distinguish between two different classes, you
+have to build three different classifiers:
 \begin{itemize}
 \item The first classifier is able to distinguish \blue{iris setosa} from other irises. 
 \item The second classifier is able to distinguish \blue{iris virginica} from other irises. 
 \item The third classifier is able to distinguish \blue{iris versicolor} from other irises. 
 \end{itemize}
-Given a feature vector $\mathbf{x}$ for an iris plant, you calculate three different probabilities.
-\begin{enumerate}
-\item The probability $P(\mathtt{setosa}\mid \mathbf{x})$ that the given iris is an iris setosa.
-\item The probability $P(\mathtt{virginica}\mid \mathbf{x})$ that the given iris is an iris virginica.
-\item The probability $P(\mathtt{versicolor}\mid \mathbf{x})$ that the given iris is an iris versicolor.
-\end{enumerate}
-If for a given value of the feature vector $\textbf{x}$ there is a class 
-$c \in \{\mathtt{setosa}, \mathtt{virginica}, \mathtt{versicolor}\}$ such that
+Your task is to implement these classifiers and to evaluate their accuracy.  
+You should  divide the data randomly into a \blue{training dataset}, which is used for computing the
+coefficients of logistic regression and a \blue{test dataset}, which you should only use to predict the
+accuracy of your model.  To this end, the function
 \\[0.2cm]
 \hspace*{1.3cm}
-$P(c \mid \mathbf{x}) \geq\frac{1}{2}$ \quad while $P(d \mid \mathbf{x}) < \frac{1}{2}$ for all 
-$d \in\{\mathtt{setosa}, \mathtt{virginica}, \mathtt{versicolor}\} \backslash \{c\}$,
+\texttt{sklearn.model\_selection.train\_test\_split}
 \\[0.2cm]
-then the class associated with the feature vector $\mathbf{x}$ is $c$, otherwise the class is $\mathtt{unkown}$.
-Your task is to implement this classifier and to estimate its accuracy.  To this end,
-you should  divide the data randomly into a \blue{training dataset}, which is used for computing the
-coefficients of logistic regression and a \blue{test dataset}, which you should only use to predict the
-accuracy of your model.  If a flower is classified as $\mathtt{unknown}$, then this should only counts as 
-two thirds of a mistake, i.e.~if your classifier would classify every flower as $\mathtt{unknown}$, then its
-accuracy would be $33.\bar{3}\%$.
+might be useful.  Once you have created these classifiers, proceed to implement a classifier that inputs a
+feature vector and that outputs the class of the iris flower as a string.  If you do this correctly, you can
+achieve an accuracy of $100\%$.
 \eox
 
 \section{Naive Bayes Classifiers}
