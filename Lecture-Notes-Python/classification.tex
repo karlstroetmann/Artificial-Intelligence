@@ -1024,10 +1024,181 @@ feature vector and that outputs the class of the iris flower as a string.  If yo
 achieve an accuracy that exceeds $95\%$.
 \eox
 
+\section{Logistic Regression with SciKit-Learn}
+In this section we discuss how linear regression is done in the SciKit-Learn environment.
+We will improve on the previous example and study the data that is shown in Figure \ref{fig:exam-iq.csv} on
+page \pageref{fig:exam-iq.csv}.
+This \textsc{Csv} file contains data about a fictional exam.  The first column indicates whether the student
+has passed or failed the exam.  A passed exam is encoded as the integer 1, while a failed exam is encoded as the integer 0.
+The second column contains the number of hours that the student has studied for the exam.  The third column
+contains the \href{https://en.wikipedia.org/wiki/Intelligence_quotient}{intelligence quotient}, abbreviated as
+IQ.  To better understand the data, we first plot it.  This plot is shown in Figure \ref{fig:exam-iq.pdf} on
+page \pageref{fig:exam-iq.pdf}.  The horizontal axis is used for the hours of study, while the vertical axis
+shows the IQ of the student.  Students who have passed the exam are shown as blue dots, while those students
+who have failed their exam are shown as red dots.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    Pass,Hours,IQ
+    0,0.50,110
+    0,0.75,95
+    0,1.00,118
+    0,1.25,97
+    0,1.50,100
+    0,1.75,110
+    0,1.75,115
+    1,2.00,104
+    1,2.25,120
+    0,2.50,98
+    1,2.75,118
+    0,3.00,88
+    1,3.25,108
+    0,3.50,125
+    1,4.00,109
+    1,4.25,110
+    1,4.50,112
+    1,4.75,97
+    1,5.00,102
+    1,5.50,109
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Results of an exam given hours of study and IQ.}
+\label{fig:exam-iq.csv}
+\end{figure}
+
+When we inspect the diagram shown in Figure \ref{fig:exam-iq.pdf} we see that there are two outliers: There is
+one student who failed although he has an IQ of 125 and he did study for $3.5$ hours.  Maybe he was still drunk
+when he had to write the exam.  There is also a student with an IQ of 104 who did pass while only studying for
+$2$ hours.  He just might have gotten lucky. We expect logistic regression to classify all other students
+correctly.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/exam-iq.pdf, scale=0.6}
+\caption{Probability of passing an exam versus hours of studying.}
+\label{fig:exam-iq.pdf}
+\end{figure}
+
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                  commandchars  = \\\{\},
+                  codes         = {\catcode`$=3\catcode`^=7\catcode`_=8}
+                ]
+    import numpy                as np
+    import pandas               as pd
+    import sklearn.linear\_model as lm
+    
+    ExamDF = pd.read\_csv('exam-iq.csv')
+    X      = np.array(ExamDF[['Hours','IQ']])
+    Y      = np.array(ExamDF['Pass'], dtype=float)
+    model  = lm.LogisticRegression(C=10000, tol=1e-6, solver='newton-cg')
+    M      = model.fit(X, Y)
+    \(\vartheta_0\)     = M.intercept\_[0]
+    \(\vartheta_1, \vartheta_2\) = M.coef\_[0]
+    errors = np.sum(np.abs(Y - model.predict(X)))
+    print((len(Y) - errors) / len(Y))
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Logistic Regression using SciKit-Learn}
+\label{fig:Logistic-Regression-with-SciKit-Learn.ipynb}
+\end{figure}
+%\$
+
+Figure \ref{fig:Logistic-Regression-with-SciKit-Learn.ipynb} on page
+\pageref{fig:Logistic-Regression-with-SciKit-Learn.ipynb} shows a \textsl{Python} script that creates a
+logistic regression classifier with the help of the SciKit-Learn package.
+\begin{enumerate}
+\item In the first three lines we import the necessary modules.
+      The support for logistic regression is located in the module
+      \texttt{sklearn.linear\_model}.
+\item In line 5, the data from the file ``\texttt{exam-iq.csv}'' is read as a Pandas
+      \href{https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html}{DataFrame}.
+\item Line 6 creates the feature matrix \texttt{X} by extracting the two independent variables ``\texttt{Hours}''
+      and ``\texttt{IQ}''.
+\item Line 7 extracts the dependent variable ``\texttt{Pass}''.  Since this variable is stored as an integer in
+      the \textsc{Csv} file, we convert it into a floating point number.  This is necessary because the method
+      \texttt{fit} that we use later expects the dependent variable to be encoded as a floating point number.
+\item Line 8 creates an object of class \texttt{LogisticRegression}.  This object is initialized with a number
+      of parameters:
+      \begin{enumerate}
+      \item \texttt{C} specifies the amount of \blue{regularization}.  We will discuss the concept of
+            regularization later when we discuss \blue{polynomial logistic regression in the next section}.
+            In this example we do not need any regularization.  Setting $C$ to a high value like $10\,000$
+            prevents regularization.
+      \item \texttt{tol} is the tolerance that specifies when the iterative algorithm to maximize the
+            log-likelihood should stop.
+      \item \texttt{solver} specifies the numerical method that is used to find the maximum of the
+            log-likelihood. By choosing ``\texttt{newton-cg}'' we specify that the
+            \href{https://en.wikipedia.org/wiki/Conjugate_gradient_method}{conjugate gradient}
+            method should be used.  This method is more sophisticated than gradient descent, but as this is not
+            a course on numerical optimization we do not have the time to discuss it.
+      \end{enumerate}
+\item All the real work is happening in line 9, because there we use the method \texttt{fit} to create the
+      logistic regression model.
+\item The next two lines are needed to extract the coefficients $\vartheta_0$, $\vartheta_1$, and $\vartheta_2$
+      that specify the logistic model.      
+      According to the model we have learned, the probability $P(h)$ that a student, who has learned for $h$
+      hours and has an IQ of $q$, will pass the exam, is given as 
+      $$ P(h) = S(\vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q) $$
+      In general, the model predicts that she will pass the exam if
+      $$ \vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q \geq 0. $$
+      This can be rewritten as follows:
+      $$  q \geq -\frac{\vartheta_0 + \vartheta_1 \cdot h}{\vartheta_2}. $$
+      The \blue{decision boundary} are those values of $(h, q)$ such that $P(h) = \frac{1}{2}$.  This set of
+      values satisfies the linear equation
+      $$  q = -\frac{\vartheta_0 + \vartheta_1 \cdot h}{\vartheta_2}. $$
+      We have plotted this decision boundary as a green line in Figure \ref{fig:exam-iq-boundary.pdf} on page
+      \pageref{fig:exam-iq-boundary.pdf}.  Everybody who is located to the right  this line is predicted to pass the exam,
+      while everybody who is located to the left is predicted to fail.
+
+
+\begin{figure}[!th]
+\epsfig{file=Figures/exam-iq-boundary.pdf, scale=0.6}
+\caption{Probability of passing an exam versus hours of studying.}
+\label{fig:exam-iq-boundary.pdf}
+\end{figure}
+
+\item Line 12 computes the number of data for which the predictions of the model are wrong.
+      The method $\texttt{predict}(X)$ takes a design matrix $X$.  Each row of $X$ is assumed to be a feature
+      vector. It creates a prediction vector.  The $i$-th entry of this vector is $1$ if the model predicts a
+      pass for the $i$-th student.  Otherwise this entry is $0$.
+\item Line 13 prints the accuracy.  As Figure \ref{fig:exam-iq-boundary.pdf} shows, 3 examples have been
+      miss-predicted.  Two of these examples where bound to be miss-predicted, but the fact that the student
+      with an IQ of 120 who has studied for $2.25$ hours has also been miss-predicted is disappointing.
+      The reason is that logistic regression does not maximize the accuracy but rather
+      maximizes the log-likelihood.  Later, we will discuss so called 
+      \blue{support vector machines}.  Often, a support vector machine is able to achieve a higher accuracy
+      than logistic regression.  However, support vector machines are also more complicated than logistic regression.
+ \end{enumerate}
+The jupyter notebook containing the computation discussed previously can be found at my \href{https://github.com/karlstroetmann/Artificial-Intelligence}{github repository}:
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Logistic-Regression-with-SciKit-Learn.ipynb}
+{Artificial-Intelligence/blob/master/Python/Logistic-Regression-with-SciKit-Learn.ipynb}
+
+
 \section{Naive Bayes Classifiers}
 In this section we discuss \href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{naive Bayes classifiers}.
 Naive Bayes classifiers are an alternative method for classification which is appropriate in cases where the
-features are not numerical but categorical.  It starts with \href{https://en.wikipedia.org/wiki/Bayes%27_theorem}{Bayes' theorem}:
+features are not numerical but rather are categorical.  It starts with \href{https://en.wikipedia.org/wiki/Bayes%27_theorem}{Bayes' theorem}:
 Assume we have some evidence $E$ about an object $o$ and want to know whether $o$ belongs to some class $C$.
 Bayes' theorem tell us that the conditional probability $P(C|E)$, i.e the probability that $o$ has class $C$
 given that we have observed the evidence $E$, is related to the conditional probability $P(E|C)$, which is the probability that we
@@ -1116,9 +1287,9 @@ way, we define the $\arg\max$ function: Given a set $S$ and a function $f:S \rig
 exactly one maximum, we define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\arg\max\limits_{x \in S} f(x) := \mathtt{extract}\Bigl(\bigl\{ x \in S \mid \forall y \in S: f(y) \leq f(x)\bigr\}\Bigr)$,
+$\arg\max\limits_{x \in S} f(x) := \texttt{extract}\Bigl(\bigl\{ x \in S \mid \forall y \in S: f(y) \leq f(x)\bigr\}\Bigr)$,
 \\[0.2cm]
-where the function $\mathtt{extract}(M)$ returns the element from a set $M$ that has exactly one element.  To
+where the function $\texttt{extract}(M)$ returns the element from a set $M$ that has exactly one element.  To
 put the definition of  $\arg\max\limits_{x \in S} f(x)$ differently, the idea is that
 $\arg\max\limits_{x \in S} f(x)$ computes the value of $x$ that maximizes $f$.  Given the features  $f_1$, $\cdots$,
 $f_m$, the naive Bayes classifier computes the most probable class as follows:
@@ -1144,10 +1315,10 @@ if nothing else is know about this object.  $P(C)$ is estimated as the proportio
 of class $C$:
 \\[0.2cm]
 \hspace*{1.3cm}
-$ \ds P(C) \approx \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)}{\mathtt{card}(T)}$.
+$ \ds P(C) \approx \frac{\texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \}\bigr)}{\texttt{card}(T)}$.
 \\[0.2cm]
-In this equation, given an object $t\in T$ the function $\mathtt{class}(t)$ determines the class of the object
-$t$, while $\mathtt{card}(M)$ returns the number of elements of the set $M$.
+In this equation, given an object $t\in T$ the function $\texttt{class}(t)$ determines the class of the object
+$t$, while $\texttt{card}(M)$ returns the number of elements of the set $M$.
 
 Next, given a feature $f$ and a class $C$, we have to determine the conditional probability $P(f_i \;|\; C)$.
 This probability can be estimated as the proportion of those objects of class $C$ in the training set $T$ that
@@ -1155,11 +1326,11 @@ possess the feature $f$:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds P(f\;|\;C) \approx 
- \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \wedge \mathtt{has}(t, f) \}\bigr)}{
-       \mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)} 
+ \frac{\texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \wedge \texttt{has}(t, f) \}\bigr)}{
+       \texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \}\bigr)} 
 $
 \\[0.2cm]
-Here, for an object $t$ and a feature $f$ the expression $\mathtt{has}(t, f)$ is true if and only if $t$ has
+Here, for an object $t$ and a feature $f$ the expression $\texttt{has}(t, f)$ is true if and only if $t$ has
 the feature $f$.
 
 \section{Example: Gender Estimation}
@@ -1246,7 +1417,7 @@ and ``\texttt{names-male.txt}'' containing female and male first names.
       in a training set $T$ is given as: 
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ds P(C) \approx  \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)}{\mathtt{card}(T)}$.
+      $\ds P(C) \approx  \frac{\texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \}\bigr)}{\texttt{card}(T)}$.
       \\[0.2cm]
       Therefore, these prior probability that a name is female is the fraction of the number of female names in
       the set of all names.  Similarly, the prior probability that a name is male is the fraction of the number
@@ -1255,8 +1426,8 @@ and ``\texttt{names-male.txt}'' containing female and male first names.
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds P(f\;|\;C) \approx 
-         \frac{\mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \wedge \mathtt{has}(t, f) \}\bigr)}{
-         \mathtt{card}\bigl(\{t \in T \;|\; \mathtt{class}(t) = C \}\bigr)} 
+         \frac{\texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \wedge \texttt{has}(t, f) \}\bigr)}{
+         \texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \}\bigr)} 
       $
       \\[0.2cm]
       The function $\texttt{conditional\_prop}(c,g)$ takes a character $c$ and a gender $g$ and determines the conditional
@@ -1265,7 +1436,7 @@ and ``\texttt{names-male.txt}'' containing female and male first names.
       gender $g \in \{\texttt{'f'}, \texttt{'m'}\}$, the entry $\texttt{Conditional\_Probability}[(c,g)]$ is the
       conditional probability of observing the last character $c$ if the gender of the name is known to be $g$. 
 \item The dictionary \texttt{Conditional\_Probability} can now be used to define the function
-      $\mathtt{classify}(\mathtt{name})$ that takes a $\mathtt{name}$ as its input and outputs the estimated
+      $\texttt{classify}(\texttt{name})$ that takes a $\texttt{name}$ as its input and outputs the estimated
       gender.
 \item Finally, we check the accuracy of this classifier on the training set.  When we run the program, we see
       that the accuracy attained is about $76\%$.  Since we are using only a single feature here, this is a
