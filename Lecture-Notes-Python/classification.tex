@@ -994,37 +994,8 @@ Figure \ref{fig:exam-probability.pdf} shows a plot of this probability $P(x)$.
 \end{figure}
 
 
-\exercise 
-The file \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/iris.csv}{iris.csv}
-contains the sizes of both the \href{https://en.wikipedia.org/wiki/Sepal}{sepals} and the
-\href{https://en.wikipedia.org/wiki/Pepal}{petals} of three different specimen of the iris flower.  The
-data is described in more detail \href{https://en.wikipedia.org/wiki/Iris_flower_data_set}{here}. 
-Use logistic regression to predict whether a given plant is of the species
-\href{https://en.wikipedia.org/wiki/Iris_setosa}{iris setosa} (Deutsch: Borsten-Schwertlilie),
-\href{https://en.wikipedia.org/wiki/Iris_virginica}{iris virginica}\footnote{
-This plant is native to North America and hence has no German name.}, or
-\href{https://en.wikipedia.org/wiki/Iris_versicolor}{iris versicolor} (Deutsch: Verschiedenfarbige Schwertlilie).
-As logistic regression is only able to distinguish between two different classes, you
-have to build three different classifiers:
-\begin{itemize}
-\item The first classifier is able to distinguish \blue{iris setosa} from other irises. 
-\item The second classifier is able to distinguish \blue{iris virginica} from other irises. 
-\item The third classifier is able to distinguish \blue{iris versicolor} from other irises. 
-\end{itemize}
-Your task is to implement these classifiers and to evaluate their accuracy.  
-You should  divide the data randomly into a \blue{training dataset}, which is used for computing the
-coefficients of logistic regression and a \blue{test dataset}, which you should only use to predict the
-accuracy of your model.  To this end, the function
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{sklearn.model\_selection.train\_test\_split}
-\\[0.2cm]
-might be useful.  Once you have created these classifiers, proceed to implement a classifier that inputs a
-feature vector and that outputs the class of the iris flower as a string.  If you do this correctly, you can
-achieve an accuracy that exceeds $95\%$.
-\eox
 
-\section{Logistic Regression with SciKit-Learn}
+\subsection{Logistic Regression with SciKit-Learn}
 In this section we discuss how linear regression is done in the SciKit-Learn environment.
 We will improve on the previous example and study the data that is shown in Figure \ref{fig:exam-iq.csv} on
 page \pageref{fig:exam-iq.csv}.
@@ -1193,6 +1164,36 @@ The jupyter notebook containing the computation discussed previously can be foun
 \hspace*{1.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Logistic-Regression-with-SciKit-Learn.ipynb}
 {Artificial-Intelligence/blob/master/Python/Logistic-Regression-with-SciKit-Learn.ipynb}
+
+\exercise 
+The file \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/iris.csv}{iris.csv}
+contains the sizes of both the \href{https://en.wikipedia.org/wiki/Sepal}{sepals} and the
+\href{https://en.wikipedia.org/wiki/Pepal}{petals} of three different specimen of the iris flower.  The
+data is described in more detail \href{https://en.wikipedia.org/wiki/Iris_flower_data_set}{here}. 
+Use logistic regression to predict whether a given plant is of the species
+\href{https://en.wikipedia.org/wiki/Iris_setosa}{iris setosa} (Deutsch: Borsten-Schwertlilie),
+\href{https://en.wikipedia.org/wiki/Iris_virginica}{iris virginica}\footnote{
+This plant is native to North America and hence has no German name.}, or
+\href{https://en.wikipedia.org/wiki/Iris_versicolor}{iris versicolor} (Deutsch: Verschiedenfarbige Schwertlilie).
+As logistic regression is only able to distinguish between two different classes, you
+have to build three different classifiers:
+\begin{itemize}
+\item The first classifier is able to distinguish \blue{iris setosa} from other irises. 
+\item The second classifier is able to distinguish \blue{iris virginica} from other irises. 
+\item The third classifier is able to distinguish \blue{iris versicolor} from other irises. 
+\end{itemize}
+Your task is to implement these classifiers and to evaluate their accuracy.  
+You should  divide the data randomly into a \blue{training dataset}, which is used for computing the
+coefficients of logistic regression and a \blue{test dataset}, which you should only use to predict the
+accuracy of your model.  To this end, the function
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html}{\texttt{sklearn.model\_selection.train\_test\_split}}
+\\[0.2cm]
+might be useful.  Once you have created these classifiers, proceed to implement a classifier that inputs a
+feature vector and that outputs the class of the iris flower as a string.  If you do this correctly, you can
+achieve an accuracy that exceeds $95\%$.
+\eox
 
 
 \section{Naive Bayes Classifiers}
