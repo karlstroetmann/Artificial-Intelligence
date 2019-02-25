@@ -1128,7 +1128,7 @@ logistic regression classifier with the help of the SciKit-Learn package.
       that specify the logistic model.      
       According to the model we have learned, the probability $P(h)$ that a student, who has learned for $h$
       hours and has an IQ of $q$, will pass the exam, is given as 
-      $$ P(h) = S(\vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q) $$
+      $$ P(Y=1|h,q) = S(\vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q) $$
       In general, the model predicts that she will pass the exam if
       $$ \vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q \geq 0. $$
       This can be rewritten as follows:
@@ -1195,6 +1195,208 @@ feature vector and that outputs the class of the iris flower as a string.  If yo
 achieve an accuracy that exceeds $95\%$.
 \eox
 
+\section{Polynomial Regression}
+Sometimes logistic regression does not work because the data is not \blue{linearly separable}.  For example,
+Figure \ref{fig:fake-data.pdf} on page \pageref{fig:fake-data.pdf} shows a classification problem where we have
+two features $x$ and $y$ and, obviously, it is not possible to separate the blue dots from the red dots by a
+vertical line.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/fake-data.pdf, scale=0.8}
+\caption{Some fake data.}
+\label{fig:fake-data.pdf}
+\end{figure}
+
+If we try to separate the data in Figure \ref{fig:fake-data.pdf} by logistic regression, we get the result
+shown in Figure \ref{fig:fake-data-line.pdf} on page \pageref{fig:fake-data-line.pdf}.  The data points above
+the green line are classified as red, while the data points below the green line are classified as blue.  The
+accuracy achieved is about $61\%$, so more than $38\%$ of the data have been miss-classified.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/fake-data-line.pdf, scale=0.8}
+\caption{Fake data with linear decision boundary.}
+\label{fig:fake-data-line.pdf}
+\end{figure}
+
+We can arrive at a better model if we extend our data with \blue{second order polynomial features}, i.e. we will not only
+consider the features $x$ and $y$ but also use $x^2$, $y^2$, and $x \cdot y$ as features.  Then the resulting
+\blue{decision boundary} will be a \href{https://en.wikipedia.org/wiki/Conic_section}{conic section}, i.e.~it
+might be an \href{https://en.wikipedia.org/wiki/Ellipse}{ellipse}, a
+\href{https://en.wikipedia.org/wiki/Parabola}{parabola}, or a
+\href{https://en.wikipedia.org/wiki/Hyperbola}{hyperbola}. 
+Figure \ref{fig:Polynomial-Logistic-Regression.ipynb-quadratic} on page
+\pageref{fig:Polynomial-Logistic-Regression.ipynb-quadratic} shows a \textsl{Python} script that reads the fake
+data shown in Figure \ref{fig:fake-data.pdf}, adds second order polynomial features to this data and then
+performs linear regression.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    import numpy  as np
+    import pandas as pd
+    import sklearn.linear_model as lm
+    from sklearn.model_selection import train_test_split
+    
+    DF = pd.read_csv('fake-data.csv')
+    X  = np.array(DF[['x','y']])
+    Y  = np.array(DF['class'])
+    
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=1)
+    
+    def logistic_regression(X_train, Y_train, X_test, Y_test, reg=10000):
+        model    = lm.LogisticRegression(C=reg, tol=1e-6, solver='newton-cg')
+        M        = model.fit(X_train, Y_train)
+        score    = M.score(X_train, Y_train)
+        yPredict = M.predict(X_test)
+        accuracy = np.sum(yPredict == Y_test) / len(Y_test)
+        return M, score, accuracy
+    
+    def extend(X):
+        n  = len(X)
+        fx = np.reshape(X[:,0], (n, 1))
+        fy = np.reshape(X[:,1], (n, 1))
+        return np.hstack([fx, fy, fx*fx, fy*fy, fx*fy])
+    
+    X_train_quadratic, X_test_quadratic = extend(X_train), extend(X_test)
+    logistic_regression(X_train_quadratic, Y_train, X_test_quadratic, Y_test)
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A script for second order logistic regression.}
+\label{fig:Polynomial-Logistic-Regression.ipynb-quadratic}
+\end{figure}
+
+\begin{enumerate}
+\item The first three lines import the modules needed for this task.
+\item As we want to split our data into a \blue{training set} and a \blue{test set}, we import the function
+      \texttt{train\_test\_split} from \texttt{sklearn.model\_selection}.
+\item Line 6 reads the data from the file ``\texttt{fake-data.csv}''.
+\item Line 7 and 8 extract the independent variables ``\texttt{x}'' and ``\texttt{y}'' and the dependent
+      variable ``\texttt{class}'' and stores them in the \blue{design matrix} \texttt{X} and the vector
+      \texttt{Y}, respectively.
+\item Line 10 splits the data into a \blue{training set} and a \blue{test set}.  We allocate $20\%$ of our data
+      to the test set, while the remaining $80\%$ are used as training data.
+      In order to be able to reproduce our results, we set \texttt{random\_state} to a fixed value.
+      This forces the random number generator to always produce the same split of the data.
+\item Line 12 defines the function \texttt{logistic\_regression}.  This function takes 5 arguments.
+      \begin{enumerate}
+      \item \texttt{X\_train} and \texttt{Y\_train} are the training data.
+      \item \texttt{X\_test} and \texttt{Y\_} are the test data.
+      \item \texttt{reg} is a \blue{regularization} parameter.  By default this parameter is set to a high
+            value.  Setting this parameter to a high value ensures that there is no regularization.
+            The default is to use next to no regularization.
+      \end{enumerate}
+      The function returns a triple of the form $(M, \mathtt{score}, \mathtt{accuracy})$ where
+      \begin{enumerate}
+      \item $M$ is the model that has been found.
+      \item \texttt{score} is the fraction of data points from the training set that have been
+            classified correctly.
+      \item \texttt{accuracy} is the fraction of data points from the test set that have been
+            classified correctly.
+      \end{enumerate}
+\item The function $\texttt{extend}(X)$ takes a design matrix $X$ as its argument.  In order to keep the
+      implementation of this function simple, we assume that $X$ has just two features, i.e.~the matrix
+      $\texttt{X}$ has shape $(n, 2)$ where $n$ is the number of rows of $X$.
+      \begin{enumerate}
+      \item We extract the two features of \texttt{X} in line 22 and 23.
+      \item In line 24 the new feature matrix is created by stacking the original features \texttt{fx} and
+            \texttt{fy} together with the new features $\mathtt{fx}^2$, $\mathtt{fy}^2$, $\mathtt{fx} \cdot \mathtt{fy}$, 
+      \end{enumerate}
+\item Line 26 extends both the training set and the test set with second order features.
+\item Line 27 performs logistic regression using the new features.
+      The use of second order feature improves the accuracy on the training set to $84\%$, while the accuracy
+      on the test set improves to $76\%$.
+      Figure \ref{fig:fake-data-ellipse.pdf} on page \pageref{fig:fake-data-ellipse.pdf} shows the resulting
+      decision boundary.
+\end{enumerate}
+
+
+\begin{figure}[!th]
+\epsfig{file=Figures/fake-data-ellipse.pdf, scale=0.8}
+\caption{Elliptical decision boundary for fake data.}
+\label{fig:fake-data-ellipse.pdf}
+\end{figure}
+
+
+As adding second order features has increased the accuracy considerably, we proceed to add higher order features.
+Figure \ref{fig:Polynomial-Logistic-Regression.ipynb-quartic} on page
+\pageref{fig:Polynomial-Logistic-Regression.ipynb-quartic} shows how we can add arbitrary polynomial features
+of higher degree.  This script is a continuation of the script shown in Figure \ref{fig:Polynomial-Logistic-Regression.ipynb-quadratic}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = last,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    from sklearn.preprocessing import PolynomialFeatures
+
+    quartic = PolynomialFeatures(4, include_bias=False)
+    X_train_quartic = quartic.fit_transform(X_train)
+    X_test_quartic  = quartic.fit_transform(X_test)
+
+    logistic_regression(X_train_quartic, Y_train, X_test_quartic, Y_test)
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Polynomial Logistic Regression.}
+\label{fig:Polynomial-Logistic-Regression.ipynb-quartic}
+\end{figure}
+
+\begin{enumerate}
+\item Line 28 imports the function \texttt{PolynomialFeatures} from \texttt{sklearn.preprocessing}.
+      This function can be used to add all polynomial features up to a given order.
+      We do not need a bias term here as it is automatically added by the function \texttt{LogisticRegression}.
+\item Line 30 creates an object that can be used to extend a design matrix with polynomial features up to degree 4
+\item Line 31 and 32 extend the training set and the test set with all polynomial features up to degree 4.
+\item When we perform logistic regression with these new features, we achieve an accuracy of $88.4\%$ on the
+      training set.  However, the accuracy on the test set does not improve.
+      Figure \ref{fig:fake-data-quartic.pdf} on page \pageref{fig:fake-data-quartic.pdf} shows the data with
+      the resulting decision boundary.
+\end{enumerate}
+ 
+\begin{figure}[!th]
+\epsfig{file=Figures/fake-data-quartic.pdf, scale=0.8}
+\caption{Fake data with a decision boundary of fourth order.}
+\label{fig:fake-data-quartic.pdf}
+\end{figure}
+
+Nothing stops us from cranking the order of the polynomial features to be added higher.
+Figure \ref{fig:fake-data-14.pdf} on page \pageref{fig:fake-data-14.pdf} shows what happens when we include all
+polynomial features up to a degree of 14.  In this case, we $100\%$ accuracy on the training set.  However, the
+accuracy on the test set is only $80\%$.  Clearly, we are overfitting the data.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/fake-data-14.pdf, scale=0.8}
+\caption{Fake data with a decision boundary of order 14.}
+\label{fig:fake-data-14.pdf}
+\end{figure}
+
+In order to combat overfitting we need to \blue{regularize}, i.e.~we need to penalize high values of the
+parameters.  If we lower the regularization parameter down to $100$, then the accuracy on the training set
+drops down to $89.6\%$, but the accuracy on the test set increases to $88\%$.  The resulting decision boundary
+is shown in Figure \ref{fig:fake-data-14-reg.pdf} on page \pageref{fig:fake-data-14-reg.pdf}.  Clearly, this
+decision boundary looks less complicated than the boundary shown in Figure \ref{fig:fake-data-14.pdf}.
+Contrary to the the previous figures, this figure shows all the data.  The previous figures had only shown the
+training data.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/fake-data-14-reg.pdf, scale=0.8}
+\caption{Fake data with a decision boundary of order 14, regularized.}
+\label{fig:fake-data-14-reg.pdf}
+\end{figure}
 
 \section{Naive Bayes Classifiers}
 In this section we discuss \href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{naive Bayes classifiers}.
