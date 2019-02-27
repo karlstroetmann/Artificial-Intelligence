@@ -1460,7 +1460,7 @@ given an event $C$ if and only if we have.
 $P(A \;|\; C) = P(A \;|\; B \wedge C)$,
 \\[0.2cm]
 
-To put it differently, Once we known that $C$ holds, when it comes to the estimating the probability of $A$,
+To put it differently, once we known that $C$ holds, when it comes to the estimating the probability of $A$,
 then it does not matter whether $B$ holds or not.  Now the important assumption that a \blue{naive Bayes classifier} 
 makes is that in order to estimate the class $C$ of an object $o$ that has features $f_1$, $\cdots$, $f_m$ it
 is assumed that the features $f_1, \cdots, f_m$ are conditionally independent once the class is known.  In
@@ -1483,7 +1483,7 @@ $
 In the last line of the previous chain of equations we have used the fact that the features $f_1$, $\cdots$,
 $f_m$ are conditionally independent given $C$.  Now a naive Bayes classifier works as follows: 
 Assume we have a set of $n$ classes $\mathcal{C} = \{ C_1, \cdots, C_n \}$ from which we have to choose the
-class of an object $o$ given the features  $f_1$, $\cdots$, $f_m$.  Now $o$ is assumed to have class $C_k$ if
+class of an object $o$ given the features  $f_1$, $\cdots$, $f_m$.  We assume that $o$ has class $C_k$ if
 and only if the probability $P(C_k\;|\; f_1 \wedge \cdots \wedge f_m)$ is maximal with respect to all classes
 of $\mathcal{C}$.  In order to be able to describe this in a more formal
 way, we define the $\arg\max$ function: Given a set $S$ and a function $f:S \rightarrow \mathbb{R}$ that has
