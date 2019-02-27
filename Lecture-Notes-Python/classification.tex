@@ -1397,6 +1397,30 @@ training data.
 \caption{Fake data with a decision boundary of order 14, regularized.}
 \label{fig:fake-data-14-reg.pdf}
 \end{figure}
+\pagebreak
+
+\exercise
+\begin{enumerate}[(a)]
+\item Assume that a design matrix $X$ has two features $x_1$ and $x_2$.  Given a natural number $n$, you want to
+      extend this design matrix by adding all features of the form $x_1^{k_1} \cdot x_2^{k_2}$ such that
+      $k_1 + k_2 = n$, i.e. you want to add all features up to a degree of $n$.
+      How many features will the extended design matrix have?
+\item Next, assume that the design matrix $X$ has three features $x_1$, $x_2$, and $x_3$.
+      This time, you want to extend the design matrix by adding all features of the form
+      $x_1^{k_1} \cdot x_3^{k_3} \cdot x_3^{k_3}$ where $k_1 + k_2 + k_3 = n$.
+      How many features will the extended design matrix have in this case?
+\item In the general case, the design matrix has $d$ features $x_1$, $\cdots$, $x_d$.  Assume you want to add all
+     polynomial terms up to order $n$ as new features, i.e. you want to add all features of the form
+     \\[0.2cm]
+     \hspace*{1.3cm}
+     $x_1^{k_1} \cdot x_2^{k_2} \cdot {\dots} \cdot x_d^{k_d}$ \quad such that $k_1 + k_2 + \cdots + k_d = n$.
+     \\[0.2cm]
+     How many features will the extended design matrix have in the general case?
+
+     \textbf{Hint}:  You might find it helpful to revisit your old lecture notes on statistics.
+     \eox
+\end{enumerate}
+\pagebreak
 
 \section{Naive Bayes Classifiers}
 In this section we discuss \href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{naive Bayes classifiers}.
