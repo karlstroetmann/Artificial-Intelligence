@@ -1403,17 +1403,17 @@ training data.
 \begin{enumerate}[(a)]
 \item Assume that a design matrix $X$ has two features $x_1$ and $x_2$.  Given a natural number $n$, you want to
       extend this design matrix by adding all features of the form $x_1^{k_1} \cdot x_2^{k_2}$ such that
-      $k_1 + k_2 = n$, i.e. you want to add all features up to a degree of $n$.
+      $k_1 + k_2 \leq n$, i.e. you want to add all features up to a degree of $n$.
       How many features will the extended design matrix have?
 \item Next, assume that the design matrix $X$ has three features $x_1$, $x_2$, and $x_3$.
       This time, you want to extend the design matrix by adding all features of the form
-      $x_1^{k_1} \cdot x_3^{k_3} \cdot x_3^{k_3}$ where $k_1 + k_2 + k_3 = n$.
+      $x_1^{k_1} \cdot x_2^{k_2} \cdot x_3^{k_3}$ where $k_1 + k_2 + k_3 \leq n$.
       How many features will the extended design matrix have in this case?
 \item In the general case, the design matrix has $d$ features $x_1$, $\cdots$, $x_d$.  Assume you want to add all
      polynomial terms up to order $n$ as new features, i.e. you want to add all features of the form
      \\[0.2cm]
      \hspace*{1.3cm}
-     $x_1^{k_1} \cdot x_2^{k_2} \cdot {\dots} \cdot x_d^{k_d}$ \quad such that $k_1 + k_2 + \cdots + k_d = n$.
+     $x_1^{k_1} \cdot x_2^{k_2} \cdot {\dots} \cdot x_d^{k_d}$ \quad such that $k_1 + k_2 + \cdots + k_d \leq n$.
      \\[0.2cm]
      How many features will the extended design matrix have in the general case?
 
@@ -1637,7 +1637,7 @@ and ``\texttt{names-male.txt}'' containing female and male first names.
       function takes a file name as its argument and reads the specified file one line at a time.  It returns a
       list of all the names given in the file. Care is taken that the newline character at the end of each line
       is discarded. 
-\item We use this function to read bot the female names and the male names and store these names in the lists
+\item We use this function to read both the female names and the male names and store these names in the lists
       \texttt{FemaleNames} and \texttt{MaleNames}.
 \item Next, we compute the \blue{prior probabilities} $P(\texttt{Female})$ and $P(\texttt{Male})$ for the classes
       $\texttt{Female}$ and $\texttt{Male}$.  Previously, we have shown that the prior probability of a class $C$
