@@ -1422,12 +1422,13 @@ training data.
 \end{enumerate}
 \pagebreak
 
+
 \section{Naive Bayes Classifiers}
 In this section we discuss \href{https://en.wikipedia.org/wiki/Naive_Bayes_classifier}{naive Bayes classifiers}.
 Naive Bayes classifiers are an alternative method for classification which is appropriate in cases where the
 features are not numerical but rather are categorical.  It starts with \href{https://en.wikipedia.org/wiki/Bayes%27_theorem}{Bayes' theorem}:
 Assume we have some evidence $E$ about an object $o$ and want to know whether $o$ belongs to some class $C$.
-Bayes' theorem tell us that the conditional probability $P(C|E)$, i.e the probability that $o$ has class $C$
+Bayes' theorem tell us that the \blue{conditional probability} $P(C|E)$, i.e the probability that $o$ has class $C$
 given that we have observed the evidence $E$, is related to the conditional probability $P(E|C)$, which is the probability that we
 observe the evidence $E$ given that $o$ has class $C$, in the following way:
 \\[0.2cm]
@@ -1448,7 +1449,8 @@ In order to apply this form of Bayes' theorem to the problem of classification, 
 \hspace*{1.3cm}
 $P(f_1 \wedge \cdots \wedge f_m\;|\;C)$.
 \\[0.2cm]
-The conditional probability $P(A|B)$ that an event $A$ happens when it is already known that $B$ has happened is defined as
+In order to be able to do this, we need some theory which will be developed next.  The conditional probability
+$P(A|B)$ that an event $A$ happens when it is already known that $B$ has happened is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds P(A|B) = \frac{P(A \wedge B)}{P(B)}$.
@@ -1458,14 +1460,15 @@ This equation can be rewritten as
 \hspace*{1.3cm}
 $P(A \wedge B) = P(A|B) \cdot P(B)$.
 \\[0.2cm]
-This equation is also true for conditional probabilities:
+Because conditional probabilities are probabilities and hence obey all the laws for probabilities, this
+equation is also true for conditional probabilities: 
 \\[0.2cm]
 \hspace*{1.3cm}
 $P(A \wedge B\;|\;C) = P(A\;|\;B \wedge C) \cdot P(B\;|\;C)$.
 \\[0.2cm]
-It can be generalized to the so called \href{https://en.wikipedia.org/wiki/Chain_rule_(probability)}{chain rule of probability}:
+This equation can be generalized to the so called \href{https://en.wikipedia.org/wiki/Chain_rule_(probability)}{chain rule of probability}:
 \\[0.2cm]
-\hspace*{1.3cm}
+\hspace*{1.2cm}
 $
 \begin{array}[t]{lcl}
        P(A_1 \wedge \cdots \wedge A_m \;|\;C) 
@@ -1478,19 +1481,19 @@ $
 $
 \\[0.2cm]
 Two events $A$ and $B$ are defined to be \href{https://en.wikipedia.org/wiki/Conditional_independence}{conditional independent}
-given an event $C$ if and only if we have.
+given an event $C$ if and only if we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$P(A \;|\; C) = P(A \;|\; B \wedge C)$,
+$P(A \;|\; C) = P(A \;|\; B \wedge C)$.
 \\[0.2cm]
-
-To put it differently, once we known that $C$ holds, when it comes to the estimating the probability of $A$,
+To put this equation differently, once we known that $C$ holds, when it comes to the estimating the probability of $A$,
 then it does not matter whether $B$ holds or not.  Now the important assumption that a \blue{naive Bayes classifier} 
 makes is that in order to estimate the class $C$ of an object $o$ that has features $f_1$, $\cdots$, $f_m$ it
 is assumed that the features $f_1, \cdots, f_m$ are conditionally independent once the class is known.  In
-most applications of naive Bayes classifiers this assumption is actually wrong.  That explains why these
-classifiers are called \blue{naive}.  Still, in practise the conditional independence of the features given
-the class is often approximately true and therefore these classifiers are often useful.  If we make this
+most applications of naive Bayes classifiers this assumption is not true because there might be some weal
+correlation between the features.  That explains why naive Bayes classifiers are called \blue{naive}.  Still,
+in practise the conditional independence of the features given 
+the class is often approximately true and therefore these classifiers are useful.  If we make the
 assumption of conditional independence, then the probability $P(C\;|\; f_1 \wedge \cdots \wedge f_m)$ of an
 object $o$ with features $f_1$, $\cdots$, $f_m$ to be of class $C$ is given as
 \\[0.2cm]
@@ -1498,7 +1501,7 @@ object $o$ with features $f_1$, $\cdots$, $f_m$ to be of class $C$ is given as
 $
 \begin{array}[t]{lcll}
       P(C\;|\; f_1 \wedge \cdots \wedge f_m) 
-& = & \ds \frac{P(f_1 \wedge \cdots f_m \;|\; C) \cdot P(C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
+& = & \ds \frac{P(f_1 \wedge \cdots \wedge f_m \;|\; C) \cdot P(C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
 & = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; f_{i+1} \wedge \cdots \wedge f_m \wedge C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
 & = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) 
 \end{array}
@@ -1509,14 +1512,16 @@ $f_m$ are conditionally independent given $C$.  Now a naive Bayes classifier wor
 Assume we have a set of $n$ classes $\mathcal{C} = \{ C_1, \cdots, C_n \}$ from which we have to choose the
 class of an object $o$ given the features  $f_1$, $\cdots$, $f_m$.  We assume that $o$ has class $C_k$ if
 and only if the probability $P(C_k\;|\; f_1 \wedge \cdots \wedge f_m)$ is maximal with respect to all classes
-of $\mathcal{C}$.  In order to be able to describe this in a more formal
-way, we define the $\arg\max$ function: Given a set $S$ and a function $f:S \rightarrow \mathbb{R}$ that has
+of $\mathcal{C}$.  In order to be able to specify this in a more formal
+way, we define the \blue{$\arg\max$} function: Given a set $S$ and a function $f:S \rightarrow \mathbb{R}$ that has
 exactly one maximum, we define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\arg\max\limits_{x \in S} f(x) := \texttt{extract}\Bigl(\bigl\{ x \in S \mid \forall y \in S: f(y) \leq f(x)\bigr\}\Bigr)$,
+$\arg\max\limits_{x \in S} f(x) := \texttt{arb}\Bigl(\bigl\{ x \in S \mid \forall y \in S: f(y) \leq f(x)\bigr\}\Bigr)$,
 \\[0.2cm]
-where the function $\texttt{extract}(M)$ returns the element from a set $M$ that has exactly one element.  To
+where the function $\texttt{arb}(M)$ returns an arbitrary element from the set $M$. 
+Since we assume that $f$ has exactly one element on the set $S$, the expression 
+$\arg\max\limits_{x \in S} f(x)$ is well defined.  To
 put the definition of  $\arg\max\limits_{x \in S} f(x)$ differently, the idea is that
 $\arg\max\limits_{x \in S} f(x)$ computes the value of $x$ that maximizes $f$.  Given the features  $f_1$, $\cdots$,
 $f_m$, the naive Bayes classifier computes the most probable class as follows:
@@ -1544,10 +1549,12 @@ of class $C$:
 \hspace*{1.3cm}
 $ \ds P(C) \approx \frac{\texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \}\bigr)}{\texttt{card}(T)}$.
 \\[0.2cm]
+This expression is called the \blue{prior probability} of $C$ or sometimes just the \blue{prior} of $C$.
 In this equation, given an object $t\in T$ the function $\texttt{class}(t)$ determines the class of the object
 $t$, while $\texttt{card}(M)$ returns the number of elements of the set $M$.
 
-Next, given a feature $f$ and a class $C$, we have to determine the conditional probability $P(f_i \;|\; C)$.
+Next, given a feature $f$ and a class $C$, we have to determine the \blue{conditional probability} that an
+object of class $C$ exhibits the feature $f_i$, i.e. we have to determine $P(f_i \;|\; C)$.
 This probability can be estimated as the proportion of those objects of class $C$ in the training set $T$ that
 possess the feature $f$:
 \\[0.2cm]
@@ -1560,7 +1567,341 @@ $
 Here, for an object $t$ and a feature $f$ the expression $\texttt{has}(t, f)$ is true if and only if $t$ has
 the feature $f$.
 
-\section{Example: Gender Estimation}
+\subsection{Example: Spam Detection}
+\href{https://en.wikipedia.org/wiki/Naive_Bayes_spam_filtering}{Spam detection} is an important application of
+classification.  We will see in this subsection that naive Bayes classifiers work well for spam detection.
+The directory
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/EmailData}{
+https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/EmailData}
+\\[0.2cm]
+contains 960 emails that are partitioned into four subdirectories:
+\begin{enumerate}
+\item \texttt{spam-train} contains 350 spam emails for training,
+\item \texttt{ham-train}  contains 350 non-spam emails for training,
+\item \texttt{spam-test}  contains 130 spam emails for testing,
+\item \texttt{ham-test}   contains 130 non-spam emails for testing.
+\end{enumerate}
+This data has been collected by Ion Androutsopoulos.  Figure \ref{fig:Spam-Detection.ipynb-1} on page
+\pageref{fig:Spam-Detection.ipynb-1} and \ref{fig:Spam-Detection.ipynb-2} on page
+\pageref{fig:Spam-Detection.ipynb-2} show parts of the notebook 
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Spam-Detection.ipynb}{
+https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Spam-Detection.ipynb}.
+\\[0.2cm]
+This notebook implements a naive Bayes classifier for spam detection.  We proceed to discuss the details of its
+implementation.
+
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    import os
+    import re
+    import numpy as np
+    import math
+
+    from collections import Counter
+
+    spam_dir_train = 'EmailData/spam-train/'
+    ham__dir_train = 'EmailData/ham-train/'
+    spam_dir_test  = 'EmailData/spam-test/'
+    ham__dir_test  = 'EmailData/ham-test/'
+    Directories    = [spam_dir_train, ham__dir_train, spam_dir_test, ham__dir_test]
+    
+    no_spam    = len(os.listdir(spam_dir_train))
+    no_ham     = len(os.listdir(ham__dir_train))
+    spam_prior = no_spam / (no_spam + no_ham)
+    ham__prior = no_ham  / (no_spam + no_ham)
+
+    def get_words(fn):
+        file = open(fn)
+        text = file.read()
+        text = text.lower()
+        return set(re.findall(r"[\w']+", text))
+
+    def read_all_files(Directories):
+        Words = Counter()
+        for directory in Directories:
+            for file_name in os.listdir(directory):
+                Words.update(get_words(directory + file_name))
+        return Words
+    
+    Word_Counter = read_all_files(Directories)
+    Common_Words = { w for w, _ in Word_Counter.most_common(2500) }
+
+    def get_common_words(fn):
+        return get_words(fn) & Common_Words
+
+    def count_commmon_words(directory):
+        Words = Counter()
+        for file_name in os.listdir(directory):
+            Words.update(get_common_words(directory + file_name))
+        return Words
+
+    spam_counter = count_commmon_words(spam_dir_train)
+    ham__counter = count_commmon_words(ham__dir_train)
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{I}}
+\label{fig:Spam-Detection.ipynb-1}
+\end{figure}
+
+\begin{enumerate}
+\item Initially we load a number of modules.  In addition to \texttt{numpy} and \texttt{math} these are
+      \begin{enumerate}
+      \item \texttt{os} to list the files in a directory.
+      \item \texttt{re} for regular expressions.
+      \end{enumerate}
+\item We import the module
+      \href{https://docs.python.org/2/library/collections.html#counter-objects}{\texttt{Counter}} from the package
+      \texttt{collections}.  
+      A \texttt{Counter} is a special type of a dictionary that is well suited for counting objects.
+\item We set some variables that would need to be adapted if this notebook were to used with a different set of
+      Emails.
+\item Using the function \texttt{listdir} from the module \texttt{os} we count the number of spam emails and
+      the number of ham emails in the corresponding directories.  These numbers are than used to compute the
+      prior probabilities for spam and ham.  In our example, the number of spam emails and the number of ham
+      emails are both 350.  Therefore, the prior probability of an email to be spam is $\frac{1}{2}$ and the
+      prior probability for ham is also $\frac{1}{2}$.
+\item The function $\texttt{get\_words}(\texttt{fn})$ takes a filename $\texttt{fn}$ as its argument.  
+      \begin{enumerate}
+      \item It reads the specified file as a string of text.  
+      \item This string of text is then converted to lower case.
+
+            In our case the conversion to lower case would not be necessary as the emails that we use
+            have been preprocessed and are already converted to lower case.
+      \item The text string is split into a list of words using the function \texttt{findall}
+            from the module \texttt{re}.  The regular expression
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            \texttt{r"[\symbol{92}w']+"}
+            \\[0.2cm]
+            specifies all strings that are made up of Unicode word characters and single quote characters.
+            The list of words returned by \texttt{findall} is then converted to a set and returned.
+      \end{enumerate}
+\item The function \texttt{read\_all\_files} reads all files contained in the directories that are stored in
+      the list \texttt{Directories}.  It returns a \texttt{Counter}.  For every word $w$ this counter contains the number of
+      those files that contain $w$.  
+      
+      Given a counter $C$ and a set $S$, the function $C.\texttt{update}(S)$ increments the count of every
+      element $x$ in $C$ that occurs in the set $S$.  For example, if
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $C = \mathtt{Counter}(\{\mathtt{a}\colon 1, \mathtt{b}\colon 2, \mathtt{c}\colon 3\})$, 
+      \\[0.2cm]
+      then the call $C.\mathtt{update}(\{\mathtt{a}, \mathtt{d}\})$ changes the counter $C$ such that afterwards
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $C = \mathtt{Counter}(\{\mathtt{a}\colon 2, \mathtt{b}\colon 2, \mathtt{c}\colon 3, \mathtt{d}\colon 1\})$.
+\item \texttt{Word\_Counter} is a \texttt{Counter} object that contains the counts of all words that occur in
+      any email.
+\item \texttt{Common\_Words} is list of the 2500 most common words occurring in all emails.
+\item The function $\texttt{get\_common\_words}(\texttt{fn})$ takes a filename $\texttt{fn}$ 
+      as its argument.  It reads the specified file and returns set of all words in \texttt{Common\_Words} that
+      are found in the specified file.  
+\item The function \texttt{count\_common\_words} takes a \texttt{directory} as its argument.  It returns a 
+      \texttt{Counter} that counts how often the words in \texttt{Common\_Words} occur in any of the files in
+      \texttt{directory}.
+\item We use this function to count how often the most common words occur in spam and ham emails.
+      These counts are stored in the dictionaries \texttt{Spam\_Counter} and \texttt{Ham\_\_Counter}.
+\end{enumerate}
+The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detection.ipynb-2} on page
+\pageref{fig:Spam-Detection.ipynb-2} and is discussed below.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = last,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    Spam_Probability = {}
+    Ham__Probability = {}
+    for w in Common_Words:
+        Spam_Probability[w] = (Spam_Counter[w] + 1) / (no_spam + 1) 
+        Ham__Probability[w] = (Ham__Counter[w] + 1) / (no_ham  + 1) 
+
+    def spam_probability(fn):
+        log_p_spam = 0.0
+        log_p_ham  = 0.0
+        words = get_common_words(fn)
+        for w in Common_Words:
+            if w in words:
+                log_p_spam += math.log(Spam_Probability[w])
+                log_p_ham  += math.log(Ham__Probability[w])
+            else:
+                log_p_spam += math.log(1.0 - Spam_Probability[w])
+                log_p_ham  += math.log(1.0 - Ham__Probability[w])
+        alpha = abs(min(log_p_spam, log_p_ham))
+        if alpha > 400: # avoid overflow
+            if log_p_spam < log_p_ham:
+                return 0
+            else:
+                return 1
+        p_spam = math.exp(log_p_spam + alpha) * spam_prior
+        p_ham  = math.exp(log_p_ham  + alpha) * ham__prior
+        return p_spam / (p_spam + p_ham)
+
+    def precission_recall(spam_dir, ham_dir):
+        TN = 0 # true negatives
+        FP = 0 # false positives
+        for email in os.listdir(spam_dir):
+            if spam_probability(spam_dir + email) > 0.5:
+                TN += 1
+            else:
+                FP += 1
+        FN = 0 # false negatives
+        TP = 0 # true positives
+        for email in os.listdir(ham_dir):
+            if spam_probability(ham_dir + email) > 0.5:
+                FN += 1
+            else:
+                TP += 1
+        precision = TP / (TP + FP)
+        recall    = TP / (TP + FN)
+        accuracy  = (TN + TP) / (TN + TP + FN + FP)
+        return precision, recall, accuracy
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{II}}
+\label{fig:Spam-Detection.ipynb-2}
+\end{figure}
+
+
+\begin{enumerate}
+\item Given the dictionaries \texttt{Spam\_Counter} and \texttt{Ham\_\_Counter}, we proceed to compute 
+      the conditional probabilities that one of the most common word occurs in a spam or ham email.
+      To this end we define the dictionaries \texttt{Spam\_Probability} and  \texttt{Ham\_\_Probability}.
+      For every word $w \in \mathtt{Common\_Words}$, we will have that
+      $\texttt{Spam\_Probability}[w]$ is the conditional probability that the word $w$ occurs in a spam email,
+      i.e.~we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{Spam\_Probability}[w] = P(w \mid C = \mathtt{spam})$.
+      \\[0.2cm]
+      A first attempt to estimate this probability is to approximate it as the fraction of all spam mails
+      containing $w$.  This would lead to the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds P(w \mid C = \mathtt{spam}) = \frac{\mathtt{Spam\_Counter}[w]}{N}$, \quad where $N$ is the number of
+      all spam training mails.
+      \\[0.2cm]
+      However, this would imply that if $\mathtt{Spam\_Counter}[w] = 0$ because the training set has no spam
+      mail that contains the word $w$, then the probability $P(w \mid C = \mathtt{spam})$ would be estimated as
+      $0$.  Clearly, this cannot be right:  Even if there is a word $w$ that has so far never occurred in a
+      spam mail, this does not mean that any mail containing this word is necessarily ham.
+
+      To get this right we use \href{https://en.wikipedia.org/wiki/Additive_smoothing}{Laplace smoothing}:
+      We assume that there is one additional spam email that contains every word $w$ from
+      \texttt{Common\_Words}.
+      With this assumption, the formula for the conditional probability $P(w \mid C = \mathtt{spam})$ is
+      changed as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds P(w \mid C = \mathtt{spam}) = \frac{\mathtt{Spam\_Counter}[w]+1}{N+1}$, 
+      \quad where $N$ is the number of all spam training mails.
+\item The function $\mathtt{spam\_probability}$ takes a filename and computes the probability that the email
+      contained in the given file is spam.
+
+      When implementing the formula 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\arg\max\limits_{C \in \mathcal{C}}  \left(\prod\limits_{i=1}^m P(f_i \;|\; C)\right) \cdot P(C) $
+      \\[0.2cm]
+      we have to be careful, because a naive implementation will evaluate the product
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\prod\limits_{i=1}^m P(f_i \;|\; C)$
+      \\[0.2cm]
+      as the number $0$ due to numerical underflow.  The trick to compute this product is to remember that
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $ \ln(a \cdot b) = \ln(a) + \ln(b) $
+      \\[0.2cm]
+      and therefore transform the product into a sum of logarithms:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $ \prod\limits_{i=1}^m P(f_i \;|\; C) = \exp\left(\alpha + \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; C)\bigr) \right) \cdot \exp(-\alpha)$
+      \\[0.2cm]
+      Here, the constant $\alpha$ has to chosen such that the application of the exponential function to the value
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $ \alpha + \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; C)\bigr) $
+      \\[0.2cm]
+      does not lead to an underflow error.
+\item In order to evalate the performance of this algorithm, we need to define two new concepts: \blue{precision} and 
+      \blue{recall}.  Let us call the ham emails the \blue{positives}, while the spam emails are called the
+      \blue{negatives}.  Then we define
+      \begin{enumerate}
+      \item \blue{true positives}: ham emails that are classified as ham,
+      \item \blue{false positives}: spam emails that are classified as ham,
+      \item \blue{true negatives}: spam emails that are classified as spam,
+      \item \blue{false negatives}: ham emails that are classified as spam.
+      \end{enumerate}
+      The \blue{precision} of the spam classifier is then defined as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $ \texttt{precision} = \frac{\mbox{number of true positives}}{\mbox{number of true positives} + \mbox{number of false positives}} $
+      \\[0.2cm]
+      Therefore, the \blue{precision} measures the percentage of the ham emails in the set of all emails that are classified as ham.
+      The \blue{recall} of the spam classifier is defined as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $ \texttt{recall} = \frac{\mbox{number of true positives}}{\mbox{number of true positives} + \mbox{number of false negatives}} $
+      \\[0.2cm]
+      Therefore, the \blue{recall} measures the percentage of those ham emails that are indeed classified as ham.  
+
+      Usually, it is very important that the recall is high as we don't want to loose a ham email because our classifier has incorrectly classified it as a spam email.  
+      On the other hand, having a high precision is not that important.  After all, if $10\%$ of the emails
+      offered to us as ham are, in fact, spam, we might tolerate this.  However, we
+      would certainly not tolerate loosing $10\%$ of our ham emails because they are
+      incorrectly specified as spam.       
+\end{enumerate}
+
+\subsection{Naive Bayes Classifier with Numerical Features}
+We can build a naive Bayes classifier even if some of our features are numerical.  Assume we have a feature $f$
+that is a numerical attribute.  The tricky part is to come up with a way to compute the conditional probability
+\\[0.2cm]
+\hspace*{1.3cm}
+$P(f = x \mid C)$
+\\[0.2cm]
+which is the conditional probability that the feature $f$ has the value $x$ if the object to classify has class
+$C$.  The idea is to assume that for every class $C$ the values of the feature $f$ have a Gaussian
+distribution.  Then we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds P(f = x \mid C) = \alpha \cdot \exp\left(-\frac{(x-\mu_C)^2}{2 \cdot \sigma_C^2}\right)$,
+\\[0.2cm]
+where $\mu_C$ is the \blue{mean value} of the feature $f$ for those objects that have class $C$, while
+$\sigma_C^2$ is the \blue{variance} of $f$ for objects of class $C$.
+Finally, $\alpha$ is a proportionality constant that can be computed from the
+fact that the sum of the  probabilities for all classes has to be $0$.
+
+\exercise
+We have already investigated the file
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/iris.csv}{iris.csv}
+in a previous exercise.   This time, your task is to implement a \blue{naive Bayes classifier} that is able to
+classify iris flowers.  You can achieve an accuracy that exceeds $95\%$.
+\eox
+
+\subsection{Example: Gender Estimation}
 In order to clarify the theory of naive Bayes classifiers, this section presents an example that shows how a
 naive Bayes classifier can be used.  In this example, our goal is to estimate the gender of a first name.  For
 example, the string ``Bianca'' is a female first name, while the string ``Michael'' is a male first name.
