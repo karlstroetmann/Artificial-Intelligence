@@ -2015,6 +2015,274 @@ The file
 contains a \blue{Jupyter notebook} that uses the \href{https://www.nltk.org}{Natural Language Toolkit}
 (\textsc{Nltk}) to implement a more sophisticated classifier for gender estimation.
 
+\section{Support Vector Machines}
+\blue{Support Vector Machines} (abbreviated as \textsc{SVM}s) had been in invented in 1963 by Vladimir
+Naumovich Vapnik and Alexey Yakovlevich Chervonenkis.   However, they only got widespread acceptance in 1995
+when Cortes and Vapnik published a paper explaining the \blue{kernel trick} \cite{cortes:1995}.  This section will introduce
+support vector machines.  In order to motivate \textsc{SVMs}, we first explain why logistic regression
+sometimes behaves suboptimally.  After that, we explain the mathematical theory of support vector machines.
+Finally, we show how we can use the support vector machines provided by SciKit Learn.
+
+\subsection{Non-Optimality of Logistic Regression}
+
+\begin{figure}[!th]
+\epsfig{file=Figures/largest-margin.pdf, scale=0.6}
+\caption{Three points to separate.}
+\label{fig:largest-margin.pdf}
+\end{figure}
+
+Figure \ref{fig:largest-margin.pdf} on page \pageref{fig:largest-margin.pdf} shows three points that belong to
+two different classes.  The blue dot at position $(3.5, 3.5)$ belongs to class $1$, while the two red crosses
+at position $(1,2)$ and $(2,1)$ belong to the class $-1$.  When we build a classifier to separate these two
+classes, we would ideally like the decision boundary to be the green line that passes through the points $(0,5)$ and
+$(5,0)$, since this line has the biggest distance from both classes.  Figure
+\ref{fig:largest-margin-logistic.pdf} on page \pageref{fig:largest-margin-logistic.pdf} shows how logistic regression
+deals with with this problem.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/largest-margin-logistic.pdf, scale=0.6}
+\caption{Three points separated by logistic regression.}
+\label{fig:largest-margin-logistic.pdf}
+\end{figure}
+
+A close inspection of Figure \ref{fig:largest-margin-logistic.pdf} shows that the decision boundary calculated
+by logistic regression is nearer to the blue dot than it is to the red crosses.  If we add a large number of
+blue points right next to the first blue points, the decision boundary found by logistic regression moves away
+from the blue points, as shown in Figure \ref{fig:largest-margin-more.pdf} on
+page \pageref{fig:largest-margin-more.pdf},
+then the decision boundary moves away from the first blue point that marks the margin of the two classes.
+These new blue points do not add real information, since they are further away from the red crosses than the
+first blue point.  Hence it is counter-intuitive that the addition of these points changes the decision boundary.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/largest-margin-more.pdf, scale=0.5}
+\caption{Points separated by logistic regression.}
+\label{fig:largest-margin-more.pdf}
+\end{figure}
+
+\subsection{The Mathematical Theory of Support Vector Machines}
+The main idea of support vector machines is to have a decision boundary that is \blue{as simple as possible} and that
+\blue{separates the different classes as much as possible}.  In two dimensions, the simplest decision boundary is a
+line.  In $n$ dimensions, the simplest decision boundary is an $(n-1)$-dimensional hyperplane.
+A hyperplane separates two different classes as much as possible if the distance to both classes is maximized.
+
+A hyperplane can be defined by a vector $\mathbf{w}$ that is perpendicular to the hyperplane together with a
+bias $b$:  A vector $\mathbf{x}$ is an element of the hyperplane if and only if
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w} \cdot \mathbf{x} + b = 0$.
+\\[0.2cm]
+In order for the decision boundary to separate the positive examples from the negative examples, we add the
+following two conditions.  If $\mathbf{x}^{(i)}$ is a positive example, then we don't just want that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w} \cdot \mathbf{x}^{(i)} + b \geq 0$.
+\\[0.2cm]
+Instead, we demand that 
+\begin{equation}
+  \label{eq:svm-1}
+  \mathbf{w} \cdot \mathbf{x}^{(i)} + b \geq 1
+\end{equation}
+holds.  Similarly, if $\mathbf{x}^{(i)}$ is a negative example, we want to have that
+\begin{equation}
+  \label{eq:svm-2}
+    \mathbf{w} \cdot \mathbf{x}^{(i)} + b \leq 1
+\end{equation}
+holds.  Let us define the the class of a positive example to be $+1$ and the
+class of a negative example to be $-1$.  Let $y_i$ denotes the class of example $\mathbf{x}^{(i)}$.
+Let us multiply equation \ref{eq:svm-1} by $y_i = 1$.  Unsurprisingly, we get
+\begin{equation}
+  \label{eq:svm-3}
+  y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b) \geq 1.
+\end{equation}
+Similarly, let us multiply equation \ref{eq:svm-1} by $y_i = -1$.  This time, things get more interesting
+as the direction of the inequality is flipped:
+\begin{equation}
+  \label{eq:svm-4}
+    y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b) \geq 1.
+\end{equation}
+Notice that the equations \ref{eq:svm-3} and \ref{eq:svm-4} are the same!  Hence
+inequation \ref{eq:svm-3} holds for both positive and negative examples.  We rewrite the last inequation as
+\begin{equation}
+  \label{eq:svm-5}
+    y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b\bigr) - 1 \geq 0.
+\end{equation}
+Those vectors $\mathbf{x}^{(i)}$ that satisfy the equality
+\\[0.2cm]
+\hspace*{1.3cm}
+$y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b\bigr) - 1 = 0$
+\\[0.2cm]
+are at the \blue{margins} of their respective classes and are called \blue{support vectors}.  These vectors
+have the smallest distance to the hyperplane defined by $\mathbf{w}$ and $b$.  Let us compute the width of the
+separation of the positive class from the negative class if the decision boundary is given by the  equation
+$\mathbf{w} \cdot \mathbf{x} + b = 0$.  To this end, assume that $\mathbf{x}_+$ is a positive support vector,
+i.e.~we have
+\begin{equation}
+  \label{eq:svm-6}
+  \mathbf{w} \cdot \mathbf{x}_+ + b = 1,  
+\end{equation}
+while $\mathbf{x}_-$ is a negative support vector and therefore satisfies
+\begin{equation}
+  \label{eq:svm-7}
+  \mathbf{w} \cdot \mathbf{x}_- + b = -1.  
+\end{equation}
+Since the vector $\mathbf{w}$ is perpendicular to the hyperplane that defines the decision boundary, the $\mathtt{width}$
+between the positive and the negative example is given by the projection $\mathbf{x}_+ - \mathbf{x}_-$ on the normalized vector $\mathbf{w}$:
+\begin{equation}
+  \label{eq:svm-8}
+ \mathtt{width} = \bigl(\mathbf{x}_+ - \mathbf{x}_-\bigr) \cdot \frac{\mathbf{w}}{||\mathbf{w}||} =
+\bigl(\mathbf{x}_+ \cdot \mathbf{w} - \mathbf{x}_-\cdot \mathbf{w}\bigr) \cdot \frac{1}{||\mathbf{w}||}   
+\end{equation}
+If we subtract equation \ref{eq:svm-7} from equation \ref{eq:svm-6}, the constant $b$ cancels and we are left
+with 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{x}_+ \cdot \mathbf{w} - \mathbf{x}_- \cdot \mathbf{w} = 2$.  
+\\[0.2cm]
+Substituting this equation into equation \ref{eq:svm-8} yields the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathtt{width} = \frac{2}{||\mathbf{w}||}$.
+\\[0.2cm]
+Hence in order to maximize the width of the separation of the two classes from the decision boundary we have to
+minimize the size of the vector $\textbf{w}$ subject to the constraints given in equation \ref{eq:svm-5}.  Now minimizing $\mathbf{w}$
+is the same as minimizing
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \frac{1}{2} \cdot ||\mathbf{w}||^2 = \frac{1}{2} \cdot \sum\limits_{k=1}^d w_k^2$,
+\\[0.2cm]
+where $d$ is the number of features.
+Determining a minimum of a function that is subject to a set of constraints requires us to use 
+\href{https://en.wikipedia.org/wiki/Lagrange_multiplier}{Lagrange multipliers}.  Assuming our training set 
+has the form $\{ \mathbf{x}^{(1)}, \cdots \mathbf{x}^{(n)} \}$,
+we define the \blue{Lagrangian} $\mathcal{L}(\mathbf{w}, b, \alpha_1, \cdots, \alpha_n)$ as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathcal{L}(\mathbf{w}, b, \alpha_1, \cdots, \alpha_n) := 
+ \frac{1}{2} \cdot ||\mathbf{w}||^2 - 
+\sum\limits_{i=1}^n \alpha_i \cdot \bigl(y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1\bigr).
+$ 
+\\[0.2cm]
+The sum in this Lagrangian sums over all training examples although not all training examples have to satisfy
+the constraint
+\\[0.2cm]
+\hspace*{1.3cm}
+$y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 = 0$.
+\\[0.2cm]
+This is not a problem because for those $i \in \{1,\cdots,\}$ where we only have the inequality
+\\[0.2cm]
+\hspace*{1.3cm}
+$y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 \geq 0$
+\\[0.2cm]
+we can just assume that the corresponding Lagrange multiplier $\alpha_i$ is  equal to $0$.
+A necessary condition for the values of $\mathbf{w}$, $b$ and $\alpha_i$ that minimize $\mathcal{L}$ is that
+the partial derivatives of $\mathcal{L}$ with respect to $w_k$, $b$ and $\alpha_i$ are all $0$.  Let us first compute the partial derivative of $\mathcal{L}$
+with respect to $w_k$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \frac{\partial \mathcal{L}}{\partial w_k} = 
+ w_k - \sum\limits_{i=1}^n \alpha_i \cdot y_i \cdot x^{(i)}_k = 0
+$
+\\[0.2cm]
+Therefore, we must have that
+\\[0.2cm]
+\hspace*{1.3cm}
+$w_k = \sum\limits_{i=1}^n \alpha_i \cdot y_i \cdot x^{(i)}_k $ 
+\\[0.2cm]
+and this implies
+\begin{equation}
+  \label{eq:svm-9}
+  \mathbf{w} = \sum\limits_{i=1}^n \alpha_i \cdot y_i \cdot \mathbf{x}^{(i)}
+\end{equation}
+Therefore the vector $\mathbf{w}$ is a linear combination of the \blue{support vectors}, where a vector
+$\mathbf{x}^{(i)}$ is a support vector iff  $\alpha_i \not= 0$.  Hence a support vector $\mathbf{x}^{(i)}$ 
+must satisfy the equality
+\\[0.2cm]
+\hspace*{1.3cm}
+$y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 = 0$.
+\\[0.2cm]
+Next, let us compute the partial derivative of $\mathcal{L}$ with respect to $b$. We have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \frac{\partial \mathcal{L}}{\partial b} = - \sum\limits_{i=1}^n \alpha_i \cdot y_i = 0$
+\\[0.2cm]
+which implies that
+\begin{equation}
+  \label{eq:svm-10}
+  \sum\limits_{i=1}^n \alpha_i \cdot y_i = 0  
+\end{equation}
+Let us rewrite the Lagrangian by substituting $\mathbf{w}$ with the right hand side of equation \ref{eq:svm-9}:
+\\[0.2cm]
+\hspace*{0.3cm}
+$
+\begin{array}[t]{lcl}
+  \mathcal{L} & = &
+                    \ds \frac{1}{2} \cdot \left(\sum\limits_{i=1}^n \alpha_i \cdot y_i \cdot \mathbf{x}^{(i)}\right)
+                    \cdot \left(\sum\limits_{j=1}^n \alpha_j \cdot y_j \cdot \mathbf{x}^{(j)}\right) 
+               - \sum\limits_{i=1}^n \alpha_i \cdot \left( y_i \cdot\left( \mathbf{x}^{(i)} \cdot
+                    \left(\sum\limits_{j=1}^n \alpha_j \cdot y_j \cdot \mathbf{x}^{(j)} \right) + b\right) -1 \right) \\[0.6cm]
+              & = &
+                    \ds \frac{1}{2} \cdot \sum\limits_{i=1}^n \sum\limits_{j=1}^n \alpha_i \cdot \alpha_j \cdot
+                    y_i \cdot y_j \cdot \bigl(\mathbf{x}^{(i)} \cdot \mathbf{x}^{(j)}\bigr) 
+                    - \sum\limits_{i=1}^n \sum\limits_{j=1}^n \alpha_i \cdot \alpha_j \cdot y_i \cdot y_j \cdot
+                     \bigl( \mathbf{x}^{(i)} \cdot \mathbf{x}^{(j)} \bigr) - b \cdot\underbrace{\sum\limits_{i=1}^n \alpha_i \cdot y_i}_{=0}
+                    + \sum\limits_{i=1}^n \alpha_i \\[0.6cm]
+              & = & \ds \sum\limits_{i=1}^n \alpha_i - \frac{1}{2} \cdot \sum\limits_{i=1}^n
+                    \sum\limits_{j=1}^n \alpha_i \cdot \alpha_j \cdot y_i \cdot y_j \cdot
+                    \bigl(\mathbf{x}^{(i)} \cdot \mathbf{x}^{(j)}\bigr)
+\end{array}
+$
+\\[0.2cm]
+Now, the \blue{crucial observation} is the following:  The Lagrangian $\mathcal{L}$ only depends on the dot
+products $\mathbf{x}^{(i)} \cdot \mathbf{x}^{(j)}$.  Why is this a big deal?  Often, a set of data point is not
+linearly separable in the given space.  However, it might be possible to transform the feature vectors
+$\mathbf{x} \in \mathbb{R}^d$ into some higher dimensional space $\mathbb{R}^h$ where $h > d$ and the tow
+classes are separable.  Concretely, it is sometimes possible to define a transformation function
+\\[0.2cm]
+\hspace*{1.3cm}
+$\Phi: \mathbb{R}^d \rightarrow \mathbb{R}^h$
+\\[0.2cm]
+such that the set of transformed data points
+$\bigl\{\Phi(\mathbf{x}^{(1)}), \cdots, \Phi(\mathbf{x}^{(n)})\bigr\}$ is linearly separable.
+The question then is to find such a transformation $\Phi$.  Here is the punch line:  As the Lagrangian does
+only depend on dot products, it is sufficient to define the transformed dot products
+\\[0.2cm]
+\hspace*{1.3cm}
+$\Phi\bigl(\mathbf{x}\bigr) \cdot \Phi\bigl(\mathbf{y}\bigr) $.
+\\[0.2cm]
+This is done with the help of so called \blue{kernel functions}:  We define the dot product
+$\Phi\bigl(\mathbf{x}\bigr) \cdot \Phi\bigl(\mathbf{y}\bigr)$ as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\Phi\bigl(\mathbf{x}\bigr) \cdot \Phi\bigl(\mathbf{y}\bigr) := k(\mathbf{x}, \mathbf{y})$
+\\[0.2cm]
+where $k$ is called a \blue{kernel function}.  There are two kernel functions that are quite popular:
+\begin{enumerate}
+\item \blue{Polynomial kernels} have the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $k(\mathbf{x}, \mathbf{y}) = (\mathbf{x} \cdot \mathbf{y} + c)^n$,
+      \\[0.2cm]
+      where $n$ is a natural number called the \blue{degree} of the kernel.
+      The number $c$ is a hyperparameter that is often set to $1$.
+\item \blue{Gaussian kernels} have the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds k(\mathbf{x}, \mathbf{y}) = \exp\left( \frac{||\mathbf{x}-\mathbf{y}||^2}{2 \cdot \sigma^2}\right)$.
+      \\[0.2cm]
+      Here, $\sigma$ is a hyperparameter.  
+\end{enumerate}
+Using a kernel function to simulate a parameter transformation is known as the \blue{kernel trick}.    
+Experience has shown that the kernel functions given above often enable us to transform a data set into a space where the
+data set is linearly separable.  Figure \ref{fig:strange-data.pdf} on page \pageref{fig:strange-data.pdf} shows
+a set of point that is separable using a support vector machine with a Gaussian kernel.
+
+\begin{figure}[!th]
+\epsfig{file=Figures/strange-data.pdf, scale=0.6}
+\caption{Points separated by a support vector machine.}
+\label{fig:strange-data.pdf}
+\end{figure}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "artificial-intelligence"
