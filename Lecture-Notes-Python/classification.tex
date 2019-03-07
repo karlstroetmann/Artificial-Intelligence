@@ -1887,18 +1887,17 @@ $C$.  The idea is to assume that for every class $C$ the values of the feature $
 distribution.  Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds P(f = x \mid C) = \alpha \cdot \exp\left(-\frac{(x-\mu_C)^2}{2 \cdot \sigma_C^2}\right)$,
+$\ds P(f = x \mid C) = \frac{1}{\sqrt{2\cdot\pi\;} \cdot \sigma_{f,C}} \cdot \exp\left(-\frac{\bigl(x-\mu_{f,C}\bigr)^2}{2 \cdot \sigma_{f,C}^2}\right)$,
 \\[0.2cm]
-where $\mu_C$ is the \blue{mean value} of the feature $f$ for those objects that have class $C$, while
-$\sigma_C^2$ is the \blue{variance} of $f$ for objects of class $C$.
-Finally, $\alpha$ is a proportionality constant that can be computed from the
-fact that the sum of the  probabilities for all classes has to be $0$.
+where $\mu_{f,C}$ is the \blue{mean value} of the feature $f$ for those objects that have class $C$, while
+$\sigma_{f,C}^2$ is the \blue{variance} of the feature $f$ for objects of class $C$.
+
 
 \exercise
 We have already investigated the file
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/iris.csv}{iris.csv}
 in a previous exercise.   This time, your task is to implement a \blue{naive Bayes classifier} that is able to
-classify iris flowers.  You can achieve an accuracy that exceeds $94\%$.
+classify iris flowers.  You can achieve an accuracy that exceeds $95\%$.
 \eox
 
 \subsection{Example: Gender Estimation}
