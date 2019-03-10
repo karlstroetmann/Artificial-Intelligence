@@ -5,14 +5,14 @@ networks:
 \begin{enumerate}
 \item The current system used by Google to \href{https://translate.google.com}{automatically translate} web
       pages is called 
-      ``\href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine
-        Translation}''
-      and,  as the name suggests, is based on neural networks. 
-\item \href{https://www.deepl.com/translator}{DeepL} is another translator that is based on deep neural networks.      
+      ``\href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine Translation}''
+      and, as the name suggests, is based on neural networks. 
+\item \href{https://www.deepl.com/translator}{DeepL} is another translator that is based on neural networks.      
 \item \href{https://de.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
       \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Ke_Jie}{beaten} 
       beaten the world champion \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie} in the game of
-      \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}.
+      \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}. AlphaGo has been succeeded by
+      \href{https://en.wikipedia.org/wiki/AlphaZero}{AlphaZero}, which is even stronger than AlphaGo.
 \item \href{https://www.tensorflow.org/tutorials/image_recognition}{Image recognition} is best done via neural networks.
 \item \href{https://en.wikipedia.org/wiki/Autonomous_car}{Autonomous driving} makes heavy use of neural networks.
 \end{enumerate}
@@ -20,7 +20,7 @@ The list given above is far from being complete.  In this chapter, we will only 
 \href{https://en.wikipedia.org/wiki/Feedforward_neural_network}{feedforward neural networks}.  Although recently both 
 \href{https://en.wikipedia.org/wiki/Convolutional_neural_network}{convolutional neural networks} and
 \href{https://en.wikipedia.org/wiki/Recurrent_neural_network}{recurrent neural networks} have gotten a lot of
-attention, these type of neural networks are more difficult to train and are therefore beyond the scope of this
+attention, these type of neural networks are more difficult to understand and are therefore beyond the scope of this
 introduction.  The rest of this chapter is strongly influenced by the online book 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -40,9 +40,10 @@ We proceed to give an overview of the content of this chapter.
       the predictions of a neural network on a training set.  In order to minimize this cost function using
       gradient descent, we have to compute the \blue{gradient} of the cost function with respect to the weights of the
       neural network.  The algorithm which is used to compute this gradient is called \blue{back propagation}.
-\item In order to efficiently find the minimum of he cost function, we need an improved version of
+\item In order to find the minimum of the cost function efficiently, we need an improved version of
       \blue{gradient descent}.  This improved version is known as \blue{stochastic gradient descent}.
-\item Next, we implement a simple neural network that is able to recognize digits.
+\item After having covered the theory, we implement a simple neural network that is able to recognize
+      handwritten digits.
 \item Finally, we discuss \href{https://www.tensorflow.org}{TensorFlow}, which is an open source software
       library for machine learning in general and neural networks in particular.
 \end{enumerate}
@@ -71,6 +72,13 @@ on page \pageref{def:sigmoid} as follows:
 \hspace*{1.3cm}
 $\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
 \\[0.2cm]
+Another useful activation function is the so called
+\href{https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}{ReLU function}, which is defined as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$a(t) = \max(0, x)$.
+\\[0.2cm]
+The abbreviation ReLU is short for \blue{rectified linear unit}.
 The function modelling the neuron can be written more explicitly using index notation.  If
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -87,7 +95,7 @@ is the input vector, then we have
 $\ds \mathbf{x} \mapsto S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
 \\[0.2cm]
 If we compare this function to a similar function appearing in the last chapter, you will notice 
-that a neuron works just like a classifier in logistic regression.  The only difference is that the bias $b$
+that a single neuron works just like a classifier in logistic regression.  The only difference is that the bias $b$
 is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
 feature vector $\mathbf{x}$ was always equal to $1$.  This assumption enabled us to incorporate the bias $b$ into the
 weight vector $\mathbf{w}$.
@@ -111,7 +119,8 @@ a small neural network with two hidden layers.  Including the input layer it has
 is given by the list $[3, 6, 4, 2]$.  A larger neural network with three hidden layers is shown in Figure
 \ref{fig:nn2.pdf} on page \pageref{fig:nn2.pdf}.  I have written a small Jupyter notebook that can be used to
 draw diagrams of this kind. This notebook is available at
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/NN-Architecture.ipynb}{Python/NN-Architecture.ipynb}. 
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/NN-Architecture.ipynb}{NN-Architecture.ipynb}
+in the \texttt{Python} subdirectory of my GitHub repository for this lecture. 
 
 
 \begin{figure}[!h]
@@ -122,7 +131,7 @@ draw diagrams of this kind. This notebook is available at
 \end{figure}
 
 
-If the topology of a neural network is  $[m(1), \cdots, m(L)]$, then  the \blue{input dimension} is defined as
+If the topology of a neural network is  $[m(1), \cdots, m(L)]$, the \blue{input dimension} is defined as
 $m(1)$.  Similarly, the \blue{output dimension} is defined as $m(L)$.
 The feedforward neural networks discussed in this chapter are \blue{fully connected}:  Every node in the $l$-th
 layer is connected to every node in the $(l+1)$-th layer via a \blue{weight}. 
@@ -144,7 +153,7 @@ the \blue{bias vector}
 \hspace*{1.3cm}
 $\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle^\top$.
 \\[0.2cm]
-Then, the \blue{activation} of the $j$-th neuron
+The \blue{activation} of the $j$-th neuron
 in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 \begin{enumerate}
 \item For the input layer we have
@@ -168,8 +177,8 @@ The \blue{activation vector} of layer $l$ is defined as
 \hspace*{1.3cm}
 $\mathbf{a}^{(l)}(\mathbf{x}) := \langle a_1^{(l)}(\mathbf{x}), \cdots, a_{m(l)}^{(l)}(\mathbf{x}) \rangle^\top$.
 \\[0.2cm]
-Using vector notation, the feed forward equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) can be
-written as follows:
+Using vector notation, the \blue{feed forward equations} (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) can be
+rewritten as follows:
 \begin{align}
   \label{eq:feedforward1v}
   \mathbf{a}^{(1)}(\mathbf{x}) & := \mathbf{x},
@@ -273,7 +282,8 @@ find this minimum\footnote{
   gradient \emph{descent}.  
 }.
 Unfortunately, the cost function $C$ when regarded as a function of the weights and biases has many local 
-minima.  Hence, all we can hope for is to find a local minimum that is good enough.
+minima.  Hence, in practical applications all we can hope for is to find a local minimum that is good enough
+for the goal that we want to achieve.
 
 
 \section{Backpropagation}
@@ -330,7 +340,7 @@ $\ds\varepsilon_j^{(l)} := \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z
 that is we regard $C_{\mathbf{x}, \mathbf{y}}$ as a function of the $z_j^{(l)}$ and take the partial
 derivatives according to these variables.  
 Note that $\varepsilon_j^{(l)}$ does depend on both $\mathbf{x}$ and $\mathbf{y}$.  
-We call  $\varepsilon_j^{(l)}$ the \blue{error in the $j$th neuron in the $l$th layer}. 
+We call  $\varepsilon_j^{(l)}$ the \blue{error in the $j$-th neuron in the $l$-th layer}. 
 Since the notation would
 get too cumbersome if we would write this as $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard the training
 example $\langle\mathbf{x}, \mathbf{y}\rangle$ as fixed for now.  Next, the quantities $\varepsilon_j^{(l)}$ are combined into a vector:
@@ -511,7 +521,7 @@ with respect to both the biases and the weights.  The equations (\ref{eq:BP1}) a
 show how the vectors $\boldsymbol{\varepsilon}^{(l)}$ can be computed.  An implementation of backpropagation should use the vectorized
 versions of these equations since this is more efficient for two reasons:
 \begin{enumerate}
-\item Interpreted languages like \textsl{Python} or \textsl{Octave} take much more time to
+\item Interpreted languages like \textsl{Python} take much more time to
       execute a loop than to execute a simple matrix-vector multiplication.  The reason is that in a loop, in
       addition to executing the statement a given number of times, the statement has to be interpreted 
       every time it is executed.
@@ -519,7 +529,7 @@ versions of these equations since this is more efficient for two reasons:
       operations to highly optimized function that have been written in more efficient low level languages like
       \texttt{C} or assembler.  Often, these optimized function are able to utilize all cores of the processor
       simultaneously.  Furthermore, sometimes these optimized function can even use the graphical coprocessor
-      which, because of parallelization,  can do a matrix multiplication much faster than the floating unit of
+      which, because of parallelization,  can do a matrix multiplication much faster than the floating point unit of
       a conventional processor.
 \end{enumerate}
 
