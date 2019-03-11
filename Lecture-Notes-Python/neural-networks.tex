@@ -158,14 +158,14 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 \begin{enumerate}
 \item For the input layer we have
       \begin{equation}
-        \label{eq:feedforward1}
+        \label{eq:FF1}
        a^{(1)}_j(\mathbf{x}) := x_j.
        \tag{FF1}
       \end{equation}
       To put it differently, the input vector $\mathbf{x}$ is the activation of the input nodes.
 \item For all other layers we have
       \begin{equation}
-         \label{eq:feedforward2}
+         \label{eq:FF2}
          a_j^{(l)}(\mathbf{x}) := 
              S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a_k^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
         \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
@@ -177,13 +177,13 @@ The \blue{activation vector} of layer $l$ is defined as
 \hspace*{1.3cm}
 $\mathbf{a}^{(l)}(\mathbf{x}) := \langle a_1^{(l)}(\mathbf{x}), \cdots, a_{m(l)}^{(l)}(\mathbf{x}) \rangle^\top$.
 \\[0.2cm]
-Using vector notation, the \blue{feed forward equations} (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) can be
+Using vector notation, the \blue{feed forward equations} (\ref{eq:FF1}) and (\ref{eq:FF2}) can be
 rewritten as follows:
 \begin{align}
-  \label{eq:feedforward1v}
+  \label{eq:FF1v}
   \mathbf{a}^{(1)}(\mathbf{x}) & := \mathbf{x},
   \tag{FF1v} \\ 
-  \label{eq:feedforward2v}
+  \label{eq:FF2v}
   \mathbf{a}^{(l)}(\mathbf{x}) & := 
   S\Bigl( W^{(l)} \cdot \mathbf{a}^{(l-1)}(\mathbf{x})\bigr) + \mathbf{b}^{(l)}\Bigr)
   \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
@@ -197,7 +197,7 @@ $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as
 \hspace*{1.3cm}
 $\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle^\top = \mathbf{a}^{(L)}(\mathbf{x})$.
 \\[0.2cm]
-Note that the equations (\ref{eq:feedforward1}) and (\ref{eq:feedforward2}) describe how information propagates
+Note that the equations (\ref{eq:FF1}) and (\ref{eq:FF2}) describe how information propagates
 through the neural network: 
 \begin{enumerate}
 \item Initially, the input vector $\mathbf{x}$ is given and stored in the input layer of the neural network:
@@ -330,7 +330,7 @@ i.e.~we have
 \hspace*{1.3cm}
 $a_j^{(l)} = S\Bigl(z_j^{(l)}\Bigr)$.
 \\[0.2cm]
-We will later see that the partial derivatives of the cost function $C_{\mathbf{x}, \mathbf{y}}$ with respect to both the weights
+Later, we will see that the partial derivatives of the cost function $C_{\mathbf{x}, \mathbf{y}}$ with respect to both the weights
 $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$ can be computed easily if we first compute the partial derivatives
 of $C_{\mathbf{x}, \mathbf{y}}$ with respect to $z_j^{(l)}$.  Therefore we define
 \\[0.2cm]
@@ -472,10 +472,10 @@ In vectorized notation, this equation takes the following form:
 \end{equation}
 Here, $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ denotes the gradient of $C_{\mathbf{x},
   \mathbf{y}}$ with respect to the bias vector $\mathbf{b}^{(l)}$.
-Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the weights:
+Finally, we can compute the  partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the weights $w_{j,k}^{(l)}$:
 \begin{equation}
   \label{eq:BP4}
-  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}} = a_k^{(l-1)} \cdot \varepsilon_j^{(l)}
+  \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}} = \varepsilon_j^{(l)} \cdot a_k^{(l-1)} 
   \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$, $ k \in \{1,\cdots,m(l-1)\}$, and $l \in \{2, \cdots,L\}$.}
   \tag{BP4}
 \end{equation}
@@ -537,32 +537,11 @@ versions of these equations since this is more efficient for two reasons:
 Since we are living in a time of fake news and alternative facts where
 \href{https://www.theguardian.com/us-news/2018/aug/19/truth-isnt-truth-rudy-giuliani-trump-alternative-facts-orwellian}{truth isn't truth} 
 and not even a president can be trusted,  you should not lightly believe the validity of the backpropagation equations.  Instead, 
-we have to prove the backpropagation equations.  Although the proof is a bit tedious, it should be accessible: The
-\href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule}  of
-\href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariate calculus} is all that is needed to  
-understand why the backpropagation equations hold.  As a reminder, the chain rule in multivariate calculus
-works as follows: Assume that the functions $f = f(\mathbf{y})$ and $g = g(\mathbf{x})$ where $\mathbf{y} \in \mathbb{R}^k$,
-$\mathbf{x} \in \mathbb{R}^n$,  $g(\mathbf{x}) \in \mathbb{R}^k$, and $f(\mathbf{y}) \in \mathbb{R}$ are
-differentiable\footnote{
-  If this text had been written in German, I would have said that $f$ and $g$ are ``\blue{total differenzierbar}''.
-}.  So we have
-\\[0.2cm]
-\hspace*{1.3cm}
-$f: \mathbb{R}^k \rightarrow \mathbb{R}$ \quad and \quad
-$g: \mathbb{R}^n \rightarrow \mathbb{R}^k$. 
-\\[0.2cm]
-If the function $h: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as
-\\[0.2cm]
-\hspace*{1.3cm}
-$h(\mathbf{x}) := f\bigl(g(\mathbf{x})\bigr)$ \quad for all $\mathbf{x} \in \mathbb{R}^n$,
-\\[0.2cm]
-then the partial derivative of $h$ with respect to $x_j$ satisfies
-\\[0.2cm]
-\hspace*{1.3cm}
-$\ds \frac{\partial h}{\partial x_j} = 
- \sum\limits_{i=1}^k \frac{\partial f}{\partial y_i} \cdot \frac{\partial g_i}{\partial x_j}
-$.
-\\[0.2cm]
+we have to \textbf{prove} the backpropagation equations.  Although the proof is a bit tedious, it should be
+accessible: We only need the \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} from calculus and the 
+\href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} from \href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariate calculus}.
+
+Lets us start with the proof of equations \ref{eq:BP1}.
 Remember that we have defined the numbers $\varepsilon_j^{(l)}$ as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -579,7 +558,7 @@ in terms of the activation $\mathbf{a}^{(L)}(\mathbf{x})$ as
 \hspace*{1.3cm}
 $\ds C_{\mathbf{x}, \mathbf{y}} = \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2$
 \\[0.2cm]
-and we have $\mathbf{a}^{(L)}(\mathbf{x}) = S\bigl(\mathbf{z}^{(L)}\bigr)$, the chain rule tells us that $\varepsilon_j^{(L)}$ 
+and we have $\mathbf{a}^{(L)}(\mathbf{x}) = S\bigl(\mathbf{z}^{(L)}\bigr)$, the chain rule of calculus tells us that $\varepsilon_j^{(L)}$ 
 can be computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -613,7 +592,35 @@ $
 \end{array}
 $
 \\[0.2cm]
-Thus we have proven equation \ref{eq:BP1}.  Next, let us compute $\varepsilon_j^{(l)}$ for $l < L$.  We have
+Thus we have proven equation \ref{eq:BP1}.  
+
+We proceed to prove equation \ref{eq:BP2}.  To this end we compute $\varepsilon_j^{(l)}$ for $l < L$.  
+This time, we need the chain rule of multivariate calculus.  As a reminder, the chain rule in multivariate calculus
+works as follows: Assume that the functions
+\\[0.2cm]
+\hspace*{1.3cm}
+$f: \mathbb{R}^k \rightarrow \mathbb{R}$ \quad and \quad
+$g: \mathbb{R}^n \rightarrow \mathbb{R}^k$. 
+\\[0.2cm]
+are differentiable\footnote{
+  If this text had been written in German, I would have said that $f$ and $g$ are ``\blue{total differenzierbar}''.
+}.  
+If the function $h: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$h(\mathbf{x}) := f\bigl(g(\mathbf{x})\bigr)$ \quad for all $\mathbf{x} \in \mathbb{R}^n$,
+\\[0.2cm]
+then the partial derivative of $h$ with respect to $x_j$ satisfies
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \frac{\partial h}{\partial x_j} = 
+ \sum\limits_{i=1}^k \frac{\partial f}{\partial y_i} \cdot \frac{\partial g_i}{\partial x_j}
+$.
+\\[0.2cm]
+
+
+
+We have
 \\[0.2cm]
 \hspace*{1.3cm}
 $
@@ -622,7 +629,7 @@ $
 & = & \ds \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(l)}} \\[0.5cm]
 & = & \ds \sum\limits_{i=1}^{m(l+1)} 
       \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_i^{(l+1)}} \cdot \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}
-    & \mbox{using the chain rule}
+    & \mbox{using the chain rule of multivariate calculus}
       \\[0.5cm]
 & = & \ds \sum\limits_{i=1}^{m(l+1)} 
       \varepsilon_i^{(l+1)} \cdot \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}
@@ -669,8 +676,9 @@ $
 \end{array}
 $
 \\[0.2cm]
-Therefore, we have now proven equation (\ref{eq:BP2}).  We proceed to prove equation (\ref{eq:BP4}).  
+Therefore, we have now proven equation (\ref{eq:BP2}).  
 
+We proceed to prove equation (\ref{eq:BP4}).  
 According to the chain rule we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -698,7 +706,7 @@ Combining these equations we arrive at
 \\[0.2cm]
 \hspace*{1.3cm}
 $ \ds\frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}}  =  
-  \varepsilon_j^{(l)} \cdot a_k^{(l-1)}
+  a_k^{(l-1)} \cdot \varepsilon_j^{(l)} 
 $. 
 \\[0.2cm]
 Therefore, equation (\ref{eq:BP4}) has been verified.
@@ -776,370 +784,16 @@ Figure \ref{fig:mnist_imgs} shows the first 18 images.
 \end{figure}
 
 We will use the first $60\,000$ of these images to train a neural network, while the remaining $10\,000$ images
-will be used to check the accuracy of the trained network.  Since \textsc{SetlX} lacks the ability to read
-image files, the images have been converted into two large \texttt{.csv} files.  You can download the $10\,000$
-images from the test set at
+will be used to check the accuracy of the trained network.  As a matter of convenience, the images have been
+converted into one large pickled zip files.  You can download this file at the following address:
 \\[0.2cm]
-\hspace*{-0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist_test.csv.gz}{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist\_test.csv.gz}
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/Python/mnist.pkl.gz}{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/Python/mnist.pkl.gz}
 \\[0.2cm]
-while the images from the training set are found at
-\\[0.2cm]
-\hspace*{-0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist_train.csv.gz}{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/SetlX/Neural-Networks/mnist\_train.csv.gz}
-\\[0.2cm]
-Note that these files are compressed.  In order to train the neural network with these files, these files first
-have to be decompressed.  Figure \ref{fig:nn-loader.stlx} on page \pageref{fig:nn-loader.stlx} contains the
-code that is used to read these files.
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-    load_data := procedure(train_length, test_length) {
-        test_data  := parse_csv("mnist_test.csv" , test_length);
-        train_data := parse_csv("mnist_train.csv", train_length);
-        train_data := [ [image, encode(label)] : [image, label] in train_data];
-        return [train_data, test_data];
-    };
-    parse_csv := procedure(file, length) {
-        Pairs := [0] * length;
-        csv := readFile(file);
-        for (i in [1..length]) {
-            Line  := split(csv[i], ",");
-            label := int(Line[1]);                               
-            image := la_vector([double(x)/255: x in Line[2..]]); 
-            Pairs[i] := [image, label];
-        }
-        return Pairs;
-    };
-    encode := procedure(digit) {  
-        result          := la_vector([0] * 10);
-        result[digit+1] := 1; // digit zero has index 1
-        return result;
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{\textsc{SetlX} code to load the image files.}
-\label{fig:nn-loader.stlx}
-\end{figure}
-
-The function that is called to load both the training data and the test data is the function \texttt{load\_data}.
-\begin{enumerate}
-\item The function \texttt{load\_data} receives two parameters.
-      \begin{enumerate}[(a)]
-      \item \texttt{train\_length} is the number of images used for training.
-      \item \texttt{test\_length} is the number of images used for training.
-      \end{enumerate}
-      Usually, we will have $\texttt{train\_length} = 60\,000$ and $\texttt{test\_length} = 10\,000$.
-      However, since training the neural network takes about 15 minutes to complete when all data are used,
-      these parameters can be set to smaller values to speed up experiments.
-
-      On completion, the function \texttt{load\_data} will return a pair of the form
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{[train\_data, test\_data]}.
-\item Both the training data and the test data are read via the function \texttt{parse\_csv}.
-      This function returns a list of pairs.  The first component of these pairs is an image of a handwritten
-      digit, while the second component is a number $d$ from the set $\{0,1,2,3,4,5,6,7,8,9\}$.
-      This number specifies the digit that is shown in the image.
-\item For the training data, the number $d$ specifying the digit needs to be encoded as a vector of dimension 10.
-      The idea is that this vector contains nine occurrences of the digit \texttt{0} and one occurrence of the
-      digit \texttt{1}.  The position of the digit \texttt{1} is given as $d+1$.  For example, $d=0$ is encoded
-      as the vector
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\langle 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 \rangle^\top$,
-      \\[0.2cm]
-      while $d=3$ is encoded as
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\langle 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 \rangle^\top$.
-      \\[0.2cm]
-      The encoding of digits as vectors is done via the function \texttt{encode}.
-\end{enumerate}
-The function \texttt{parse\_csv} is responsible for reading a given \texttt{.csv} file.
-\begin{enumerate}
-\item This function is called with two parameters.
-      \begin{enumerate}[(a)]
-      \item \texttt{file} is the name of the \texttt{.csv} file that is to be read.
-      \item \texttt{length} specifies the number of lines that should be read.
-      \end{enumerate}
-      The \texttt{.csv} files containing the images of handwritten digits contain one image per row.
-      Every row contains 785 numbers.
-      \begin{enumerate}[(a)]
-      \item The first number specifies the digit that is shown in the image.
-      \item The remaining $784= 28 \times 28$ numbers specify the darkness of the pixels.
-            These numbers are elements of the set $\{0,\cdots,255\}$.  The number $0$ specifies a pixel that is
-            white, while the number $255$ specifies a pixel that is black.  Numbers in between are interpreted
-            as grey values.
-      \end{enumerate}
-      The function returns a list of pairs of the form
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{[image, label]}
-      \\[0.2cm]
-      where \texttt{image} is a vector of dimension $784$, while \texttt{label} is a digit from the set
-      $\{0,\cdots,9\}$.
-\item The function \texttt{readFile} returns a list of strings.  Each string in this list corresponds to
-      one line in the \texttt{.csv} file and therefore it corresponds to one image and the corresponding label.
-\item The function \texttt{split} splits the string at the occurrences of the commas and returns a list of
-      strings of length 785.
-\item The first entry of this list is the digit that is shown in the image.  This entry is converted to
-      an integer and is then stored in the variable \texttt{label}.
-\item The remaining 784 entries are the pixels of the image encoded in this line.  The grey values of these
-      pixels are elements from the set $\{0,\cdots,255\}$.  In order to improve the convergence speed of stochastic
-      gradient descent, these values are transformed into real values in the range $[0,1]$. 
-\item The image and its label are combined into a pair and stored in the list \texttt{Pairs}.
-      After \texttt{length} lines have been read, the list \texttt{Pairs} is returned.
-\end{enumerate}
-The function \texttt{encode} is used to encode a digit into a vector.  First, the function creates a vector
-\texttt{result} of dimension $10$ that is initialized to all zeros.  Then, it inserts a \texttt{1} at index
-$\texttt{digit}+1$ and returns the resulting vector.  This encode technique is called
-\href{https://en.wikipedia.org/wiki/One-hot}{one-hot encoding}.  We use one hot encoding since the output layer
-of the neural network that we are going to construct contains $10$ output nodes, one node to recognize each
-digit.  The first output node will recognize the digit ``0'', the second output node will recognize the digit
-``1'', and in general the $i$-th output node will recognize the $i$+1-th digit.
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                  ]
-    rndVector := length   |-> la_vector([random() - 0.5: i in [1..length]]);
-    my_rnd    := []       |-> (random() - 1/2) / 28; // 28 = sqrt(784)
-    rndMatrix := [rs, cs] |->
-                 la_matrix([[my_rnd(): c in [1..cs]]: r in [1..rs]]);
-    sigmoid   := [x] |-> la_vector([1 / (1 + exp(-a)) : a in x]);
-    sigmoid_prime := procedure(x) {
-        s := sigmoid(x); 
-        return la_vector([a * (1 - a): a in s]);
-    };
-    hadamard := [x, y] |-> la_vector([x[i] * y[i]: i in [1 .. #x]]);
-    argmax := procedure(x) {
-        [maxValue, maxIndex] := [x[1], 1];
-        for (i in [2 .. #x] | x[i] > maxValue) {
-            [maxValue, maxIndex] := [x[i], i];
-        }
-        return maxIndex;
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{Auxiliary functions.}
-\label{fig:nn.stlx:auxiliary}
-\end{figure}
-Figure \ref{fig:nn.stlx:auxiliary} on page \pageref{fig:nn.stlx:auxiliary} show some auxiliary functions.
-\begin{enumerate}
-\item \texttt{rndVector} creates a vector of random numbers that are uniformly distributed in the
-      interval $[-0.5, 0.5]$.  The argument \texttt{length} specifies the dimension of this vector.
-
-      This function is used later to initialize the biases of the neurons of the neural network.
-\item \texttt{my\_rnd} returns a random number that is uniformly distributed in the interval
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\ds \biggl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\biggr]$. 
-      \\[0.2cm]
-      This function is used to initialize the weights of the neurons.  The reason for the upper bound of
-      $\frac{1}{28}$ is the fact that we have to avoid \blue{saturation} of the neurons.  A neuron is said to
-      be saturated if the input argument $a$ to the logistic function $S$ of the neuron is either very low or very
-      high.  In that case, if $a$ is small, $S(a)$ would be very small, while if $a$ is big, $S(a)$ would be
-      very close to $1$.  The reason is that
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\ds\lim\limits_{a\rightarrow-\infty} S(a) = 0$ \quad and \quad       $\ds\lim\limits_{a\rightarrow\infty} S(a) = 1$.
-      \\[0.2cm]
-      In any case, the derivative of the logistic function, which has the form
-      $S'(a)=S(a)\cdot\bigl(1-S(a)\bigr)$ would be close to $0$ because either $S(a)$ is small or $1-S(a)$ is
-      small.  But then the gradient that is used in gradient descent would be very small also and hence
-      gradient descent would require a very large number of iterations to converge.  In order to prevent this
-      from happening we need to ensure that the initial inputs of the logistic functions are are not to big.
-      In the hidden layer, the weight matrices have a size of $28 \times 28 = 784$. If we add $n$ random
-      numbers that are uniformly distributed in the interval $[-1,1]$, the expected value is $0$ but the
-      variance is $784$ times the variance of a random variable that is $\mathrm{Unif}(-1,1)$.  As the standard
-      deviation is the square root of the variance and $28 = \sqrt{784}$, choosing the weights from the interval
-      $\bigl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\bigr]$ will ensure that the
-      neurons are not saturated when initialized.
-\item $\texttt{rndMatrix}(\texttt{rs}, \texttt{cs})$ creates a matrix of \texttt{rs} rows and \texttt{cs} columns of random
-      numbers uniformly distributed in the interval
-      $\bigl[-\frac{1}{2}\cdot\frac{1}{28},\; \frac{1}{2}\cdot\frac{1}{28}\bigr]$.
-\item $\texttt{sigmoid}(\texttt{x})$ takes a vector \texttt{x} and computes the element-wise sigmoid function of
-      this vector.
-\item $\texttt{sigmoid\_prime}(\texttt{x})$ takes a vector \texttt{x} and computes the element-wise derivative
-      of the sigmoid function of this vector.  Remember that the derivative $S'(t)$ of the sigmoid function $S(t)$
-      satisfies the equation
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $S'(t) = S(t) \cdot \bigl(1 - S(t)\bigr)$.
-\end{enumerate}
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-    class network(inputSize, hiddenSize, outputSize) {
-        mInputSize  := inputSize;   //        784
-        mHiddenSize := hiddenSize;  //  30 .. 100
-        mOutputSize := outputSize;  //         10
-        mBiasesH  := rndVector(mHiddenSize);  // biases hidden layer
-        mBiasesO  := rndVector(mOutputSize);  // biases output layer
-        mWeightsH := rndMatrix(mHiddenSize, mInputSize);  // weights hidden layer
-        mWeightsO := rndMatrix(mOutputSize, mHiddenSize); // weights output layer
-        ...
-    }
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{The constructor of the class $\mathtt{network}$.}
-\label{fig:nn.stlx:network}
-\end{figure}
-Figure \ref{fig:nn.stlx} on page \pageref{fig:nn.stlx} shows the outline of the class \texttt{network} and its
-constructor.  This class represents a neural network with one hidden layer.
-\begin{enumerate}
-\item The argument \texttt{inputSize} specifies the number of input nodes.  The neural network for the
-      recognition of handwritten digits has 784 inputs.  These inputs are the grey values of the $28 \times 28$
-      pixels that constitute the image of the handwritten digit.
-\item The argument \texttt{hiddenSize} specifies the number of neurons in the hidden layer.  We assume that
-      there is only one hidden layer.  I have experimented with 30 neurons, 60 neurons and a hundred neurons.
-      \begin{enumerate}[(a)]
-      \item For 30 neurons, the computation took about 15 minutes and the trained neural network achieved an
-            accuracy of $96.3\symbol{37}$.
-      \item For 60 neurons, the computation took 25 minutes and the network achieved an accuracy of
-            $97.3\symbol{37}$.
-      \item If there are 100 neurons in the hidden layer, the computation took 41 minutes and achieved an
-            accuracy of $97.9\symbol{37}$.
-
-            For 100 neurons, the number of weights in the hidden layer is $784 \cdot 100 = 78\,400$.
-            Therefore, the number of weights is greater than the number of training examples.  Hence,
-            we should really use \href{http://neuralnetworksanddeeplearning.com/chap3.html}{regularization} in
-            order to further increase the accuracy of the network.
-      \end{enumerate}
-\item The argument \texttt{mOutputSize} specifies the number of output neurons.  For the neural network
-      recognizing handwritten digits this number is $10$ since there is an output neuron for every digit.
-\item Besides storing the topology of the neural network, the class \texttt{network} stores the biases and
-      weights of all the neurons.  The biases and weights are initialized as random numbers.  As explained when
-      discussing the auxiliary functions in Figure \ref{fig:nn.stlx:auxiliary} on page
-      \pageref{fig:nn.stlx:auxiliary} we have to take care that these random numbers are not to big for
-      otherwise the neurons would \blue{saturate} and the learning would be very slow.
-\end{enumerate}
-
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-    sgd := procedure(training_data, epochs, mbs, eta, test_data) {
-        n_test := #test_data;         
-        n      := #training_data;
-        for (j in [1 .. epochs]) {
-            training_data := shuffle(training_data);
-            mini_batches  := [training_data[k .. k+mbs-1]: k in [1, mbs..n]];
-            for (mini_batch in mini_batches) {
-                update_mini_batch(mini_batch, eta);
-            }
-            print("Epoch $j$: $evaluate(test_data)$ / $n_test$");
-        }
-    };
-    update_mini_batch := procedure(mini_batch, eta) {
-        nabla_BH := 0 * mBiasesH;  // gradient biases hidden layer
-        nabla_BO := 0 * mBiasesO;  // gradient biases output layer
-        nabla_WH := 0 * mWeightsH; // gradient weights hidden layer
-        nabla_WO := 0 * mWeightsO; // gradient weights output layer
-        for([x,y] in mini_batch) {
-            [dltNbl_BH, dltNbl_BO, dltNbl_WH, dltNbl_WO] := backprop(x, y);
-            nabla_BH += dltNbl_BH;
-            nabla_BO += dltNbl_BO;
-            nabla_WH += dltNbl_WH;
-            nabla_WO += dltNbl_WO;
-        }        
-        alpha := eta / #mini_batch;
-        this.mBiasesH  -= alpha * nabla_BH;
-        this.mBiasesO  -= alpha * nabla_BO;
-        this.mWeightsH -= alpha * nabla_WH;
-        this.mWeightsO -= alpha * nabla_WO;
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{Stochastic gradient descent.}
-\label{fig:nn.stlx:sgd}
-\end{figure}
-Figure \ref{fig:nn.stlx:sgd} on page \pageref{fig:nn.stlx:sgd} shows the method \texttt{sgd} of the class
-\texttt{network}.  This method implements stochastic gradient descent.   It receives 5 arguments.
-\begin{enumerate}
-\item \texttt{training\_data} is a list of pairs of the form $[\mathbf{x}_i, \mathbf{y}_i]$.
-      Here, $\mathbf{x}_i$ is a vector of dimension $784$.  This vector contains the pixels of an image showing
-      one of the handwritten digits from the training set.  $\mathbf{y}_i$ is the one-hot encoding of the digit
-      that is shown in the image $\mathbf{x}_i$.
-\item \texttt{epochs} is the number of iterations of gradient descent.  In order to train the neural network to
-      recognize handwritten digits, we will use 30 iterations.
-\item \texttt{mbs} is the size of the mini-batches that are used in stochastic gradient descent.
-      I have achieved the fastest learning when I have used a mini-batch size of 10.  Using a mini-batch size
-      of 20 was sightly slower, but this parameter seems to be quite uncritical.
-\item \texttt{eta} is the learning rate.
-\item \texttt{test\_data} is the list of test data.  These data are only used to check the accuracy, they are
-      not used to determine the weights or biases.
-\end{enumerate}
-The implementation of stochastic gradient descent executes a \texttt{for}-loop that runs \texttt{epoch} number
-of times.  At the beginning of each iteration, the training data are shuffled randomly.  Next, the data is
-chopped up into chunks of size \texttt{mbs}.  These chunks are called \blue{mini-batches}.  The inner
-\texttt{for}-loop iterates over all mini-batches and executes one step of gradient descent that only uses the
-data form the mini-batch.  At the end of each iteration of the outer \texttt{for}-loop, the accuracy of the
-current version of the neural net is printed.
-
-The method \texttt{update\_mini\_batch} performs one step of gradient descent for the data from one mini-batch.
-It receives two arguments.
-\begin{enumerate}
-\item \texttt{mini\_batch} is the list of training data that constitute one mini-batch.
-\item \texttt{eta} is the \blue{learning rate}.
-\end{enumerate}
-The implementation of \texttt{update\_mini\_batch} works as follows:
-\begin{enumerate}
-\item First, we initialize the vectors \texttt{nabla\_BH}, \texttt{nabla\_BO} and the matrices
-      \texttt{nabla\_WH}, \texttt{nabla\_WO} to contain only zeros.
-      \begin{enumerate}[(a)]
-      \item \texttt{nabla\_BH} will store the gradient of the bias vector of the hidden layer.
-      \item \texttt{nabla\_BO} will store the gradient of the bias vector of the output layer.
-      \item \texttt{nabla\_WH} will store the gradient of the weight matrix of the hidden layer.
-      \item \texttt{nabla\_WO} will store the gradient of the weight matrix of the output layer.
-      \end{enumerate}
-\item Next, we iterate of all training examples in the mini-batch and for every training example
-      \texttt{[x,y]} we compute the contribution of this training example to the gradients of the
-      cost function $C$, i.e.~we compute
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ \quad and \quad  $\nabla_{W^{(l)}} C_{\mathbf{x},
-        \mathbf{y}}$ 
-      \\[0.2cm]
-      for the hidden layer and the output layer.  These gradients are computed by the function
-      \texttt{backprop}.
-\item Finally, the bias vectors and the weight matrices are updated according to the learning rate and the
-      computed gradients.
-\end{enumerate}
+We will next describe a \textsl{Python} program that loads these images, trains a neural network on it, and
+finally evaluates the accuracy of the network.  The program is shown in the Figures
+\ref{fig:Digit-Regocnition.ipynb-1}, \ref{fig:Digit-Regocnition.ipynb-2}, \ref{fig:Digit-Regocnition.ipynb-3},
+and \ref{fig:Digit-Regocnition.ipynb-4}.
 
 
 \begin{figure}[!ht]
@@ -1153,25 +807,331 @@ The implementation of \texttt{update\_mini\_batch} works as follows:
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    backprop := procedure(x, y) {
-        ZH := mWeightsH * x + mBiasesH;
-        AH := sigmoid(ZH);
-        ZO := mWeightsO * AH + mBiasesO;
-        AO := sigmoid(ZO);
-        epsilonO := hadamard(AO - y, sigmoid_prime(ZO));
-        nabla_BO := epsilonO;
-        nabla_WO := la_matrix(epsilonO) * la_matrix(AH)!;
-        epsilonH := hadamard(mWeightsO! * epsilonO, sigmoid_prime(ZH));
-        nabla_BH := epsilonH;
-        nabla_WH := la_matrix(epsilonH) * la_matrix(x)!;
-        return [nabla_BH, nabla_BO, nabla_WH, nabla_WO];
-    };
+    import gzip
+    import pickle
+    import numpy             as np
+    import matplotlib.pyplot as plt
+    import random
+
+    def vectorized_result(d):
+        e    = np.zeros((10, 1), dtype=np.float32)
+        e[d] = 1.0
+        return e
+
+    def load_data():
+        with gzip.open('mnist.pkl.gz', 'rb') as f:
+            train, validate, test = pickle.load(f, encoding="latin1")
+        training_inputs   = [np.reshape(x, (784, 1)) for x in train[0]]
+        training_results  = [vectorized_result(y) for y in train[1]]
+        training_data     = zip(training_inputs, training_results)
+        validation_inputs = [np.reshape(x, (784, 1)) for x in validate[0]]
+        validation_data   = zip(validation_inputs, validate[1])
+        test_inputs       = [np.reshape(x, (784, 1)) for x in test[0]]
+        test_data         = zip(test_inputs, test[1])
+        training_data     = list(training_data)
+        validation_data   = list(validation_data)
+        test_data         = list(test_data)
+        return (training_data, validation_data, test_data)        
+
+    (training_data, validation_data, test_data) = load_data()
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{Implementation of backpropagation.}
-\label{fig:nn.stlx}
+\caption{Code to load the image files.}
+\label{fig:Digit-Regocnition.ipynb-1}
 \end{figure}
-The method \texttt{backprop} computes the gradients of the bias vectors and the weight matrices with respect to
+The code on Figure \ref{fig:Digit-Regocnition.ipynb-1} on page \pageref{fig:Digit-Regocnition.ipynb-1} shows the
+code to load the image files.  We discuss it line by line.
+\begin{enumerate}
+\item Since the images are have been compressed as a \texttt{.gz} file, we need the module \texttt{gzip} to
+      uncompress the file.
+\item The format that has been used to store the images is called
+      \href{https://docs.python.org/3.6/library/pickle.html}{pickle}.
+      This a binary format that can be used to serialize \textsl{Python} objects into binary strings.  These
+      strings can then be stored as files and later be used to restore the corresponding \textsl{Python} objects.  In order
+      to read pickled objects, we import the module \texttt{pickle}.
+\item The images of the handwritten digits that we are going to import have a size of $28 \times 28$ pixels.
+      In this program, we will store the images as \texttt{numpy} arrays of size $28 \cdot 28 = 784$.
+\item In order to be able to display these images, we import \texttt{matplotlib}.
+\item Every image of a handwritten character is associated with a number $d \in \{0, \cdots, 0\}$.
+      We need to transform these numbers into the expected output of our neural network.  This neural network
+      will have 10 output nodes corresponding to these digits.  The $k$-th output node will be one
+      if the neural network has recognized the digit $k$, while all other output nodes will be $0$.
+
+      The function $\texttt{vectorized\_result}(d)$ takes a digit $d \in \{0,\cdots,9\}$ and returns a
+      \texttt{numpy} array \texttt{e} of shape $(10, 1)$ such that $\texttt{e}[d][0]=1$ and $\texttt{e}[j][0]=0$ for
+      $j\not=d$.  For example, we have
+      \begin{verbatim}
+      vectorized_result(2) = array([[0.],
+                                    [0.],
+                                    [1.],
+                                    [0.],
+                                    [0.],
+                                    [0.],
+                                    [0.],
+                                    [0.],
+                                    [0.],
+                                    [0.]], dtype=float32)
+      \end{verbatim}
+      \vspace*{-0.5cm}
+      
+      For reasons of efficiency we will only use \blue{single precision floating point numbers}. 
+\item The function \texttt{load\_data} reads the file \texttt{mnist.pkl.gz}, uncompresses it,
+      and returns three lists:
+      \begin{enumerate}
+      \item \texttt{training\_data} stores the first $50\,000$ images,
+      \item \texttt{validation\_data} holds $10\,000$ images that can be used for the validation of
+            hyper-parameters,   
+      \item \texttt{test\_data} holds the remaining $10\,000$ images.
+      \end{enumerate}
+      The images are stored as pairs $(x,y)$: $x$ is a \texttt{numyp} array of shape $(784,1)$ and $y$ is a
+      \texttt{numpy} array of shape $(10, 1)$.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = last,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                  ]
+    def rndMatrix(rows, cols):
+        return np.random.randn(rows, cols) / np.sqrt(cols)
+
+    def sigmoid(x):
+        return 1.0 / (1.0 + np.exp(-x))    
+    
+    def sigmoid_prime(x):
+        s = sigmoid(x)
+        return s * (1 - s)
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The constructor of the class $\mathtt{network}$.}
+\label{fig:Digit-Regocnition.ipynb-2}
+\end{figure}
+
+Figure \ref{fig:Digit-Regocnition.ipynb-2} on page \pageref{fig:Digit-Regocnition.ipynb-2}
+shows the implementation of three utility functions.
+\begin{enumerate}
+\item The function $\mathtt{rndMatrix}(r, c)$ creates a matrix of shape $r, c)$ that is filled with
+      random numbers.  These numbers have Gaussian distribution with mean $0$ and variance
+      $1/r$.  This function is used to initialize the weight matrices.  It is important that not all weights
+      are initialized to the same number, for otherwise they would stay the same and then the different neurons
+      would effectively all calculate the same feature instead of different features.  It is also important
+      that the weights are not to big for otherwise the associated neurons would \blue{saturate} and their
+      learning would be very slow.
+\item The function $\texttt{sigmoid}(x)$ computes the sigmoid function.  If $x$ is a number,
+      $\texttt{sigmoid}(x)$ computes
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds S(x) := \frac{1}{1 + \texttt{exp}(-x)}$
+      \\[0.2cm]
+      If $\mathbf{x}$ is a vector of the form $\mathbf{x} = (x_1,\cdots, x_n)^\top$, we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $S(\mathbf{x}) = \bigl(S(x_1), \cdots, S(x_n)\bigr)^\top$.
+\item The function $\texttt{sigmoid\_prime}(x)$ computes the derivative of the sigmoid function.
+      The implementation is based on the equation:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $S'(x) = S(x) \cdot \bigl(1 - S(x)\bigr)$
+      \\[0.2cm]
+      $x$ can either be a number or a vector.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = last,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    class Network(object):
+        def __init__(self, hiddenSize):
+            self.mInputSize  = 28 * 28
+            self.mHiddenSize = hiddenSize
+            self.mOutputSize = 10
+            self.mBiasesH    = np.zeros((self.mHiddenSize, 1))   
+            self.mBiasesO    = np.zeros((self.mOutputSize, 1))   
+            self.mWeightsH   = rndMatrix(self.mHiddenSize, self.mInputSize)  
+            self.mWeightsO   = rndMatrix(self.mOutputSize, self.mHiddenSize) 
+    
+    def feedforward(self, x):
+        AH = sigmoid(self.mWeightsH @ x  + self.mBiasesH) 
+        AO = sigmoid(self.mWeightsO @ AH + self.mBiasesO) 
+        return AO        
+    
+    def sgd(self, training_data, epochs, mbs, eta, test_data):
+        n_test = len(test_data)
+        n      = len(training_data)
+        for j in range(epochs):
+            random.shuffle(training_data)
+            mini_batches = [training_data[k : k+mbs] for k in range(0, n, mbs)]
+            for mini_batch in mini_batches:
+                self.update_mini_batch(mini_batch, eta)    
+            print('Epoch %2d: %d / %d' % (j, self.evaluate(test_data), n_test))
+            
+    def update_mini_batch(self, mini_batch, eta):
+        nabla_BH = np.zeros((self.mHiddenSize, 1))  
+        nabla_BO = np.zeros((self.mOutputSize, 1))  
+        nabla_WH = np.zeros((self.mHiddenSize, self.mInputSize))
+        nabla_WO = np.zeros((self.mOutputSize, self.mHiddenSize))
+        for x, y in mini_batch:
+            dltNbl_BH, dltNbl_BO, dltNbl_WH, dltNbl_WO = self.backprop(x, y)
+            nabla_BH += dltNbl_BH
+            nabla_BO += dltNbl_BO
+            nabla_WH += dltNbl_WH
+            nabla_WO += dltNbl_WO      
+        alpha = eta / len(mini_batch)
+        self.mBiasesH  -= alpha * nabla_BH
+        self.mBiasesO  -= alpha * nabla_BO
+        self.mWeightsH -= alpha * nabla_WH
+        self.mWeightsO -= alpha * nabla_WO
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The class \texttt{Network}, part \texttt{I}.}
+\label{fig:Digit-Regocnition.ipynb-3}
+\end{figure}
+
+
+Figure \ref{fig:Digit-Regocnition.ipynb-3} shows the first part of the class \texttt{Network}.  This class
+represents a neural network with one hidden layer. 
+\begin{enumerate}
+\item The member variable \texttt{mInputSize} specifies the number of input nodes.  The neural network for the
+      recognition of handwritten digits has 784 inputs.  These inputs are the grey values of the $28 \times 28$
+      pixels that constitute the image of the handwritten digit.
+\item The member variable \texttt{mHiddenSize}, specifies the number of neurons in the hidden layer.  We assume that
+      there is only one hidden layer.  I have experimented with 30 neurons, 60 neurons and $100$ neurons.
+      \begin{enumerate}[(a)]
+      \item For 30 neurons, the computation took about 1 minutes and 39 seconds and the trained neural network achieved an
+            accuracy of $96.0\symbol{37}$.
+      \item For 60 neurons, the computation took 2 minutes and 15 seconds the network achieved an accuracy of
+            $97.2\symbol{37}$.
+      \item If there are 100 neurons in the hidden layer, the computation took 3 minutes and 16 seconds and achieved an
+            accuracy of $97.8\symbol{37}$.
+
+            For 100 neurons, the number of weights in the hidden layer is $784 \cdot 100 = 78\,400$.
+            Therefore, the number of weights is greater than the number of training examples.  Hence,
+            we should really use \href{http://neuralnetworksanddeeplearning.com/chap3.html}{regularization} in
+            order to prevent over-fitting and increase the accuracy of the network.
+      \end{enumerate}
+\item The argument \texttt{mOutputSize} specifies the number of output neurons.  For the neural network
+      recognizing handwritten digits this number is $10$ since there is an output neuron for every digit.
+\item Besides storing the topology of the neural network, the class \texttt{Network} stores the biases and
+      weights of all the neurons.  The weights are initialized as random numbers.
+      \begin{enumerate}
+      \item \texttt{mBiasesH} stores the bias vector of the hidden layer.
+      \item \texttt{mBiasesO} stores the bias vector of the output layer.
+      \item \texttt{mWeightsH} stores the weight matrix $W^{(2)}$, which specifies the weights connecting the
+            input layer with the hidden layer.
+      \item \texttt{mWeightsH} stores the weight matrix $W^{(3)}$, which specifies the weights connecting the
+            hidden layer with the output layer.
+      \end{enumerate}
+\item The function \texttt{feedforward} receives an image $\mathbf{x}$ of a digit that is stored as a vector of
+      shape $(784,1)$ and computes the output of the
+      neural network for this image.  The code is a straightforward implementation of the equations (\ref{eq:FF1}) and (\ref{eq:FF2}).
+\item The method \texttt{sgd} implements \blue{stochastic gradient descent}.   It receives 5 arguments.
+      \begin{enumerate}
+      \item \texttt{training\_data} is a list of pairs of the form $\bigl(\mathbf{x}^{(i)}, \mathbf{y}^{(i)}\bigr)$.
+            Here, $\mathbf{x}^{(i)}$ is a vector of dimension $784$.  This vector contains the pixels of an image showing
+            one of the handwritten digits from the training set.  $\mathbf{y}^{(i)}$ is the \blue{one-hot encoding} of the digit
+            that is shown in the image $\mathbf{x}^{(i)}$.
+      \item \texttt{epochs} is the number of iterations of gradient descent.  In order to train the neural network to
+            recognize handwritten digits, we will use 30 iterations.
+      \item \texttt{mbs} is the size of the mini-batches that are used in stochastic gradient descent.
+            I have achieved the fastest learning when I have used a mini-batch size of 10.  Using a mini-batch size
+            of 20 was slightly slower, but this parameter seems to be quite uncritical.
+      \item \texttt{eta} is the learning rate.
+      \item \texttt{test\_data} is the list of test data.  These data are only used to check the accuracy, they are
+            not used to determine the weights or biases.
+      \end{enumerate}
+      The implementation of stochastic gradient descent executes a \texttt{for}-loop that runs \texttt{epoch} number
+      of times.  At the beginning of each iteration, the training data are shuffled randomly.  Next, the data is
+      chopped up into chunks of size \texttt{mbs}.  These chunks are called \blue{mini-batches}.  The inner
+      \texttt{for}-loop iterates over all mini-batches and executes one step of gradient descent that only uses the
+      data from the mini-batch.  At the end of each iteration of the outer \texttt{for}-loop, the accuracy of the
+      current version of the neural net is printed.
+\item The method \texttt{update\_mini\_batch} performs one step of gradient descent for the data from one mini-batch.
+      It receives two arguments.
+      \begin{enumerate}
+      \item \texttt{mini\_batch} is the list of training data that constitute one mini-batch.
+      \item \texttt{eta} is the \blue{learning rate}.
+      \end{enumerate}
+      The implementation of \texttt{update\_mini\_batch} works as follows:
+      \begin{enumerate}
+      \item First, we initialize the vectors \texttt{nabla\_BH}, \texttt{nabla\_BO} and the matrices
+            \texttt{nabla\_WH}, \texttt{nabla\_WO} to contain only zeros.
+            \begin{enumerate}[(a)]
+            \item \texttt{nabla\_BH} will store the gradient of the bias vector of the hidden layer.
+            \item \texttt{nabla\_BO} will store the gradient of the bias vector of the output layer.
+            \item \texttt{nabla\_WH} will store the gradient of the weight matrix of the hidden layer.
+            \item \texttt{nabla\_WO} will store the gradient of the weight matrix of the output layer.
+            \end{enumerate}
+      \item Next, we iterate of all training examples in the mini-batch and for every training example
+            \texttt{[x,y]} we compute the contribution of this training example to the gradients of the
+            cost function $C$, i.e.~we compute
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $\nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}}$ \quad and \quad  $\nabla_{W^{(l)}} C_{\mathbf{x},
+              \mathbf{y}}$ 
+            \\[0.2cm]
+            for the hidden layer and the output layer.  These gradients are computed by the function
+            \texttt{backprop}.
+      \item Finally, the bias vectors and the weight matrices are updated according to the learning rate and the
+            computed gradients.
+      \end{enumerate}
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = last,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                  ]
+        def backprop(self, x, y):
+            # feedforward pass
+            ZH = self.mWeightsH @ x  + self.mBiasesH
+            AH = sigmoid(ZH)
+            ZO = self.mWeightsO @ AH + self.mBiasesO
+            AO = sigmoid(ZO)
+            # backwards pass, output layer
+            epsilonO = (AO - y) # * sigmoid_prime(ZO)
+            nabla_BO = epsilonO
+            nabla_WO = epsilonO @ AH.transpose()
+            # backwards pass, hidden layer
+            epsilonH = (self.mWeightsO.transpose() @ epsilonO) * sigmoid_prime(ZH)
+            nabla_BH = epsilonH
+            nabla_WH = epsilonH @ x.transpose()
+            return (nabla_BH, nabla_BO, nabla_WH, nabla_WO)
+        
+        def evaluate(self, test_data):
+            test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
+            return sum(int(y1 == y2) for (y1, y2) in test_results)
+        # end of class Network
+            
+    net = Network(60)
+    net.sgd(training_data, 30, 20, 0.3, test_data)   
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The class \texttt{Network}, part \texttt{II}.}
+\label{fig:Digit-Regocnition.ipynb-4}
+\end{figure}
+
+
+The method \texttt{backprop} that is shown in Figure \ref{fig:Digit-Regocnition.ipynb-4} computes the gradients
+of the bias vectors and the weight matrices with respect to 
 a single training example $\langle \texttt{x}, \texttt{y} \rangle$.  The implementation of \texttt{backprop}
 proceeds as follows:
 \begin{enumerate}
@@ -1224,79 +1184,17 @@ proceeds as follows:
 \item Finally, the gradients of the cost function with respect to the bias
       vector and the weight matrix of the hidden layer are computed.  This is completely to the computation of
       the corresponding gradients of the output layer.
+\item The method \texttt{evaluate} is used to evaluate the accuracy of the neural network on the test data.
+\item Finally, we see how the computation can be started by creating an object of class \texttt{Network} and
+      then calling the method \texttt{sgd}.
 \end{enumerate}
+The program discussed in this section is available as a jupyter notebook at the following address:
+\\[0.2cm]
+\hspace*{0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Digit-Recognition.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Digit-Recognition.ipynb}.
 
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    feedforward := procedure(x) {
-        AH := sigmoid(mWeightsH * x  + mBiasesH);
-        AO := sigmoid(mWeightsO * AH + mBiasesO);
-        return AO;
-    };
-    evaluate := procedure(test_data) {
-        test_results := [[argmax(feedforward(x)) - 1, y]: [x, y] in test_data];
-        return #[1 : [a, b] in test_results | a == b];
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{Evaluation functions.}
-\label{fig:nn.stlx:evaluation}
-\end{figure}
 
-Figure \ref{fig:nn.stlx:evaluation} shows the implementation of the function \texttt{feedforward}.  This
-function receives an image $\mathbf{x}$ stored a s a vector of dimension $784$ and computes the output of the
-neural network for this image.  The code is a straightforward implementation of the equations (FF1) and (FF2).
-The function \texttt{evaluate} is used to evaluate the accuracy of the neural network on the test data.
-Finally, Figure \ref{fig:nn-start.stlx} shows how the computation can be started.
 
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    load("nn-loader.stlx");
-    load("nn.stlx");
-    
-    main := procedure() {
-        resetRandom();
-        train_length := 60000;
-        test_length  := 10000;
-        inputSize    :=   784;
-        hiddenSize   :=    30;
-        outputSize   :=    10;
-        epochs       :=    30;
-        mbs          :=    10;
-        eta          :=   1.0;
-        [training_data, test_data] := load_data(train_length, test_length);
-        print("Create Network");
-        net := network(inputSize, hiddenSize, outputSize);
-        print("Start SGD");
-        start := now();
-        net.sgd(training_data, epochs, mbs, eta, test_data);
-        stop := now();
-        print("Time needed:\t $stop - start$");
-    };
-    main();
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{How to start the training.}
-\label{fig:nn-start.stlx}
-\end{figure}
 
 
 %%% Local Variables:
