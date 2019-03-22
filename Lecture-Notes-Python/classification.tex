@@ -369,7 +369,16 @@ Next, let us discuss the implementation of gradient ascent.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[linenos]{python}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                mathescape,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     def findMaximum(f, gradF, start, eps):
         x     = start
         fx    = f(x)
@@ -773,15 +782,24 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \begin{figure}[!ht]
 \centering
 
-\begin{minted}[linenos]{python}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+                escapeinside  = ||
+              ]{python}
     import numpy as np
     
+    # compute |$\displaystyle \frac{1}{1+\exp(-t)}$|
     def sigmoid(t):
-        "compute the sigmoid of t"
         return 1.0 / (1.0 + np.exp(-t))
     
+    # compute |$\displaystyle \ln\left(\frac{1}{1+\exp(-t)}\right)$| and avoid overflow
     def logSigmoid(t):
-        "compute the sigmoid of t, avoid overflow"
         if t > -100:
             return -np.log(1.0 + np.exp(-t))
         else:
@@ -918,7 +936,15 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \begin{figure}[!ht]
 \centering
 
-\begin{minted}[linenos]{python}              
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}              
     import csv
     import gradient_ascent
 
@@ -1211,7 +1237,15 @@ performs linear regression.
 \begin{figure}[!ht]
 \centering
 
-\begin{minted}[linenos]{python}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     import numpy  as np
     import pandas as pd
     import sklearn.linear_model as lm
@@ -1305,7 +1339,15 @@ of higher degree.  This script is a continuation of the script shown in Figure \
 \begin{figure}[!th]
   \centering
 
-\begin{minted}[linenos]{python}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     from sklearn.preprocessing import PolynomialFeatures
 
     quartic = PolynomialFeatures(4, include_bias=False)
@@ -1561,7 +1603,15 @@ implementation.
 \begin{figure}[!ht]
 \centering
 
-\begin{minted}[linenos]{python}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     import os
     import re
     import numpy as np
@@ -1679,7 +1729,15 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
 \begin{figure}[!ht]
 \centering
 
-\begin{minted}[linenos,firstnumber=last]{python}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = last,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     Spam_Probability = {}
     Ham__Probability = {}
     for w in Common_Words:
@@ -1858,7 +1916,15 @@ different values.
  
 \begin{figure}[!ht]
 \centering
-\begin{minted}[linenos]{python}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     def read_names(file_name):
         Result = []
         with open(file_name, 'r') as file:

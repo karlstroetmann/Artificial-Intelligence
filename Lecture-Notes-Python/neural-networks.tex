@@ -798,15 +798,15 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     import gzip
     import pickle
     import numpy             as np
@@ -834,7 +834,7 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
         return (training_data, validation_data, test_data)        
 
     (training_data, validation_data, test_data) = load_data()
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Code to load the image files.}
 \label{fig:Digit-Regocnition.ipynb-1}
@@ -889,15 +889,15 @@ code to load the image files.  We discuss it line by line.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = last,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                  ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = last,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     def rndMatrix(rows, cols):
         return np.random.randn(rows, cols) / np.sqrt(cols)
 
@@ -907,7 +907,7 @@ code to load the image files.  We discuss it line by line.
     def sigmoid_prime(x):
         s = sigmoid(x)
         return s * (1 - s)
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The constructor of the class $\mathtt{network}$.}
 \label{fig:Digit-Regocnition.ipynb-2}
@@ -944,15 +944,15 @@ shows the implementation of three utility functions.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = last,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = last,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python}
     class Network(object):
         def __init__(self, hiddenSize):
             self.mInputSize  = 28 * 28
@@ -994,7 +994,7 @@ shows the implementation of three utility functions.
         self.mBiasesO  -= alpha * nabla_BO
         self.mWeightsH -= alpha * nabla_WH
         self.mWeightsO -= alpha * nabla_WO
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The class \texttt{Network}, part \texttt{I}.}
 \label{fig:Digit-Regocnition.ipynb-3}
@@ -1091,15 +1091,15 @@ represents a neural network with one hidden layer.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = last,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                  ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = last,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.5cm,
+                xrightmargin  = 0.5cm,
+              ]{python}
         def backprop(self, x, y):
             # feedforward pass
             ZH = self.mWeightsH @ x  + self.mBiasesH
@@ -1123,7 +1123,7 @@ represents a neural network with one hidden layer.
             
     net = Network(60)
     net.sgd(training_data, 30, 20, 0.3, test_data)   
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The class \texttt{Network}, part \texttt{II}.}
 \label{fig:Digit-Regocnition.ipynb-4}
