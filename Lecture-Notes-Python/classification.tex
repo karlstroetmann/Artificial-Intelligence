@@ -369,15 +369,7 @@ Next, let us discuss the implementation of gradient ascent.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                  ]
+\begin{minted}[linenos]{python}
     def findMaximum(f, gradF, start, eps):
         x     = start
         fx    = f(x)
@@ -396,8 +388,8 @@ Next, let us discuss the implementation of gradient ascent.
             if abs(fx - fOld) <= abs(fx) * eps:
                 return x, fx
             cnt += 1                  
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+
 \caption{The gradient ascent algorithm.}
 \label{fig:gradient-ascent.py}
 \end{figure}
@@ -780,15 +772,8 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+
+\begin{minted}[linenos]{python}
     import numpy as np
     
     def sigmoid(t):
@@ -818,8 +803,8 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
             L = [y[i]*X[i][j]*sigmoid(-y[i] * (X[i] @ w)) for i in range(len(X))]
             Gradient.append(sum(L))
         return np.array(Gradient)
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+
 \caption{An implementation of logistic regression.}
 \label{fig:logistic_regression.py}
 \end{figure}
@@ -932,15 +917,8 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = last,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+
+\begin{minted}[linenos]{python}              
     import csv
     import gradient_ascent
 
@@ -967,8 +945,8 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
         gradF   = lambda w: gradLL(X, y, w)
         w, _, _ = gradient_ascent.findMaximum(f, gradF, start, eps)
         return w
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+
 \caption{The function \texttt{logisticRegression}.}
 \label{fig:logistic_regression.py:2}
 \end{figure}
@@ -1232,15 +1210,8 @@ performs linear regression.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+
+\begin{minted}[linenos]{python}
     import numpy  as np
     import pandas as pd
     import sklearn.linear_model as lm
@@ -1268,8 +1239,8 @@ performs linear regression.
     
     X_train_quadratic, X_test_quadratic = extend(X_train), extend(X_test)
     logistic_regression(X_train_quadratic, Y_train, X_test_quadratic, Y_test)
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+
 \caption{A script for second order logistic regression.}
 \label{fig:Polynomial-Logistic-Regression.ipynb-quadratic}
 \end{figure}
@@ -1331,17 +1302,10 @@ Figure \ref{fig:Polynomial-Logistic-Regression.ipynb-quartic} on page
 \pageref{fig:Polynomial-Logistic-Regression.ipynb-quartic} shows how we can add arbitrary polynomial features
 of higher degree.  This script is a continuation of the script shown in Figure \ref{fig:Polynomial-Logistic-Regression.ipynb-quadratic}.
 
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = last,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{figure}[!th]
+  \centering
+
+\begin{minted}[linenos]{python}
     from sklearn.preprocessing import PolynomialFeatures
 
     quartic = PolynomialFeatures(4, include_bias=False)
@@ -1349,8 +1313,8 @@ of higher degree.  This script is a continuation of the script shown in Figure \
     X_test_quartic  = quartic.fit_transform(X_test)
 
     logistic_regression(X_train_quartic, Y_train, X_test_quartic, Y_test)
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+
 \caption{Polynomial Logistic Regression.}
 \label{fig:Polynomial-Logistic-Regression.ipynb-quartic}
 \end{figure}
@@ -1397,7 +1361,6 @@ training data.
 \caption{Fake data with a decision boundary of order 14, regularized.}
 \label{fig:fake-data-14-reg.pdf}
 \end{figure}
-\pagebreak
 
 \exercise
 \begin{enumerate}[(a)]
@@ -1420,7 +1383,6 @@ training data.
      \textbf{Hint}:  You might find it helpful to revisit your old lecture notes on statistics.
      \eox
 \end{enumerate}
-\pagebreak
 
 
 \section{Naive Bayes Classifiers}
@@ -1598,15 +1560,8 @@ implementation.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+
+\begin{minted}[linenos]{python}
     import os
     import re
     import numpy as np
@@ -1652,8 +1607,8 @@ implementation.
 
     spam_counter = count_commmon_words(spam_dir_train)
     ham__counter = count_commmon_words(ham__dir_train)
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+
 \caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{I}}
 \label{fig:Spam-Detection.ipynb-1}
 \end{figure}
@@ -1723,15 +1678,8 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = last,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+
+\begin{minted}[linenos,firstnumber=last]{python}
     Spam_Probability = {}
     Ham__Probability = {}
     for w in Common_Words:
@@ -1778,8 +1726,8 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
         recall    = TP / (TP + FN)
         accuracy  = (TN + TP) / (TN + TP + FN + FP)
         return precision, recall, accuracy
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+    
 \caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{II}}
 \label{fig:Spam-Detection.ipynb-2}
 \end{figure}
@@ -1910,15 +1858,7 @@ different values.
  
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[linenos]{python}
     def read_names(file_name):
         Result = []
         with open(file_name, 'r') as file:
@@ -1962,8 +1902,8 @@ different values.
         total += 1
     accuracy = correct / total
     print(f'The accuracy of our estimator is {accuracy}.')
-\end{Verbatim}
-\vspace*{-0.3cm}
+\end{minted}
+
 \caption{A naive Bayes classifier for predicting the gender of a name.}
 \label{fig:gender_prediction.py}
 \end{figure}
