@@ -11,7 +11,7 @@
 \usepackage[fleqn]{amsmath}
 \usepackage{stmaryrd}
 \usepackage{enumerate}
-\usepackage{color}
+\usepackage{xcolor}
 \usepackage{xfrac}
 \usepackage{amsmath}
 \usepackage{minted}
@@ -39,7 +39,10 @@
 
 \pagestyle{fancy}
 \definecolor{bg}{rgb}{0.9,0.8,0.6}
-\usemintedstyle{default}
+%\usemintedstyle{default}
+\setminted{
+   python3
+}
 
 \fancyfoot[C]{--- \thepage/\pageref{LastPage}\ ---}
 

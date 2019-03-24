@@ -806,7 +806,7 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     import gzip
     import pickle
     import numpy             as np
@@ -897,7 +897,7 @@ code to load the image files.  We discuss it line by line.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     def rndMatrix(rows, cols):
         return np.random.randn(rows, cols) / np.sqrt(cols)
 
@@ -952,7 +952,7 @@ shows the implementation of three utility functions.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     class Network(object):
         def __init__(self, hiddenSize):
             self.mInputSize  = 28 * 28
@@ -1099,7 +1099,7 @@ represents a neural network with one hidden layer.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.5cm,
                 xrightmargin  = 0.5cm,
-              ]{python}
+              ]{python3}
         def backprop(self, x, y):
             # feedforward pass
             ZH = self.mWeightsH @ x  + self.mBiasesH

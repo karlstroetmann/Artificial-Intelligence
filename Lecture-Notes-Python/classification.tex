@@ -1,4 +1,4 @@
-\chapter{Classification \label{chapter:classification}}
+]{python3}\chapter{Classification \label{chapter:classification}}
 One of the earliest application of artificial intelligence is 
 \href{https://en.wikipedia.org/wiki/Statistical_classification}{classification}.  A good
 example of classification is \href{https://en.wikipedia.org/wiki/Anti-spam_techniques#Detecting_spam}{spam detection}.
@@ -378,7 +378,7 @@ Next, let us discuss the implementation of gradient ascent.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     def findMaximum(f, gradF, start, eps):
         x     = start
         fx    = f(x)
@@ -791,7 +791,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
                 escapeinside  = ||
-              ]{python}
+              ]{python3}
     import numpy as np
     
     # compute |$\displaystyle \frac{1}{1+\exp(-t)}$|
@@ -944,7 +944,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}              
+              ]{python3}              
     import csv
     import gradient_ascent
 
@@ -1245,7 +1245,7 @@ performs linear regression.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     import numpy  as np
     import pandas as pd
     import sklearn.linear_model as lm
@@ -1347,7 +1347,7 @@ of higher degree.  This script is a continuation of the script shown in Figure \
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     from sklearn.preprocessing import PolynomialFeatures
 
     quartic = PolynomialFeatures(4, include_bias=False)
@@ -1611,7 +1611,7 @@ implementation.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     import os
     import re
     import numpy as np
@@ -1737,7 +1737,7 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     Spam_Probability = {}
     Ham__Probability = {}
     for w in Common_Words:
@@ -1924,7 +1924,7 @@ different values.
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
-              ]{python}
+              ]{python3}
     def read_names(file_name):
         Result = []
         with open(file_name, 'r') as file:
