@@ -164,7 +164,7 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
 \item The function $\texttt{nextStates}$ takes a $\texttt{State}$ and a $\texttt{player}$ and computes the set
       of states that can be reached from $\texttt{State}$ if $\texttt{player}$ is to move next.
       To this end, it first computes the set of \blue{empty} positions, i.e. those positions that have not yet
-      been marked by either player..  Every position is represented as pair of the
+      been marked by either player. Every position is represented as pair of the
       form $[\texttt{row}, \texttt{col}]$ where $\texttt{row}$ specifies the row and $\texttt{col}$ specifies
       the column of the position.  The position $[\texttt{row}, \texttt{col}]$ is \blue{empty} in
       $\texttt{State}$ iff
