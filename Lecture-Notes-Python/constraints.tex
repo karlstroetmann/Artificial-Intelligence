@@ -725,14 +725,16 @@ column, then no other queen can be placed in
 that column.   Additionally, the queen in row 2 can then not be placed in any of the first three columns.
 Abstractly, constraint propagation works as follows.
 \begin{enumerate}
-\item Before the search is started, we create a dictionary $\texttt{ValuesPerVar}$.  For every variable
+\item Before the search is started, we create a dictionary $\texttt{ValuesPerVar}$.  Initially, for every variable
       $\texttt{x}$,  the set
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{ValuesPerVar[x]}$ 
       \\[0.2cm]
-      contains those values that can be assigned to
-      $\texttt{x}$ without violating a constraint. 
+      contains all values $\texttt{v}$ from the set $\texttt{Values}$.  As soon as we discover that assigning a
+      value $\texttt{v}$ to the variable $\texttt{x}$ is inconsistent with the variable
+      assignments that have already taken place for other variables, the value $\texttt{v}$ will be removed from the set
+      $\texttt{ValuesPerVar[x]}$. 
 \item As long as the problem is not solved,  we choose a variable $\texttt{x}$ that has not been assigned a
       value yet.  This variable is chosen using the \blue{most constrained variable} heuristic:  We choose a
       variable $\texttt{x}$ such that the number of values in the set
