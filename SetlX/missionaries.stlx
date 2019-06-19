@@ -116,9 +116,7 @@ pathTo := procedure(state, Parent) {
 problem := [m, i] |-> m > 0 && m < i;
 // noProblemAtAll(m, i) is true if there is no problem on either side.
 noProblemAtAll := [m, i] |-> !problem(m, i) && !problem(3 - m, 3 - i);
-// Given a state s, and an action a, try to execute the action a in state s.
-// If this results in a legal state, this new state is returned.  Otherwise,
-// om is returned.
+
 nextStates := procedure(s) {
     [m, i, b] := s;
     if (b == 1) {  // The boat is on the western shore.
