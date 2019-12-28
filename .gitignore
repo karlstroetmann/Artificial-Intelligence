@@ -23,3 +23,10 @@ Literature/*
 Exercises/*
 Python/.ipynb_checkpoints/
 Python/__pycache__/
+Lecture-Notes/_minted-_region_/*
+Lecture-Notes/_minted-artificial-intelligence/*
+Lecture-Notes/artificial-intelligence.idx
+Lecture-Notes/artificial-intelligence.ilg
+Lecture-Notes/artificial-intelligence.ind
+Lecture-Notes/artificial-intelligence.lof
+.mypy_cache/*

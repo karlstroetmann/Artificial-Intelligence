@@ -1,6 +1,6 @@
 \chapter{Search}
 In this chapter we discuss various \blue{search algorithms}.  First, we define
-the notion of a \blue{search problem}.  We will discuss the
+the notion of a \blue{search problem}.  We will use the
 \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle} as our running example.  Then we
 introduce various algorithms for solving search problems.  In particular, we present
 \begin{enumerate}
@@ -8,14 +8,13 @@ introduce various algorithms for solving search problems.  In particular, we pre
 \item \blue{depth first search},
 \item \blue{iterative deepening},
 \item \blue{bidirectional breadth first search},
-\item \blue{$\mathrm{A}^*$ search},
-\item \blue{bidirectional $\mathrm{A}^*$ search},
+\item \blue{$\mathrm{A}^*$ search} and \blue{bidirectional $\mathrm{A}^*$ search},
 \item \blue{iterative deepening $\mathrm{A}^*$ search}, and
 \item \blue{$\mathrm{A}^*$-$\mathrm{IDA}^*$ search}.
 \end{enumerate}
 
 \begin{Definition}[Search Problem]
-  A \blue{search problem} is a tuple of the form
+  A \blue{search problem} \index{search problem} is a tuple of the form
   \\[0.2cm]
   \hspace*{1.3cm}
   $\mathcal{P} = \langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$
@@ -23,14 +22,15 @@ introduce various algorithms for solving search problems.  In particular, we pre
   where
   \begin{enumerate}
   \item $Q$ is the set of \blue{states}, also known as the \blue{state space}.
-  \item $\texttt{nextStates}$ is a function taking a state as input and returning the set of those
+        \index{state}
+  \item \textts{nextStates} is a function taking a state as input and returning the set of those
         states that can be reached from the given state in one step,
         i.e.~we have
         \\[0.2cm]
         \hspace*{1.3cm}
         $\texttt{nextStates}:Q \rightarrow 2^Q$.
         \\[0.2cm]
-        The function $\mathtt{nextStates}$ gives rise to the \blue{transition relation} $R$, which is a
+        The function \textts{nextStates} gives rise to the \blue{transition relation} $R$, which is a
         relation on $Q$, i.e.~$R \subseteq Q \times Q$.  This relation is defined as follows:
         \\[0.2cm]
         \hspace*{1.3cm}
@@ -38,16 +38,17 @@ introduce various algorithms for solving search problems.  In particular, we pre
         \\[0.2cm]
         If either $\pair(s_1, s_2) \in R$ or $\pair(s_2, s_1) \in R$, then  $s_1$ and $s_2$ are
         called \blue{neighboring states}.
-  \item $\mathtt{start}$ is the \blue{start state}, hence $\mathtt{start} \in Q$.
-  \item $\mathtt{goal}$ is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
+  \item \textts{start} is the \blue{start state}, hence $\mathtt{start} \in Q$.
+  \item \textts{goal} is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
 
         Sometimes, instead of a single $\mathtt{goal}$ there is a set of goal states $\mathtt{Goals}$.
   \end{enumerate}
   A \blue{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{nextStates}(s_i)$ for all $i \in
   \{1,\cdots,n-1\}$.
+  \index{path}
   The \blue{length} of this path is defined as the length of the list.
-  A path $[s_1, \cdots, s_n]$ is a \blue{solution} to the search problem $P$ iff the following
-  conditions are satisfied:
+  A path $[s_1, \cdots, s_n]$ is a \blue{solution} to the search problem $P$ iff \index{search problem, solution}
+  the following conditions are satisfied:
   \begin{enumerate}
   \item $s_1 = \mathtt{start}$, i.e.~the first element of the path is the start state.
   \item $s_n = \mathtt{goal}$, i.e.~the last element of the path is the goal state.
@@ -63,15 +64,15 @@ introduce various algorithms for solving search problems.  In particular, we pre
 \end{Definition}
 
 \remark
-In the literature, a \blue{state} is often called a \blue{node}.  In these lecture
-notes, I will also refer to states as nodes.  \eoxs
+In the literature, a \blue{state} is often called a \blue{node}.  \index{node}
+In these lecture notes, I will also refer to states as nodes.  \eoxs
 
 \example
 We illustrate the notion of a search problem with the following example, which is also known as the
 \href{https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem}{missionaries and cannibals problem}:
 Three missionaries and three infidels have to cross a river that runs from the north to the south.
 Initially, both the missionaries and the infidels are on the western shore.  There is just one small boat and
-that boat has only room for at most two passengers.  Both the missionaries and the infidels can steer the boat.
+that can carry at most two passengers.  Both the missionaries and the infidels can steer the boat.
 However, if at any time the missionaries are confronted with a majority of infidels on either shore of the
 river, then the missionaries have a problem.
 
@@ -86,26 +87,27 @@ river, then the missionaries have a problem.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    problem := [m, i] |-> m > 0 && m < i;
+    problem = lambda m, i: 0 < m < i
 
-    noProblemAtAll := [m, i] |-> !problem(m, i) && !problem(3 - m, 3 - i);
+    noProblem = lambda m, i: not problem(m, i) and not problem(3 - m, 3 - i)
 
-    nextStates := procedure(s) {
-        [m, i, b] := s;
-        if (b == 1) {  // The boat is on the western shore.
-            return { [m - mb, i - ib, 0]
-                   : mb in {0 .. m}, ib in {0 .. i}
-                   | mb + ib in {1, 2} && noProblemAtAll(m - mb, i - ib)
-                   };
-        } else {
-            return { [m + mb, i + ib, 1]
-                   : mb in {0 .. 3 - m}, ib in {0 .. 3 - i}
-                   | mb + ib in {1, 2} && noProblemAtAll(m + mb, i + ib)
-                   };
-        }
-    };
-    start := [3, 3, 1];
-    goal  := [0, 0, 0];
+    def nextStates(state):
+        m, i, b = state
+        if b == 1:
+            return { (m - mb, i - ib, 0) for mb in range(m+1)
+                                         for ib in range(i+1)
+                                         if 1 <= mb + ib <= 2 and 
+                                            noProblem(m - mb, i - ib) 
+                   }
+        else:
+            return { (m + mb, i + ib, 1) for mb in range(3-m+1)
+                                         for ib in range(3-i+1)
+                                         if 1 <= mb + ib <= 2 and 
+                                            noProblem(m + mb, i + ib) 
+                   }
+
+    start = (3, 3, 1)
+    goal  = (0, 0, 0)
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The missionary and cannibals problem coded as a search problem.}
@@ -119,11 +121,12 @@ as a search problem.  We discuss this formalization line by line.
 
       If $m$ is the number of missionaries on a given shore, while $i$ is the number of infidels on
       that same shore, then $\textsl{problem}(m, i)$ is \texttt{true} iff the missionaries have a problem on that
-      shore.
-\item Line 3 defines the auxiliary function \texttt{noProblemAtAll}.
+      shore.  There is a problem if the number of missionaries is greater than $0$ but less than the number of
+      infidels. 
+\item Line 3 defines the auxiliary function \texttt{noProblem}.
 
       If $m$ is the number of missionaries on the western shore and $i$ is the number of infidels on
-      that shore, then the expression $\texttt{noProblemAtAll}(m, i)$ is true, if there is no problem
+      that shore, then the expression $\texttt{noProblem}(m, i)$ is true, if there is no problem
       for the missionaries on either shore.
 
       The implementation of this function uses the fact that if $m$ is the number of missionaries on
@@ -134,7 +137,7 @@ as a search problem.  We discuss this formalization line by line.
       the form
       \\[0.2cm]
       \hspace*{1.3cm}
-      $s = [m, i, b]$ \quad where $m \in \{0,1,2,3\}$, $i \in \{0,1,2,3\}$, $b \in\{0,1\}$.
+      $s = (m, i, b)$ \quad where $m \in \{0,1,2,3\}$, $i \in \{0,1,2,3\}$, and $b \in\{0,1\}$.
       \\[0.2cm]
       Here $m$ is the number of missionaries on the western shore, $i$ is the number of infidels on
       the western shore, and $b$ is the number of boats on the western shore.
@@ -149,7 +152,7 @@ as a search problem.  We discuss this formalization line by line.
             western shore.  Therefore, the new state has the form
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{[m - mb, i - ib, 0]}.
+            \texttt{(m - mb, i - ib, 0)}.
             \\[0.2cm]
             This explains line 8.
       \item Since the number $\mathtt{mb}$ of missionaries leaving the western shore can not be greater
@@ -168,13 +171,13 @@ as a search problem.  We discuss this formalization line by line.
             and at most 2.  This explains the condition
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\mathtt{mb} + \mathtt{ib} \in \{1,2\}$.
+           \texttt{1 <= mb + ib <= 2}.
             \\[0.2cm]
             Finally, there should be no problem in the new state on either shore.  This is checked
             using the expression
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{noProblemAtAll(m - mb, i - ib)}.
+            \texttt{noProblem(m - mb, i - ib)}.
             \\[0.2cm]
             These two checks are performed in line 10.
       \end{enumerate}
@@ -183,18 +186,22 @@ as a search problem.  We discuss this formalization line by line.
       infidels on the western shore is now increased.  Hence, in this case the new state has the form
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{[m + mb, i + ib, 1]}.
+      \texttt{(m + mb, i + ib, 1)}.
       \\[0.2cm]
       As the number of missionaries on the eastern shore is $3 - \mathrm{m}$ and the number of infidels on the
       eastern shore is $3 - \mathrm{i}$, $\mathtt{mb}$ is now a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while
       $\mathtt{ib}$ is a member of the set $\{0,\cdots,3 - \mathtt{i}\}$.
-\item Finally the start state and the goal state are defined in line 19 and line 20.
+\item Finally the start state and the goal state are defined in line 20 and line 21.
 \end{enumerate}
 The code in Figure \ref{fig:missionaries.stlx} does not define the set of states $Q$ of the search problem.  The
 reason is that, in order to solve the problem, we do not need to define this set.  If we wanted to, we could
 define the set of states as follows: 
 \begin{verbatim}
-States := { [m,i,b] : m in {0..3}, i in {0..3}, b in {0,1} | noProblemAtAll(m, i) };
+    States = { (m, i, b) for m in {0, 1, 2, 3}
+                         for i in {0, 1, 2, 3}
+                         for b in {0, 1} 
+                         if noProblem(m, i)
+             }
 \end{verbatim}
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
 missionaries and cannibals puzzle.  In that figure, for every state both the western and the
@@ -217,7 +224,7 @@ square board, where each side has a length of 3.  This board is subdivided into 
 these 9 squares, 8 are occupied with square tiles that are numbered from 1 to 8.  One square remains
 empty. Figure \ref{fig:8-puzzle.pdf} on page \pageref{fig:8-puzzle.pdf} shows two possible states of this
 sliding puzzle.  The $4 \times 4$ \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}
-is similar to the $3 \times 3$ sliding puzzle but it is played on a square board of length 4
+is similar to the $3 \times 3$ sliding puzzle but it is played on a square board of size 4
 instead.  The $4 \times 4$ sliding puzzle is also known as the \blue{15 puzzle}, while the $3 \times 3$ puzzle is
 called the \blue{8 puzzle}.
 

@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass[11pt]{report}
 \usepackage{fleqn}
 \usepackage{graphicx}
 \usepackage{epstopdf}
@@ -15,6 +15,8 @@
 \usepackage{xfrac}
 \usepackage{amsmath}
 \usepackage{minted}
+\usepackage{makeidx}
+\usepackage{tocbibind}
 
 \usepackage{hyperref}
 \usepackage[all]{hypcap}
@@ -55,11 +57,13 @@
 
 \definecolor{amethyst}{rgb}{0.2, 0.4, 0.6}
 \definecolor{orange}{rgb}{1, 0.9, 0.0}
+\definecolor{sepia}{rgb}{1.0,1.0,0.9}
 
 \newfont{\chess}{chess20}
 \newfont{\bigchess}{chess30}
 \newcommand{\chf}{\baselineskip20pt\lineskip0pt\chess}
 
+\newcommand{\textts}[1]{\colorbox{sepia}{\texttt{#1}}}
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\green}[1]{{\color{green}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
@@ -155,36 +159,41 @@ These lecture notes, their \LaTeX\ sources, and the programs discussed in these 
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/}{https://github.com/karlstroetmann/Artificial-Intelligence}.
 \\[0.2cm]
 In particular, the lecture notes are found in the directory
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes-Python/}{Lecture-Notes-Python} in
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/}{Lecture-Notes} in
 the file
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes-Python/artificial-intelligence.pdf}{artificial-intelligence.pdf}.
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Lecture-Notes/artificial-intelligence.pdf}{artificial-intelligence.pdf}.
 The lecture notes are subject to continuous change.  Provided the program \href{http://git-scm.com/download}{\texttt{git}}
-is installed on your computer, the repository containing the lecture notes can be cloned using the command
+is installed on your computer, the command 
 \\[0.2cm]
 \hspace*{1.3cm}
-\mbox{\blue{\texttt{git clone https://github.com/karlstroetmann/Artificial-Intelligence.git}}}.
+\mbox{\blue{\texttt{git clone https://github.com/karlstroetmann/Artificial-Intelligence.git}}}
 \\[0.2cm]
+clones the repository containing the lecture notes and stores them on your local disc.
 Once you have cloned the repository, the command
 \\[0.2cm]
 \hspace*{1.3cm}
 \blue{{\texttt{git pull}}}
 \\[0.2cm]
 can be used to load the current version of these lecture notes from
-\href{https://github.com}{\texttt{github}}.  As this is the third time that I give this lecture, these lecture
-notes are still incomplete and will be changed frequently during the semester.  If you find any typos, errors, or
-inconsistencies, please contact me via \href{https://discordapp.com}{discord} or, if that is not possible, email me at: 
+\href{https://github.com}{\texttt{github}}.  As artificial intelligence is a very active area of research, these lecture
+notes will always be incomplete and hence will change from time to time.  If you find any typos, errors, or
+inconsistencies, please contact me via \href{https://discordapp.com}{discord} or, if that is not possible, email me: 
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{mailto:karl.stroetmann@dhbw-mannheim.de}{\texttt{karl.stroetmann@dhbw-mannheim.de}}.
+\href{mailto:karl.stroetmann@dhbw-mannheim.de}{\texttt{karl.stroetmann@dhbw-mannheim.de}}
 \\[0.2cm]
-I am currently rewriting these lecture notes as I am moving from the programming language \textsc{SetlX} to \textsl{Python}.
+I am currently rewriting these lecture notes as I am moving from the programming language
+\href{https://randoom.org/Software/SetlX/}{\textsc{SetlX}} to
+\href{https://python.org}{\textsl{Python}}. 
 \end{minipage}
 }
 
+\makeindex
 
 \begin{document}
 \maketitle
 \tableofcontents
+
 \include{introduction}
 \include{search}
 \include{constraints}
@@ -199,6 +208,8 @@ I am currently rewriting these lecture notes as I am moving from the programming
 
 \bibliographystyle{alpha}
 \bibliography{cs}
+\listoffigures
+\printindex
 
 \end{document}
 

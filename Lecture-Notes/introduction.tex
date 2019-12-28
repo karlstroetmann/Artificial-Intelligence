@@ -2,122 +2,36 @@
 
 \section{What is Artificial Intelligence?}
 Before we start to dive into the subject of
-\href{https://en.wikipedia.org/wiki/Artificial_intelligence}{Artificial Intelligence} we have to answer the
-following question:  
+\href{https://en.wikipedia.org/wiki/Artificial_intelligence}{Artificial Intelligence} (usually abbreviated as
+AI) we have to answer the following question:  
 \\[0.2cm]
 \hspace*{1.3cm}
-What is \blue{Artificial Intelligence}? 
+What is \blue{artificial intelligence}? 
 \\[0.2cm] 
-Historically, there have been a number of different answers to this question \cite{russell:2009}.  We will look at these
-different answers and discuss them.
-\begin{enumerate}
-\item \blue{Artificial Intelligence} is the study of creating machines that \red{\underline{think}} like humans.
-
-      As we have a working prototype of intelligence, namely humans, it is quite natural to try to
-      build machines that work in a way similar to humans, thereby creating artificial
-      intelligence.  As a first step in this endeavor we would have to study how humans actually
-      think and thus we would have to study the brain.  Unfortunately, as of today, no one really
-      knows how the brain works.  Although there are branches of science devoted to studying the
-      human thought processes and the human brain, namely
-      \href{https://en.wikipedia.org/wiki/Cognitive_science}{cognitive science} and 
-      \href{https://en.wikipedia.org/wiki/Computational_neuroscience}{computational neuroscience},
-      this approach has not proven to be fruitful for creating thinking machines, the reason being
-      that the current understanding of the human thought processes is just not sufficient.  
-
-\item \blue{Artificial Intelligence} is the science of machines that \red{\underline{act}} like humans.
-
-      Since we do not know how humans think,  we cannot build machines that think like people.
-      Therefore, the next best thing might be to build  machines that act and behave like humans.  
-      Actually, the \href{https://en.wikipedia.org/wiki/Turing_test}{Turing Test} is based on this
-      idea:  Turing suggested that if we want to know whether we have succeeded in building an
-      intelligent machine, we should place it at the other end of a chat line.  If we cannot
-      distinguish the computer from a human, then we have succeeded at creating intelligence. 
-
-      However, with respect to the kind of Artificial Intelligence that is needed in industry, this
-      approach isn't very useful.  To illustrate the point, consider an analogy with aerodynamics:
-      In aerodynamics we try to build planes that fly fast and efficiently, not planes that flap
-      their wings like birds do, as the later approach has failed historically, 
-      e.g.~remember what happened to 
-      \href{https://en.wikipedia.org/wiki/Daedalus#Daedalus_and_Icarus}{Daedalus and Icarus}.
-\item \blue{Artificial Intelligence} is the science of creating machines that \red{\underline{think lo}g\underline{icall}y}.
-
-      The idea with this approach is to create machines that are based on 
-      \href{https://en.wikipedia.org/wiki/Mathematical_logic}{mathematical logic}.  If a
-      goal is given to these machines, then these machines use logical reasoning in order to deduce
-      those actions that need to be performed in order to best achieve the given goals. 
-      Unfortunately, this approach had only limited success:  In playing
-      games the approach was quite successful for dealing with games like checkers or chess.
-      However, the approach was mostly unsuccessful for dealing with many real world problems.
-      There were two main reasons for its failure:
-      \begin{enumerate}
-      \item In order for the logical approach to be successful, the environment has to be
-            \blue{completely} 
-            described by mathematical axioms.  It has turned out that our knowledge of the real
-            world is often not sufficient to completely describe the environment via axioms.  
-      \item Even if we have complete knowledge, it often turns out that describing every possible case via logic
-            formulae is just unwieldy.  Consider the following formula:
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            $\forall x:\bigl( \mathtt{bird}(x) \rightarrow \mathtt{flies}(x) \bigr)$
-            \\[0.2cm]
-            The problem with this formula is that although it appears to be common sense, there are a number of counter 
-            examples:
-            \begin{enumerate}
-            \item Penguins, emus, and ostriches don't fly.
-
-                  However, if we put a penguin into a plane, it turns out the penguin will fly.
-            \item Birds that have just hatched do not fly.
-            \item Birds with clipped wings do not fly.
-            \end{enumerate}
-            It is easy to extend this list with ever more contrived examples and counter examples.
-            This shows that trying to model all eventualities with logic is just too unwieldy to be practical.
-      \item In real life situations we often deal with \blue{uncertainty}.  Classical logic does not
-            perform well when it has to deal with  uncertainties.  Instead, we need statistics.
-      \end{enumerate}
-\item \blue{Artificial Intelligence} is the science of creating machines that \red{\underline{act rationall}y}.
-
-      All we really want is to build machines that, given the knowledge we have, try to 
-      \blue{optimize the expected results}:  In our world, there is lots of uncertainty.  We cannot
-      hope to create 
-      machines that always make the decisions that turn out to be optimal.  What we can
-      hope is to create machines that will make decisions that turn out to be good on average.  For
-      example, suppose we try to create a program for asset management:  We cannot hope to build a
-      machine that always buys the best company share in the stock market.  Rather, our goal should
-      be to build a program that maximizes our expected profits in the long term.
-
-      It has turned out that the main tool needed for this approach is not mathematical logic but
-      rather \href{https://en.wikipedia.org/wiki/Numerical_analysis}{numerical analysis} and
-      \href{https://en.wikipedia.org/wiki/Mathematical_statistics}{mathematical statistics}.  The shift 
-      from logic to numerical analysis and statistics has been the most important reason for the spectacular
-      success of Artificial Intelligence in the recent years.  Another important factor is the 
-      \blue{enhanced performance of modern hardware}. 
-\end{enumerate}
-Now that we have clarified the notion of artificial intelligence, we should set its goals.  As we
-can never achieve more than what we aim for, we have every reason to be ambitious here.  For example, my
-personal vision of Artificial Intelligence goes like this: 
-Imagine 70 years from now you (not feeling too well) have a conversation with
-\href{https://en.wikipedia.org/wiki/Siri}{Siri}.  Instead of asking Siri for the
-best graveyard in the vicinity, you think about all the sins you have committed.  As Siri has
-accompanied you for your whole life, she knows about these sins better than you.  Hence,  
-the conversation with Siri works out as follows: 
-\\[0.2cm]
-\begin{tabular}[t]{ll}
-\textbf{You (with trembling voice):}           & Hey Siri, does God exist?                   \\[0.2cm]
-\textbf{Siri (with the voice of Darth Vader):} & Your voice seems troubled, let me think $\cdots$ \\
-After a small pause which almost drains \\
-the battery of your phone completely, \\
-Siri gets back with a soothing announcement: \\           
-                                     & You don't have to worry any more, I have fixed the problem.  \\
-                                     & He is dead now.  
-\end{tabular}
-\\[0.2cm]
-My apologies to all those infidels that do not get the point.
-\pagebreak
+According to the Oxford Dictionary of English,
+\index{artificial intelligence, definition}
+artificial intelligence is:
+\begin{quote}
+  \colorbox{sepia}{\textsl{The theory and development of computer systems able to perform tasks normally}} \linebreak
+  \colorbox{sepia}{\textsl{requiring human intelligence, such as visual perception, speech recognition,}}  \linebreak
+  \colorbox{sepia}{\textsl{decision-making, and translation between languages.}} 
+\end{quote}
+There have been two competitive approaches to machine learning.  The first approach is based on
+\blue{symbolic logic} and is known as \blue{symbolic AI}.  \index{symbolic AI}
+Typical tasks addressed with this approach were the development of automatic theorem provers, programs to
+perform \blue{symbolic integration}, or programs to play chess like
+\href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue}.
+In the beginning, this approach was the dominant paradigm in AI.
+The second approach is known as \blue{machine learning}.  Arthur Samuel defined machine learning as
+``the field of study that gives computers the ability to learn without being
+explicitly programmed'' \cite{samuel:1959}. \index{machine learning, definition}
+Machine learning is mostly responsible for the recent hype in AI.
 
 \section{Overview}
 This lecture consists of two parts.
 \begin{enumerate}
-\item The common theme of the first part is \blue{declarative programming}.  The main idea of declarative
+\item The common theme of the first part is \blue{declarative programming}.  This approach is part of symbolic
+      AI.  The main idea of declarative 
       programming is that we start with a \blue{problem specification}.  This is usually a short description of
       the problem that is to be solved.  This description is then fed into an \blue{automatic problem solver}
       that returns a solution of the problem.  Originally, 
@@ -140,11 +54,11 @@ This lecture consists of two parts.
             search problem is the \href{https://en.wikipedia.org/wiki/15_puzzle}{fifteen puzzle}.
             We discuss various state-of-the-art algorithms that can solve search problems.
       \item \blue{Games} like \href{https://en.wikipedia.org/wiki/Chess}{chess} or
-            \href{https://en.wikipedia.org/wiki/Poker}{poker} can be specified quite easily and there are
+            \href{https://en.wikipedia.org/wiki/checkers}{checkers} can be specified quite easily and there are
             various techniques for computers to find optimal strategies for playing adversarial games.
       \item \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{Constraint satisfaction problems} 
             have great practical importance.  Today, very efficient constraint solvers have been developed to
-            solve various constraint satisfaction problems that often occur in practice.
+            solve various constraint satisfaction problems that occur in practice.
       \end{enumerate}
 \item In the second part of this lecture we discuss \blue{machine learning}.  In the last ten years, a number of
       advances in machine learning have made it into the headlines of the news.  It is fair to say that
@@ -167,12 +81,12 @@ This lecture consists of two parts.
             such that the equation $y_i = f(\mathbf{x}_i)$ is true for most $i\in\{1,\cdots,N\}$.  A typical
             classification problem is \href{https://en.wikipedia.org/wiki/Email_spam}{spam detection}.  The
             first algorithm we introduce to solve classification problems is \blue{logistic regression}.
+            After that, we study \blue{support vector machines} and \blue{naive Bayes classifiers}.
       \item Finally, we discuss neural networks.  As an example, we will build a neural network that is able to
             recognize digits. 
       \end{enumerate}
 \end{enumerate}
 \pagebreak
-
 
 \section{Literature}
 The main sources of these lecture notes are the following:
@@ -198,8 +112,7 @@ The main sources of these lecture notes are the following:
       director of research at Google and \href{https://en.wikipedia.org/wiki/Sebastian_Thrun}{Sebastian Thrun},
       who is the chairman of \href{https://www.udacity.com}{Udacity}.
 \end{enumerate}
-The programs presented in these lecture notes are expected to run with version 2.7 of 
-\href{https://randoom.org/Software/SetlX}{\textsc{SetlX}}.
+The programs presented in these lecture notes are expected to run with version 3.7 of \textsl{Python}.
 
 
 %%% Local Variables:
