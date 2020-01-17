@@ -1,8 +1,14 @@
 \chapter{Search}
-In this chapter we discuss various \blue{search algorithms}.  First, we define
-the notion of a \blue{search problem}.  We will use the
-\href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle} as our running example.  Then we
-introduce various algorithms for solving search problems.  In particular, we present
+This chapter is the first of three chapters where we will solve problems by making use of
+\blue{declarative programming}. \index{declarative programming}
+The idea of declarative programming is that rather than developing a program to solve a specific problem,
+we implement an algorithm that can solve a whole class of problems.  Then, in order to solve a problem that
+falls within this class, we just have to specify the problem, which is usually much easier than solving it from
+scratch.  In this chapter, this idea is illustrated via \blue{search problems}.
+First, we define the notion of a \blue{search problem} formally.  This notion is then illustrated with two
+examples.  We start with the \blue{missionaries and cannibals problem}.  Next, we use the 
+\href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle} as our running example. \index{sliding puzzle}
+After that we introduce various algorithms for solving search problems.  In particular, we present
 \begin{enumerate}
 \item \blue{breadth first search},
 \item \blue{depth first search},
@@ -17,7 +23,7 @@ introduce various algorithms for solving search problems.  In particular, we pre
   A \blue{search problem} \index{search problem} is a tuple of the form
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\mathcal{P} = \langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$
+  $\mathcal{P} = \langle Q,\;\mathtt{nextStates},\; \mathtt{start},\; \mathtt{goal}\rangle$
   \\[0.2cm]
   where
   \begin{enumerate}
@@ -31,23 +37,27 @@ introduce various algorithms for solving search problems.  In particular, we pre
         $\texttt{nextStates}:Q \rightarrow 2^Q$.
         \\[0.2cm]
         The function \textts{nextStates} gives rise to the \blue{transition relation} $R$, which is a
-        relation on $Q$, i.e.~$R \subseteq Q \times Q$.  This relation is defined as follows:
+        relation on $Q$, i.e.~we have $R \subseteq Q \times Q$.  This relation is defined as follows:
         \\[0.2cm]
         \hspace*{1.3cm}
         $R := \bigl\{ \pair(s_1, s_2) \in Q \times Q \mid s_2 \in \mathtt{nextStates}(s_1) \bigr\}$.
         \\[0.2cm]
         If either $\pair(s_1, s_2) \in R$ or $\pair(s_2, s_1) \in R$, then  $s_1$ and $s_2$ are
         called \blue{neighboring states}.
+        \index{\texttt{nextStates}}
   \item \textts{start} is the \blue{start state}, hence $\mathtt{start} \in Q$.
+        \index{start state}
   \item \textts{goal} is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
-
+        \index{goal state}
+    
         Sometimes, instead of a single $\mathtt{goal}$ there is a set of goal states $\mathtt{Goals}$.
   \end{enumerate}
-  A \blue{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{nextStates}(s_i)$ for all $i \in
+  A \blue{path} \index{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{nextStates}(s_i)$ for all $i \in
   \{1,\cdots,n-1\}$.
   \index{path}
-  The \blue{length} of this path is defined as the length of the list.
-  A path $[s_1, \cdots, s_n]$ is a \blue{solution} to the search problem $P$ iff \index{search problem, solution}
+  The \blue{length} of this path is defined as the length of this list.
+  A path $[s_1, \cdots, s_n]$ is a \blue{solution} \index{solution, of a search problem}
+  to the search problem $P$ iff \index{search problem, solution}
   the following conditions are satisfied:
   \begin{enumerate}
   \item $s_1 = \mathtt{start}$, i.e.~the first element of the path is the start state.
@@ -60,6 +70,7 @@ introduce various algorithms for solving search problems.  In particular, we pre
         $s_n \in \mathtt{Goals}$.
   \end{enumerate}
   A path $p = [s_1, \cdots, s_n]$ is a \blue{minimal solution} to the search problem $\mathcal{P}$
+  \index{solution, minimal}
   iff it is a solution and, furthermore, the length of $p$ is minimal among all other solutions. \eoxs
 \end{Definition}
 
@@ -70,8 +81,9 @@ In these lecture notes, I will also refer to states as nodes.  \eoxs
 \example
 We illustrate the notion of a search problem with the following example, which is also known as the
 \href{https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem}{missionaries and cannibals problem}:
+\index{missionaries and cannibals}
 Three missionaries and three infidels have to cross a river that runs from the north to the south.
-Initially, both the missionaries and the infidels are on the western shore.  There is just one small boat and
+Initially, both the missionaries and the infidels are on the western shore.  There is just one small boat 
 that can carry at most two passengers.  Both the missionaries and the infidels can steer the boat.
 However, if at any time the missionaries are confronted with a majority of infidels on either shore of the
 river, then the missionaries have a problem.
@@ -117,13 +129,13 @@ river, then the missionaries have a problem.
 Figure \ref{fig:missionaries.stlx} shows a formalization of the missionaries and cannibals problem
 as a search problem.  We discuss this formalization line by line.
 \begin{enumerate}
-\item Line 1 defines the auxiliary function \texttt{problem}.
+\item Line 1 defines the auxiliary function \textts{problem}.
 
       If $m$ is the number of missionaries on a given shore, while $i$ is the number of infidels on
-      that same shore, then $\textsl{problem}(m, i)$ is \texttt{true} iff the missionaries have a problem on that
+      that same shore, then $\texttt{problem}(m, i)$ is \texttt{True} iff the missionaries have a problem on that
       shore.  There is a problem if the number of missionaries is greater than $0$ but less than the number of
       infidels. 
-\item Line 3 defines the auxiliary function \texttt{noProblem}.
+\item Line 3 defines the auxiliary function \textts{noProblem}.
 
       If $m$ is the number of missionaries on the western shore and $i$ is the number of infidels on
       that shore, then the expression $\texttt{noProblem}(m, i)$ is true, if there is no problem
@@ -133,14 +145,14 @@ as a search problem.  We discuss this formalization line by line.
       the western shore, then $3-m$ is the number of missionaries on the eastern shore.  Similarly,
       if $i$ is the number of infidels on the western shore, then the number of infidels on the
       eastern shore is $3 - i$.
-\item Lines 5 to 18 define the function \texttt{nextStates}.  A state $s$ is represented as a triple of
+\item Lines 5 to 18 define the function \textts{nextStates}.  A state $s$ is represented as a triple of
       the form
       \\[0.2cm]
       \hspace*{1.3cm}
       $s = (m, i, b)$ \quad where $m \in \{0,1,2,3\}$, $i \in \{0,1,2,3\}$, and $b \in\{0,1\}$.
       \\[0.2cm]
-      Here $m$ is the number of missionaries on the western shore, $i$ is the number of infidels on
-      the western shore, and $b$ is the number of boats on the western shore.
+      Here $m$, $i$, and $b$ are, respectively, the number of missionaries, the number of infidels, and the number
+      of boats on the western shore. 
       \begin{enumerate}[(a)]
       \item Line 6 extracts the components $m$, $i$, and $b$ from the state $s$.
       \item Line 7 checks whether the boat is on the western shore.
@@ -159,27 +171,33 @@ as a search problem.  We discuss this formalization line by line.
             than the number $m$ of all missionaries on the western shore, we have the condition
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\mathtt{mb} \in \{0,\cdots,\mathrm{m}\}$.
+            $\mathtt{mb} \in \{0,\cdots,\mathrm{m}\}$,
+            \\[0.2cm]
+            which is implemented by the line
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            \texttt{for mb in range(m+1)}
             \\[0.2cm]
             There is a similar condition for the number of infidels crossing:
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\mathtt{ib} \in \{0,\cdots,\mathrm{i}\}$.
+            $\mathtt{ib} \in \{0,\cdots,\mathrm{i}\}$
             \\[0.2cm]
-            This explains line 9.
+            which is implemented by
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            \texttt{for ib in range(i+1)}.
       \item Furthermore, we have to check that the number of persons crossing the river is at least 1
             and at most 2.  This explains the condition
             \\[0.2cm]
             \hspace*{1.3cm}
-           \texttt{1 <= mb + ib <= 2}.
+            \texttt{1 <= mb + ib <= 2}.
             \\[0.2cm]
             Finally, there should be no problem in the new state on either shore.  This is checked
             using the expression
             \\[0.2cm]
             \hspace*{1.3cm}
             \texttt{noProblem(m - mb, i - ib)}.
-            \\[0.2cm]
-            These two checks are performed in line 10.
       \end{enumerate}
 \item If the boat is on the eastern shore instead, then the missionaries and the infidels will be crossing
       the river from the eastern shore to the western shore.  Therefore, the number of missionaries and
@@ -188,9 +206,11 @@ as a search problem.  We discuss this formalization line by line.
       \hspace*{1.3cm}
       \texttt{(m + mb, i + ib, 1)}.
       \\[0.2cm]
+      here, \texttt{mb} is the number of missionaries arriving on the western shore and \texttt{ib} is the
+      number of arriving infidels.
       As the number of missionaries on the eastern shore is $3 - \mathrm{m}$ and the number of infidels on the
-      eastern shore is $3 - \mathrm{i}$, $\mathtt{mb}$ is now a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while
-      $\mathtt{ib}$ is a member of the set $\{0,\cdots,3 - \mathtt{i}\}$.
+      eastern shore is $3 - \mathrm{i}$, $\mathtt{mb}$ has to be a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while
+      $\mathtt{ib}$ has to be a member of the set $\{0,\cdots,3 - \mathtt{i}\}$.
 \item Finally the start state and the goal state are defined in line 20 and line 21.
 \end{enumerate}
 The code in Figure \ref{fig:missionaries.stlx} does not define the set of states $Q$ of the search problem.  The
@@ -203,6 +223,10 @@ define the set of states as follows:
                          if noProblem(m, i)
              }
 \end{verbatim}
+However, in general the set of states is not needed by the algorithms solving search problems and in many cases
+this set is so big that it would be impossible to compute it.  Hence, in practice the set of states is only an
+abstract notion that is needed in order to specify the function \texttt{nextStates}, but it is not implemented.
+
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
 missionaries and cannibals puzzle.  In that figure, for every state both the western and the
 eastern shore are shown.  The start state is covered with a blue ellipse, while the goal state is
@@ -219,14 +243,16 @@ is a solution involving just 11 crossings of the river.
 
 
 \section{The Sliding Puzzle}
-The $3 \times 3$ sliding puzzle uses a
+The missionaries and cannibals problem is rather small and therefore it is not useful when we want to compare
+the efficiency of various algorithms for solving search problems.  Therefore, we will now present a problem
+that has a bigger complexity:  The $3 \times 3$ sliding puzzle uses a \index{sliding puzzle}
 square board, where each side has a length of 3.  This board is subdivided into $3 \times 3 = 9$ squares of length 1.  Of
 these 9 squares, 8 are occupied with square tiles that are numbered from 1 to 8.  One square remains
 empty. Figure \ref{fig:8-puzzle.pdf} on page \pageref{fig:8-puzzle.pdf} shows two possible states of this
 sliding puzzle.  The $4 \times 4$ \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}
-is similar to the $3 \times 3$ sliding puzzle but it is played on a square board of size 4
+is similar to the $3 \times 3$ sliding puzzle but uses a square board of size 4
 instead.  The $4 \times 4$ sliding puzzle is also known as the \blue{15 puzzle}, while the $3 \times 3$ puzzle is
-called the \blue{8 puzzle}.
+called the \blue{8 puzzle}. \index{8 puzzle} \index{15 puzzle}
 
 \begin{figure}[!ht]
 \centering
@@ -287,69 +313,88 @@ entire state space in memory.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    findTile := procedure(number, State) {
-        n := #State;
-        L := [1 .. n];
-        for (row in L, col in L | State[row][col] == number) {
-            return [row, col];
-        }
-    };
-    moveDir := procedure(State, row, col, dx, dy) {
-        State[row     ][col     ] := State[row + dx][col + dy];
-        State[row + dx][col + dy] := 0;
-        return State;
-    };
-    nextStates := procedure(State) {
-        n          := #State;
-        [row, col] := findTile(0, State);
-        newStates  := [];
-        directions := [ [1, 0], [-1, 0], [0, 1], [0, -1] ];
-        L          := [1 .. n];
-        for ([dx, dy] in directions) {
-            if (row + dx in L && col + dy in L) {
-                newStates += [ moveDir(State, row, col, dx, dy) ];
-            }
-        }
-        return newStates;
-    };
-    start := [ [8, 0, 6],
-               [5, 4, 7],
-               [2, 3, 1]
-             ];
-    goal := [ [0, 1, 2],
-              [3, 4, 5],
-              [6, 7, 8]
-            ];
+    to_list = lambda State: [list(row) for row in State]
+    
+    to_tuple = lambda State: tuple(tuple(row) for row in State)
+    
+    def find_tile(tile, State):
+        n = len(State)
+        for row in range(n):
+            for col in range(n):
+                if State[row][col] == tile:
+                    return row, col
+    
+    def move_dir(State, row, col, dx, dy):
+        State = to_list(State)
+        State[row     ][col     ] = State[row + dx][col + dy]
+        State[row + dx][col + dy] = 0
+        return to_tuple(State)
+    
+    def next_states(State):
+        n          = len(State)
+        row, col   = find_tile(0, State)
+        New_States = set()
+        Directions = [ (1, 0), (-1, 0), (0, 1), (0, -1) ]
+        for dx, dy in Directions:
+            if row + dx in range(n) and col + dy in range(n):
+                New_States.add(move_dir(State, row, col, dx, dy))
+        return New_States
+    
+    start = ( (8, 0, 6),
+              (5, 4, 7),
+              (2, 3, 1)
+            )
+
+    goal = ( (0, 1, 2), 
+             (3, 4, 5), 
+             (6, 7, 8)
+           )
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The $3 \times 3$ sliding puzzle.}
-\label{fig:sliding-puzzle.stlx}
+\label{fig:Sliding-Puzzle.ipynb}
 \end{figure}
-Figure \ref{fig:sliding-puzzle.stlx} shows how the $3 \times 3$ sliding puzzle can be formulated as
-a search problem.  We discuss this program line by line.
+Figure \ref{fig:Sliding-Puzzle.ipynb} shows how the $3 \times 3$ sliding puzzle can be formulated as
+a search problem.  In order to discuss the program, we first have to understand that states are
+represented as tuples of tuples.  For example, the state shown above on the left side in Figure
+\ref{fig:8-puzzle.pdf} is represented as the tuple:
+\begin{verbatim}
+        ( (8, 0, 6),
+          (5, 4, 7),
+          (2, 3, 1)
+        )
+\end{verbatim}
+Here, we have represented the empty tile as $0$.
+If states are represented as tuples of tuples, given a state $s$, the expression $s[r][c]$ returns the tile in
+the row $r$ and column $c$, where counting of rows and columns starts from $0$.
+We have to represent states as tuples of tuples rather than lists of lists since
+tuples are immutable while lists are mutable and we need to store states in sets later.  In \textsl{Python},
+sets can only store immutable objects.  However, later we have to manipulate the states.  To this end, we have
+to first transform them to lists of lists, which can be manipulated.  After the manipulation these lists of
+lists have to be transformed back to tuples of tuples.
+We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb} line by line.
 \begin{enumerate}
-\item $\mathtt{findTile}$ is an auxiliary procedure that takes a $\mathtt{number}$ and a $\mathtt{State}$ and
+\item The function \textts{to\_list} transforms a tuple of tuples into a list of lists.
+\item The function \textts{to\_tuple} transforms a list of lists into a tuple of tuples.
+\item \textts{findTile} is an auxiliary function that is needed to implement the function \textts{nextStates}.
+      It is called with a $\mathtt{number}$ and a $\mathtt{State}$ and
       returns the row and column where the tile labelled with $\mathtt{number}$ can be found.
-
-      Here, a state is represented as a list of lists.  For example, the states shown in Figure
-      \ref{fig:8-puzzle.pdf} are represented as shown in line 26 and line 30.  The empty tile is
-      coded as $0$.
-\item $\mathtt{moveDir}$ takes a $\mathtt{State}$, the $\mathtt{row}$ and the $\mathtt{col}$umn
+\item \textts{moveDir} takes a $\mathtt{State}$, the $\mathtt{row}$ and the $\mathtt{col}$umn
       where to find the empty square and a direction in which the empty square should be moved.
       This direction is specified via the two variables $\mathtt{dx}$ and $\mathtt{dy}$.  The tile
       at the position $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ is
       moved into the position $\langle\mathtt{row}, \mathtt{col}\rangle$, while the tile at position
       $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ becomes empty.
-\item Given a $\mathtt{State}$, the procedure $\mathtt{nextStates}$ computes the set of all states
+\item Given a $\mathtt{State}$, the procedure \textts{next\_states} computes the set of all states
       that can be reached in one step from $\mathtt{State}$.  The basic idea is to find the position of the
       empty tile and then try to move the empty tile in all possible directions.  If the empty tile is found at
-      position $[\mathtt{row}, \mathtt{col}]$ and the direction of the movement is given as $[\mathtt{dx}, \mathtt{dy}]$, then
+      position $(\mathtt{row}, \mathtt{col})$ and the direction of the movement is given as $(\mathtt{dx}, \mathtt{dy})$, then
       in order to ensure that the empty tile can be moved to the position $[\mathtt{row}+\mathtt{dx}, \mathtt{col}+\mathtt{dy}]$,
       we have to ensure that both
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{row}+\mathtt{dx} \in \{1,\cdots,n\}$ \quad and \quad
-      $\mathtt{col}+\mathtt{dy} \in \{1,\cdots,n\}$
+      $\mathtt{row}+\mathtt{dx} \in \{0,\cdots,n-1\}$ \quad and \quad
+      $\mathtt{col}+\mathtt{dy} \in \{0,\cdots,n-1\}$
       \\[0.2cm]
       hold, where $n$ is the size of the board.
 \end{enumerate}
@@ -359,9 +404,9 @@ algorithm to solve search problems is \href{https://en.wikipedia.org/wiki/Breadt
 We discuss this algorithm next.
 
 \section{Breadth First Search}
-Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows:
+Informally, breadth first search, abbreviated as \ac{bfs}, works as follows: \index{breadth first search}
 \begin{enumerate}
-\item Given a search problems $\langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$,
+\item Given a search problems $\langle Q,\;\mathtt{nextStates},\; \mathtt{start},\; \mathtt{goal}\rangle$,
       we initialize a set $\mathtt{Frontier}$ to contain the state $\mathtt{start}$.
 
       In general, $\mathtt{Frontier}$ contains those states that have just been discovered and whose successors have not
@@ -372,7 +417,7 @@ Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows:
       These old states are then saved into a set $\mathtt{Visited}$.
 \end{enumerate}
 In order to avoid loops, an implementation of breadth first search keeps track of those states that have
-been visited.  These states are collected in a set $\mathtt{Visited}$.  Once a state has been added to
+been visited in the set $\mathtt{Visited}$.  Once a state has been added to
 the set $\mathtt{Visited}$,  it will never be revisited again.
 Furthermore, in order to keep track of the path leading to the goal, we utilize a dictionary called
 $\mathtt{Parent}$.  For every state $s$ that is in $\mathtt{Frontier}$, $\mathtt{Parent}[s]$ is the state that
@@ -394,40 +439,37 @@ $s \in \mathtt{nextStates}(\mathtt{Parent}[s])$.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    search := procedure(start, goal, nextStates) {
-        Frontier := { start };
-        Visited  := {}; // set of nodes that have been expanded
-        Parent   := {};
-        while (Frontier != {}) {
-            NewFrontier := {};
-            for ( s in Frontier, ns in nextStates(s)
-                | !(ns in Visited) && !(ns in Frontier)
-                )
-            {
-                NewFrontier += { ns };
-                Parent[ns]  := s;
-                if (ns == goal) {
-                    return pathTo(goal, Parent);
-                }
-            }
-            Visited  += Frontier;
-            Frontier := NewFrontier;
-        }
-    };
+    def search(start, goal, next_states):
+        Frontier = { start }
+        Visited  = set()
+        Parent   = { start: start }
+        while len(Frontier) > 0:
+            NewFrontier = set()
+            for s in Frontier:
+                for ns in next_states(s):
+                    if ns not in Visited and ns not in Frontier:
+                        NewFrontier.add(ns)
+                        Parent[ns] = s
+                        if ns == goal:
+                            return path_to(goal, Parent)
+            Visited |= Frontier
+            Frontier = NewFrontier
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Breadth first search.}
-\label{fig:breadth-first-search.stlx}
+\label{fig:Breadth-First-Search.ipynb}
 \end{figure}
-\myFig{breadth-first-search.stlx} shows an implementation of
-breadth first search in \textsc{SetlX}.  We discuss this implementation line by line:
+\myFig{Breadth-First-Search.ipynb} shows an implementation of
+breadth first search in \textsl{Python}.  We discuss this implementation line by line:
 \begin{enumerate}
 \item $\mathtt{Frontier}$ is the set of all those states that have been encountered but whose
       neighbours have not yet been explored.  Initially, it contains the state $\mathtt{start}$.
 \item $\mathtt{Visited}$ is the set of all those states, all whose neighbours have already been
       added to the set $\mathtt{Frontier}$.  In order to avoid infinite loops, these states must not
       be visited again.
-\item $\mathtt{Parent}$ is a dictionary keeping track of the state leading to a given state.
+\item $\mathtt{Parent}$ is a dictionary keeping track of the predecessors of the state that have been reached.
+      The only state with no real predecessor is the state \texttt{start}.  By convention, \texttt{start} is its
+      own predecessor.
 \item As long as the set $\mathtt{Frontier}$ is not empty, we add all neighbours of states in
       $\mathtt{Frontier}$ that have not yet been visited to the set $\mathtt{NewFrontier}$.
       When doing this, we keep track of the path leading to a new state $\mathtt{ns}$ by storing its
@@ -437,7 +479,7 @@ breadth first search in \textsc{SetlX}.  We discuss this implementation line by 
       \ref{fig:pathTo.stlx} on page \pageref{fig:pathTo.stlx}.
 \item After we have collected all successors of states in $\mathtt{Frontier}$, the states
       in the set $\mathtt{Frontier}$ have been visited and are therefore added to the set
-      $\mathtt{Visited}$, while the $\mathtt{Frontier}$ is updated to $\mathtt{NewFrontier}$.
+      $\mathtt{Visited}$, while the set $\mathtt{Frontier}$ is updated to $\mathtt{NewFrontier}$.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -451,14 +493,11 @@ breadth first search in \textsc{SetlX}.  We discuss this implementation line by 
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    pathTo := procedure(state, Parent) {
-        Path := [];
-        while (state != om) {
-            Path  += [state];
-            state := Parent[state];
-        }
-        return reverse(Path);
-    };
+    def path_to(state, Parent):
+        p = Parent[state]
+        if p == state:
+            return [state]
+        return path_to(p, Parent) + [state]
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The procedure $\mathtt{pathTo}()$.}
@@ -467,7 +506,7 @@ breadth first search in \textsc{SetlX}.  We discuss this implementation line by 
 The procedure call $\mathtt{pathTo}(\mathtt{state}, \mathtt{Parent})$ constructs a path reaching
 from $\mathtt{start}$ to $\mathtt{state}$ in reverse by looking up the parent states.
 
-If we try breadth first search to solve the missionaries and cannibals problem, we immediately get
+If we try breadth first search to solve the missionaries and cannibals problem, we obtain
 the solution shown in Figure \ref{fig:missionaries.solution}.  15 nodes had to be expanded to find
 this solution.  To keep this in perspective, we note that Figure \ref{fig:missionaries.pdf} shows
 that the entire state space contains 16 states.  Therefore, with the exception of one state, we have
@@ -513,160 +552,14 @@ inspected all the states.  This is a typical behaviour for breadth first search.
 \label{fig:missionaries.solution}
 \end{figure}
 
-Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes about 6 seconds to solve
+Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes about 2 seconds to solve
 this problem on my computer\footnote{
   I happen to own an iMac from 2017.  This iMac is equipped with 32 Gigabytes of main memory and a
   quad core 3.4 GHz ``Intel Core i5'' processor.  I suspect this to be the I5-7500 (Kaby Lake) processor.
-}, while 181439 states are touched.  Again, we see that breadth first search touches nearly all the
+}, while 181,439 states are touched.  Again, we see that breadth first search touches nearly all the
 states reachable from the start state.
 
-\subsection{A Queue Based Implementation of Breadth First Search}
-In the literature, for example in Figure 3.11 of Russell \& Norvig \cite{russell:2009}, breadth
-first search is often implemented using a
-\href{https://en.wikipedia.org/wiki/Queue_(abstract_data_type)}{queue} data structure.
-Figure \ref{fig:breadth-first-search-queue.stlx} on page
-\pageref{fig:breadth-first-search-queue.stlx} shows an implementation of breadth first search that
-uses a queue to store the set \texttt{Frontier}.  However, when we run this version, it turns out
-that the solution of the $3 \times 3$ sliding puzzle needs about 58 seconds, which is a lot
-slower than our set based implementation that has been presented in Figure
-\ref{fig:breadth-first-search.stlx}.
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    search := procedure(start, goal, nextStates) {
-        Queue   := [ start ];
-        Visited := {};
-        Parent  := {};
-        while (Queue != []) {
-            state := Queue[1];
-            Queue := Queue[2..];
-            if (state == goal) {
-                return pathTo(state, Parent);
-            }
-            Visited   += { state };
-            newStates := nextStates(state);
-            for (ns in newStates | !(ns in Visited) && Parent[ns] == om) {
-                Parent[ns] := state;
-                Queue      += [ ns ];
-            }
-        }
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{A queue based implementation of breadth first search.}
-\label{fig:breadth-first-search-queue.stlx}
-\end{figure}
-
-The solution of the $3 \times 3$ sliding puzzle that is found by breadth first search is shown in
-Figure \ref{fig:8-puzzle.solution1} and Figure \ref{fig:8-puzzle.solution2}.
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 8 |   | 6 |        |   | 8 | 6 |        | 5 | 8 | 6 |        | 5 | 8 | 6 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 5 | 4 | 7 |  |==>  | 5 | 4 | 7 |  |==>  |   | 4 | 7 |  |==>  | 2 | 4 | 7 |  |==>
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 2 | 3 | 1 |        | 2 | 3 | 1 |        | 2 | 3 | 1 |        |   | 3 | 1 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 5 | 8 | 6 |        | 5 | 8 | 6 |        | 5 | 8 | 6 |        | 5 | 8 |   |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 2 | 4 | 7 |  |==>  | 2 | 4 | 7 |  |==>  | 2 | 4 |   |  |==>  | 2 | 4 | 6 |  |==>
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 3 |   | 1 |        | 3 | 1 |   |        | 3 | 1 | 7 |        | 3 | 1 | 7 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 5 |   | 8 |        |   | 5 | 8 |        | 2 | 5 | 8 |        | 2 | 5 | 8 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 2 | 4 | 6 |  |==>  | 2 | 4 | 6 |  |==>  |   | 4 | 6 |  |==>  | 4 |   | 6 |  |==>
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 3 | 1 | 7 |        | 3 | 1 | 7 |        | 3 | 1 | 7 |        | 3 | 1 | 7 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 2 | 5 | 8 |        | 2 | 5 | 8 |        | 2 | 5 | 8 |        | 2 | 5 |   |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 4 | 1 | 6 |  |==>  | 4 | 1 | 6 |  |==>  | 4 | 1 |   |  |==>  | 4 | 1 | 8 |  |==>
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 3 |   | 7 |        | 3 | 7 |   |        | 3 | 7 | 6 |        | 3 | 7 | 6 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 2 |   | 5 |        |   | 2 | 5 |        | 4 | 2 | 5 |        | 4 | 2 | 5 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 4 | 1 | 8 |  |==>  | 4 | 1 | 8 |  |==>  |   | 1 | 8 |  |==>  | 1 |   | 8 |  |==>
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 3 | 7 | 6 |        | 3 | 7 | 6 |        | 3 | 7 | 6 |        | 3 | 7 | 6 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 4 | 2 | 5 |        | 4 | 2 | 5 |        | 4 | 2 | 5 |        | 4 | 2 |   |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 1 | 7 | 8 |  |==>  | 1 | 7 | 8 |  |==>  | 1 | 7 |   |  |==>  | 1 | 7 | 5 |  |==>
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 3 |   | 6 |        | 3 | 6 |   |        | 3 | 6 | 8 |        | 3 | 6 | 8 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{The first 24 steps in the solution of the $3 \times 3$ sliding puzzle.}
-\label{fig:8-puzzle.solution1}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 4 |   | 2 |        |   | 4 | 2 |        | 1 | 4 | 2 |        | 1 | 4 | 2 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 1 | 7 | 5 |  |==>  | 1 | 7 | 5 |  |==>  |   | 7 | 5 |  |==>  | 3 | 7 | 5 |  |==>
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 3 | 6 | 8 |        | 3 | 6 | 8 |        | 3 | 6 | 8 |        |   | 6 | 8 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 1 | 4 | 2 |        | 1 | 4 | 2 |        | 1 |   | 2 |        |   | 1 | 2 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 3 | 7 | 5 |  |==>  | 3 |   | 5 |  |==>  | 3 | 4 | 5 |  |==>  | 3 | 4 | 5 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-    | 6 |   | 8 |        | 6 | 7 | 8 |        | 6 | 7 | 8 |        | 6 | 7 | 8 |
-    +---+---+---+        +---+---+---+        +---+---+---+        +---+---+---+
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{The last 7 steps in the solution of the $3 \times 3$ sliding puzzle.}
-\label{fig:8-puzzle.solution2}
-\end{figure}
-
-We conclude our discussion of breadth first search by noting the two most important properties of
-breadth first search.
+Breadth first search has two important properties:
 \begin{enumerate}
 \item Breadth first search is \blue{complete}:  If there is a solution to the given
       search problem, then breadth first search is going to find it.
@@ -675,15 +568,16 @@ breadth first search.
 \end{enumerate}
 \proof
 Both of these claims can be shown simultaneously.  Consider the implementation of breadth first
-search shown in Figure \ref{fig:breadth-first-search.stlx}.  An easy induction on the number of
+search shown in Figure \ref{fig:Breadth-First-Search.ipynb}.  An easy induction on the number of
 iterations of the \texttt{while} loop shows that after $n$ iterations of the \texttt{while} loop,
 the set $\mathtt{Frontier}$ contains exactly those states that have a distance of $n$ to the state
 $\mathtt{start}$.  This claim is obviously true before the first iteration of the while loop as in
 this case, $\mathtt{Frontier}$ only contains the state $\mathtt{start}$.  In the induction step we
 assume the claim is true after $n$ iterations.  Then, in the next iteration all states that can be
 reached in one step from a state in $\mathtt{Frontier}$ are added to the new $\mathtt{Frontier}$,
-provided there is no shorter path to these states.  There is a shorter path to these states if these
-states are already a member of the set $\mathtt{Visited}$.  Hence, the claim is true after $n+1$
+provided there is no shorter path to them.  There is a shorter path to a state if this
+state is already a member of the set $\mathtt{Visited}$.  Otherwise, the shortest path to a state that is
+reached in iteration $n+1$ has the length $n+1$.  Hence, the claim is true after $n+1$
 iterations also.
 
 Now, if there is a path from $\mathtt{start}$ to $\mathtt{goal}$, there must also be a shortest
@@ -698,13 +592,75 @@ a lot of memory because it will store a large part of the state space in the set
 $\mathtt{Visited}$.  In many cases, the state space is so big that this is not possible.  For example, it is
 impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzle using breadth first search.
 
+\subsection{A Queue Based Implementation of Breadth First Search}
+In the literature, for example in Figure 3.11 of Russell \& Norvig \cite{russell:2009}, breadth
+first search is often implemented using a
+\href{https://en.wikipedia.org/wiki/Queue_(abstract_data_type)}{queue} data structure.
+Figure \ref{fig:Breadth-First-Search-Queue.ipynb} on page
+\pageref{fig:Breadth-First-Search-Queue.ipynb} shows an implementation of breadth first search that
+uses a queue to store the set \texttt{Frontier}.   Here we use the module \texttt{deque} from the package
+\texttt{collections}. This module implements a
+\href{https://en.wikipedia.org/wiki/Double-ended_queue}{double-ended queue}, \index{double-ended queue}
+which is implemented as a 
+\href{https://en.wikipedia.org/wiki/Doubly_linked_list}{doubly linked list}. \index{doubly linked list}
+Besides the constructor, our
+implementation uses two methods from the class \texttt{deque}:
+\begin{enumerate}
+\item Line 4 initializes the \texttt{Frontier} as a double-ended queue that contains the state \texttt{start}.
+\item In line 8 we remove the oldest element in the queue \texttt{Frontier}, which is supposed to be at the
+      left end of the queue.  This is achieved via the method \textts{popleft}.
+\item In line 16 we add the states that have not been encountered previously at the right end of the queue
+      \texttt{Frontier} using the method \textts{append}.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines,
+                  framesep      = 0.3cm,
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                  ]
+    from collections import deque
+                  
+    def search(start, goal, next_states):
+        Frontier = deque([start])
+        Visited  = set()
+        Parent   = { start: start }
+        while len(Frontier) > 0:
+            state = Frontier.popleft()
+            if state == goal:
+                return path_to(state, Parent)
+            Visited.add(state)
+            newStates = next_states(state)
+            for ns in newStates:
+                if ns not in Visited and ns not in Parent:
+                    Parent[ns] = state
+                    Frontier.append(ns)
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A queue based implementation of breadth first search.}
+\label{fig:Breadth-First-Search-Queue.ipynb}
+\end{figure}
+
+
 
 \section{Depth First Search}
 To overcome the memory limitations of breadth first search, the
 \href{https://en.wikipedia.org/wiki/Depth-first_search}{depth first search} algorithm has been
-developed.  The basic idea is to replace the queue of Figure
-\ref{fig:breadth-first-search-queue.stlx} by a stack.  The resulting algorithm is shown in Figure
-\ref{fig:depth-first-search.stlx} on page \pageref{fig:depth-first-search.stlx}.  Basically, in this
+developed.  Depth first search is abbreviated as \ac{dfs}.  There are two ideas involved when going from
+breadth first search to depth first search:
+\begin{enumerate}
+\item In order to save memory, \ac{dfs} removes the set \texttt{Visited} of \ac{bfs}.
+\item While \ac{bfs} ensures that every state is visited by implementing the \texttt{Frontier} as a queue,
+      \ac{dfs} replaces this queue by a stack.  This way, \ac{dfs} tries to get as far away from the state
+      \texttt{start} as early as possible.  In order to prevent loops, we still have the parent dictionary.
+\end{enumerate}
+The resulting algorithm is shown in Figure
+\ref{fig:Depth-First-Search-Stack.ipynb} on page \pageref{fig:Depth-First-Search-Stack.ipynb}.  Basically, in this
 implementation, a path is searched to its end before trying an alternative.  This way, we might be able to find a
 $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the whole state space.
 
@@ -719,131 +675,47 @@ $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the who
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    search := procedure(start, goal, nextStates) {
-        Stack  := [ start ];
-        Parent := {};
-        while (Stack != []) {
-            state := Stack[-1];
-            Stack := Stack[..-2];
-            if (state == goal) {
-                return pathTo(state, Parent);
-            }
-            newStates := nextStates(state);
-            for (ns in newStates | ns != start && Parent[ns] == om) {
-                Parent[ns] := state;
-                Stack      += [ns];
-            }
-        }
-    };
+    def search(start, goal, next_states):
+        Stack  = deque([start])
+        Parent = { start: start }
+        while len(Stack) > 0:
+            state = Stack.pop()
+            for ns in next_states(state):
+                if ns == goal:
+                    return path_to(state, Parent) + [goal]
+                if ns not in Parent:
+                    Parent[ns] = state
+                    Stack.append(ns)
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The depth first search algorithm.}
-\label{fig:depth-first-search.stlx}
+\label{fig:Depth-First-Search-Stack.ipynb}
 \end{figure}
-Actually, it is not necessary to understand the details of the implementation shown in
-\myFig{depth-first-search.stlx}.  The reason is that the recursive implementation of depth first
-search that is presented in the following subsection is superior to the implementation shown in
-\myFig{depth-first-search.stlx}.
-When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes about 68 seconds to find a solution.
-The solution that is found has a length of $41,553$ steps.  As the
-shortest path from $\mathtt{start}$ to $\mathtt{goal}$ has 31 steps, the solution found by depth
-first search is very far from optimal.  All this is rather disappointing news.  The only good news
-is that there is no longer a need to keep the set $\mathtt{Visited}$ around.  However, we still have
-to maintain the set $\mathtt{Parent}$.  If we were more ambitious, we could eliminate the use of
-this dictionary also, but the resulting implementation would be rather unwieldy.  Fortunately, we will be
-able to get rid of the set $\mathtt{Parent}$ with next to no effort when we develop a recursive
+The implementation of  \texttt{search} works as follows:
+\begin{enumerate}
+\item Any states that are encountered during the search are placed on top of the stack \texttt{Stack}.
+\item In order to record the information how a state has been added to the \texttt{Stack}, we have a dictionary
+      \texttt{Parent}.  For every state $s$ that is on \texttt{Stack}, $\texttt{Parent}[s]$ returns a state $p$
+      such that $s \in \texttt{next\_states}(p)$,  i.e. $p$ is the state that immediately precedes $s$ on the
+      path that leads from \texttt{start} to $s$.  
+\item Initially, \texttt{Stack} only contains the state \texttt{start}.
+\item As long as \texttt{Stack} is not empty, the \texttt{state} on top of \texttt{Stack} is replaced by all
+      states that be reached in one step from \texttt{state}.  However, in order to prevent depth first search
+      to run in circles, only those states \texttt{ns}from the set \texttt{next\_states(state)} are appended to
+      \texttt{Stack} that have not been encountered previously.  This is checked by testing 
+      whether \texttt{ns} is in the domain of \texttt{Parent}.
+\item When the \texttt{goal} is reached,  a path leading from \texttt{start} to \texttt{goal} is returned.
+\end{enumerate}
+When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes about 0.25 seconds
+on my computer to find a solution.  This is quite an improvement compared to breadth first search.
+Furthermore, there is no longer a need to keep the set $\mathtt{Visited}$ around, hence the memory requirements of depth
+first search are much smaller than the memory requirements of breadth first search.  However, we still have
+to maintain the set $\mathtt{Parent}$.  Fortunately, we will be able to get rid of the set $\mathtt{Parent}$ when we develop a recursive
 implementation of depth first search in the following subsection.
 
-\subsection{Getting Rid of the $\mathtt{Parent}$ Dictionary}
-It can be argued that the implementation of depth first search discussed previously is not really
-depth first search because it uses the dictionary $\mathtt{Parent}$.  As states are only added to
-$\mathtt{Parent}$ and never removed, at the end of the search this dictionary will contain all
-states that have been visited.  This defeats the most important advantage of depth first search
-which is the fact that it should only store the current path that is investigated.  Therefore,
-it has been suggested (for example compare Russel and Norvig \cite{russell:2009}) that instead of
-storing single states, the stack should store the full paths leading to these states.  This leads to
-the implementation shown in \myFig{depth-first-search-path.stlx}.
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    search := procedure(start, goal, nextStates) {
-        Stack  := [ [start] ];
-        while (Stack != []) {
-            Path  := Stack[-1];
-            Stack := Stack[..-2];
-            state := Path[-1];
-            if (state == goal) {
-                return Path;
-            }
-            newStates := nextStates(state);
-            for (ns in newStates | !(ns in Path)) {
-                Stack += [ Path + [ns] ];
-            }
-        }
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{An path-based implementation of depth first search.}
-\label{fig:depth-first-search-path.stlx}
-\end{figure}
-
-Unfortunately, it  turns out that the paths get very long and hence need a lot of memory to be
-stored and this fact defeats the main idea of this implementation.  As a result, the procedure
-$\mathtt{search}$ that is given in \myFig{depth-first-search-path.stlx} is not able to solve the
-instance of the  $3 \times 3$ sliding puzzle that was shown in \myFig{8-puzzle.pdf}.
-
-\exercise
-Assume that $n$ is a positive natural number and that the set of states $Q_n$ is defined as
-\\[0.2cm]
-\hspace*{1.3cm}
-$Q_n := \bigl\{ \pair(a, b) \mid a \in \{0,\cdots,n\} \wedge b \in \{0,\cdots,n\} \bigr\}$.
-\\[0.2cm]
-Furthermore, the states $\mathtt{start}$ and $\mathtt{goal}$ are defined as
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,n)$.
-\\[0.2cm]
-Next, the function $\mathtt{nextStates}$ is defined as
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \left\{
-\begin{array}{ll}
-\bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}  & \mbox{if $a < n$ and $b < n$} \\[0.1cm]
-\bigl\{\pair(a+1,b), \pair(a+1,0)\bigr\}  & \mbox{if $a < n$ and $b = n$} \\[0.1cm]
-\bigl\{\pair(0,b+1), \pair(a,b+1)\bigr\}  & \mbox{if $a = n$ and $b < n$} \\[0.1cm]
-\{\}  & \mbox{if $a = n$ and $b = n$}
-\end{array}
-\right.
-$
-\\[0.2cm]
-Finally, the search problem $\mathcal{P}$ is defined as
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathcal{P} := \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \rangle$.
-\\[0.2cm]
-Assume that states can be stored using 8 bytes.  Furthermore, assume that we use the algorithm given in
-\myFig{depth-first-search-path.stlx} to solve the search problem $\mathcal{P}$.  Finally, assume that the path
-found by depth first search is the longest path leading from $\mathtt{start}$ to $\mathtt{goal}$.
-
-How many bytes do we need to store all the states on the stack in the moment that the $\mathtt{goal}$
-is reached? How big is this number if $n = 100$?
-\vspace*{0.2cm}
-
-\noindent
-\textbf{Note} that the question only asks for the memory needed to store the states.  The memory
-needed to store the stack itself and the various lists on the stack is on top of the memory
-needed to store the states.  However, to answer this exercise correctly, you should ignore this kind of
-memory. 
-\eoxs
+However, there is also bad news: the solution that is found has a length of more than $8,000$ steps.  As the
+shortest path from $\mathtt{start}$ to $\mathtt{goal}$ has only 31 steps, the solution found by depth
+first search is very far from being optimal.
 
 \subsection{A Recursive Implementation of Depth First Search}
 Sometimes, the depth first search algorithm is presented as a recursive algorithm, since this leads
@@ -988,7 +860,7 @@ We proceed to discuss the details of this program.
       \ref{fig:iterative-deepening.stlx} is stack based.  In this implementation,
       the stack contains paths leading from $\mathtt{start}$ to the state at the end of a given
       path.  Hence it is similar to the implementation of depth first search shown in
-      \myFig{depth-first-search.stlx}.
+      \myFig{Depth-First-Search-Stack.ipynb}.
 \item The stack is initialized to contain the path $\mathtt{[start]}$.
 \item In the \texttt{while}-loop, the first thing that happens is that the $\mathtt{Path}$ on top of
       the stack is removed from the stack.  The state at the end of this $\mathtt{Path}$ is called $\mathtt{state}$.
@@ -1201,7 +1073,7 @@ keeping a two trillion states in memory is impossible on most devices.
 
 Figure \ref{fig:bidirectional-bfs.stlx} on page \pageref{fig:bidirectional-bfs.stlx} shows the implementation
 of bidirectional breadth first search.  Essentially, we have to copy the breadth first program shown in
-Figure \ref{fig:breadth-first-search.stlx}. Let us discuss the details of the implementation.
+Figure \ref{fig:Breadth-First-Search.ipynb}. Let us discuss the details of the implementation.
 \begin{enumerate}
 \item The variable $\mathtt{FrontierA}$ is the frontier that starts from the state $\mathtt{start}$, while
       $\mathtt{FrontierB}$ is the frontier that starts from the state $\mathtt{goal}$.
@@ -2075,7 +1947,7 @@ So far, the best search algorithm we have encountered is bidirectional breadth f
 of memory consumption, the $\mathrm{A}^*$ algorithm also looks very promising.  Hence, it might be a good idea
 to combine these two algorithms.  \myFig{a-star-bidirectional.stlx} shows the resulting program.  This program
 relates to the $\mathrm{A}^*$ algorithm shown in \myFig{a-star-search.stlx} as the algorithm for bidirectional
-search shown in \myFig{bidirectional-bfs.stlx} relates to breadth first search shown in \myFig{breadth-first-search.stlx}.
+search shown in \myFig{bidirectional-bfs.stlx} relates to breadth first search shown in \myFig{Breadth-First-Search.ipynb}.
 The only new idea is that we alternate between the $\mathrm{A}^*$ search starting from $\texttt{start}$ and the
 $\mathrm{A}^*$ search starting from $\texttt{goal}$ depending on the estimated total distance:
 \begin{enumerate}[(a)]

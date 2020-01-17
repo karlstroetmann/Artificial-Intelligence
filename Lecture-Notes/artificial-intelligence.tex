@@ -1,4 +1,5 @@
 \documentclass[11pt]{report}
+\usepackage{acro}
 \usepackage{fleqn}
 \usepackage{graphicx}
 \usepackage{epstopdf}
@@ -181,18 +182,33 @@ inconsistencies, please contact me via \href{https://discordapp.com}{discord} or
 \\[0.2cm]
 \hspace*{1.3cm}
 \href{mailto:karl.stroetmann@dhbw-mannheim.de}{\texttt{karl.stroetmann@dhbw-mannheim.de}}
-\\[0.2cm]
-I am currently rewriting these lecture notes as I am moving from the programming language
-\href{https://randoom.org/Software/SetlX/}{\textsc{SetlX}} to
-\href{https://python.org}{\textsl{Python}}. 
 \end{minipage}
 }
+
+\DeclareAcronym{ai}{
+  short = AI,
+  long  = artificial intelligence,
+  class = abbrev
+}
+\DeclareAcronym{bfs}{
+  short = BFS,
+  long  = breadth first search,
+  class = abbrev
+}
+\DeclareAcronym{dfs}{
+  short = DFS,
+  long  = depth first search,
+  class = abbrev
+}
+\acsetup{first-style=short}
 
 \makeindex
 
 \begin{document}
 \maketitle
 \tableofcontents
+
+\printacronyms[include-classes=abbrev, name=Abbreviations]
 
 \include{introduction}
 \include{search}
