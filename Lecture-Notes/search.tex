@@ -1003,43 +1003,42 @@ keeping a two trillion states in memory is impossible on most devices.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    search := procedure(start, goal, nextStates) {
-        FrontierA := { start };
-        VisitedA  := {}; // set of nodes expanded starting from start
-        ParentA   := {};
-        FrontierB := { goal };
-        VisitedB  := {}; // set of nodes expanded starting from goal
-        ParentB   := {};
-        while (FrontierA != {} && FrontierB != {}) {
-            VisitedA += FrontierA;
-            VisitedB += FrontierB;
-            NewFrontier := {};
-            for (s in FrontierA, ns in nextStates(s) | !(ns in VisitedA)) {
-                NewFrontier += { ns };
-                ParentA[ns] := s;
-                if (ns in VisitedB) {
-                    return combinePaths(ns, ParentA, ParentB);
-                }
-            }
-            FrontierA   := NewFrontier;
-            NewFrontier := {};
-            for (s in FrontierB, ns in nextStates(s) | !(ns in VisitedB)) {
-                NewFrontier += { ns };
-                ParentB[ns] := s;
-                if (ns in VisitedA) {
-                    return combinePaths(ns, ParentA, ParentB);
-                }
-            }
-            FrontierB := NewFrontier;
-        }
-    };
+    def search(start, goal, next_states):        
+        FrontierA = { start }
+        VisitedA  = set()           # set of nodes expanded starting from start
+        ParentA   = { start: start}
+        FrontierB = { goal }
+        VisitedB  = set()           # set of nodes expanded starting from goal
+        ParentB   = { goal: goal} 
+        print('start while:')
+        while len(FrontierA) > 0 and len(FrontierB) > 0:
+            VisitedA  |= FrontierA
+            VisitedB  |= FrontierB
+            NewFrontier = set()
+            for s in FrontierA:
+                for ns in next_states(s):
+                    if ns not in VisitedA:
+                        NewFrontier |= { ns }
+                        ParentA[ns]  = s
+                        if ns in VisitedB:
+                            return combinePaths(ns, ParentA, ParentB)
+            FrontierA   = NewFrontier
+            NewFrontier = set()
+            for s in FrontierB:
+                for ns in next_states(s):
+                    if ns not in VisitedB:
+                        NewFrontier |= { ns }
+                        ParentB[ns]  = s
+                        if ns in VisitedA:
+                            return combinePaths(ns, ParentA, ParentB)
+            FrontierB = NewFrontier
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Bidirectional breadth first search.}
-\label{fig:bidirectional-bfs.stlx}
+\label{fig:Bidirectional-BFS.ipynb}
 \end{figure}
 
-Figure \ref{fig:bidirectional-bfs.stlx} on page \pageref{fig:bidirectional-bfs.stlx} shows the implementation
+Figure \ref{fig:Bidirectional-BFS.ipynb} on page \pageref{fig:Bidirectional-BFS.ipynb} shows the implementation
 of bidirectional breadth first search.  Essentially, we have to copy the breadth first program shown in
 Figure \ref{fig:Breadth-First-Search.ipynb}. Let us discuss the details of the implementation.
 \begin{enumerate}
@@ -1063,8 +1062,8 @@ Figure \ref{fig:Breadth-First-Search.ipynb}. Let us discuss the details of the i
       \ref{fig:combine-paths.stlx} on page \pageref{fig:combine-paths.stlx}.
 \item Next, the same computation is done with the role of the states $\mathtt{start}$ and $\mathtt{goal}$ exchanged.
 \end{enumerate}
-On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in less than a
-second!  However, bidirectional breadth first search is still not able to solve the $4 \times 4$ sliding puzzle
+On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in less than 120
+milliseconds!  However, bidirectional breadth first search is still not able to solve the $4 \times 4$ sliding puzzle
 since the portion of the search space that needs to be computed is just too big to fit into memory.
 
 \begin{figure}[!ht]
@@ -1078,11 +1077,10 @@ since the portion of the search space that needs to be computed is just too big 
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    combinePaths := procedure(node, ParentA, ParentB) {
-        Path1 := pathTo(node, ParentA);
-        Path2 := pathTo(node, ParentB);
-        return Path1[..-2] + reverse(Path2);
-    };
+    def combinePaths(state, ParentA, ParentB):
+            Path1 = path_to(state, ParentA)
+            Path2 = path_to(state, ParentB)
+            return Path1[:-1] + Path2[::-1] # Path2 is reversed
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Combining two paths.}
@@ -1915,7 +1913,7 @@ So far, the best search algorithm we have encountered is bidirectional breadth f
 of memory consumption, the $\mathrm{A}^*$ algorithm also looks very promising.  Hence, it might be a good idea
 to combine these two algorithms.  \myFig{a-star-bidirectional.stlx} shows the resulting program.  This program
 relates to the $\mathrm{A}^*$ algorithm shown in \myFig{a-star-search.stlx} as the algorithm for bidirectional
-search shown in \myFig{bidirectional-bfs.stlx} relates to breadth first search shown in \myFig{Breadth-First-Search.ipynb}.
+search shown in \myFig{Bidirectional-BFS.ipynb} relates to breadth first search shown in \myFig{Breadth-First-Search.ipynb}.
 The only new idea is that we alternate between the $\mathrm{A}^*$ search starting from $\texttt{start}$ and the
 $\mathrm{A}^*$ search starting from $\texttt{goal}$ depending on the estimated total distance:
 \begin{enumerate}[(a)]
