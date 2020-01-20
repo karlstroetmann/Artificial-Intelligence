@@ -650,8 +650,8 @@ implementation uses two methods from the class \texttt{deque}:
 
 \section{Depth First Search}
 To overcome the memory limitations of breadth first search, the
-\href{https://en.wikipedia.org/wiki/Depth-first_search}{depth first search} algorithm has been
-developed.  Depth first search is abbreviated as \ac{dfs}.  There are two ideas involved when going from
+\href{https://en.wikipedia.org/wiki/Depth-first_search}{depth first search} algorithm \index{depth first search}
+has been developed.  Depth first search is abbreviated as \ac{dfs}.  There are two ideas involved when going from
 breadth first search to depth first search:
 \begin{enumerate}
 \item In order to save memory, \ac{dfs} removes the set \texttt{Visited} of \ac{bfs}.
@@ -734,21 +734,17 @@ implementation is shown in \myFig{depth-first-search-recursive.stlx}.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    search := procedure(start, goal, nextStates) {
-        return dfs(start, goal, nextStates, [start]);
-    };
-    dfs := procedure(state, goal, nextStates, Path) {
-        if (state == goal) {
-            return Path;
-        }
-        newStates := nextStates(state);
-        for (ns in newStates | !(ns in Path)) {
-            result := dfs(ns, goal, nextStates, Path + [ns]);
-            if (result != om) {
-                return result;
-            }
-        }
-    };
+    def search(start, goal, next_states):
+        return dfs(start, goal, next_states, [start])
+    
+    def dfs(state, goal, next_states, Path):
+        if state == goal:
+            return Path
+        for ns in next_states(state):
+            if ns not in Path:
+                Result = dfs(ns, goal, next_states, Path + [ns])
+                if Result != None:
+                    return Result
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{A recursive implementation of depth first search.}
@@ -766,7 +762,7 @@ The implementation of $\mathtt{dfs}$ works as follows:
 \item If $\mathtt{state}$ is equal to $\mathtt{goal}$, our search is successful. Since by assumption
       the list $\mathtt{Path}$ is a path connecting $\mathtt{start}$ and $\mathtt{state}$ and we
       have checked that $\mathtt{state}$ is equal to $\mathtt{goal}$, we can return $\mathtt{Path}$ as our solution.
-\item Otherwise, $\mathtt{newStates}$ is the set of states that are reachable from $\mathtt{state}$
+\item Otherwise, $\mathtt{next\_states}(\mathtt{state})$ is the set of states that are reachable from $\mathtt{state}$
       in one step.  Any of the states $\mathtt{ns}$ in this set could be the next state on a path
       that leads to $\mathtt{goal}$.  Therefore, we try recursively to reach $\mathtt{goal}$ from
       every state $\mathtt{ns}$.  Note that we have to change $\mathtt{Path}$ to the list
@@ -782,31 +778,33 @@ The implementation of $\mathtt{dfs}$ works as follows:
       The current implementation no longer has a need for the dictionary $\mathtt{Parent}$.  This is very
       fortunate since it reduces the memory requirements of depth first search considerably.
 \item If one of the recursive calls of $\mathtt{dfs}$ returns a list, this list is a solution to our
-      search problem and hence it is returned.  However, if instead the undefined value
-      $\mathtt{om}$ is returned, the \texttt{for} loop needs to carry on and test the other
+      search problem and hence it is returned.  However, if instead 
+      $\mathtt{None}$ is returned, the \texttt{for} loop needs to carry on and test the other
       successors of $\mathtt{state}$.
-\item Note that the recursive invocation of $\mathtt{dfs}$ returns $\mathtt{om}$ if the end of the
+\item Note that the recursive invocation of $\mathtt{dfs}$ returns $\mathtt{None}$ if the end of the
       \texttt{for} loop is reached and no solution has been returned so far.  The reason is that there is
       no \texttt{return} statement at the end of the procedure $\mathtt{dfs}$.  Hence, if the last
-      line of the procedure $\mathtt{dfs}$ is reached, $\mathtt{om}$ is returned by default.
+      line of the procedure $\mathtt{dfs}$ is reached, $\mathtt{None}$ is returned by default.
 \end{enumerate}
 
-For the $3 \times 3$ puzzle, it takes about one second to compute the solution.  In this case, the length of
-the solution is still 3653 steps, which is unsatisfying.  The good news is that this program does not
-need much memory.  The only variable that uses considerable memory is the variable $\mathtt{Path}$.
-If we can somehow keep the list $\mathtt{Path}$ short, then the recursive version of depth first search uses only a
-tiny fraction of the memory needed by breadth first search.
+For the $3 \times 3$ puzzle, the recursive implementation takes about 26 second to compute the solution.  In
+this case, the solution has a length of more than $20\,000$ steps.  This, together with the fact that function
+calls are quite expensive in \textsl{Python}, is the reason that the recursive version is less efficient than
+the stack based implementation of depth first search.
+The good news is that this program does not need much memory.  The only variable that uses considerable memory
+is the variable $\mathtt{Path}$.  If we can somehow keep the list $\mathtt{Path}$ short, then the recursive
+version of depth first search uses only a small fraction of the memory needed by breadth first search.
 
 \section{Iterative Deepening}
-The fact that the recursive version of depth first search took just one second to find a solution is
-very impressive.  The questions is whether it might be possible to force depth first search to find
-the shortest solution.  The answer to this question leads to an algorithm that is known as
-\href{https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search}{iterative deepening}.  The main
-idea behind iterative deepening is to run depth first with a \blue{depth limit} $d$.  This limit
-enforces that a solution has at most a length of $d$.  If no solution is found at a depth of $d$, the new depth
-$d+1$ can be tried next and the process can be continued until a solution is found.  The program shown in
-Figure \ref{fig:iterative-deepening.stlx} on page \pageref{fig:iterative-deepening.stlx} implements this strategy.
-We proceed to discuss the details of this program.
+The fact that the recursive version of depth first search took just one second to find a solution is very
+impressive.  The questions is whether it might be possible to force depth first search to find the shortest
+solution.  The answer to this question leads to an algorithm that is known as
+\href{https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search}{iterative deepening}.
+\index{iterative deepening} The main idea behind iterative deepening is to run depth first with a \blue{depth
+  limit} $d$.  This limit enforces that a solution has at most a length of $d$.  If no solution is found at a
+depth of $d$, the new depth $d+1$ can be tried next and the process can be continued until a solution is found.
+The program shown in Figure \ref{fig:Iterative-Deepening.ipynb} on page \pageref{fig:Iterative-Deepening.ipynb}
+implements this strategy.  We proceed to discuss the details of this program.
 
 \begin{figure}[!ht]
 \centering
@@ -819,31 +817,30 @@ We proceed to discuss the details of this program.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    search := procedure(start, goal, nextStates) {
-        limit := 1;
-        while (true) {
-            Path := depthLimitedSearch(start, goal, nextStates, limit);
-            if (Path != om) { return Path; }
-            limit += 1;
-        }
-    };
-    depthLimitedSearch := procedure(start, goal, nextStates, limit) {
-        Stack := [ [start] ];
-        while (Stack != []) {
-            Path  := Stack[-1];
-            Stack := Stack[..-2];
-            state := Path[-1];
-            if (state == goal)  { return Path; }
-            if (#Path >= limit) { continue;    }
-            for (ns in nextStates(state) | !(ns in Path)) {
-                Stack += [ Path + [ns] ];
-            }
-        }
-    };
+    def search(start, goal, next_states):
+        limit = 1
+        while True:
+            Path = depth_limited_search(start, goal, next_states, limit)
+            if Path != None:
+                return Path
+            limit += 1
+    
+    def depth_limited_search(state, goal, next_states, limit):
+        Stack = deque([[start]])
+        while len(Stack) > 0:
+            Path  = Stack.pop()
+            state = Path[-1]
+            if state == goal:
+                return Path
+            if len(Path) >= limit:
+                continue
+            for ns in next_states(state):
+                if ns not in Path:
+                    Stack.append(Path + [ns])
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Iterative deepening implemented in \textsc{SetlX}.}
-\label{fig:iterative-deepening.stlx}
+\label{fig:Iterative-Deepening.ipynb}
 \end{figure}
 
 \begin{enumerate}
@@ -857,7 +854,7 @@ We proceed to discuss the details of this program.
       \end{itemize}
 \item The procedure $\mathtt{depthLimitedSearch}$ implements depth first search but takes care to compute only
       those paths that have a length of at most $\mathtt{limit}$.  The implementation shown in Figure
-      \ref{fig:iterative-deepening.stlx} is stack based.  In this implementation,
+      \ref{fig:Iterative-Deepening.ipynb} is stack based.  In this implementation,
       the stack contains paths leading from $\mathtt{start}$ to the state at the end of a given
       path.  Hence it is similar to the implementation of depth first search shown in
       \myFig{Depth-First-Search-Stack.ipynb}.
@@ -869,19 +866,36 @@ We proceed to discuss the details of this program.
 \item Otherwise, we check the length of $\mathtt{Path}$.  If this length is greater than or equal to the
       $\mathtt{limit}$, the $\mathtt{Path}$ can be discarded as we have already checked that it
       does not end in the $\mathtt{goal}$.
-\item Otherwise, the neighbours of $\mathtt{state}$ are computed.  For every neighbour $\mathtt{ns}$
+\item Next, the neighbours of $\mathtt{state}$ are computed.  For every neighbour $\mathtt{ns}$
       of $\mathtt{state}$ that has not yet been encountered in $\mathtt{Path}$, we extend
-      $\mathtt{Path}$ to a new list that ends in $\mathtt{ns}$.
+      $\mathtt{Path}$ to a new list that ends in $\mathtt{ns}$ and push this new list onto the $\mathtt{Stack}$.
 \item This process is iterated until the $\mathtt{Stack}$ is exhausted.
 \end{enumerate}
 The nice thing about the program presented in this section is the fact that it does not use much
 memory.  The reason is that the stack can never have a size that is longer than $\mathtt{limit}$ and
 therefore the overall memory that is needed can be bounded by $\mathcal{O}(\mathtt{limit}^2)$.
 However, when we run this program to solve the $3 \times 3$ sliding puzzle, the algorithm takes
-about 25 minutes.  There are two reasons for this:
+about 17 minutes.  There are two reasons for this:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
-      to 31.  Essentially, all the computations done with a limit less than $31$ are wasted.
+      to 31.  Essentially, all the computations done with a limit less than $31$ are wasted. However,
+      this process is not as wasteful as we might first expect.  To see this, assume that the number of states
+      reached is doubled\footnote{
+        When we run breadth first search for the sliding puzzle we can observe that at least at the beginning
+        of the search the number of states is roughly doubled after each step.  This observation holds true for
+        the first 16 steps. 
+      }
+      after every iteration.  Then the number of states to explore when searching with a depth limit of $d$ is 
+      roughly $2^d$.  Hence, when we run depth limited search up to depth $d$, the number of states visited is 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds 1 + 2^1 + 2^2 + \cdots + 2^d = \sum\limits_{i=0}^d 2^i = 2^{d+1} - 1$.
+      \\[0.2cm]
+      Therefore, if the solution is found at a depth of $d+1$, we will explore roughly $2^{d+1}$ states to find
+      the solution if we would do depth first search with a depth limit of $d+1$.  If, instead, we use
+      iterative deepening, we have wastefully explored an additional number of $2^{d+1} -1$ states.  Hence, we
+      will visit only twice the number of states with iterative deepening than we would have visited with depth
+      limited search with the correct depth limit.
 \item Given a state $s$ that is reachable from the $\mathtt{start}$, there often are a huge number of
       different paths that lead from $\texttt{start}$ to $s$.  The version of iterative deepening presented in
       this section tries all of these paths and hence needs a large amount of time.
@@ -915,7 +929,7 @@ your claim.
 The expression giving the number of different solutions contains factorials.  In order to get a better feeling
 for the asymptotic growth of this expression we can use 
 \href{https://en.wikipedia.org/wiki/Stirling%27s_approximation}{Stirling's approximation} of the factorial.
-Stirling's approximation of $n!$ is given as follows:
+Stirling's approximation of $n!$ is given as follows: \index{Stirling's approximation of the factorial}
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds n! \sim \sqrt{2 \cdot \pi \cdot n\,} \cdot \Bigl(\frac{n}{e}\Bigr)^n$.
@@ -923,7 +937,7 @@ $\ds n! \sim \sqrt{2 \cdot \pi \cdot n\,} \cdot \Bigl(\frac{n}{e}\Bigr)^n$.
 
 \exercise
 If there is no solution, the implementation of iterative deepening that is shown in Figure
-\ref{fig:iterative-deepening.stlx} does not terminate.  The reason is that the function $\mathtt{depthLimitedSearch}$ does not
+\ref{fig:Iterative-Deepening.ipynb} does not terminate.  The reason is that the function $\mathtt{depthLimitedSearch}$ does not
 distinguish between the following two reasons for failure:
 \begin{enumerate}
 \item It can fail to find a solution because the depth limit is reached.
@@ -933,61 +947,14 @@ Improve the implementation of iterative deepening so that it will always termina
 state space is finite.
 \eoxs
 
-\subsection{A Recursive Implementation of Iterative Deepening}
-If we implement iterative deepening recursively, then we know that the call stack is bounded by the length of
-the shortest solution.  \myFig{iterative-deepening-recursive.stlx}
-shows a recursive implementation of iterative deepening.
-Unfortunately, the running time of the recursive implementation of iterative deepening is still
-quite big:  On my computer, the recursive implementation takes about 23 minutes.
-
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
-    search := procedure(start, goal, nextStates) {
-        limit := 1;
-        while (true) {
-            result := dfsLimited(start, goal, nextStates, [start], limit);
-            if (result != om) {
-                return result;
-            }
-            limit += 1;
-        }
-    };
-    dfsLimited := procedure(state, goal, nextStates, Path, limit) {
-        if (state == goal) {
-            return Path;
-        }
-        if (limit == 0) {
-            return;  // limit execceded
-        }
-        for (ns in nextStates(state) | !(ns in Path)) {
-            result := dfsLimited(ns, goal, nextStates, Path + [ns], limit - 1);
-            if (result != om) {
-                return result;
-            }
-        }
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{A recursive implementation of iterative deepening.}
-\label{fig:iterative-deepening-recursive.stlx}
-\end{figure}
 
 \section{Bidirectional Breadth First Search}
 Breadth first search first visits all states that have a distance of 1 from start, then all
 states that have a distance of 2, then of 3 and so on until finally the goal is found.  If the length of the shortest path
 from $\mathtt{start}$ to $\mathtt{goal}$ is $d$, then all states that have a distance of at most $d$ will be
 visited.  In many search problems, the number of states grows exponentially with the distance, i.e.~there is
-a \blue{branching factor} $b$ such that the set of all states that have a distance of at most $d$
+a \blue{branching factor} $b$ \index{branching factor}
+such that the set of all states that have a distance of at most $d$
 from $\mathtt{start}$ is roughly
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -996,7 +963,8 @@ from $\mathtt{start}$ is roughly
 At least this is true in the beginning of the search.  As the size of
 the memory that is needed is the most constraining factor when searching, it is important to cut down this
 size.  One simple idea is to start searching both from the node $\mathtt{start}$ and the node $\mathtt{goal}$
-simultaneously.  The justification is that we can hope that the path starting from $\mathtt{start}$ and the
+simultaneously.  This approach is known as \blue{bidirectional search}.  \index{bidirectional search}
+The justification is that the path starting from $\mathtt{start}$ and the
 path starting from $\mathtt{goal}$ will meet in the middle and hence they will both have a size of approximately
 $d/2$.  If this is the case, only
 \\[0.2cm]
@@ -1015,12 +983,12 @@ is $40$.  Then we need to explore
 \hspace*{1.3cm}
 $2^{41} - 1 = 2,199,023,255,551$
 \\[0.2cm]
-in breadth first search, while we only have to explore
+states in breadth first search, while we only have to explore
 \\[0.2cm]
 \hspace*{1.3cm}
 $2 \cdot \bigl(2^{40/2+1} - 1\bigr) = 4,194,302 $
 \\[0.2cm]
-with bidirectional breadth first search.  While it is certainly feasible to keep four million states in memory,
+states with bidirectional breadth first search.  While it is certainly feasible to keep four million states in memory,
 keeping a two trillion states in memory is impossible on most devices.
 
 
@@ -1545,7 +1513,7 @@ $\mathtt{Frontier}$ is exhausted and hence the state $\mathtt{goal}$ is not reac
       \begin{enumerate}
       \item For every $\mathtt{neighbour}$ we check the estimated length of a solution passing through
             $\mathtt{neighbour}$ and store this length in $\mathtt{oldEstimate}$.   Note that
-            $\mathtt{oldEstimate}$ is undefined, i.e.~it has the value $\mathtt{om}$, if we haven't yet encountered the node
+            $\mathtt{oldEstimate}$ is undefined, i.e.~it has the value $\mathtt{None}$, if we haven't yet encountered the node
             $\mathtt{neighbour}$ in our search.
       \item If a solution connects $\mathtt{start}$ with $\mathtt{goal}$ while passing first through
             $\mathtt{state}$ and then through $\mathtt{neighbour}$, the estimated length of this solution would be
@@ -1558,13 +1526,13 @@ $\mathtt{Frontier}$ is exhausted and hence the state $\mathtt{goal}$ is not reac
             then proceeds to $\mathtt{neighbour}$ is better than the previous solution that passes through
             $\mathtt{neighbour}$.  This check is done by comparing $\mathtt{newEstimate}$ and
             $\mathtt{oldEstimate}$.  Note that we have to take care of the fact that there might be no valid
-            $\mathtt{oldEstimate}$, i.e.~the variable $\texttt{oldEstimate}$ might have the value $\mathtt{om}$.
+            $\mathtt{oldEstimate}$, i.e.~the variable $\texttt{oldEstimate}$ might have the value $\mathtt{None}$.
 
             In case the new solution seems to be better than the old solution, we have to update
             the $\mathtt{Parent}$ dictionary, the $\mathtt{Distance}$ dictionary, and the $\mathtt{Estimate}$
             dictionary.  Furthermore, we have to update the priority queue $\mathtt{Frontier}$.
             Here, we have to take care to remove the previous entry for the state
-            $\mathtt{neighbour}$ if it exists, which is the case if $\mathtt{oldEstimate}$ is different from $\mathtt{om}$.
+            $\mathtt{neighbour}$ if it exists, which is the case if $\mathtt{oldEstimate}$ is different from $\mathtt{None}$.
       \end{enumerate}
 \end{enumerate}
 The $\mathrm{A}^*$ algorithm has been discovered by Hart, Nilsson, and Raphael and was first published in
