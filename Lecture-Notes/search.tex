@@ -1090,7 +1090,12 @@ since the portion of the search space that needs to be computed is just too big 
 \section{Best First Search}
 Up to now, all the search algorithms we have discussed were essentially blind.  Given a state $s$ and
 all of its neighbours, they had no idea which of the neighbours they should pick because they had no conception
-which of these neighbours might be more promising than the other neighbours.  If a human tries to solve a
+which of these neighbours might be more promising than the other neighbours.  Search algorithms that know nothing
+about the distance of a state to the goal are called \blue{blind}.  \index{blind search}
+Russell and Norvig \cite{russell:2009} use the name \blue{uninformed search} instead of blind search.
+\index{uninformed search} 
+
+If a human tries to solve a
 problem, she usually will develop a feeling that certain states are more favourable than other states because
 they seem to be closer to the solution.  In order to formalise this procedure, we next define the notion of a
 \blue{search heuristic}. \index{search heuristic}
@@ -1107,9 +1112,9 @@ a \blue{search heuristic} or simply \blue{heuristic} is a function \index{heuris
 \hspace*{1.3cm}
 $h: Q \rightarrow \mathbb{R}$
 \\[0.2cm]
-that computes an approximation of the distance of a given state $s$ to the goal state $\mathtt{goal}$.
-The heuristic is \blue{admissible} if it never \underline{\color{red}{overestimates}} the true distance,
-i.e.~if the function 
+that computes an approximation of the distance of a given state $s$ to the state \textts{goal}.
+The heuristic is \blue{admissible} \index{admissible heuristic} if it never
+\underline{\color{red}{overestimates}} the true distance, i.e.~if the function 
 \\[0.2cm]
 \hspace*{1.3cm}
 $d:Q \rightarrow \mathbb{R}$
@@ -1119,16 +1124,17 @@ computes the \blue{true distance} from a state $s$ to the goal, then we must hav
 \hspace*{1.3cm}
 $h(s) \leq d(s)$ \quad for all $s \in Q$.
 \\[0.2cm]
-Hence, the heuristic is admissible iff it is \blue{optimistic}:  It must never overestimate the
+Hence, the heuristic is admissible iff it is \blue{optimistic}: \index{optimistic heuristic}
+It must never overestimate the
 distance to the goal, but it is free to underestimate this distance.
 
-Finally, the  heuristic $h$ is called \blue{consistent} iff we have
+Finally, the  heuristic $h$ is called \blue{consistent} \index{consistent heuristic} iff we have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s_2 \in \mathtt{nextStates}(s_1)$.  \eod
 \end{Definition}
 
-Let us explain the idea behind the notion of consistency.  First, if we are already at the goal, the heuristic
+Let us explain the idea behind the notion of \blue{consistency}.  First, if we are already at the goal, the heuristic
 should notice this and therefore we need to have $h(\mathtt{goal}) = 0$.  Secondly, assume we are at the state
 $s_1$ and $s_2$ is a neighbour of $s_1$, i.e.~we have that
 \\[0.2cm]
@@ -1165,7 +1171,7 @@ This claim is shown by induction on $k$.
 \begin{enumerate}
 \item[B.C.:] $k=0$.
 
-             We have $h(s_0) = h(\mathtt{goal}) = 0 \leq 0$ because the fact that $h$ is consistent implies
+             We have $h(s_0) = h(\mathtt{goal}) = 0 \leq 0$, because the fact that $h$ is consistent implies
              $h(\mathtt{goal}) = 0$.
 \item[I.S.:] $k \mapsto k+1$.
 
@@ -1197,7 +1203,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       \hspace*{1.3cm}
       $0 \leq 1 + 0$,
       \\[0.2cm]
-      this heuristic is obviously consistent, but this heuristic is too trivial to be of any use.
+      this heuristic is obviously consistent, but when we use this heuristic, we are back to blind search.
 \item The next heuristic is the \blue{number of misplaced tiles} heuristic.  For a state $s$,
       this heuristic counts the number of tiles in $s$ that are not in their final position, i.e.~that are not
       in the same position as the corresponding tile in $\mathtt{goal}$.  For example, in \myFig{8-puzzle.pdf}
@@ -1208,10 +1214,13 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       one tile, it is obvious that this heuristic is admissible.  It is also consistent.  First, the
       $\mathtt{goal}$ has no misplaced tiles, hence its heuristic is $0$.  Second, in every step of the sliding
       puzzle  only one tile is moved.  Therefore the number of misplaced tiles in two neighbouring state can
-      differ by at most one.
-
-      Unfortunately, the number of misplaced tiles heuristic is very crude and therefore not
-      particularly useful.
+      differ by at most one and therefore the inequality
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $h(s_1) \leq 1 + h(s_2)$
+      \\[0.2cm]
+      is satisfied for any neighbouring states $s_1$ and $s_2$.  Unfortunately, the number of misplaced tiles
+      heuristic is very crude and therefore not particularly useful.
 \item The \blue{Manhattan heuristic} improves on the previous heuristic.  For two points
       $\pair(x_1, y_1), \pair(x_2, y_2) \in \mathbb{R}^2$ the \blue{Manhattan distance} of these
       points is defined as
@@ -1246,7 +1255,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       \\[0.2cm]
       The Manhattan heuristic measure the number of moves that would be needed if we wanted to put every tile
       of $s$ into its final positions and if we were allowed to slide tiles over each other.  Figure
-      \ref{fig:manhattan.stlx} on page \pageref{fig:manhattan.stlx} shows how the Manhattan distance can be
+      \ref{fig:manhattan.py} on page \pageref{fig:manhattan.py} shows how the Manhattan distance can be
       computed.  The code given in that figure works for a general $n \times n$ sliding puzzle.  It takes two
       states $\mathtt{stateA}$ and $\mathtt{stateB}$ and computes the Manhattan distance between these states.
       \begin{enumerate}
@@ -1272,20 +1281,20 @@ In the following, we will discuss several heuristics for the sliding puzzle.
                           xleftmargin   = 0.8cm,
                           xrightmargin  = 0.8cm,
                         ]
-    manhattan := procedure(stateA, stateB) {
-        n := #stateA;
-        L := [1 .. n];
-        result := 0;
-        for (rowA in L, colA in L | stateA[rowA][colA] != 0) {
-            [rowB, colB] := findTile(stateA[rowA][colA], stateB);
-            result += abs(rowA - rowB) + abs(colA - colB);
-        }
-        return result;
-    };
+    def manhattan(stateA, stateB):
+        n = len(stateA)
+        result = 0
+        for rowA in range(n):
+            for colA in range(n): 
+                tile = stateA[rowA][colA]
+                if tile != 0:
+                    rowB, colB = find_tile(tile, stateB)
+                    result += abs(rowA - rowB) + abs(colA - colB)
+        return result
     \end{Verbatim}
     \vspace*{-0.3cm}
     \caption{The Manhattan distance between two states.}
-    \label{fig:manhattan.stlx}
+    \label{fig:manhattan.py}
     \end{figure}
 
     The Manhattan distance is admissible.  The reason is that if $s_2 \in \mathtt{nextStates}(s_1)$,
@@ -1303,6 +1312,23 @@ version of depth first search.  However, instead of using a stack, the algorithm
 ordered with respect to the estimated distance of the state at the end of the path from the $\mathtt{goal}$.
 We always expand the path next that seems to be closest to the goal.
 
+In \textsl{Python} the module \href{https://docs.python.org/3.7/library/heapq.html}{\texttt{heapq}} provides 
+\href{https://en.wikipedia.org/wiki/Priority_queue}{priority queues} that are implemented as 
+\href{https://en.wikipedia.org/wiki/Heap_(data_structure)}{heaps}. 
+Technically, these heaps are just lists.  In order to use them as priority queues, the entries of these lists
+will be pairs of the form $(p, o)$, where $p$ is the priority of the object $o$.  Usually, the priorities are
+numbers and, contra-intuitively, high priorities correspond to \textbf{small} numbers, that is $(p_1, o_1)$ has
+a higher priority than $(p_2, o_2)$ if and only if $p_1 < p_2$. 
+We need only two functions from the module `heapq`:
+\begin{enumerate}
+\item Given a heap $H$, the function $\texttt{heapq.heappop}(H)$ removes the pair
+      from H that has the highest priority.  This pair is also returned.
+\item Given a heap $H$, the function $\texttt{heapq.heappush}\bigl(H, (p, o)\bigr)$  
+      pushes the pair $(p, o)$ onto the heap $H$.  This method does not return a 
+      value.  Instead, the heap $H$ is changed in place.
+\end{enumerate}
+
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines,
@@ -1314,61 +1340,62 @@ We always expand the path next that seems to be closest to the goal.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    bestFirstSearch := procedure(start, goal, nextStates, heuristic) {
-        PrioQueue := { [heuristic(start, goal), [start]] };
-        while (PrioQueue != {}) {
-            [_, Path] := fromB(PrioQueue);
-            state     := Path[-1];
-            if (state == goal) { return Path; }
-            for (ns in nextStates(state) | !(ns in Path)) {
-                PrioQueue += { [heuristic(ns, goal), Path + [ns]] };
-            }
-        }
-    };
+    def search(start, goal, next_states, heuristic):
+        PrioQueue = [ (heuristic(start, goal), [start]) ]
+        while len(PrioQueue) > 0:
+            _, Path = heapq.heappop(PrioQueue)
+            state   = Path[-1]
+            for ns in next_states(state):
+                if ns not in Path:
+                    if state == goal:
+                        return Path + [goal]
+                    d = heuristic(ns, goal)
+                    heapq.heappush(PrioQueue, (d, Path + [ns]))
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The best first search algorithm.}
-\label{fig:best-first-search.stlx}
+\label{fig:Best-First-Search.ipynb}
 \end{figure}
 
-The procedure $\mathtt{bestFirstSearch}$ shown in \myFig{best-first-search.stlx} takes four parameters.  The
+The procedure $\mathtt{bestFirstSearch}$ shown in \myFig{Best-First-Search.ipynb} takes four parameters.  The
 first three of these parameters are the same as in the previous search algorithms.  The last parameter
-$\mathtt{heuristic}$ is a function that takes to states and then estimates the distance between these states.
+$\mathtt{heuristic}$ is a function that takes two states and then estimates the distance between these states.
 Later, we will use the Manhattan distance to serve as this $\mathtt{heuristic}$.  The details of the
 implementation are as follows:
 \begin{enumerate}
-\item The variable $\mathtt{PrioQueue}$ serves as a priority queue.  We take advantage of the fact that
-      \textsc{SetlX} stores sets as ordered binary trees that store their elements in increasing order.
-      Hence, the smallest element of a set is the first element.
-
-      Furthermore, \textsc{SetlX} orders pairs lexicographically.  Hence, we store the paths in
-      $\mathtt{PrioQueue}$ as pairs of the form
+\item The variable \textts{PrioQueue} serves as a priority queue.  This priority queue is initialized as a
+      list containing the pair $(d, [\mathtt{start}])$, where $d$ is the estimated distance of a path
+      leading from \textts{start} to \textts{goal}.  In \textts{PrioQueue} we store the paths in
+      as pairs of the form
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\pair(\mathtt{estimate}, \mathtt{Path})$.
+      $\pair(\mathtt{estimate}, \mathtt{Path})$,
       \\[0.2cm]
-      Here $\mathtt{Path}$ is a list of states starting from the node $\mathtt{start}$.  If the last node on
+      where $\mathtt{Path}$ is a list of states starting from the node \textts{start}.  If the last node on
       this list is called $\mathtt{state}$, then we have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{estimate} = \mathtt{heuristic}(\mathtt{state}, \mathtt{goal})$,
-      \\[0.2cm]
-      i.e.~$\mathtt{estimate}$ is the estimated distance between $\mathtt{state}$ and $\mathtt{goal}$ and hence
-      an estimate of the number of steps needed to complete $\mathtt{Path}$ into a solution.  This ensures,
-      that the best path, i.e.~the path whose last state is nearest to the $\mathtt{goal}$ is at the
-      beginning of the set $\mathtt{PrioQueue}$.
-\item As long as $\mathtt{PrioQueue}$ is not empty, we take the $\mathtt{Path}$ from the beginning of this
-      priority queue and remove it from the queue.  The state at the end of $\mathtt{Path}$ is named $\mathtt{state}$.
+      \\[0.2cm] ()
+      i.e.~\textts{estimate} is the estimated distance between these \textts{state} and \textts{goal} and hence
+      an estimate of the number of steps needed to complete \textts{Path} into a solution.  This ensures,
+      that the best path, i.e.~the path whose last state is nearest to the \textts{goal} is at the
+      beginning of the set \textts{PrioQueue}.
+\item As long as \textts{PrioQueue} is not empty, we take the \textts{Path} from the beginning of this
+      priority queue and remove it from the queue.  The state at the end of \textts{Path} is named \textts{state}.
 
-      In \textsc{SetlX}, a function call of the form $\texttt{fromB}(S)$ returns the smallest element from the
-      set $S$.  Furthermore, this element is removed from the set $S$.
-\item If $\mathtt{state}$ is the $\mathtt{goal}$, a solution has been found and is returned.  
-\item Otherwise, the states reachable from $\mathtt{state}$ are inserted into the priority queue.
-      When these states are inserted, we have to compute their estimated distance to $\mathtt{goal}$ since this
-      distance is used as the priority in $\mathtt{PrioQueue}$.
+      The function $\texttt{heappop}(\mathtt{PrioQueue})$ returns the smallest pair from 
+      \texttt{PrioQueue} and, furthermore, this pair is removed from \textts{PrioQueue}.
+\item Next, we inspect all neighbouring states of \textts{state} that have not already occurred in the
+      \textts{Path} leading to \textts{state}.
+
+\item If \textts{state} is the \textts{goal}, a solution has been found and is returned.  
+\item Otherwise, the states reachable from \textts{state} are inserted into the priority queue.
+      When these states are inserted, we have to compute their estimated distance to \textts{goal} since this
+      distance is used as the priority in \textts{PrioQueue}.
 \end{enumerate}
 Best first search solves the instance of the $3 \times 3$ puzzle shown in \myFig{8-puzzle.pdf} in less than
-a quarter of a second.  However, the solution that is found takes 75 steps.  While this is not as ridiculous as the
+7 milliseconds.  However, the solution that is found takes 75 steps.  While this is not as ridiculous as the
 solution found by depth first search, it is still far from an optimal solution.  Furthermore,
 best first search is still not strong enough to solve the $4 \times 4$ puzzle shown in
 \myFig{start-goal.stlx}.
