@@ -2004,9 +2004,10 @@ So far, we have combined $\mathrm{A}^*$ search with bidirectional search and ach
 memory space is too limited for bidirectional $\mathrm{A}^*$ search to be possible, we can instead
 combine $\mathrm{A}^*$ search with \blue{iterative deepening}.  The resulting search technique is known as
 \href{https://en.wikipedia.org/wiki/Iterative_deepening_A*}{\color{blue}iterative deepening $\mathrm{A}^*$ search}
-and is commonly abbreviated as $\mathrm{IDA}^*$.  It has been invented by Richard Korf \cite{korf:1985}.
+and is commonly abbreviated as  \ac{ida} search.  \index{IDA$^*$ search}
+It has been invented by Richard Korf \cite{korf:1985}.
  \myFig{iterative-deepening-a-star.stlx}
-shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to discuss this program.
+shows an implementation of \ac{ida} search.  We proceed to discuss this program.
 
 \begin{figure}[!ht]
 \centering
@@ -2019,36 +2020,31 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    idaStarSearch := procedure(start, goal, nextStates, heuristic) {
-        limit := heuristic(start, goal);
-        while (true) {
-            Path := search([start], goal, nextStates, limit, heuristic);
-            if (isList(Path)) {
-                return Path;
-            }
-            limit := Path;
-        }
-    };
-    search := procedure(Path, goal, nextStates, limit, heuristic) {
-        state    := Path[-1];
-        distance := #Path - 1;
-        total    := distance + heuristic(state, goal);
-        if (total > limit) {
-            return total;
-        }
-        if (state == goal) {
-            return Path;
-        }
-        smallest := mathConst("Infinity");
-        for (ns in nextStates(state) | !(ns in Path) ) {
-            result := search(Path + [ns], goal, nextStates, limit, heuristic);
-            if (isList(result)) {
-                return result;
-            }
-            smallest := min([result, smallest]);
-        }
-        return smallest;
-    };
+    def search(start, goal, next_states, heuristic):
+        limit = heuristic(start, goal)
+        while True:
+            print(f'Trying to find a solution of length {limit}.')
+            Path = dl_search([start], goal, next_states, limit, heuristic)
+            if isinstance(Path, list):
+                return Path
+            limit = Path
+    
+    def dl_search(Path, goal, next_states, limit, heuristic):
+        state    = Path[-1]
+        distance = len(Path) - 1
+        total    = distance + heuristic(state, goal)
+        if total > limit:
+            return total
+        if state == goal:
+            return Path
+        smallest = float("Inf")  # infinity
+        for ns in next_states(state):
+            if ns not in Path:
+                Solution = dl_search(Path + [ns], goal, next_states, limit, heuristic)
+                if isinstance(Solution, list):
+                    return Solution
+                smallest = min(smallest, Solution)
+        return smallest
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Iterative deepening $\textrm{A}^*$ search.}
@@ -2057,108 +2053,114 @@ shows an implementation of $\mathrm{IDA}^*$ in \textsc{SetlX}.  We proceed to di
 \begin{enumerate}
 \item As in the $\mathrm{A}^*$ search algorithm, the function \texttt{idaStarSearch} takes four parameters.
       \begin{enumerate}
-      \item \texttt{start} is a state.  This state represents the start state of the search problem.
-      \item \texttt{goal} is the goal state.
-      \item \texttt{nextStates} is a function that takes a state $s$ as a parameter and
+      \item \textts{start} is a state.  This state represents the start state of the search problem.
+      \item \textts{goal} is the goal state.
+      \item \textts{next\_states} is a function that takes a state $s$ as a parameter and
             computes the set of all those states that can be reached from $s$ in a single step.
-      \item \texttt{heuristic} is a function that takes two parameters $s_1$ and $s_2$, where $s_1$ and $s_2$
+      \item \textts{heuristic} is a function that takes two parameters $s_1$ and $s_2$, where $s_1$ and $s_2$
             are states. The expression
             \\[0.2cm]
             \hspace*{1.3cm}
             $\texttt{heuristic}(s_1, s_2)$
             \\[0.2cm]
-            computes an estimate of the distance between $s_1$ and $s_2$.  It is assumed that this
-            estimate is optimistic, i.e.~\texttt{heuristic} has to be admissible.
-     \end{enumerate}
-\item The function \texttt{idaStarSearch} initializes $\texttt{limit}$ to be an estimate of the distance
-      between $\texttt{start}$ and $\texttt{goal}$.  As we assume that the function $\texttt{heuristic}$ is
-      optimistic, we know that there is no path from $\texttt{start}$ to $\texttt{goal}$ that is shorter than
-      $\texttt{limit}$.  Hence, we start our search by assuming that we might find a path that has a length of
-      $\texttt{limit}$.
-\item Next, we start a \texttt{while} loop.  In this loop, we call the function $\texttt{search}$ to compute a path from
-      $\texttt{start}$ to $\texttt{goal}$ that has a length of at most $\texttt{limit}$.  The function
-      $\texttt{search}$ uses $\mathrm{A}^*$ search and is described in detail below.
-      When the function $\texttt{search}$ returns, there are two cases:
-      \begin{enumerate}
-      \item $\texttt{search}$ does find a path.  In this case, this path is returned in the variable
-            $\texttt{Path}$ and the value of this variable is a list.  This list is returned as the solution to
-            the search problem.
-      \item $\texttt{search}$ is not able to find a path within the given $\texttt{limit}$.  In this case,
-            $\texttt{search}$ will not return a list representing a path but instead it will return a number.
-            This number will specify the minimal length that any path leading from $\texttt{start}$ to $\texttt{goal}$ needs to
-            have.  This number is then used to update the $\texttt{limit}$ which is used for the next
-            invocation of $\texttt{search}$.
+            computes an estimate of the distance between $s_1$ and $s_2$.  In \ac{ida} search it is required that this
+            estimate is optimistic, i.e.~\textts{heuristic} has to be \blue{admissible}.
 
-            \textbf{Note} that the fact that $\texttt{search}$ is able to compute this new $\texttt{limit}$ is
+            Note that this is different from A$^*$ search. A$^*$ search requires that \textts{heuristic} is 
+            \blue{consistent}.
+     \end{enumerate}
+\item The function \textts{search} initializes \textts{limit} to be an estimate of the distance
+      between \textts{start} and \textts{goal}.  As we assume that the function \textts{heuristic} is
+      optimistic, we know that there is no path from \textts{start} to \textts{goal} that is shorter than
+      \textts{limit}.  Hence, we start our search by assuming that we might find a path that has a length of
+      \textts{limit}.
+\item Next, we start a \textts{while} loop.  In this loop, we call the function \textts{dl\_search} 
+      (\blue{depth limited search}) to compute a path from
+      \textts{start} to \textts{goal} that has a length of at most \textts{limit}.  The function
+      \textts{dl\_search}  is described in detail below.
+      When the function \textts{dl\_search} returns, there are two cases:
+      \begin{enumerate}
+      \item \textts{dl\_search} does find a path.  In this case, this path is returned in the variable
+            \textts{Path} and the value of this variable is a list.  This list is returned as the solution to
+            the search problem.
+      \item \textts{dl\_search} is not able to find a path within the given \textts{limit}.  In this case,
+            \textts{dl\_search} will not return a list representing a path but instead it will return a number.
+            This number will specify the minimal length that any path leading from \textts{start} to \textts{goal} needs to
+            have.  This number is then used to update the \textts{limit} which is used for the next
+            invocation of \textts{dl\_search}.
+
+            \textbf{Note} that the fact that \textts{dl\_search} is able to compute this new \textts{limit} is
             a significant enhancement over iterative deepening.  While we had to test every single possible
-            length in iterative deepening, now the fact that we can intelligently update the $\texttt{limit}$
+            length in iterative deepening, now the fact that we can intelligently update the \textts{limit}
             results in a considerable saving of computation time.
       \end{enumerate}
 \end{enumerate}
-We proceed to discuss the function \texttt{search}. This function takes 5 parameters, which we describe next.
+We proceed to discuss the function \textts{dl\_search} This function takes 5 parameters, which we describe next.
 \begin{enumerate}
-\item $\texttt{Path}$ is a list of states.  This list starts with the state $\texttt{start}$.
-      If $\texttt{state}$ is the last state on this list, then $\texttt{Path}$ represents a path leading from
-      $\texttt{start}$ to $\texttt{state}$.
-\item $\texttt{goal}$ is another state.  The purpose of the recursive invocations of $\texttt{search}$ is to
-      find a path from $\texttt{state}$ to $\texttt{goal}$, where $\texttt{state}$ is the last element of the
-      list $\texttt{Path}$.
-\item $\texttt{nextStates}$ is a function that takes a state $s$ as input and computes the set of states that are
+\item \textts{Path} is a list of states.  This list starts with the state \textts{start}.
+      If \textts{state} is the last state on this list, then \textts{Path} represents a path leading from
+      \textts{start} to \textts{state}.
+\item \textts{goal} is another state.  The purpose of the recursive invocations of \textts{dl\_search} is to
+      find a path from \textts{state} to \textts{goal}, where \textts{state} is the last element of the
+      list \textts{Path}.
+\item \textts{next\_states} is a function that takes a state $s$ as input and computes the set of states that are
       reachable from $s$ in one step.
-\item $\texttt{limit}$ is the upper bound for the path from $\texttt{start}$ to $\texttt{goal}$.  If the
-      procedure $\texttt{search}$ is not able to find a path from $\texttt{start}$ to $\texttt{goal}$ that has
-      a length of at most $\texttt{limit}$, then the search is unsuccessful.  In that case, instead of a path
-      the function \texttt{search} returns a new estimate for the distance between $\texttt{start}$ and
-      $\texttt{goal}$.  Of course, this new estimate will be bigger than $\texttt{limit}$.
-\item $\texttt{heuristic}$ is a function taking to states as arguments.  The invocation
-      $\texttt{heuristic}(s_1, s_2)$ computes an \emph{estimate} of the distance between the states $s_1$ and $s_2$.  It is
+\item \textts{limit} is the upper bound for the path from \textts{start} to \textts{goal}.  If the
+      procedure \textts{dl\_search} is not able to find a path from \textts{start} to \textts{goal} that has
+      a length of at most \textts{limit}, then the search is unsuccessful.  In that case, instead of a path
+      the function \textts{dl\_search} returns a new estimate for the distance between \textts{start} and
+      \textts{goal}.  Of course, this new estimate will be bigger than \textts{limit}.
+\item \textts{heuristic} is a function taking two states as arguments.  The invocation
+      $\textts{heuristic}(s_1, s_2)$ computes an \emph{estimate} of the distance between the states $s_1$ and $s_2$.  It is
       assumed that this estimate is optimistic, i.e.~the value returned by $\texttt{heuristic}(s_1, s_2)$
       is less or equal than the true distance between $s_1$ and $s_2$.
 \end{enumerate}
-We proceed to describe the implementation of the function \texttt{search}.
+We proceed to describe the implementation of the function \textts{dl\_search}
 \begin{enumerate}
-\item The variable $\texttt{state}$ is assigned the last element of $\texttt{Path}$.  Hence, $\texttt{Path}$
-      connects $\texttt{start}$ and $\texttt{state}$.
-\item The length of the path connecting $\texttt{start}$ and $\texttt{state}$ is stored in 
-      $\texttt{distance}$.
-\item Since $\texttt{heuristic}$ is assumed to be optimistic,  if we want to extend $\texttt{Path}$, then the best we
-      can hope for is to find a path from $\texttt{start}$ to $\texttt{goal}$ that has a length of
+\item The variable \textts{state} is assigned the last element of \textts{Path}.  Hence, \textts{Path}
+      connects \textts{start} and \textts{state}.
+\item The length of the path connecting \textts{start} and \textts{state} is stored in 
+      \textts{distance}.
+\item Since \textts{heuristic} is assumed to be optimistic,  if we want to extend \textts{Path}, then the best we
+      can hope for is to find a path from \textts{start} to \textts{goal} that has a length of
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{distance} + \texttt{heuristic}(\texttt{state}, \texttt{goal})$.
       \\[0.2cm]
-      This length is computed and saved in the variable $\texttt{total}$.
-\item If $\texttt{total}$ is bigger than $\texttt{limit}$, it is not possible to find a path from
-      $\texttt{start}$ to $\texttt{goal}$ passing through $\texttt{state}$ that has a length of at most
-      $\texttt{limit}$.  Hence, in this case we return $\texttt{total}$ to communicate that the limit needs to
-      be increased to have at least a value of $\texttt{total}$.
-\item If we are lucky and $\texttt{state}$ is equal to $\texttt{goal}$, the search is successful and $\texttt{Path}$ is returned.
-\item Otherwise, we iterate over all nodes $\texttt{ns}$ reachable from $\texttt{state}$ that have not already been visited
-      by $\texttt{Path}$.  If $\texttt{ns}$ is a node of this kind, we extend the $\texttt{Path}$ so that
+      This length is computed and saved in the variable \textts{total}.
+\item If \textts{total} is bigger than \textts{limit}, it is not possible to find a path from
+      \textts{start} to \textts{goal} passing through \textts{state} that has a length of at most
+      \textts{limit}.  Hence, in this case we return \textts{total} to communicate that the limit needs to
+      be increased to have at least a value of \textts{total}.
+\item If we are lucky and \textts{state} is equal to \textts{goal}, the search is successful and \textts{Path}
+      is returned. 
+\item Otherwise, we iterate over all nodes \textts{ns} reachable from \textts{state} that have not already been visited
+      by \textts{Path}.  If \textts{ns} is a node of this kind, we extend the \textts{Path} so that
       this node is visited next.  The resulting path has the form
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{Path + [ns]}.
       \\[0.2cm]
-      Next, we recursively start a new search starting from the node $\texttt{ns}$.  If this search is
+      Next, we recursively start a new search starting from the node \textts{ns}.  If this search is
       successful, the resulting path is returned.  Otherwise, the search returns the minimum distance that is
-      needed to reach the state $\texttt{goal}$ from the state $\texttt{start}$ on a path via the state
-      $\texttt{ns}$.  If this distance is smaller than the distance \texttt{smallest} that is returned from
-      visiting previous neighbouring nodes, the variable $\texttt{smallest}$ variable is updated accordingly.
-      This way, if the $\texttt{for}$ loop is not able to return a path leading to $\texttt{goal}$, the variable
-      $\texttt{smallest}$ contains a lower bound for the distance that is needed to reach $\texttt{goal}$ by a path that
-      extends the given $\texttt{Path}$. 
+      needed to reach the state \textts{goal} from the state \textts{start} on a path via the state
+      \textts{ns}.  If this distance is smaller than the distance \textts{smallest} that is returned from
+      visiting previous neighbouring nodes, the variable \textts{smallest} variable is updated accordingly.
+      This way, if the \texttt{for} loop is not able to return a path leading to \textts{goal}, the variable
+      \textts{smallest} contains a lower bound for the distance that is needed to reach \textts{goal} by a path that
+      extends the given \textts{Path}. 
 
       \textbf{Note}: At this point, a natural question is to ask whether the $\texttt{for}$ loop should collect
-      all paths leading to $\texttt{goal}$ and then only return the path that is shortest.  However, this is
-      not necessary:  Every time the function $\texttt{search}$ is invoked it is already guaranteed that there
-      is no path that is shorter than the parameter $\texttt{limit}$.  Therefore, if $\texttt{search}$ is able
-      to find a path that has a length of at most $\texttt{limit}$, this path is known to be optimal.
+      all paths leading to \textts{goal} and then only return the path that is shortest.  However, this is
+      not necessary:  Every time the function \textts{dl\_search} is invoked it is already guaranteed that there
+      is no path that is shorter than the parameter \textts{limit}.  Therefore, if \textts{dl\_search} is able
+      to find a path that has a length of at most \textts{limit}, this path is known to be optimal.
 \end{enumerate}
 Iterative deepening $\mathrm{A}^*$ is a complete search algorithm that does find an optimal path, provided that the employed heuristic
 is optimistic.  On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}, this
-algorithm takes about $1.7$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, the algorithm
-takes about $154$ seconds.  Although this is more than the time needed by bidirectional $\mathrm{A}^*$ search,
+algorithm takes about $0.8$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle shown in Figure
+\ref{fig:start-goal.stlx}, the algorithm 
+takes about $2.5$ seconds.  Although this is more than the time needed by bidirectional $\mathrm{A}^*$ search,
 the good news is that the $\mathrm{IDA}^*$ algorithm does not need much memory since basically only the path
 discovered so far is stored in memory.  Hence, $\mathrm{IDA}^*$ is a viable alternative if the available memory
 is not sufficient to support the bidirectional $\mathrm{A}^*$ algorithm.
@@ -2375,8 +2377,9 @@ A frame containing a function that can be used to print a board can be found at:
 \end{figure}
 
 \pagebreak
+\vspace*{\fill}
 
-
+\pagebreak
 
 
 \exercise
