@@ -1903,54 +1903,47 @@ the $\mathtt{goal}$ is eventually found.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    aStarSearch := procedure(start, goal, nextStates, heuristic) {
-        estimate  := heuristic(start, goal);
-        ParentA   := {};                     ParentB   := {};                    
-        DistanceA := { [start, 0] };         DistanceB := { [goal,  0] };
-        EstimateA := { [start, estimate] };  EstimateB := { [goal,  estimate] };  
-        FrontierA := { [estimate, start] };  FrontierB := { [estimate, goal ] };  
-        while (FrontierA != {} && FrontierB != {}) {
-            [guessA, stateA] := first(FrontierA); stateADist := DistanceA[stateA];
-            [guessB, stateB] := first(FrontierB); stateBDist := DistanceB[stateB];
-            if (guessA <= guessB) {
-                FrontierA -= { [guessA, stateA] };
-                for (neighbour in nextStates(stateA)) {
-                    oldEstimate := EstimateA[neighbour];
-                    newEstimate := stateADist + 1 + heuristic(neighbour, goal);
-                    if (oldEstimate == om || newEstimate < oldEstimate) {
-                        ParentA[neighbour]   := stateA;
-                        DistanceA[neighbour] := stateADist + 1;
-                        EstimateA[neighbour] := newEstimate;
-                        FrontierA            += { [newEstimate, neighbour] };
-                        if (oldEstimate != om) { 
-                            FrontierA -= { [oldEstimate, neighbour] }; 
-                        }
-                    }
-                    if (DistanceB[neighbour] != om) {
-                        return combinePaths(neighbour, ParentA, ParentB);
-                    }
-                }
-            } else {
-                FrontierB -= { [guessB, stateB] };
-                for (neighbour in nextStates(stateB)) {
-                    oldEstimate := EstimateB[neighbour];
-                    newEstimate := stateBDist + 1 + heuristic(start, neighbour);
-                    if (oldEstimate == om || newEstimate < oldEstimate) {
-                        ParentB[neighbour]   := stateB;
-                        DistanceB[neighbour] := stateBDist + 1;
-                        EstimateB[neighbour] := newEstimate;
-                        FrontierB            += { [newEstimate, neighbour] };
-                        if (oldEstimate != om) { 
-                            FrontierB -= { [oldEstimate, neighbour] }; 
-                        }
-                    }
-                    if (DistanceA[neighbour] != om) {
-                        return combinePaths(neighbour, ParentA, ParentB);
-                    }
-                }
-            }
-        }
-    };
+    def search(start, goal, next_states, heuristic):
+        estimate  = heuristic(start, goal)
+        ParentA   = { start: start };      ParentB   = { goal : goal  }
+        DistanceA = { start: 0 };          DistanceB = { goal : 0 }
+        EstimateA = { start: estimate };   EstimateB = { goal : estimate }
+        FrontierA = Set.Set();             FrontierB = Set.Set()
+        FrontierA.insert( (estimate, start) )
+        FrontierB.insert( (estimate, goal ) )
+        while not FrontierA.isEmpty() and not FrontierB.isEmpty():
+            guessA, stateA = FrontierA.pop()
+            guessB, stateB = FrontierB.pop()
+            stateADist = DistanceA[stateA]
+            stateBDist = DistanceB[stateB]
+            if guessA <= guessB:
+                FrontierB.insert( (guessB, stateB) )
+                for ns in next_states(stateA):
+                    oldEstimate = EstimateA.get(ns, None)
+                    newEstimate = stateADist + 1 + heuristic(ns, goal)
+                    if oldEstimate == None or newEstimate < oldEstimate:
+                        ParentA  [ns] = stateA
+                        DistanceA[ns] = stateADist + 1
+                        EstimateA[ns] = newEstimate
+                        FrontierA.insert( (newEstimate, ns) )
+                        if oldEstimate != None:
+                            FrontierA.delete( (oldEstimate, ns) )
+                    if DistanceB.get(ns, None) != None:
+                        return combinePaths(ns, ParentA, ParentB)
+            else:
+                FrontierA.insert( (guessA, stateA) )
+                for ns in next_states(stateB):
+                    oldEstimate = EstimateB.get(ns, None)
+                    newEstimate = stateBDist + 1 + heuristic(start, ns)
+                    if oldEstimate == None or newEstimate < oldEstimate:
+                        ParentB  [ns] = stateB
+                        DistanceB[ns] = stateBDist + 1
+                        EstimateB[ns] = newEstimate
+                        FrontierB.insert( (newEstimate, ns) )
+                        if oldEstimate != None:
+                            FrontierB.delete( (oldEstimate, ns) )
+                    if DistanceA.get(ns, None) != None:
+                        return combinePaths(ns, ParentA, ParentB)                    
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Bidirectional $\mathrm{A}^*$ search.}
