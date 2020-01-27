@@ -23,28 +23,28 @@ After that we introduce various algorithms for solving search problems.  In part
   A \blue{search problem} \index{search problem} is a tuple of the form
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\mathcal{P} = \langle Q,\;\mathtt{nextStates},\; \mathtt{start},\; \mathtt{goal}\rangle$
+  $\mathcal{P} = \langle Q,\;\mathtt{next\_states},\; \mathtt{start},\; \mathtt{goal}\rangle$
   \\[0.2cm]
   where
   \begin{enumerate}
   \item $Q$ is the set of \blue{states}, also known as the \blue{state space}.
         \index{state}
-  \item \textts{nextStates} is a function taking a state as input and returning the set of those
+  \item \textts{next\_states} is a function taking a state as input and returning the set of those
         states that can be reached from the given state in one step,
         i.e.~we have
         \\[0.2cm]
         \hspace*{1.3cm}
-        $\texttt{nextStates}:Q \rightarrow 2^Q$.
+        $\texttt{next\_states}:Q \rightarrow 2^Q$.
         \\[0.2cm]
-        The function \textts{nextStates} gives rise to the \blue{transition relation} $R$, which is a
+        The function \textts{next\_states} gives rise to the \blue{transition relation} $R$, which is a
         relation on $Q$, i.e.~we have $R \subseteq Q \times Q$.  This relation is defined as follows:
         \\[0.2cm]
         \hspace*{1.3cm}
-        $R := \bigl\{ \pair(s_1, s_2) \in Q \times Q \mid s_2 \in \mathtt{nextStates}(s_1) \bigr\}$.
+        $R := \bigl\{ \pair(s_1, s_2) \in Q \times Q \mid s_2 \in \mathtt{next\_states}(s_1) \bigr\}$.
         \\[0.2cm]
         If either $\pair(s_1, s_2) \in R$ or $\pair(s_2, s_1) \in R$, then  $s_1$ and $s_2$ are
         called \blue{neighboring states}.
-        \index{\texttt{nextStates}}
+        \index{\texttt{next\_states}}
   \item \textts{start} is the \blue{start state}, hence $\mathtt{start} \in Q$.
         \index{start state}
   \item \textts{goal} is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
@@ -52,7 +52,7 @@ After that we introduce various algorithms for solving search problems.  In part
     
         Sometimes, instead of a single $\mathtt{goal}$ there is a set of goal states $\mathtt{Goals}$.
   \end{enumerate}
-  A \blue{path} \index{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{nextStates}(s_i)$ for all $i \in
+  A \blue{path} \index{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{next\_states}(s_i)$ for all $i \in
   \{1,\cdots,n-1\}$.
   \index{path}
   The \blue{length} of this path is defined as the length of this list.
@@ -103,7 +103,7 @@ river, then the missionaries have a problem.
 
     noProblem = lambda m, i: not problem(m, i) and not problem(3 - m, 3 - i)
 
-    def nextStates(state):
+    def next\_states(state):
         m, i, b = state
         if b == 1:
             return { (m - mb, i - ib, 0) for mb in range(m+1)
@@ -145,7 +145,7 @@ as a search problem.  We discuss this formalization line by line.
       the western shore, then $3-m$ is the number of missionaries on the eastern shore.  Similarly,
       if $i$ is the number of infidels on the western shore, then the number of infidels on the
       eastern shore is $3 - i$.
-\item Lines 5 to 18 define the function \textts{nextStates}.  A state $s$ is represented as a triple of
+\item Lines 5 to 18 define the function \textts{next\_states}.  A state $s$ is represented as a triple of
       the form
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -225,7 +225,7 @@ define the set of states as follows:
 \end{verbatim}
 However, in general the set of states is not needed by the algorithms solving search problems and in many cases
 this set is so big that it would be impossible to compute it.  Hence, in practice the set of states is only an
-abstract notion that is needed in order to specify the function \texttt{nextStates}, but it is not implemented.
+abstract notion that is needed in order to specify the function \texttt{next\_states}, but it is not implemented.
 
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
 missionaries and cannibals puzzle.  In that figure, for every state both the western and the
@@ -376,7 +376,7 @@ We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb}
 \begin{enumerate}
 \item The function \textts{to\_list} transforms a tuple of tuples into a list of lists.
 \item The function \textts{to\_tuple} transforms a list of lists into a tuple of tuples.
-\item \textts{findTile} is an auxiliary function that is needed to implement the function \textts{nextStates}.
+\item \textts{findTile} is an auxiliary function that is needed to implement the function \textts{next\_states}.
       It is called with a $\mathtt{number}$ and a $\mathtt{State}$ and
       returns the row and column where the tile labelled with $\mathtt{number}$ can be found.
 \item \textts{moveDir} takes a $\mathtt{State}$, the $\mathtt{row}$ and the $\mathtt{col}$umn
@@ -385,7 +385,7 @@ We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb}
       at the position $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ is
       moved into the position $\langle\mathtt{row}, \mathtt{col}\rangle$, while the tile at position
       $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ becomes empty.
-\item Given a $\mathtt{State}$, the procedure \textts{next\_states} computes the set of all states
+\item Given a $\mathtt{State}$, the function \textts{next\_states} computes the set of all states
       that can be reached in one step from $\mathtt{State}$.  The basic idea is to find the position of the
       empty tile and then try to move the empty tile in all possible directions.  If the empty tile is found at
       position $(\mathtt{row}, \mathtt{col})$ and the direction of the movement is given as $(\mathtt{dx}, \mathtt{dy})$, then
@@ -406,7 +406,7 @@ We discuss this algorithm next.
 \section{Breadth First Search}
 Informally, breadth first search, abbreviated as \ac{bfs}, works as follows: \index{breadth first search}
 \begin{enumerate}
-\item Given a search problems $\langle Q,\;\mathtt{nextStates},\; \mathtt{start},\; \mathtt{goal}\rangle$,
+\item Given a search problems $\langle Q,\;\mathtt{next\_states},\; \mathtt{start},\; \mathtt{goal}\rangle$,
       we initialize a set $\mathtt{Frontier}$ to contain the state $\mathtt{start}$.
 
       In general, $\mathtt{Frontier}$ contains those states that have just been discovered and whose successors have not
@@ -425,7 +425,7 @@ caused $s$ to be added to the set $\mathtt{Frontier}$, i.e.~for all states $s\in
 we have 
 \\[0.2cm]
 \hspace*{1.3cm}
-$s \in \mathtt{nextStates}(\mathtt{Parent}[s])$.
+$s \in \mathtt{next\_states}(\mathtt{Parent}[s])$.
 
 
 \begin{figure}[!ht]
@@ -475,7 +475,7 @@ breadth first search in \textsl{Python}.  We discuss this implementation line by
       When doing this, we keep track of the path leading to a new state $\mathtt{ns}$ by storing its
       parent in the dictionary $\mathtt{Parent}$.
 \item If the new state happens to be the state $\mathtt{goal}$, we return a path leading from
-      $\mathtt{start}$ to $\mathtt{goal}$.  The procedure $\mathtt{pathTo}()$ is shown in Figure
+      $\mathtt{start}$ to $\mathtt{goal}$.  The function $\mathtt{pathTo}()$ is shown in Figure
       \ref{fig:pathTo.stlx} on page \pageref{fig:pathTo.stlx}.
 \item After we have collected all successors of states in $\mathtt{Frontier}$, the states
       in the set $\mathtt{Frontier}$ have been visited and are therefore added to the set
@@ -500,10 +500,10 @@ breadth first search in \textsl{Python}.  We discuss this implementation line by
         return path_to(p, Parent) + [state]
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{The procedure $\mathtt{pathTo}()$.}
+\caption{The function $\mathtt{pathTo}()$.}
 \label{fig:pathTo.stlx}
 \end{figure}
-The procedure call $\mathtt{pathTo}(\mathtt{state}, \mathtt{Parent})$ constructs a path reaching
+The function call $\mathtt{pathTo}(\mathtt{state}, \mathtt{Parent})$ constructs a path reaching
 from $\mathtt{start}$ to $\mathtt{state}$ in reverse by looking up the parent states.
 
 If we try breadth first search to solve the missionaries and cannibals problem, we obtain
@@ -750,10 +750,10 @@ implementation is shown in \myFig{depth-first-search-recursive.stlx}.
 \caption{A recursive implementation of depth first search.}
 \label{fig:depth-first-search-recursive.stlx}
 \end{figure}
-The only purpose of the procedure \texttt{search} is to call the procedure $\mathtt{dfs}$, which needs one
+The only purpose of the function \texttt{search} is to call the function $\mathtt{dfs}$, which needs one
 additional argument.  This argument is called $\mathtt{Path}$.  The idea is that $\mathtt{Path}$ is
 a path leading from the state $\mathtt{start}$ to the current $\mathtt{state}$ that is the first
-argument of the procedure $\mathtt{dfs}$.  On the first invocation of $\mathtt{dfs}$, the
+argument of the function $\mathtt{dfs}$.  On the first invocation of $\mathtt{dfs}$, the
 parameter $\mathtt{state}$ is equal to $\mathtt{start}$ and therefore $\mathtt{Path}$ is initialized
 as the list containing only $\mathtt{start}$.
 
@@ -770,7 +770,7 @@ The implementation of $\mathtt{dfs}$ works as follows:
       \hspace*{1.3cm}
       \texttt{Path + [ns]}
       \\[0.2cm]
-      when we call the procedure $\mathtt{dfs}$ recursively.  This way, we retain the invariant of
+      when we call the function $\mathtt{dfs}$ recursively.  This way, we retain the invariant of
       $\mathtt{dfs}$ that the list $\mathtt{Path}$ is a path connecting $\mathtt{start}$ with $\mathtt{state}$.
 \item We still have to avoid running in circles.  In the recursive version of depth first search,
       this is achieved by checking that the state $\mathtt{ns}$ is not already a member of the list $\mathtt{Path}$.  In the
@@ -783,8 +783,8 @@ The implementation of $\mathtt{dfs}$ works as follows:
       successors of $\mathtt{state}$.
 \item Note that the recursive invocation of $\mathtt{dfs}$ returns $\mathtt{None}$ if the end of the
       \texttt{for} loop is reached and no solution has been returned so far.  The reason is that there is
-      no \texttt{return} statement at the end of the procedure $\mathtt{dfs}$.  Hence, if the last
-      line of the procedure $\mathtt{dfs}$ is reached, $\mathtt{None}$ is returned by default.
+      no \texttt{return} statement at the end of the function $\mathtt{dfs}$.  Hence, if the last
+      line of the function $\mathtt{dfs}$ is reached, $\mathtt{None}$ is returned by default.
 \end{enumerate}
 
 For the $3 \times 3$ puzzle, the recursive implementation takes about 26 second to compute the solution.  In
@@ -844,7 +844,7 @@ implements this strategy.  We proceed to discuss the details of this program.
 \end{figure}
 
 \begin{enumerate}
-\item The procedure $\mathtt{search}$ initializes the variable $\mathtt{limit}$ to 1 and tries to find a solution
+\item The function $\mathtt{search}$ initializes the variable $\mathtt{limit}$ to 1 and tries to find a solution
       to the search problem that has a length that is less than or equal to $\mathtt{limit}$.  If a solution is
       found, it is returned.  Otherwise, the variable $\mathtt{limit}$ is incremented by one and a
       new instance of depth first search is started.  This process continues until either
@@ -852,7 +852,7 @@ implements this strategy.  We proceed to discuss the details of this program.
       \item a solution is found \qquad or
       \item the sun rises in the west.
       \end{itemize}
-\item The procedure $\mathtt{depthLimitedSearch}$ implements depth first search but takes care to compute only
+\item The function $\mathtt{depthLimitedSearch}$ implements depth first search but takes care to compute only
       those paths that have a length of at most $\mathtt{limit}$.  The implementation shown in Figure
       \ref{fig:Iterative-Deepening.ipynb} is stack based.  In this implementation,
       the stack contains paths leading from $\mathtt{start}$ to the state at the end of a given
@@ -912,15 +912,15 @@ Furthermore, the states $\mathtt{start}$ and $\mathtt{goal}$ are defined as
 \hspace*{1.3cm}
 $\mathtt{start} := \pair(0,0)$ \quad and \quad $\mathtt{goal} := \pair(n,n)$ where $n \in \mathbb{N}$.
 \\[0.2cm]
-Next, the function $\mathtt{nextStates}$ is defined as
+Next, the function $\mathtt{next\_states}$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{nextStates}\bigl(\pair(a,b)\bigr) := \bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}$.
+$\mathtt{next\_states}\bigl(\pair(a,b)\bigr) := \bigl\{\pair(a+1,b), \pair(a,b+1)\bigr\}$.
 \\[0.2cm]
 Finally, the search problem $\mathcal{P}$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{P} := \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \rangle$.
+$\mathcal{P} := \langle Q, \mathtt{next\_states}, \mathtt{start}, \mathtt{goal} \rangle$.
 \\[0.2cm]
 Given a natural number $n$, compute the number of different solutions of this search problem and prove
 your claim.  
@@ -1105,7 +1105,7 @@ they seem to be closer to the solution.  In order to formalise this procedure, w
 Given a search problem
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{P} = \langle Q, \mathtt{nextStates}, \mathtt{start}, \mathtt{goal} \rangle$,
+$\mathcal{P} = \langle Q, \mathtt{next\_states}, \mathtt{start}, \mathtt{goal} \rangle$,
 \\[0.2cm]
 a \blue{search heuristic} or simply \blue{heuristic} is a function \index{heuristic}
 \\[0.2cm]
@@ -1131,7 +1131,7 @@ distance to the goal, but it is free to underestimate this distance.
 Finally, the  heuristic $h$ is called \blue{consistent} \index{consistent heuristic} iff we have 
 \\[0.2cm]
 \hspace*{1.3cm}
-$h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s_2 \in \mathtt{nextStates}(s_1)$.  \eod
+$h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s_2 \in \mathtt{next\_states}(s_1)$.  \eod
 \end{Definition}
 
 Let us explain the idea behind the notion of \blue{consistency}.  First, if we are already at the goal, the heuristic
@@ -1139,7 +1139,7 @@ should notice this and therefore we need to have $h(\mathtt{goal}) = 0$.  Second
 $s_1$ and $s_2$ is a neighbour of $s_1$, i.e.~we have that
 \\[0.2cm]
 \hspace*{1.3cm}
-$s_2 \in \mathtt{nextStates}(s_1)$.
+$s_2 \in \mathtt{next\_states}(s_1)$.
 \\[0.2cm]
 Now if our heuristic $h$ assumes that the distance of $s_2$ from the $\mathtt{goal}$ is $h(s_2)$, then the distance of
 $s_1$ from the $\mathtt{goal}$ can be at most $1 + h(s_2)$ because starting from $s_1$ we can first go to $s_2$
@@ -1180,7 +1180,7 @@ This claim is shown by induction on $k$.
              \hspace*{1.3cm}
              $
              \begin{array}[b]{lcll}
-               h(s_{k+1}) & \leq & 1 + h(s_k) & \mbox{because $s_k \in \mathtt{nextStates}(s_{k+1})$ and $h$ is consistent,} \\[0.2cm]
+               h(s_{k+1}) & \leq & 1 + h(s_k) & \mbox{because $s_k \in \mathtt{next\_states}(s_{k+1})$ and $h$ is consistent,} \\[0.2cm]
                          & \leq & 1 + k      & \mbox{because $h(s_k) \leq k$ by induction hypotheses.} 
              \end{array}
              $ 
@@ -1297,7 +1297,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
     \label{fig:manhattan.py}
     \end{figure}
 
-    The Manhattan distance is admissible.  The reason is that if $s_2 \in \mathtt{nextStates}(s_1)$,
+    The Manhattan distance is admissible.  The reason is that if $s_2 \in \mathtt{next\_states}(s_1)$,
     then there can be only one tile $t$ such that the position of $t$ in $s_1$ is different from the position
     of $t$ in $s_2$.  Furthermore, this position differs by either one row or one column.  Therefore,
     \\[0.2cm]
@@ -1357,7 +1357,7 @@ We need only two functions from the module `heapq`:
 \label{fig:Best-First-Search.ipynb}
 \end{figure}
 
-The procedure $\mathtt{bestFirstSearch}$ shown in \myFig{Best-First-Search.ipynb} takes four parameters.  The
+The function $\mathtt{search}$ shown in \myFig{Best-First-Search.ipynb} takes four parameters.  The
 first three of these parameters are the same as in the previous search algorithms.  The last parameter
 $\mathtt{heuristic}$ is a function that takes two states and then estimates the distance between these states.
 Later, we will use the Manhattan distance to serve as this $\mathtt{heuristic}$.  The details of the
@@ -1404,7 +1404,7 @@ It should be noted that the fact that the Manhattan distance is a \blue{consiste
 no consequence for best first search.  Only the $\mathrm{A}^*$ algorithm, which is presented next, makes use of
 this fact.
 
-\section{The A$^*$ Search Algorithm}
+\section{A$^*$ Search \label{sec:a-star-search}}
 We have seen that best first search can be very fast.  However, the solution returned by best first search is
 not optimal.  Next, we describe the \blue{$\mathrm{A}^*$ search algorithm}, which also uses a heuristic.  \index{A$^*$ search}
 If the heuristic used with the A$^*$ search algorithm is consistent, then the path that is computed by A$^*$
@@ -1468,10 +1468,10 @@ The function \textts{search} takes 4 parameters:
 \begin{enumerate}
 \item \textts{start} is a state.  This state represents the start state of the search problem.
 \item \textts{goal} is the goal state.
-\item \textts{nextStates} is a function that takes a state as a parameter.  For a state $s$,
+\item \textts{next\_states} is a function that takes a state as a parameter.  For a state $s$,
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{nextStates}(s)$
+      $\mathtt{next\_states}(s)$
       \\[0.2cm]
       computes the set of all those states that can be reached from $s$ in a single step.
 \item \texttt{heuristic} is a function that takes two parameters.
@@ -1489,7 +1489,7 @@ algorithm.
       encountered during the search, i.e.~we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathtt{Parent}[s_2] = s_1 \;\Rightarrow\; s_2 \in \mathtt{nextStates}(s_1)$.
+      $\mathtt{Parent}[s_2] = s_1 \;\Rightarrow\; s_2 \in \mathtt{next\_states}(s_1)$.
       \\[0.2cm]
       The only exception is the state \textts{start}:  We have 
       $\mathtt{Parent}[\mathtt{start}] = \mathtt{start}$ instead. 
@@ -1658,7 +1658,7 @@ the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipy
 Assume 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{P} = \langle Q,\mathtt{nextStates}, \mathtt{start}, \mathtt{goal}\rangle$
+$\mathcal{P} = \langle Q,\mathtt{next\_states}, \mathtt{start}, \mathtt{goal}\rangle$
 \\[0.2cm]
 is a search problem and
 \\[0.2cm]
@@ -1790,12 +1790,12 @@ $m < n$.  Furthermore, according to Claim One we have
 $\mathtt{Distance}[s] = n$.
 \\[0.2cm]
 Now it is time to make use of the fact that the heuristic $h$ is consistent.  First, since
-$s \in \texttt{nextStates}(y_{m-1})$  we have that 
+$s \in \texttt{next\_states}(y_{m-1})$  we have that 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{heuristic}(y_{m-1}) \leq 1 + \texttt{heuristic}(s)$.
 \\[0.2cm]
-Next, as we have $y_{m-1} \in \texttt{nextStates}(y_{m-2})$ the consistency of $\texttt{heuristic}$ implies
+Next, as we have $y_{m-1} \in \texttt{next\_states}(y_{m-2})$ the consistency of $\texttt{heuristic}$ implies
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{heuristic}(y_{m-2}) \leq 1 + \texttt{heuristic}(y_{m-1}) \leq 2 + \texttt{heuristic}(s)$.
@@ -1999,7 +1999,7 @@ Only $17,626$ states had to be processed to compute this solution!
 \end{figure}
 
 
-\section{Iterative Deepening $\mathrm{A}^*$ Search}
+\section{Iterative Deepening $\mathrm{A}^*$ Search \label{sec:ida-star-search}}
 So far, we have combined $\mathrm{A}^*$ search with bidirectional search and achieved good results.  When
 memory space is too limited for bidirectional $\mathrm{A}^*$ search to be possible, we can instead
 combine $\mathrm{A}^*$ search with \blue{iterative deepening}.  The resulting search technique is known as
@@ -2051,7 +2051,7 @@ shows an implementation of \ac{ida} search.  We proceed to discuss this program.
 \label{fig:iterative-deepening-a-star.stlx}
 \end{figure}
 \begin{enumerate}
-\item As in the $\mathrm{A}^*$ search algorithm, the function \texttt{idaStarSearch} takes four parameters.
+\item As in the $\mathrm{A}^*$ search algorithm, the function \texttt{search} takes four parameters.
       \begin{enumerate}
       \item \textts{start} is a state.  This state represents the start state of the search problem.
       \item \textts{goal} is the goal state.
@@ -2106,7 +2106,7 @@ We proceed to discuss the function \textts{dl\_search} This function takes 5 par
 \item \textts{next\_states} is a function that takes a state $s$ as input and computes the set of states that are
       reachable from $s$ in one step.
 \item \textts{limit} is the upper bound for the path from \textts{start} to \textts{goal}.  If the
-      procedure \textts{dl\_search} is not able to find a path from \textts{start} to \textts{goal} that has
+      function \textts{dl\_search} is not able to find a path from \textts{start} to \textts{goal} that has
       a length of at most \textts{limit}, then the search is unsuccessful.  In that case, instead of a path
       the function \textts{dl\_search} returns a new estimate for the distance between \textts{start} and
       \textts{goal}.  Of course, this new estimate will be bigger than \textts{limit}.
@@ -2165,7 +2165,7 @@ the good news is that the $\mathrm{IDA}^*$ algorithm does not need much memory s
 discovered so far is stored in memory.  Hence, $\mathrm{IDA}^*$ is a viable alternative if the available memory
 is not sufficient to support the bidirectional $\mathrm{A}^*$ algorithm.
 
-\section{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ Search Algorithm}
+\section{$\mathrm{A}^*$-$\mathrm{IDA}^*$ Search}
 So far, from all of the search algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
 bidirectional $\mathrm{A}^*$ search is only feasible if sufficient memory is available.   While
 $\mathrm{IDA}^*$ requires more time, its memory consumption is much lower than the memory consumption of
@@ -2174,6 +2174,8 @@ $\mathrm{IDA}^*$ algorithm.  Concretely, the
 idea is to run an $\mathrm{A}^*$ search from the $\texttt{start}$ node until memory is more or less
 exhausted.  Then, we start $\mathrm{IDA}^*$ from the $\texttt{goal}$ node and search until we find any of the
 nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\texttt{start}$ node.
+\index{A$^*$-IDA$^*$ search}
+
 
 \begin{figure}[!ht]
 \centering
@@ -2186,53 +2188,47 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    aStarIdaStarSearch := procedure(start, goal, nextStates, heuristic, size) {
-        Parent   := {};               // dictionary: state |-> predecessor(state)
-        Distance := { [start, 0] };   // dictionary: state |-> distance(start,state)
-        est      := heuristic(start, goal);
-        Estimate := { [start, est] }; // dictionary: state |-> distance(start,state,goal)
-        Frontier := { [est, start] }; // priority queue
-        while (#Distance < size && Frontier != {}) {
-            [_, state] := fromB(Frontier);
-            if (state == goal) {
-                 return pathTo(state, Parent);
-            }
-            stateDist := Distance[state];
-            for (neighbour in nextStates(state)) {
-                oldEstimate := Estimate[neighbour];
-                newEstimate := stateDist + 1 + heuristic(neighbour, goal);
-                if (oldEstimate == om || newEstimate < oldEstimate) {
-                    Parent[neighbour]   := state;
-                    Distance[neighbour] := stateDist + 1;
-                    Estimate[neighbour] := newEstimate;
-                    Frontier            += { [newEstimate, neighbour] };
-                    if (oldEstimate != om) {
-                        Frontier -= { [oldEstimate, neighbour] };
-                    }
-                }
-            }
-        }
-        Path := deepeningSearch(goal, start, nextStates, heuristic, Distance);
-        return pathTo(Path[-1], Parent) + reverse(Path)[2..];
-    };
+    def search(start, goal, next_states, heuristic, size):
+        Parent   = { start:start }
+        Distance = { start: 0 }           
+        estGoal  = heuristic(start, goal)
+        Estimate = { start: estGoal }
+        Frontier = Set.Set()
+        Frontier.insert( (estGoal, start) )
+        while len(Distance) < size and not Frontier.isEmpty():
+            estimate, state = Frontier.pop()
+            if state == goal:
+                return path_to(state, Parent)
+            stateDist = Distance[state]
+            for ns in next_states(state):
+                oldEstimate = Estimate.get(ns, None)
+                newEstimate = stateDist + 1 + heuristic(ns, goal)
+                if oldEstimate == None or newEstimate < oldEstimate:
+                    Distance[ns] = stateDist + 1
+                    Estimate[ns] = newEstimate
+                    Parent[ns]   = state
+                    Frontier.insert( (newEstimate, ns) )
+                    if oldEstimate != None:
+                        Frontier.delete( (oldEstimate, ns) )
+        Path = id_search(goal, start, next_states, heuristic, Distance)
+        return path_to(Path[-1], Parent) + Path[::-1][1:]
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{I}.}
-\label{fig:a-star-ida-star.stlx-1}
+\label{fig:A-Star-Ida-Star.ipynb-1}
 \end{figure}
 
-An implementation of the $\mathrm{A}^*$-$\mathrm{IDA}^*$ algorithm is shown in \myFig{a-star-ida-star.stlx-1}
-and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure $\texttt{aStarIdaStarSearch}$.
+An implementation of the $\mathrm{A}^*$-$\mathrm{IDA}^*$ algorithm is shown in \myFig{A-Star-Ida-Star.ipynb-1}
+and \myFig{A-Star-Ida-Star.ipynb-2}.  We begin with a discussion of the function $\texttt{search}$.
 \begin{enumerate}
-\item The procedure takes 5 arguments.
+\item The function $\mathtt{search}$ takes 5 arguments.
       \begin{enumerate}[(a)]
-      \item $\texttt{start}$ and $\texttt{goal}$ are nodes.  The procedure tries to find a path connecting
+      \item $\texttt{start}$ and $\texttt{goal}$ are states.  The function tries to find a path connecting
             $\texttt{start}$ and $\texttt{goal}$.
-      \item $\texttt{nextStates}$ is a function that takes a state $s$ as input and computes the set of states that are
+      \item $\texttt{next\_states}$ is a function that takes a state $s$ as input and computes the set of states that are
             reachable from $s$ in one step.
-      \item $\texttt{heuristic}$ computes an \emph{estimate} of the distance between $s_1$ and $s_2$.  It is
-            assumed that this estimate is optimistic, i.e.~the value returned by $\texttt{heuristic}(s_1, s_2)$
-            is less or equal than the true distance between $s_1$ and $s_2$.
+      \item $\texttt{heuristic}$ computes an \blue{estimate} of the distance between $s_1$ and $s_2$.  It is
+            assumed that this estimate is both \blue{admissible} and \blue{consistent}.
       \item $\texttt{size}$ is the maximal number of states that the $\mathrm{A}^*$ search is allowed to
             explore before the algorithm switches over to $\mathrm{IDA}^*$ search.
       \end{enumerate}
@@ -2241,13 +2237,13 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
       more than $\texttt{size}$ nodes, the algorithm terminates and returns the path that has been found.
       Otherwise, the algorithm switches over to an $\mathrm{IDA}^*$ search that starts from $\texttt{goal}$ and
       tries to connect goal to any of the nodes that have been encountered during the $\mathrm{A}^*$ search.
-      To this end, the procedure $\texttt{aStarIdaStarSearch}$ maintains the following variables.
+      To this end, the function $\texttt{search}$ maintains the following variables.
       \begin{enumerate}
       \item $\texttt{Parent}$ is a dictionary associating a parent state with those states that have already been
             encountered during the search, i.e.~we have
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\texttt{Parent}[s_2] = s_1 \;\Rightarrow\; s_2 \in \texttt{nextStates}(s_1)$.
+            $\texttt{Parent}[s_2] = s_1 \;\Rightarrow\; s_2 \in \texttt{next\_states}(s_1)$.
             \\[0.2cm]
             Once the goal has been found, this dictionary is used to compute the path from $\texttt{start}$ to
             $\texttt{goal}$.
@@ -2260,32 +2256,40 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
             \hspace*{1.3cm}
             $\texttt{Estimate}[s] = \texttt{Distance}[s] + \texttt{heuristic}(s, \texttt{goal})$.
             \\[0.2cm]
-            Instead of recalculating this sum every time we need it, we store it in the dictionary
+            Instead of recalculating this sum every time we need it, we store the sum in the dictionary
             $\texttt{Estimate}$.
       \item $\texttt{Frontier}$ is a \href{https://en.wikipedia.org/wiki/Priority_queue}{priority queue}.
             The elements of $\texttt{Frontier}$ are pairs of the form
             \\[0.2cm]
             \hspace*{1.3cm}
-            $[d, s]$ \quad such that \quad $d = \texttt{Estimate}[s]$,
+            $(d, s)$ \quad such that \quad $d = \texttt{Estimate}[s]$,
             \\[0.2cm]
-            i.e.~if $[d, s] \in \texttt{Frontier}$, then the state $s$ has been encountered in the $\mathrm{A}^*$ search and it is
+            i.e.~if $(d, s) \in \texttt{Frontier}$, then the state $s$ has been encountered in the $\mathrm{A}^*$ search and it is
             estimated that a path leading from $\texttt{start}$ to $\texttt{goal}$ and passing through $s$ would have
-            a length of $d$.
+            a length of $d$.  This priority queue is implemented as an ordered set.
       \end{enumerate}
-\item The $\mathrm{A}^*$ search runs exactly as discussed previously.  The only difference is that the
+\item The $\mathrm{A}^*$ search runs exactly as discussed in section \ref{sec:a-star-search}.  The only difference is that the
       \texttt{while} loop is terminated once the dictionary $\texttt{Distance}$ has more than $\texttt{size}$
       entries.  If we are lucky, the $\mathrm{A}^*$ search is already able to find the $\texttt{goal}$ and the
       algorithm terminates.
-\item Otherwise, the procedure $\texttt{deepeningSearch}$ is called.  This procedure starts an iterative deepening
-      $\mathrm{A}^*$ search from the node $\texttt{goal}$.  This search terminates as soon as a state is found
+\item Otherwise, the function $\texttt{id\_search}$ is called.  This function starts an iterative deepening
+  $\mathrm{A}^*$ search from the node $\texttt{goal}$.  This works as described in section \ref{sec:ida-star-search}.
+      This search terminates as soon as a state is found
       that has already been encountered during the $\mathrm{A}^*$ search.  The set of these nodes is given to
-      the procedure $\texttt{deepeningSearch}$ via the parameter $\texttt{Distance}$.  The procedure
-      $\texttt{deepeningSearch}$ returns a pair.  The first component of this pair is the state $\texttt{s}$.  This is
-      the state in $\texttt{Distance}$ that has been reached by the $\mathrm{IDA}^*$ search.  The second component is the
-      path $\texttt{P}$ that leads from the node $\texttt{s}$ to the node $\texttt{goal}$ but that does not include the node $\texttt{s}$.
+      the function $\texttt{id\_search}$ via the dictionary $\texttt{Distance}$.  The function
+      $\texttt{id\_search}$ returns a path leading from $\mathtt{goal}$ to a state $s$ that is a key of the
+      dictionary $\texttt{Distance}$ and hence has been reached by the  A$^*$ search. 
       In order to compute a path from $\texttt{start}$ to $\texttt{goal}$, we still have to compute a
       path from $\texttt{start}$ to $s$.  This path is then combined with the path $\texttt{P}$ and the resulting path
       is returned.
+
+      The expression \texttt{Path[::-1]} in line 24 reverses the list $\mathtt{Path}$ and 
+      hence \texttt{Path[::-1]} is a path leading from the state $s$ to the state $\mathtt{goal}$.
+      \texttt{Path[::-1][-1]} is the same path but without the state $s$, as this state is already included 
+      as the last state of the path returned by the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{path\_to(Path[-1], Parent)}.
 \end{enumerate}
 
 
@@ -2300,56 +2304,57 @@ and \myFig{a-star-ida-star.stlx-2}.  We begin with a discussion of the procedure
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    deepeningSearch := procedure(goal, start, nextStates, heuristic, Distance) {
-        limit := 0;
-        while (true) {
-            print("limit = $limit$");
-            Path := search([goal], start, nextStates, limit, heuristic, Distance);
-            if (isList(Path)) {
-                return Path;
-            }
-            limit := Path;
-        }
-    };
-    search := procedure(Path, start, nextStates, limit, heuristic, Distance) {
-        state := Path[-1];
-        total := #Path - 1 + heuristic(state, start);
-        if (total > limit) {
-            return total;
-        }
-        if (Distance[state] != om) {
-            return Path;
-        }
-        smallest := mathConst("Infinity");
-        for (ns in nextStates(state) | !(ns in Path) ) {
-            result := search(Path + [ns], start, nextStates, limit, heuristic, Distance);
-            if (isList(result)) {
-                return result;
-            }
-            smallest := min([smallest, result]);
-        }
-        return smallest;
-    };
+    def id_search(goal, start, next_states, heuristic, Distance):
+        limit = 0
+        while True:
+            Path = dl_search([goal], start, next_states, limit, heuristic, Distance)
+            if isinstance(Path, list):
+                return Path
+            limit = Path
+    
+    def dl_search(Path, start, next_states, limit, heuristic, Distance):
+        state = Path[-1]
+        total = len(Path) - 1 + heuristic(state, start)
+        if total > limit:
+            return total
+        if state in Distance:
+            return Path
+        smallest = float('Inf')
+        for ns in next_states(state):
+            if ns not in Path:
+                result = dl_search( Path + [ns], start, next_states, limit, 
+                                    heuristic, Distance
+                                  )
+                if isinstance(result, list):
+                    return result
+                smallest = min(smallest, result)
+        return smallest 
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{II}.}
-\label{fig:a-star-ida-star.stlx-2}
-\end{figure}5
+\label{fig:A-Star-Ida-Star.ipynb-2}
+\end{figure}
 
 Iterative deepening $\mathrm{A}^*$-$\mathrm{IDA}^*$ is a complete search algorithm.
 On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}, this
-algorithm takes about $0.8$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
-is allowed to visit at most $3\,000$ states, the algorithm takes less than $5$ seconds.
-% However, there is one caveat:
-% I do not know whether $\mathrm{A}^*$-$\mathrm{IDA}^*$ search finds an optimal path, although in practise it often does.
+algorithm takes about $0.14$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
+is allowed to visit at most $3\,000$ states, the algorithm takes less than $1.33$ seconds.
+ $\mathrm{A}^*$-$\mathrm{IDA}^*$ is not optimal.  For example the solution computed for 
+the $4 \times 4$ sliding puzzle has a length of 40, while the shortest solution for the given problem only
+requires 36 step.
+\pagebreak
 
 \exercise
 The \href{https://en.wikipedia.org/wiki/Eight_queens_puzzle}{eight queens puzzle} is the problem of  placing
 eight chess queens on a chessboard so that no two queens can attack each other.  In
 \href{https://en.wikipedia.org/wiki/Chess}{chess}, a \href{https://en.wikipedia.org/wiki/Queen_(chess)}{queen}
-can attack by moving horizontally, vertically, or diagonally.  Reformulate the \blue{eight queens puzzle} as a
-search problem and solve this puzzle via breadth first search.  For extra credit, compute all 92 solutions of
-the eight queens puzzle.  
+can attack by moving horizontally, vertically, or diagonally.  
+\begin{enumerate}[(a)]
+\item Reformulate the \blue{eight queens puzzle} as a search problem.
+\item Compute an upper bound for the number of states.
+\item Which of the algorithms we have discusses are suitable to solve this problem?
+\item Compute all 92 solutions of the eight queens puzzle.  
+\end{enumerate}
 
 \hint
 It is easiest to encode states as lists.  For example, the solution of the eight queens puzzle that is shown in
@@ -2362,11 +2367,7 @@ because the queen in the first row is positioned in column 6, the queen in the s
 column 4, and so on.  The start state would then be the empty list and given a state $L$, all states from the
 set $\mathtt{nextState}(L)$ would be lists of the form $L + [c]$.  If $\#L = k$, then the state $l + [c]$ has
 $k+1$ queens, where the queen in row $k+1$ has been placed in column $c$.
-A frame containing a function that can be used to print a board can be found at:
-\\[0.2cm]
-\hspace*{0.0cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/queens-frame.stlx}}
-\\[0.2cm]
+
 
 
 \begin{figure}[!ht]
@@ -2376,8 +2377,7 @@ A frame containing a function that can be used to print a board can be found at:
 \label{fig:queens.pdf}
 \end{figure}
 
-\pagebreak
-\vspace*{\fill}
+
 
 \pagebreak
 
@@ -2395,26 +2395,26 @@ that are nearer to the goal than the start state.  To make this idea more precis
 15-puzzle, where the states $\texttt{Start}$ and $\texttt{Goal}$ are given as follows:
 \begin{verbatim}
        Start :=  +---+---+---+---+    Goal :=  +---+---+---+---+
-                 |15 |14 | 8 |12 |             | 1 | 2 | 3 | 4 |
+                 |   |15 |14 | 8 |             |   | 1 | 2 | 3 |
                  +---+---+---+---+             +---+---+---+---+
-                 |10 |11 |13 | 9 |             | 5 | 6 | 7 | 8 |
+                 |12 |10 |11 |13 |             | 4 | 5 | 6 | 7 |
                  +---+---+---+---+             +---+---+---+---+
-                 | 6 | 2 | 5 | 1 |             | 9 |10 |11 |12 |
+                 | 9 | 6 | 2 | 5 |             | 8 | 9 |10 |11 |
                  +---+---+---+---+             +---+---+---+---+
-                 | 3 | 4 | 7 |   |             |13 |14 |15 |   |
+                 | 1 | 3 | 4 | 7 |             |12 |13 |14 |15 |
                  +---+---+---+---+             +---+---+---+---+
 \end{verbatim}
-In order to solve the puzzle, we could try to first move the tiles numbered with $1$ and $2$ into the upper left
+In order to solve the puzzle, we could try to first move the tiles numbered with $14$ and $15$ into the lower right
 corner.  The resulting state would have the following form:
 \begin{verbatim}
                  +---+---+---+---+
-                 | 1 | 2 | * | * |
-                 +---+---+---+---+
                  | * | * | * | * |
                  +---+---+---+---+
                  | * | * | * | * |
                  +---+---+---+---+
                  | * | * | * | * |
+                 +---+---+---+---+
+                 | * | * |14 |15 |
                  +---+---+---+---+
 \end{verbatim}
 Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do not care about the actual
@@ -2425,16 +2425,29 @@ following pattern:
 
 \begin{verbatim}
                  +---+---+---+---+
-                 | 1 | 2 | * | * |
-                 +---+---+---+---+
-                 | 5 | 6 | * | * |
-                 +---+---+---+---+
                  | * | * | * | * |
                  +---+---+---+---+
                  | * | * | * | * |
+                 +---+---+---+---+
+                 | * | * | * | * |
+                 +---+---+---+---+
+                 |12 |13 |14 |15 |
                  +---+---+---+---+
 \end{verbatim}
-This way, slowly but surely we will reach the goal.  I have prepared a framework for taoistic search.  The file
+We have now solved the bottom line of the puzzle.  In a similar way, we can try to solve the line above the
+bottom line.  After that, the next step would then be to reach a goal of the form
+\begin{verbatim}
+                 +---+---+---+---+
+                 | * | * | 2 | 3 |
+                 +---+---+---+---+
+                 | * | * | 6 | 7 |
+                 +---+---+---+---+
+                 | 8 | 9 |10 |11 |
+                 +---+---+---+---+
+                 |12 |13 |14 |15 |
+                 +---+---+---+---+
+\end{verbatim}
+The final step would then solve the puzzle.  I have prepared a framework for taoistic search.  The file
 \\[0.2cm]
 \hspace*{-0.5cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
