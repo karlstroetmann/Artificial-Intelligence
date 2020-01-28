@@ -1,41 +1,40 @@
-\chapter{Constraint Satisfaction}
-In this chapter we discuss algorithms for solving 
+\chapter{Solving Constraint Satisfaction Problems}
+In this chapter we discuss various algorithms for solving 
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problems}.
-In a constraint satisfaction problem we have been given a number of \blue{formul\ae} and search for values that can be
-assigned to the \blue{variables} occurring in these formul\ae\  so that the formul\ae\  evaluate as true.
+In a constraint satisfaction problem we are given a set of \blue{formul\ae} and search for values that can be
+assigned to the \blue{variables} occurring in these formul\ae\  so that all of the formul\ae\  evaluate as true.
 Constraint satisfaction problems can be seen as a refinement of the search problems discussed in the previous
 chapter:  In a search problem, the states are abstract and therefore have no structure that can be exploited to
 guide the search, while in a \blue{constraint satisfaction problem}, the states have a structure, as these
 states are \blue{variable assignments}.  This structure can be exploited to guide the search.  This chapter is
 structured as follows: 
-\begin{enumerate}
+\begin{enumerate}[(a)]
 \item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
-      notion, two examples of constraint satisfaction problems are presented.  After that, we discuss
-      applications of constraint satisfaction problems.
+      notion, we present two examples.  After that, we discuss applications of constraint satisfaction problems.
 \item The simplest algorithm to solve a constraint satisfaction problem is via \blue{brute force search}.
       The idea behind brute force search is to test all possible \blue{variable assignments}.
-\item In most cases, the search space is so large that it is not possible to enumerate all potential solutions.
+\item In most cases, the search space is so large that it is not feasible to enumerate all variable assignments.
       \blue{Backtracking search} improves on brute force search by mixing the generation
-      of variable assignments with the testing of the constraints.  In many cases, this approach can
-      drastically improve the performance of the search algorithm.
-\item Backtracking search can be refined by using \blue{constraint propagation} and by
-      using the \blue{most restricted variable} heuristic.
+      of variable assignments with the testing of the constraints.  In many cases, this approach
+      improves the performance of the brute search algorithm drastically.
+\item Backtracking search can be refined by using both \blue{constraint propagation} and 
+      the \blue{most restricted variable} heuristic.
 \item Furthermore, checking the \blue{consistency} of the values assigned to different variables
       can reduce the size of the search space considerably. 
 \item Finally, \blue{local search} is a completely different approach to solve
       constraint satisfaction problems.  This approach is especially useful if the constraint satisfaction
-      problem is big, but the problem is not too complicated.
+      problem is huge, but not too complicated.
 \end{enumerate}
 
-\section{Formal Definition of Constraint Satisfaction Problems}
+\section[Formal Definition of \textsc{Csp}s]{Formal Definition of Constraint Satisfaction Problems}
 Formally, we define a 
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problem} as a triple
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{P} := \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \rangle$
 \\[0.2cm]
-where
-\begin{enumerate}
+where \index{constraint satisfaction problem}
+\begin{enumerate}[(a)]
 \item $\mathtt{Vars}$ is a set of strings which serve as \blue{variables},
 \item $\mathtt{Values}$ is a set of \blue{values} that can be assigned to the variables in $\mathtt{Vars}$.
 \item $\mathtt{Constraints}$ is a set of formul\ae\ from \blue{first order logic}.  Each of these formul\ae\ is
@@ -53,24 +52,24 @@ where
       defining the constraints.  In what follows we assume that these interpretations are understood from the
       context of the constraint satisfaction problem $\mathcal{P}$.
 \end{enumerate}
-In the following, the abbreviation \textsc{Csp} is short for \blue{constraint satisfaction problem}.
-Given a \textsc{Csp}
+In the following, the abbreviation \ac{csp} is short for \blue{constraint satisfaction problem}.
+Given a \ac{csp}
 \\[0.2cm]
 \hspace*{1.3cm}
  $\mathcal{P} = \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \rangle$, 
 \\[0.2cm]
-a \blue{variable assignment} for $\mathcal{P}$ is a function
+a \blue{variable assignment} for $\mathcal{P}$ is a function \index{variable assignment}
 \\[0.2cm]
 \hspace*{1.3cm}
 $A: \mathtt{Vars} \rightarrow \mathtt{Values}$.
 \\[0.2cm]
-A variable assignment $A$ is a \blue{solution} of the \textsc{Csp} $\mathcal{P}$ 
+A variable assignment $A$ is a \blue{solution} of the \ac{csp} $\mathcal{P}$ 
 if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{eval}(f, A) = \mathtt{true}$ \quad for all $f \in \mathtt{Constraints}$.
 \\[0.2cm]
-Finally, a \blue{partial variable assignment} $B$ for $\mathcal{P}$ is a function
+Finally, a \blue{partial variable assignment} $B$ for $\mathcal{P}$ is a function \index{partial variable assignment}
 \\[0.2cm]
 \hspace*{1.3cm}
 $B: \mathtt{Vars} \rightarrow \mathtt{Values} \cup \{ \Omega \}$ \quad where $\Omega$ denotes the undefined value.
@@ -93,7 +92,8 @@ We proceed to illustrate the definitions given so far by presenting two examples
 \end{figure}
 
 \subsection{Example: Map Colouring}
-In \href{https://en.wikipedia.org/wiki/Four_color_theorem}{map colouring} a map showing different state
+\index{map coloring}
+In \href{https://en.wikipedia.org/wiki/Four_color_theorem}{map colouring} a map showing different state and their
 borders is given and the task is to colour the different states such that no two states that have a common
 border share the same colour.  \myFig{australia.pdf} shows a map of Australia.  There are seven different
 states in Australia:
@@ -108,26 +108,23 @@ states in Australia:
 \end{enumerate}
 Figure \ref{fig:australia.pdf} would certainly look better if different states had been coloured with different
 colours.  For the purpose of 
-this example let us assume that we have only three colours available.  The question then is whether it is 
-possible to colour the different states in a way that no two neighbouring states share the same colour.  This
-problem can be formalized as a constraint satisfaction problem.  To this end we define:
+this example let us assume that we have only three colours available.  The task is then to colour the different
+states in a way that no two neighbouring states share the same colour.  This task can be formalized as a
+constraint satisfaction problem.  To this end we define: 
 \begin{enumerate}
 \item $\texttt{Vars} := \{ \mathrm{WA}, \mathrm{NT}, \mathrm{SA}, \mathrm{Q}, \mathrm{NSW}, \mathrm{V}, \mathrm{T} \}$,
 \item $\texttt{Values} := \{ \texttt{red}, \texttt{green}, \texttt{blue} \}$,
-\item $\texttt{Constraints} := $ \\[0.1cm]
-      \hspace*{0.3cm}
-      $\bigl\{ \mathrm{WA} \not= \mathrm{NT}, \mathrm{WA} \not= \mathrm{SA},
-                 \mathrm{NT} \not= \mathrm{SA}, \mathrm{NT} \not= \mathrm{Q},
-                 \mathrm{SA} \not= \mathrm{Q},  \mathrm{SA} \not= \mathrm{NSW}, \mathrm{SA} \not= \mathrm{V}, 
-                 \mathrm{Q}  \not= \mathrm{NSW},
-                 \mathtt{NSW}\not= \mathtt{V}, 
-                 \mathrm{V}  \not= \mathrm{T}
-       \bigr\}
-      $
+\item $\texttt{Constraints} := $ \\[0.2cm]
+      \hspace*{0.8cm}
+      $\bigl\{ \mathtt{WA} \not= \mathtt{NT},\, \mathtt{WA} \not= \mathtt{SA},\, \mathtt{SA} \not= \mathtt{Q},\, 
+                \mathtt{NT} \not= \mathtt{Q},\,
+                \mathtt{SA} \not= \mathtt{Q},\, \mathtt{SA} \not= \mathtt{NSW},\, \mathtt{SA} \not= \mathtt{V},\,
+                \mathtt{Q} \not= \mathtt{NSW},\, \mathtt{NSW} \not= \mathtt{V},\, \mathtt{V} \not= \mathtt{T}
+       \bigr\}$.
 \end{enumerate}
-Then $\mathcal{P} := \langle \texttt{Vars}, \texttt{Values}, \texttt{Constraints} \rangle$ is a constraint satisfaction problem.  
+Then $\mathcal{P} := \langle \texttt{Vars},\, \texttt{Values},\, \texttt{Constraints} \rangle$ is a constraint satisfaction problem.  
 If we define the assignment $A$ such that
-\begin{enumerate}
+\begin{enumerate}[(a)]
 \item $A(\mathrm{WA}) = \texttt{blue}$,
 \item $A(\mathrm{NT}) = \texttt{red}$,
 \item $A(\mathrm{SA}) = \texttt{green}$,
@@ -136,7 +133,7 @@ If we define the assignment $A$ such that
 \item $A(\mathrm{V}) = \texttt{blue}$,
 \item $A(\mathrm{T}) = \texttt{red}$,
 \end{enumerate}
-then you can check that the assignment $A$ is indeed a solution to the constraint satisfaction problem $\mathcal{P}$.
+then it is straightforward to check that this assignment is indeed a solution to the constraint satisfaction problem $\mathcal{P}$.
 
 \subsection{Example: The Eight Queens Puzzle}
 The \href{https://en.wikipedia.org/wiki/Eight_queens_puzzle}{eight queens problem} asks to put 8 queens onto a
@@ -146,7 +143,7 @@ want to put 8 queens on a chessboard such that no two queens can attack each oth
 queen in every row:  If we would put more than one queen in a row, the queens in that row can attack each other.
 If we would leave a row empty, then, given that the other rows contain at most one queen, there would be less
 than 8 queens on the board.  Therefore, in order to model the eight queens problem as a constraint satisfaction
-problem, we will use the following set of variables:
+problem, we will use the following set of variables:  \index{8 queens puzzle}
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Vars} := \{ \texttt{V}_1, \texttt{V}_2, \texttt{V}_3, \texttt{V}_4, \texttt{V}_5, \texttt{V}_6, \texttt{V}_7,\texttt{V}_8 \}$,
@@ -159,13 +156,13 @@ $\texttt{Values} := \{1,2,3,4,5,6,7,8\}$.
 \\[0.2cm]
 Next, let us define the constraints.  There are two different types of constraints.
 \begin{enumerate}
-\item We have constraints that express that no two queens positioned in different rows share the same column.
+\item We have constraints that express that no two queens that are positioned in different rows share the same column.
       To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{SameRow} := \bigl\{ \texttt{V}_i \not= \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
-      Here the condition $i < j$ ensures that, for example, we have the constraint $\texttt{V}_2 \not= \texttt{V}_1$
+      Here the condition $j < i$ ensures that, for example, we have the constraint $\texttt{V}_2 \not= \texttt{V}_1$
       but not the constraint  $\texttt{V}_1 \not= \texttt{V}_2$, as the latter constraint would be redundant if
       the former constraint has already been established.
 \item We have constraints that express that no two queens positioned in different rows share the same 
@@ -181,8 +178,7 @@ Next, let us define the constraints.  There are two different types of constrain
       \hspace*{1.3cm}
       $\texttt{SameDiagonal} := \bigl\{ |i  - j| \not= |\texttt{V}_i - \texttt{V}_j| \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
-      A more detailed explanation of this constraint is given in my lecture notes on 
-      \href{https://github.com/karlstroetmann/Logik/blob/master/Lecture-Notes/logic.pdf}{logic}.
+      Essentially, these are just the linear equations for the straight lines with slope $1$ and $-1$.
 \end{enumerate}
 Then, the set of constraints is defined as 
 \\[0.2cm]
@@ -197,7 +193,10 @@ $\mathcal{P} := \langle \texttt{Vars}, \texttt{Values}, \texttt{Constraints} \ra
 If we define the assignment $A$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
-$A(V_1) := 4,\; A(V_2) := 8,\; A(V_3) := 1,\; A(V_4) := 2,\; A(V_5) := 6,\; A(V_6) := 2,\; A(V_7) := 7,\; A(V_8) := 5$,
+$A(V_1) := 4,\; A(V_2) := 8,\; A(V_3) := 1,\; A(V_4) := 2,\; A(V_5) := 6,\; A(V_6) := 2$,
+\\[0.2cm]
+\hspace*{1.3cm}
+$A(V_7) := 7,\; A(V_8) := 5$,
 \\[0.2cm]
 then it is easy to see that this assignment is a solution of the eight queens problem.  This solution is shown
 in \myFig{eight-queens.txt}.
@@ -223,21 +222,22 @@ in \myFig{eight-queens.txt}.
   \caption{A solution of the eight queens problem.}
   \label{fig:eight-queens.txt}
 \end{figure}
-Later, when we implement procedures to solve  \textsc{Csp}s, we will represent variable assignments and partial
-variable assignments as binary relations.  For example, $A$ would then be represented as the relation
+Later, when we implement procedures to solve  \ac{csp}s, we will represent variable assignments and partial
+variable assignments as \textsl{Python} \blue{dictionaries}.  For example, $A$ would then be represented as the
+dictionary 
 \\[0.2cm]
 \hspace*{1.3cm}
-$A = \bigl\{ \pair(\mathrm{V}_1,4), \pair(\mathrm{V}_2,8), \pair(\mathrm{V}_3,1), \pair(\mathrm{V}_4,2), 
-             \pair(\mathrm{V}_5,6), \pair(\mathrm{V}_6,2), \pair(\mathrm{V}_7,7), \pair(\mathrm{V}_8,5) 
-     \bigr\}$.
+$A := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1, \mathrm{V}_4:2, 
+             \mathrm{V}_5:6, \mathrm{V}_6:2, \mathrm{V}_7:7, \mathrm{V}_8:5 
+      \bigr\}$.
 \\[0.2cm]
 If we define 
 \\[0.2cm]
 \hspace*{1.3cm}
-$B := \bigl\{ \pair(\mathrm{V}_1,4), \pair(\mathrm{V}_2,8), \pair(\mathrm{V}_3,1) \bigr\}$,
+$B := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1 \bigr\}$,
 \\[0.2cm]
-then $B$ is a partial assignment and $\texttt{dom}(B) = \{ \mathrm{V}_1, \mathrm{V}_2, \mathrm{V}_3 \}$.  This
-partial assignment is shown in \myFig{eight-queens-partial.txt}.
+then $B$ is a \blue{partial} variable assignment and $\texttt{dom}(B) = \{ \mathrm{V}_1, \mathrm{V}_2, \mathrm{V}_3 \}$.  This
+partial variable assignment is shown in \myFig{eight-queens-partial.txt}.
 
 \begin{figure}[!ht]
   \centering
@@ -256,16 +256,17 @@ partial assignment is shown in \myFig{eight-queens-partial.txt}.
          \vrule width1pt}
    \hrule height1pt}
 
-  \caption{The partial assignment $\bigl\{ \pair(\mathrm{V}_1,4), \pair(\mathrm{V}_2,8), \pair(\mathrm{V}_3,1) \bigr\}$.}
+  \caption{The partial assignment $\bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1 \bigr\}$.}
   \label{fig:eight-queens-partial.txt}
 \end{figure}
 
 
 
-\myFig{queens-csp.stlx} shows a \textsc{SetlX} program that can be used to create the eight queens puzzle as a
-\textsc{Csp}.  The code shown in this figure is more general than the eight queens puzzle:  Given a natural
-number $n$, the function call $\texttt{queensCSP}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
-the eight queens problem to the problem of putting $n$ queens on a board of size $n$ times $n$.
+\myFig{N-Queens-Problem-CSP.ipynb} shows a \textsc{SetlX} program that can be used to create the eight queens puzzle as a
+\ac{csp}.  The code shown in this figure is more general than necessary.  Given a natural
+number $n$, the function call $\texttt{create\_csp}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
+the eight queens problem to the problem of placing $n$ queens on a board of size $n$ times $n$ such that no
+queen can capture another queen.
 
 \begin{figure}[!ht]
 \centering
@@ -278,23 +279,28 @@ the eight queens problem to the problem of putting $n$ queens on a board of size
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    createCSP := procedure(n) {
-        S            := { 1 .. n };           // used as indices
-        Variables    := { "V$i$" : i in S };
-        Values       := { 1 .. n };
-        SameRow      := { "V$i$ != V$j$" : i in S, j in S | i < j };
-        SameDiagonal := { "abs($i$-$j$)!=abs(V$i$-V$j$)" : i in S, j in S | i < j };
-        return [Variables, Values, SameRow + SameDiagonal];
-    };
+    def create_csp(n):
+        S            = range(1, n+1)           
+        Variables    = { f'V{i}' for i in S }
+        Values       = set(S)
+        SameRow      = { f'V{i} != V{j}' for i in S
+                                         for j in S
+                                         if  i < j 
+                       }
+        SameDiagonal = { f'abs(V{j} - V{i}) != {j - i}' for i in S
+                                                        for j in S 
+                                                        if  i < j 
+                       }
+        return (Variables, Values, SameRow | SameDiagonal)
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{\textsc{SetlX} code to create the CSP representing the eight-queens puzzle.}
-\label{fig:queens-csp.stlx}
+\caption{\textsl{Python} code to create the \ac{csp} representing the $n$-queens puzzle.}
+\label{fig:N-Queens-Problem-CSP.ipynb}
 \end{figure}
 
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
-that we will be able to develop a so called \blue{constraint solver} that takes as input a \textsc{Csp}
-like the one produced by the program shown in Figure \ref{fig:queens-csp.stlx} and that is then capable of
+that we will be able to develop a so called \blue{constraint solver} that takes as input a \ac{csp}
+like the one produced by the program shown in Figure \ref{fig:N-Queens-Problem-CSP.ipynb} and that is then capable of
 computing a solution.  In effect, this enables us to use
 \href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming}:  Instead of specifying
 an algorithm that solves a problem we confine ourselves to  specifying the problem precisely and then let a
@@ -303,33 +309,6 @@ was one of the main ideas incorporated in the programming language
 \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to the promisses
 made in declarative programming as a viable general purpose programming method, constraint programming has
 proven to be very useful in a number of domains. 
-
-% \exercise
-% Formulate the $n$ queens puzzle as a search problem.  Represent states as lists of the form
-% \\[0.2cm]
-% \hspace*{1.3cm}
-% $[Q_1,\cdots,Q_k]$ \quad where $k \in \{0,\cdots,n\}$ and $Q_i \in \{1,\cdots,n\}$.
-% \\[0.2cm]
-% Here, $Q_i$ specifies the column of the queen positioned in the $i$-th row.  If we assume that every row has at
-% most one queen, the set of all states is then defined as
-% \\[0.2cm]
-% $\mathcal{Q}:=\bigl\{ [Q_1,\cdots,Q_k] \bigm| 
-%          k \el \{0,\cdots,n\} \wedge \forall i \el \{1,\cdots,n\}:Q_i \el \{1,\cdots,n\} \wedge 
-%          \forall i,j\el\{1,\cdots,k\}:(i \not=j \rightarrow Q_i \not= Q_j)
-% \bigr\}$.
-% \begin{enumerate}[(a)]
-% \item Derive a mathematical expression that returns the number of states for a given value of $n$.  
-%       What is the number of states if $n=8$?
-% \item Which of the search algorithms presented in the previous chapter could be used to solve the 8
-%       queens puzzle?  Which of these algorithms will work best?
-% \item Solve the 8 queens puzzle using an appropriate search algorithm.
-
-%       Note that we do not know the goal of this search problem.  Instead, you have to adapt the
-%       search algorithm so that it takes a function $\texttt{isGoal}$ instead of a state $\texttt{goal}$.  For a given
-%       state $s$, the function $\texttt{isGoal}(s)$ returns true iff $s$ is a solution of the $n$ queens puzzle.
-%       \eoxs
-% \end{enumerate}
-
 
 \subsection{Applications}
 Besides the toy problems discussed so far, there are a number of industrial applications of constraint
@@ -343,7 +322,7 @@ important problem.  For example, airlines have to solve a crew scheduling proble
 assign crews to aircrafts.
 
 \section{Brute Force Search}
-The most straightforward algorithm to solve a \textsc{Csp} is to test all possible combinations of assigning
+The most straightforward algorithm to solve a \ac{csp} is to test all possible combinations of assigning
 values to variables.  If there are $n$ different values that can be assigned to $k$ variables, this amounts to 
 checking $n^k$ different assignments.  For example, for the eight queens problem there are 8 variables and
 8 possible values leading to 
@@ -354,8 +333,8 @@ $8^8 = 2^{24} = 16,777,216$
 different assignments that need to be tested.  Given the clock speed of modern computers, checking a million
 assignments per second is plausible.  Hence, this approach is be able to solve the eight queens problem in
 less than 5 minutes.  The approach of testing all possible combinations is known as
-\href{https://en.wikipedia.org/wiki/Brute-force_search}{brute force search}.  An implementation of brute force
-search is shown in \myFig{csp-brute-force.stlx}. 
+\href{https://en.wikipedia.org/wiki/Brute-force_search}{brute force search}.  \index{brute force search}
+An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ipynb}. 
 
 \begin{figure}[!ht]
 \centering
@@ -368,52 +347,50 @@ search is shown in \myFig{csp-brute-force.stlx}.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    solve := procedure(CSP) {
-        return brute_force_search({}, CSP);
-    };
-    brute_force_search := procedure(Assignment, CSP) {
-        [Variables, Values, Constraints] := CSP;
-        if (#Assignment == #Variables) {  // all variables have been assigned
-            if (check_all_constraints(Assignment, Constraints)) {
-                return Assignment;
-            }
-            return;
-        }
-        var := rnd(Variables - domain(Assignment));
-        for (value in Values) {
-            NewAss := Assignment + { [var, value] };
-            result := brute_force_search(NewAss, CSP);
-            if (result != om) {
-                return result;
-            }
-        }
-    };
+    def solve(P):
+        return brute_force_search({}, P)
+
+    def brute_force_search(Assignment, csp):
+        Variables, Values, Constraints = csp
+        if len(Assignment) == len(Variables): # all variables have been assigned
+            if check_all_constraints(Assignment, Constraints):
+                print('Assignment:', Assignment)
+                return Assignment
+            else:
+                return None
+        var = arb(Variables - set(Assignment.keys()))
+        for value in Values:
+            NewAss = Assignment.copy()
+            NewAss[var] = value
+            result = brute_force_search(NewAss, csp)
+            if result != None:
+                return result
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{Solving a \textsc{Csp} via brute force search.}
-\label{fig:csp-brute-force.stlx}
+\caption{Solving a \ac{csp} via brute force search.}
+\label{fig:Brute-Force-Solver.ipynb}
 \end{figure}
 
-The procedure $\texttt{solve}$ gets a constraint satisfaction problem $\texttt{CSP}$ as its input.  
+The procedure $\texttt{solve}$ gets a constraint satisfaction problem $P$ as its input.  
 This $\texttt{CSP}$ is given as a triple of the form  
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{CSP} = [\texttt{Variables}, \texttt{Values}, \texttt{Constraints}]$.
+$P = (\texttt{Variables}, \texttt{Values}, \texttt{Constraints})$.
 \\[0.2cm]
 The sole purpose of $\texttt{search}$ is to call the function $\texttt{brute\_force\_search}$.  The
 implementation of this function is recursive and the function takes two arguments.
 \begin{enumerate}
-\item $\texttt{Assignment}$ is a partial assignment of values to variables.  Initially, this assignment will be
-      empty.  Every recursive call of $\texttt{brute\_force\_search}$ adds the assignment of one variable to
+\item $\texttt{Assignment}$ is a partial variable assignment.  Initially, this assignment will be the
+      empty dictionary.  Every recursive call of $\texttt{brute\_force\_search}$ adds the assignment of one variable to
       the given assignment. 
-\item $\texttt{CSP}$ is a triple of the form
+\item $\texttt{csp}$ is a triple of the form
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{CSP} = [\texttt{Variables}, \texttt{Values}, \texttt{Constraints}]$.
+      $\texttt{csp} = (\texttt{Variables}, \texttt{Values}, \texttt{Constraints})$.
       \\[0.2cm]
       Here, \texttt{Constraints} is a set of first order logic formul\ae\ that are given as strings.  These
-      strings have to follow the syntax of \textsc{SetlX} formul\ae\ so that they can be evaluated using the
-      \textsc{SetlX} function $\texttt{eval}$.
+      strings have to follow the syntax of \textsl{Python} expressions so that they can be evaluated using the
+      \textsl{Python} function $\texttt{eval}$.
 \end{enumerate}
 The implementation of $\texttt{brute\_force\_search}$ works as follows:
 \begin{enumerate}
@@ -421,22 +398,19 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
       number of entries as the set $\texttt{Variables}$ has elements.  Hence, in that case
       $\texttt{Assignment}$ is a complete assignment of all variables and we now have to test whether
       all constraints are satisfied.  This is done using the auxiliary procedure
-      $\texttt{check\_all\_constraints}$ that is shown in \myFig{csp-brute-force.stlx-2}. 
+      $\texttt{check\_all\_constraints}$ that is shown in \myFig{Brute-Force-Solver.ipynb-2}. 
       If the current $\texttt{Assignment}$ does indeed satisfy all constraints, it is a solution to the given
-      $\texttt{CSP}$ and is therefore returned.
+      \ac{csp} and is therefore returned.
 
-      If, instead, some constraint is violated, then $\texttt{brute\_force\_search}$ returns the undefined value $\Omega$.
-\item If the assignment is not yet complete, we randomly\footnote{
-         Experimental evidence suggests that picking a random variable performs much better than sorting the
-         variables and always picking the first unassigned variable.
-      } 
+      If, instead, some constraint is violated, then $\texttt{brute\_force\_search}$ returns the value
+      \texttt{None}.
+\item If the assignment is not yet complete, we arbitrarily 
       pick a variable $\texttt{var}$ from the set of those $\texttt{Variables}$ that still have no value assigned.  
-      Then, for every possible
-      $\texttt{value}$ in the set $\texttt{Values}$, we augment the current partial
-      $\texttt{Assignment}$ to the new assignment
+      Then, for every possible  $\texttt{value}$ in the set $\texttt{Values}$, we extend the current partial
+      $\texttt{Assignment}$ to the new assignment \texttt{NewAss} that satisfies
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Assignment + \{ [var, value] \}}.
+      \texttt{NewAss[var] = value}.
       \\[0.2cm]
       Next, the algorithm recursively tries to find a solution for this new partial assignment.
       If this recursive call succeeds, the solution it has computed is returned.  Otherwise, another
@@ -455,55 +429,36 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    check_all_constraints := procedure(Assignment, Constraints) {
-        return forall(f in Constraints | eval_constraint(Assignment, f));
-    };       
-    eval_constraint := procedure(Assignment, Formula) {
-        for ([var, value] in Assignment) {
-            execute("$var$ := $value$;");
-        }
-        return eval(Formula);
-    };
+    def check_all_constraints(Assignment, Constraints):
+        A = Assignment.copy()
+        return all(eval(f, A) for f in Constraints)
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Auxiliary procedures for brute force search.}
-\label{fig:csp-brute-force.stlx-2}
+\label{fig:Brute-Force-Solver.ipynb-2}
 \end{figure}
 
 The function $\texttt{check\_all\_constraints}$ takes a complete variable $\texttt{Assignment}$ as
-its first input.  The second input is the set of $\texttt{Constraints}$.  For all formul\ae\
-$\texttt{f}$ from the set $\texttt{Constraints}$, it checks whether $\texttt{f}$ is satisfied provided all
-variables are assigned as specified in $\texttt{Assignment}$.  This check is done
-using the auxiliary function $\texttt{eval\_constraint}$.  
+its first input.  The second input is the set $\texttt{Constraints}$ which is a set of \textsl{Python}
+expressions.  For all expressions
+$\texttt{f}$ from the set $\texttt{Constraints}$, the function $\texttt{check\_all\_constraints}$ checks
+whether $\texttt{f}$ yields \texttt{True} under the given variable assignment.
+This check is done using the auxiliary function $\texttt{eval\_constraint}$.  
 
-The procedure $\texttt{eval\_constraint}$ takes an $\texttt{Assignment}$ and a $\texttt{Formula}$
-that is supposed to be a constraint. Its purpose is to evaluate $\texttt{Formula}$ using the $\texttt{Assignment}$.  In
-order for this to be possible we have to assume that
+When I tested this brute force search with the eight queens problem, it took about 20 seconds to
+compute a solution.  In contrast, the seven queens problem took roughly one second.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{var}(\texttt{Formula)} \subseteq \texttt{dom}(\texttt{Assignment})$,
-\\[0.2cm]
-i.e.~all variables occurring in $\texttt{Formula}$ have a value assigned in $\texttt{Assignment}$.
-
-The $\texttt{Formula}$ is evaluated by first assigning the variables assigned in $\texttt{Assignment}$ to
-their corresponding values.  Once these assignments have been executed in
-the \texttt{for}-loop, the $\texttt{Formula}$ can be evaluated using the procedure $\texttt{eval}$, which
-is one of the predefined procedures in \textsc{SetlX}.
-
-When I tested this brute force search with the eight queens problem, it took about 300 seconds to
-compute a solution.  In contrast, the seven queens problem took roughly 14 seconds.  As we have
-\\[0.2cm]
-\hspace*{1.3cm}
-$\ds\frac{8^8}{7^7} \approx 20$ \quad \and \quad $\ds\frac{300}{14} \approx 21$
+$\ds\frac{8^8}{7^7} \approx 20$ 
 \\[0.2cm]
 this shows that the computation time does indeed grow with the number of possible assignments that
 have to be checked.  However, the correspondence is not exact.  The reason is that we stop our
-search as soon as a solution is found.  If we are lucky and the given \textsc{Csp} is easy to solve, this
+search as soon as a solution is found.  If we are lucky and the given \ac{csp} is easy to solve, this
 might happen when we have checked only a small portion of the set of all possible assignments.
 
 \section{Backtracking Search}
 Due to the combinatorial explosion of the search space, brute force search is only viable when we deal with
-small problems containing just a handful of variables.  One approach to solve a \textsc{Csp} that is both
+small problems containing just a handful of variables.  One approach to solve a \ac{csp} that is both
 conceptually simple and at least more efficient than brute force search is \blue{backtracking}.  The idea is to
 try to evaluate constraints as soon as possible:  If $C$ is a constraint and $B$ is a partial assignment such
 that all the variables occurring in $C$ have already been assigned a value in $B$ and the evaluation of $C$
@@ -511,7 +466,7 @@ fails, then there is no point in trying to complete the variable assignment $B$.
 evaluate a constraint $C$ as soon as all of its variables have been assigned a value.  If $C$ is not valid, we
 backtrack and discard the current partial variable assignment.  This approach can result in huge time savings.
 
-\myFig{csp-backtrack-solver.stlx-1} shows a simple \textsc{Csp} solver 
+\myFig{csp-backtrack-solver.stlx-1} shows a simple \ac{csp} solver 
 that employs backtracking.  We discuss this program next.  The procedure $\texttt{solve}$ takes a constraint
 satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.  
 
@@ -551,7 +506,7 @@ satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{A backtracking \textsc{Csp} solver.}
+\caption{A backtracking \ac{csp} solver.}
 \label{fig:csp-backtrack-solver.stlx-1}
 \end{figure}
 \begin{enumerate}
@@ -561,7 +516,7 @@ satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.
       Figure \ref{fig:collectVars.stlx} on page \pageref{fig:collectVars.stlx}.
       These variables are then stored together with the constraint $\texttt{f}$ and
       the correspondingly modified data structure is stored in $\texttt{CSP}$ and is called an
-      \blue{augmented \textsc{Csp}}.
+      \blue{augmented \ac{csp}}.
 
       The reason to compute and store these variables is efficiency: When we later check whether a constraint $\texttt{f}$
       is satisfied for a partial variable assignment $\texttt{Assignment}$ where $\texttt{Assignment}$ is
@@ -680,7 +635,7 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{Auxiliary procedures for the \textsc{Csp} solver shown in Figure \ref{fig:csp-backtrack-solver.stlx-1}}
+\caption{Auxiliary procedures for the \ac{csp} solver shown in Figure \ref{fig:csp-backtrack-solver.stlx-1}}
 \label{fig:csp-backtrack-solver.stlx-2}
 \end{figure}
 
@@ -864,10 +819,10 @@ without violating the given constraint $\texttt{f}$.
       \texttt{\{[var, value]\}}.
 \item The set $\texttt{Legal}$ collects all those values that satisfy the constraint $\texttt{f}$.
 \item If the set $\texttt{Legal}$ is empty, then the unary constraint $\texttt{f}$ is unsatisfiable and hence
-      the \textsc{Csp} is unsolvable.  In that case, the \textsc{Csp} is unsolvable.
+      the \ac{csp} is unsolvable.  In that case, the \ac{csp} is unsolvable.
       Hence, an exception is raised which is caught in the procedure \texttt{solve}.
       After catching the exception, the procedure $\mathtt{solve}$ returns the undefined value $\Omega$ 
-      to signal the given \textsc{Csp} has no solution. 
+      to signal the given \ac{csp} has no solution. 
 \item Otherwise, the set  $\texttt{Legal}$ is returned.
 \end{enumerate}
 
@@ -1087,7 +1042,7 @@ puzzle can be found at
 \hspace*{1.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/zebra-csp.stlx}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/zebra-csp.stlx}
 \\[0.2cm]
-When coding the zebra puzzle as a \textsc{Csp} you should be careful to name the variables correctly.  A single
+When coding the zebra puzzle as a \ac{csp} you should be careful to name the variables correctly.  A single
 spelling error in one of the constraints can easily result in an unsolvable problem.
 \eoxs
 
@@ -1127,7 +1082,7 @@ Table \ref{tab:sudoku} on page \pageref{tab:sudoku} shows a \href{https://en.wik
 that I have taken from the
 \href{http://sudoku.zeit.de/cgi-bin/sudoku/sudoku_kd_app_2016.pl?action=level&kd_nr=24091123601092&year=2018&month=03&day=23&level=-c+5}{Zeit Online}
 magazine.  Write a program that transforms this sudoku into a constraint satisfaction problem and solve the
-resulting \textsc{Csp} using the constraint satisfaction solver developed in this section.  A framework for solving sudoku
+resulting \ac{csp} using the constraint satisfaction solver developed in this section.  A framework for solving sudoku
 puzzles can be found at:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1213,7 +1168,7 @@ possible assignments. In order to do better, we have to perform the addition in 
    };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{Formulating ``$\texttt{SEND} + \texttt{MORE} = \texttt{MONEY}$'' as a \textsc{Csp}.}
+\caption{Formulating ``$\texttt{SEND} + \texttt{MORE} = \texttt{MONEY}$'' as a \ac{csp}.}
 \label{fig:send-more-money.stlx}
 \end{figure}
 
