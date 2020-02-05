@@ -1214,7 +1214,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       one tile, it is obvious that this heuristic is admissible.  It is also consistent.  First, the
       $\mathtt{goal}$ has no misplaced tiles, hence its heuristic is $0$.  Second, in every step of the sliding
       puzzle  only one tile is moved.  Therefore the number of misplaced tiles in two neighbouring state can
-      differ by at most one and therefore the inequality
+      differ by at most one and hence the inequality
       \\[0.2cm]
       \hspace*{1.3cm}
       $h(s_1) \leq 1 + h(s_2)$
@@ -1261,7 +1261,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       \begin{enumerate}
       \item First, the size $\mathtt{n}$ of the puzzle is computed by checking the number of rows of
             $\mathtt{stateA}$.
-      \item Next, the \texttt{for} loop iterates over all rows and columns of $\mathtt{stateA}$ that do not
+      \item Next, the \texttt{for} loops iterates over all rows and columns of $\mathtt{stateA}$ that do not
             contain a blank tile.  Remember that the blank tile is coded using the number $0$.  The tile at
             position $\pair(\mathtt{rowA}, \mathtt{colA})$ in $\mathtt{stateA}$ is computed using the expression \texttt{stateA[rowA][colA]} and the
             corresponding position $\pair(\mathtt{rowB}, \mathtt{colB})$ of this tile in state $\mathtt{stateB}$ is computed using the function
@@ -1345,10 +1345,10 @@ We need only two functions from the module `heapq`:
         while len(PrioQueue) > 0:
             _, Path = heapq.heappop(PrioQueue)
             state   = Path[-1]
+            if state == goal:
+                return Path
             for ns in next_states(state):
                 if ns not in Path:
-                    if state == goal:
-                        return Path + [goal]
                     d = heuristic(ns, goal)
                     heapq.heappush(PrioQueue, (d, Path + [ns]))
 \end{Verbatim}
@@ -1360,13 +1360,13 @@ We need only two functions from the module `heapq`:
 The function $\mathtt{search}$ shown in \myFig{Best-First-Search.ipynb} takes four parameters.  The
 first three of these parameters are the same as in the previous search algorithms.  The last parameter
 $\mathtt{heuristic}$ is a function that takes two states and then estimates the distance between these states.
-Later, we will use the Manhattan distance to serve as this $\mathtt{heuristic}$.  The details of the
+Later, we will use the Manhattan distance to serve as the parameter $\mathtt{heuristic}$.  The details of the
 implementation are as follows:
 \begin{enumerate}
 \item The variable \textts{PrioQueue} serves as a priority queue.  This priority queue is initialized as a
       list containing the pair $(d, [\mathtt{start}])$, where $d$ is the estimated distance of a path
-      leading from \textts{start} to \textts{goal}.  In \textts{PrioQueue} we store the paths in
-      as pairs of the form
+      leading from \textts{start} to \textts{goal}.  In \textts{PrioQueue} we store the paths 
+      in pairs of the form
       \\[0.2cm]
       \hspace*{1.3cm}
       $\pair(\mathtt{estimate}, \mathtt{Path})$,
@@ -1376,7 +1376,7 @@ implementation are as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{estimate} = \mathtt{heuristic}(\mathtt{state}, \mathtt{goal})$,
-      \\[0.2cm] ()
+      \\[0.2cm] 
       i.e.~\textts{estimate} is the estimated distance between these \textts{state} and \textts{goal} and hence
       an estimate of the number of steps needed to complete \textts{Path} into a solution.  This ensures,
       that the best path, i.e.~the path whose last state is nearest to the \textts{goal} is at the
@@ -1474,7 +1474,7 @@ The function \textts{search} takes 4 parameters:
       $\mathtt{next\_states}(s)$
       \\[0.2cm]
       computes the set of all those states that can be reached from $s$ in a single step.
-\item \texttt{heuristic} is a function that takes two parameters.
+\item \textts{heuristic} is a function that takes two parameters.
       For two states $s_1$ and $s_2$, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1536,7 +1536,8 @@ algorithm.
       Since priority queues are implemented as ordered binary trees, the elements of a priority queue need to
       be comparable, i.e. if $x$ and $y$ are inserted into a priority queue, then the  
       expression $x < y$ must return a Boolean value and the relation $<$ has to define 
-      linear order.
+      linear order.  This implies that the elements inserted into the priority queue must be
+      \emph{homogeneous}, i.e.~they must all be of the same type.
 \end{enumerate}
 After the variables described above have been initialized, the $\mathrm{A}^*$ algorithm runs in a
 \texttt{while} loop that does only terminate if either a solution is found or the priority queue
