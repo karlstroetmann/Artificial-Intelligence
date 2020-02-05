@@ -2379,86 +2379,83 @@ $k+1$ queens, where the queen in row $k+1$ has been placed in column $c$.
 
 
 
-% \pagebreak
+ \pagebreak
 
-% \exercise
-% The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher
-% \href{https://en.wikipedia.org/wiki/Laozi}{Laozi} once said:
-% \\[0.2cm]
-% \hspace*{1.3cm}
-% \textsl{``A journey of a thousand miles begins but with a single step''}.
-% \\[0.2cm]
-% This proverb is the foundation of \blue{taoistic search}.  The idea is, instead of trying to reach
-% the goal directly, we rather define some intermediate states which are easier to reach than the goal state and
-% that are nearer to the goal than the start state.  To make this idea more precise, consider the following instance of the
-% 15-puzzle, where the states $\texttt{Start}$ and $\texttt{Goal}$ are given as follows:
-% \begin{verbatim}
-%        Start :=  +---+---+---+---+    Goal :=  +---+---+---+---+
-%                  |   |15 |14 | 8 |             |   | 1 | 2 | 3 |
-%                  +---+---+---+---+             +---+---+---+---+
-%                  |12 |10 |11 |13 |             | 4 | 5 | 6 | 7 |
-%                  +---+---+---+---+             +---+---+---+---+
-%                  | 9 | 6 | 2 | 5 |             | 8 | 9 |10 |11 |
-%                  +---+---+---+---+             +---+---+---+---+
-%                  | 1 | 3 | 4 | 7 |             |12 |13 |14 |15 |
-%                  +---+---+---+---+             +---+---+---+---+
-% \end{verbatim}
-% In order to solve the puzzle, we could try to first move the tiles numbered with $14$ and $15$ into the lower right
-% corner.  The resulting state would have the following form:
-% \begin{verbatim}
-%                  +---+---+---+---+
-%                  | * | * | * | * |
-%                  +---+---+---+---+
-%                  | * | * | * | * |
-%                  +---+---+---+---+
-%                  | * | * | * | * |
-%                  +---+---+---+---+
-%                  | * | * |14 |15 |
-%                  +---+---+---+---+
-% \end{verbatim}
-% Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do not care about the actual
-% character in the state, for we only want to ensure that the first two tiles are positioned correctly.  Once we have reached a
-% state specified by the pattern given above, we could the proceed to reach a state that is described by the
-% following pattern:
+ \exercise
+ The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher
+ \href{https://en.wikipedia.org/wiki/Laozi}{Laozi} once said:
+ \\[0.2cm]
+ \hspace*{1.3cm}
+ \textsl{``A journey of a thousand miles begins but with a single step''}.
+ \\[0.2cm]
+ This proverb is the foundation of \blue{taoistic search}.  The idea is, instead of trying to reach
+ the goal directly, we rather define some intermediate states which are easier to reach than the goal state and
+ that are nearer to the goal than the start state.  To make this idea more precise, consider the following instance of the
+ 15-puzzle, where the states $\texttt{Start}$ and $\texttt{Goal}$ are given as follows:
+ \begin{verbatim}
+        Start :=  +---+---+---+---+    Goal :=  +---+---+---+---+
+                  |   |15 |14 | 8 |             |   | 1 | 2 | 3 |
+                  +---+---+---+---+             +---+---+---+---+
+                  |12 |10 |11 |13 |             | 4 | 5 | 6 | 7 |
+                  +---+---+---+---+             +---+---+---+---+
+                  | 9 | 6 | 2 | 5 |             | 8 | 9 |10 |11 |
+                  +---+---+---+---+             +---+---+---+---+
+                  | 1 | 3 | 4 | 7 |             |12 |13 |14 |15 |
+                  +---+---+---+---+             +---+---+---+---+
+ \end{verbatim}
+ In order to solve the puzzle, we could try to first move the tiles numbered with $14$ and $15$ into the lower right
+ corner.  The resulting state would have the following form:
+ \begin{verbatim}
+                  +---+---+---+---+
+                  | * | * | * | * |
+                  +---+---+---+---+
+                  | * | * | * | * |
+                  +---+---+---+---+
+                  | * | * | * | * |
+                  +---+---+---+---+
+                  | * | * |14 |15 |
+                  +---+---+---+---+
+ \end{verbatim}
+ Here, the character ``\texttt{*}'' is used as a wildcard character, i.e.~we do not care about the actual
+ character in the state, for we only want to ensure that the first two tiles are positioned correctly.  Once we have reached a
+ state specified by the pattern given above, we could then proceed to reach a state that is described by the
+ following pattern:
 
 
-% \begin{verbatim}
-%                  +---+---+---+---+
-%                  | * | * | * | * |
-%                  +---+---+---+---+
-%                  | * | * | * | * |
-%                  +---+---+---+---+
-%                  | * | * | * | * |
-%                  +---+---+---+---+
-%                  |12 |13 |14 |15 |
-%                  +---+---+---+---+
-% \end{verbatim}
-% We have now solved the bottom line of the puzzle.  In a similar way, we can try to solve the line above the
-% bottom line.  After that, the next step would then be to reach a goal of the form
-% \begin{verbatim}
-%                  +---+---+---+---+
-%                  | * | * | 2 | 3 |
-%                  +---+---+---+---+
-%                  | * | * | 6 | 7 |
-%                  +---+---+---+---+
-%                  | 8 | 9 |10 |11 |
-%                  +---+---+---+---+
-%                  |12 |13 |14 |15 |
-%                  +---+---+---+---+
-% \end{verbatim}
-% The final step would then solve the puzzle.  I have prepared a framework for taoistic search.  The file
-% \\[0.2cm]
-% \hspace*{-0.5cm}
-% \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/sliding-puzzle-frame.stlx}}
-% \\[0.2cm]
-% contains a framework for the sliding puzzle where some functions are left unimplemented.  The file
-% \\[0.2cm]
-% \hspace*{-0.5cm}
-% \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/a-star-lao-tzu.stlx}}
-% \\[0.2cm]
-% is also required.  It contains an adapted form of $\mathrm{A}^*$ search.  More details will be given in the
-% lecture.  Your task is to implement the missing functions in the file \texttt{sliding-puzzle-frame.stlx}.
-% \eox
+ \begin{verbatim}
+                  +---+---+---+---+
+                  | * | * | * | * |
+                  +---+---+---+---+
+                  | * | * | * | * |
+                  +---+---+---+---+
+                  | * | * | * | * |
+                  +---+---+---+---+
+                  |12 |13 |14 |15 |
+                  +---+---+---+---+
+ \end{verbatim}
+ We have now solved the bottom line of the puzzle.  In a similar way, we can try to solve the line above the
+ bottom line.  After that, the next step would then be to reach a goal of the form
+ \begin{verbatim}
+                  +---+---+---+---+
+                  | * | * | 2 | 3 |
+                  +---+---+---+---+
+                  | * | * | 6 | 7 |
+                  +---+---+---+---+
+                  | 8 | 9 |10 |11 |
+                  +---+---+---+---+
+                  |12 |13 |14 |15 |
+                  +---+---+---+---+
+\end{verbatim}
+The final step would then solve the puzzle.  I have prepared a framework for taoistic search.  The file
+\\[0.2cm]
+\hspace*{1.5cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Taoistic-Search}{\texttt{Python/Taoistic-Search.ipynb}}
+\\[0.2cm]
+from my github repository at
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence}} \linebreak
+contains a framework to solve the sliding puzzle using taoistic search where some functions are left unimplemented.  
+ Your task is to implement the missing functions in this file and thereby solve the puzzle.
+ \eox
 
 %%% Local Variables:
 %%% mode: latex
