@@ -1010,7 +1010,6 @@ keeping a two trillion states in memory is impossible on most devices.
         FrontierB = { goal }
         VisitedB  = set()           # set of nodes expanded starting from goal
         ParentB   = { goal: goal} 
-        print('start while:')
         while len(FrontierA) > 0 and len(FrontierB) > 0:
             VisitedA  |= FrontierA
             VisitedB  |= FrontierB
@@ -2024,7 +2023,6 @@ shows an implementation of \ac{ida} search.  We proceed to discuss this program.
     def search(start, goal, next_states, heuristic):
         limit = heuristic(start, goal)
         while True:
-            print(f'Trying to find a solution of length {limit}.')
             Path = dl_search([start], goal, next_states, limit, heuristic)
             if isinstance(Path, list):
                 return Path
