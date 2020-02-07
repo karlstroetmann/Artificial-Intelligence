@@ -1967,7 +1967,9 @@ When we run bidirectional $\mathrm{A}^*$ search for the $3 \times 3$ sliding puz
 \myFig{8-puzzle.pdf}, the program takes 150 milliseconds and uses only $2,963$ states.  Therefore, I have tried
 to solve the $4 \times 4$ sliding puzzle shown in \myFig{start-goal.stlx} using
 bidirectional $\mathrm{A}^*$ search.  A solution of $40$ steps was found in $1.3$ seconds.
-Only $17,626$ states had to be processed to compute this solution!  
+Only $17,626$ states had to be processed to compute this solution!  As the shortest path connection
+\texttt{start} and \texttt{goal} has a length of 36 steps, this shows that bidirectional $\mathrm{A}^*$ search
+does not find the shortest path.
 
 
 
