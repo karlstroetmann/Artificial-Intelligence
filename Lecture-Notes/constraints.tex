@@ -1,7 +1,8 @@
 \chapter{Solving Constraint Satisfaction Problems}
 In this chapter we discuss various algorithms for solving 
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problems}.
-In a constraint satisfaction problem we are given a set of \blue{formul\ae} and search for values that can be
+In a \blue{constraint satisfaction problem} we are given a set of \blue{formul\ae} and search for \blue{values}
+that can be 
 assigned to the \blue{variables} occurring in these formul\ae\  so that all of the formul\ae\  evaluate as true.
 Constraint satisfaction problems can be seen as a refinement of the search problems discussed in the previous
 chapter:  In a search problem, the states are abstract and therefore have no structure that can be exploited to
@@ -12,7 +13,7 @@ structured as follows:
 \item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
       notion, we present two examples.  After that, we discuss applications of constraint satisfaction problems.
 \item The simplest algorithm to solve a constraint satisfaction problem is via \blue{brute force search}.
-      The idea behind brute force search is to test all possible \blue{variable assignments}.
+      The idea behind \emph{brute force search} is to test all possible \blue{variable assignments}.
 \item In most cases, the search space is so large that it is not feasible to enumerate all variable assignments.
       \blue{Backtracking search} improves on brute force search by mixing the generation
       of variable assignments with the testing of the constraints.  In many cases, this approach
@@ -25,6 +26,9 @@ structured as follows:
       constraint satisfaction problems.  This approach is especially useful if the constraint satisfaction
       problem is huge, but not too complicated.
 \end{enumerate}
+When we have finished our discussion of constraint satisfaction problems, we will have implemented a
+\blue{constraint solver} that is able to solve instances of the most difficult
+\href{https://en.wikipedia.org/wiki/Sudoku}{Sudoku} puzzles in seconds.
 
 \section[Formal Definition of \textsc{Csp}s]{Formal Definition of Constraint Satisfaction Problems}
 Formally, we define a 
@@ -49,8 +53,10 @@ where \index{constraint satisfaction problem}
       \\[0.2cm]
       The second component $\mathcal{J}$ defines the
       \blue{interpretations} of the function symbols and predicate symbols that are used in the formul\ae\
-      defining the constraints.  In what follows we assume that these interpretations are understood from the
-      context of the constraint satisfaction problem $\mathcal{P}$.
+      defining the constraints.  In the following we assume that these interpretations are understood from the
+      context of the constraint satisfaction problem $\mathcal{P}$.  Later, when we discuss examples of constraint
+      satisfaction problems, both the function symbols and the predicate symbols will be interpreted
+      by functions written in \textsl{Python}.
 \end{enumerate}
 In the following, the abbreviation \ac{csp} is short for \blue{constraint satisfaction problem}.
 Given a \ac{csp}
@@ -136,14 +142,15 @@ If we define the assignment $A$ such that
 then it is straightforward to check that this assignment is indeed a solution to the constraint satisfaction problem $\mathcal{P}$.
 
 \subsection{Example: The Eight Queens Puzzle}
-The \href{https://en.wikipedia.org/wiki/Eight_queens_puzzle}{eight queens problem} asks to put 8 queens onto a
+\index{eight queens puzzle}
+The \href{https://en.wikipedia.org/wiki/Eight_queens_puzzle}{eight queens puzzle} asks to put 8 queens onto a
 chessboard such that no queen can attack another queen.  In \href{https://en.wikipedia.org/wiki/Chess}{chess},
 a queen can attack all pieces that are either in the same row, the same column, or the same diagonal.  If we
 want to put 8 queens on a chessboard such that no two queens can attack each other, we have to put exactly one
-queen in every row:  If we would put more than one queen in a row, the queens in that row can attack each other.
-If we would leave a row empty, then, given that the other rows contain at most one queen, there would be less
-than 8 queens on the board.  Therefore, in order to model the eight queens problem as a constraint satisfaction
-problem, we will use the following set of variables:  \index{8 queens puzzle}
+queen in every row:  If we would put more than one queen in a row, the queens in that row could attack each
+other.  If we would leave a row empty, then, given that the other rows contain at most one queen, there would
+be less than 8 queens on the board.  Therefore, in order to model the eight queens problem as a constraint
+satisfaction problem, we will use the following set of variables:  \index{8 queens puzzle}
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Vars} := \{ \texttt{V}_1, \texttt{V}_2, \texttt{V}_3, \texttt{V}_4, \texttt{V}_5, \texttt{V}_6, \texttt{V}_7,\texttt{V}_8 \}$,
@@ -156,15 +163,16 @@ $\texttt{Values} := \{1,2,3,4,5,6,7,8\}$.
 \\[0.2cm]
 Next, let us define the constraints.  There are two different types of constraints.
 \begin{enumerate}
-\item We have constraints that express that no two queens that are positioned in different rows share the same column.
-      To capture these constraints, we define
+\item We have constraints that express that no two queens that are positioned in different rows share the same
+      column.  To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{SameRow} := \bigl\{ \texttt{V}_i \not= \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
-      Here the condition $j < i$ ensures that, for example, we have the constraint $\texttt{V}_2 \not= \texttt{V}_1$
-      but not the constraint  $\texttt{V}_1 \not= \texttt{V}_2$, as the latter constraint would be redundant if
-      the former constraint has already been established.
+      Here the condition $j < i$ ensures that, for example,  while we have the constraint
+      $\texttt{V}_2 \not=
+      \texttt{V}_1$ we do not also have the constraint  $\texttt{V}_1 \not= \texttt{V}_2$, as the latter 
+      constraint would be redundant if the former constraint had already been established.
 \item We have constraints that express that no two queens positioned in different rows share the same 
       diagonal.  The queens in row $i$ and row $j$ share the same diagonal iff the equation
       \\[0.2cm]
@@ -237,7 +245,7 @@ If we define
 $B := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1 \bigr\}$,
 \\[0.2cm]
 then $B$ is a \blue{partial} variable assignment and $\texttt{dom}(B) = \{ \mathrm{V}_1, \mathrm{V}_2, \mathrm{V}_3 \}$.  This
-partial variable assignment is shown in \myFig{eight-queens-partial.txt}.
+\emph{partial variable assignment} is shown in \myFig{eight-queens-partial.txt}.
 
 \begin{figure}[!ht]
   \centering
@@ -262,8 +270,8 @@ partial variable assignment is shown in \myFig{eight-queens-partial.txt}.
 
 
 
-\myFig{N-Queens-Problem-CSP.ipynb} shows a \textsc{SetlX} program that can be used to create the eight queens puzzle as a
-\ac{csp}.  The code shown in this figure is more general than necessary.  Given a natural
+\myFig{N-Queens-Problem-CSP.ipynb} shows a \textsl{Python} program that can be used to create a \ac{csp} that
+encodes the eight queens puzzle.  The code shown in this figure is more general than necessary.  Given a natural
 number $n$, the function call $\texttt{create\_csp}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
 the eight queens problem to the problem of placing $n$ queens on a board of size $n$ times $n$ such that no
 queen can capture another queen.
@@ -300,7 +308,7 @@ queen can capture another queen.
 
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
 that we will be able to develop a so called \blue{constraint solver} that takes as input a \ac{csp}
-like the one produced by the program shown in Figure \ref{fig:N-Queens-Problem-CSP.ipynb} and that is then capable of
+like the one produced by the program shown in Figure \ref{fig:N-Queens-Problem-CSP.ipynb} and that is capable of
 computing a solution.  In effect, this enables us to use
 \href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming}:  Instead of specifying
 an algorithm that solves a problem we confine ourselves to  specifying the problem precisely and then let a
@@ -331,8 +339,8 @@ checking $n^k$ different assignments.  For example, for the eight queens problem
 $8^8 = 2^{24} = 16,777,216$
 \\[0.2cm]
 different assignments that need to be tested.  Given the clock speed of modern computers, checking a million
-assignments per second is plausible.  Hence, this approach is be able to solve the eight queens problem in
-less than 5 minutes.  The approach of testing all possible combinations is known as
+assignments per second is plausible.  Hence, this approach is able to solve the eight queens problem in
+about 20 seconds.  The approach of testing all possible combinations is known as
 \href{https://en.wikipedia.org/wiki/Brute-force_search}{brute force search}.  \index{brute force search}
 An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ipynb}. 
 
