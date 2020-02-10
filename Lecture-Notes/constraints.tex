@@ -472,11 +472,13 @@ try to evaluate constraints as soon as possible:  If $C$ is a constraint and $B$
 that all the variables occurring in $C$ have already been assigned a value in $B$ and the evaluation of $C$
 fails, then there is no point in trying to complete the variable assignment $B$.  Hence, in backtracking we
 evaluate a constraint $C$ as soon as all of its variables have been assigned a value.  If $C$ is not valid, we
-backtrack and discard the current partial variable assignment.  This approach can result in huge time savings.
+backtrack and discard the current partial variable assignment.  This approach can result in huge time savings
+when compared to the baseline of brute force search.
 
-\myFig{csp-backtrack-solver.stlx-1} shows a simple \ac{csp} solver 
-that employs backtracking.  We discuss this program next.  The procedure $\texttt{solve}$ takes a constraint
-satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.  
+\myFig{Backtrack-Solver.ipynb} shows a simple \ac{csp} solver 
+that employs backtracking.  \index{backtracking}
+We discuss this program next.  The procedure $\texttt{solve}$ takes a constraint
+satisfaction problem $\mathtt{P}$ as input and tries to find a solution.  
 
 
 \begin{figure}[!ht]
@@ -487,43 +489,44 @@ satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                  ]
-    solve := procedure(CSP) {
-        [Vars, Vals, Constrs] := CSP;
-        CSP := [Vars, Vals, { [f, collectVars(f)] : f in Constrs }];
-        check {
-            return bt_search({}, CSP);
-        }
-    };
-    bt_search := procedure(Assignment, CSP) {
-        [Variables, Values, Constraints] := CSP;
-        if (#Assignment == #Variables) {
-            return Assignment;
-        }
-        var := rnd(Variables - domain(Assignment));
-        for (value in Values) {
-            check {
-                if (is_consistent(var, value, Assignment, Constraints)) {
-                    return bt_search(Assignment + { [var, value] }, CSP);
-                }
-            }
-        }
-        backtrack;
-    };
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    def solve(P):
+        Variables, Values, Constraints = P
+        csp = (Variables, Values, [(f, collect_variables(f)) for f in Constraints])
+        try:
+            return backtrack_search({}, csp)
+        except Backtrack:
+            return None
+        
+    def backtrack_search(Assignment, P):
+        Variables, Values, Constraints = P
+        if len(Assignment) == len(Variables):
+            return Assignment
+        var = arb(Variables - set(Assignment.keys()))
+        for value in Values:
+            try:
+                if is_consistent(var, value, Assignment, Constraints):
+                    NewAss = Assignment.copy()
+                    NewAss[var] = value
+                    return backtrack_search(NewAss, P)
+            except Backtrack:
+                continue
+        raise Backtrack()  
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{A backtracking \ac{csp} solver.}
-\label{fig:csp-backtrack-solver.stlx-1}
+\label{fig:Backtrack-Solver.ipynb}
 \end{figure}
+
 \begin{enumerate}
-\item First, the $\texttt{CSP}$ is split into its components.
-\item Next, for every constraint $\texttt{f}$ of the given $\texttt{CSP}$, we compute the set of variables that
-      are used in $\texttt{f}$.  This is done using the procedure $\texttt{collectVars}$ that is shown in
-      Figure \ref{fig:collectVars.stlx} on page \pageref{fig:collectVars.stlx}.
+\item First, the \ac{csp} \texttt{P} is split into its components.
+\item Next, for every constraint $\texttt{f}$ of the given \ac{csp}, we compute the set of variables that
+      are used in $\texttt{f}$.  This is done using the procedure $\texttt{collect\_variables}$ that is shown in
+      Figure \ref{fig:collect_variables.py} on page \pageref{fig:collect_variables.py}.
       These variables are then stored together with the constraint $\texttt{f}$ and
-      the correspondingly modified data structure is stored in $\texttt{CSP}$ and is called an
+      the correspondingly modified data structure is stored in the variable \texttt{csp} and is called an
       \blue{augmented \ac{csp}}.
 
       The reason to compute and store these variables is efficiency: When we later check whether a constraint $\texttt{f}$
@@ -531,20 +534,117 @@ satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.
       stored as a dictionary, we only need to check the constraint $\texttt{f}$ iff all of the variables occurring
       in $\texttt{f}$ are elements of the domain of $\texttt{Assignment}$.   It would be wasteful to compute
       these variables every time.
-\item Next, we call the procedure $\texttt{bt\_search}$ to compute a solution of $\texttt{CSP}$.
-      This procedure is enclosed in a \texttt{check}-block.  Conceptually, this \texttt{check}-block is the
-      same as if we had enclosed the call to $\texttt{bt\_search}$ in a \texttt{try}-\texttt{catch}-block as
-      shown below:
-
+\item Next, we call the procedure $\texttt{backtrack\_search}$ to compute a solution of $\texttt{CSP}$.
+      This procedure is enclosed in a \texttt{try}-\texttt{except}-block that catches exceptions of class
+      \texttt{Backtrack}.  This class is defined as follows:
+      
 \begin{verbatim}
-      try {
-          return bt_search({}, csp);
-      } catch(e) {}
+      class Backtrack(Exception):
+          pass
 \end{verbatim}
-     The point is that the procedure $\texttt{bt\_search}$ either returns a solution or, if it is not able to
-     find a solution, it throws a special kind of exception, a so called \blue{backtrack exception}.
-     The \texttt{check}-block ensures that this exception is silently discarded.  It is just a syntactical
-     convenience that is more concise than using \texttt{try} and \texttt{catch}.
+      Its only purpose is to create a name for the special kind of exceptions used to administer backtracking.
+      The reason for enclosing the call to \texttt{backtrack\_search} in a \texttt{try}-\texttt{except}-block
+      is that the procedure $\texttt{backtrack\_search}$ either returns a solution or, if it is not
+      able to find a solution, it raises an exception of class \texttt{Backtrack}.
+      The \texttt{try}-\texttt{except}-block ensures that this exception is silently discarded.
+\end{enumerate}
+Next, we discuss the implementation of the function $\texttt{backtrack\_search}$.  This procedure receives a partial assignment
+$\texttt{Assignment}$ as input together with an augmented \ac{csp}.  This partial assignment is
+\blue{consistent} with $\texttt{CSP}$:  If $\texttt{f}$ is a constraint of $\texttt{CSP}$ such that
+all the variables occurring in $\texttt{f}$ are members of $\texttt{dom}(\texttt{Assignment})$, then evaluating
+$\texttt{f}$ using $\texttt{Assignment}$ yields $\texttt{true}$.  Initially, this partial assignment is empty
+and hence trivially consistent.  The idea is to extend this partial assignment until it is a complete
+assignment that satisfies all constraints of the given $\texttt{CSP}$.
+\begin{enumerate}
+\item First, the augmented \ac{csp} is split into its components.
+\item Next, if $\texttt{Assignment}$ is already a complete variable assignment, i.e.~if the dictionary
+      $\texttt{Assignment}$ has as many elements as there are variables, then it must be a solution of
+      the $\texttt{CSP}$ and, therefore, it is returned.  The reason is that the function
+      \texttt{backtrack\_search} is only called with a \blue{consistent} partial assignment.
+\item Otherwise, we have to extend the partial $\texttt{Assignment}$.  In order to do so, we first have to
+      select a variable $\texttt{var}$ that has not yet been assigned a value in $\texttt{Assignment}$ so far.
+      This is done in line 13 using the function \texttt{arb} that selects an arbitrary variable
+      from its input set.  This function is defined as follows:
+\begin{verbatim}
+    def arb(S):
+        for x in S:
+            return x
+\end{verbatim}    
+\item Next, we try to assign a $\texttt{value}$ to the selected variable $\texttt{var}$.  After assigning
+      a $\texttt{value}$ to $\texttt{var}$, we immediately check whether this assignment would be consistent
+      with the constraints using the procedure $\texttt{is\_consistent}$.
+      If the partial $\texttt{Assignment}$ turns out to be consistent, the partial $\texttt{Assignment}$
+      is extended to the new partial assignment \texttt{NewAss} that satisfies
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{NewAss[var] = value}.
+      \\[0.2cm]
+      Then, the procedure $\texttt{backtrack\_search}$ is called recursively to complete this new partial assignment.
+      If this is successful, the resulting assignment is a solution that is returned.  Otherwise,
+      the recursive call of $\texttt{backtrack\_search}$ will raise an exception.  This exception is muted 
+      by the \texttt{try}-\texttt{except}-block that surrounds the call to $\texttt{backtrack\_search}$.  In that case, the
+      \texttt{for}-loop generates a new $\texttt{value}$ that can be assigned to the variable
+      $\texttt{var}$.  If all possible values have been tried and none was successful, the \texttt{for}-loop
+      ends and the \texttt{raise}-statement raises a \texttt{Backtrack} exception that is either called in the
+      function \texttt{backtrack\_search} or, if there is no solution, in the function \texttt{solve}.
+\end{enumerate}
+
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    def is_consistent(var, value, Assignment, Constraints):
+        NewAssign      = Assignment.copy()
+        NewAssign[var] = value
+        return all(eval(f, NewAssign) for (f, Vs) in Constraints
+                                      if  var in Vs and Vs <= NewAssign.keys()
+                  )
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The definition of the function \texttt{is\_consistent}.}
+\label{fig:is_consistent.py}
+\end{figure}
+
+We still need to discuss the implementation of the auxiliary procedure $\texttt{is\_consistent}$
+shown in \ref{fig:is_consistent.py}.  This procedure takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
+$\texttt{Assignment}$ and a set of $\texttt{Constraints}$ as arguments.  It is assumed that $\texttt{Assignment}$ is
+\blue{partially consistent} with respect to the set $\texttt{Constraints}$, i.e.~for every formula $\texttt{f}$
+occurring in $\texttt{Constraints}$ such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{Assignment})$
+\\[0.2cm]
+holds, the formula $\texttt{f}$ evaluates to $\texttt{true}$ given the $\texttt{Assignment}$.  The purpose of
+$\texttt{is\_consistent}$ is to check, whether the extended assignment
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{NewAssign} \;\texttt{:=}\;\texttt{Assignment} \cup \{ \texttt{var} \mapsto \texttt{value} \}$
+\\[0.2cm]
+that assigns $\texttt{value}$ to the variable $\texttt{var}$ is still partially consistent with $\texttt{Constraints}$. 
+To this end, the \texttt{for}-loop iterates over all $\texttt{Formula}$ in $\texttt{Constraints}$. 
+However, we only have to check those $\texttt{Formula}$ that contain the variable $\texttt{var}$ and,
+furthermore, have the property that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{Vars}(\texttt{Formula}) \subseteq \texttt{dom}(\texttt{NewAssign})$,
+\\[0.2cm]
+i.e.~all variables occurring in $\texttt{Formula}$ need to have a value assigned in
+$\texttt{NewAssign}$.  The reasoning is as follows:
+\begin{enumerate}
+\item If $\texttt{var}$ does not occur in $\texttt{Formula}$, then adding $\texttt{var}$ to
+      $\texttt{Assignment}$ cannot change the result of evaluating $\texttt{Formula}$ and as
+      $\texttt{Assignment}$ is assumed to be partially consistent with respect to $\texttt{Formula}$, 
+      $\texttt{NewAssign}$ is also partially consistent with respect to $\texttt{Formula}$.
+\item If $\texttt{dom}(\texttt{NewAssign}) \not\subseteq \texttt{Vars}(\texttt{Formula})$, then $\texttt{Formula}$ can not be evaluated anyway. 
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -558,128 +658,27 @@ satisfaction problem $\texttt{CSP}$ as input and tries to find a solution.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    collectVars := procedure(f) {
-        return varsTerm(parseTerm(f));
-    };
-    varsTerm := procedure(f) {
-        match (f) {
-            case v | isVariable(v): return { varName(v) };
-            case n | isNumber(n):   return {};
-            case lhs + rhs:         return varsTerm(lhs) + varsTerm(rhs);
-            case lhs - rhs:         return varsTerm(lhs) + varsTerm(rhs);
-            case lhs * rhs:         return varsTerm(lhs) + varsTerm(rhs);
-            case lhs / rhs:         return varsTerm(lhs) + varsTerm(rhs);
-            case lhs \ rhs:         return varsTerm(lhs) + varsTerm(rhs);
-            case lhs % rhs:         return varsTerm(lhs) + varsTerm(rhs);
-            case lhs == rhs:        return varsTerm(lhs) + varsTerm(rhs);
-            case lhs != rhs:        return varsTerm(lhs) + varsTerm(rhs);
-            case !formula:          return varsTerm(formula);
-            case lhs && rhs:        return varsTerm(lhs) + varsTerm(rhs);
-            case lhs || rhs:        return varsTerm(lhs) + varsTerm(rhs);
-            case lhs => rhs:        return varsTerm(lhs) + varsTerm(rhs);
-            case lhs <==> rhs:      return varsTerm(lhs) + varsTerm(rhs);
-            case lhs <!=> rhs:      return varsTerm(lhs) + varsTerm(rhs);
-            default:                return +/ [ varsTerm(t) : t in args(f) ];
-        }
-    };
+    import extractVariables as ev
+    
+    def collect_variables(expr):
+        return { var for var in ev.extractVars(expr)
+                     if  var not in dir(__builtins__)
+               }
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The procedure \texttt{collectVars}.}
-\label{fig:collectVars.stlx}
+\label{fig:collect_variables.py}
 \end{figure}
+Finally, let us discuss the function \texttt{collect\_variables} that is shown in \myFig{collect_variables.py}.
+This function uses the module \texttt{extractVariables} that provides the function $\texttt{extractVars}(e)$.
+This function takes a string $e$ that can be interpreted as a \textsl{Python} expression as its argument and
+returns the set of all variables and function symbols occurring in the expression $e$.  As we only want to keep
+the variable names, the function \texttt{collect\_variables} takes care to eliminate the function symbols.
+This is done by making use of the fact that all function symbols that have been defined are a member of the
+list \texttt{dir(\_\_builtin\_\_)}. 
 
-
-Next, we discuss the implementation of the procedure $\texttt{bt\_search}$.  This procedure receives a partial assignment
-$\texttt{Assignment}$ as input together with an augmented $\texttt{CSP}$.  This partial assignment is
-\blue{consistent} with $\texttt{CSP}$:  If $\texttt{f}$ is a constraint of $\texttt{CSP}$ such that
-all the variables occurring in $\texttt{f}$ are members of $\texttt{dom}(\texttt{Assignment})$, then evaluating
-$\texttt{f}$ using $\texttt{Assignment}$ yields $\texttt{true}$.  Initially, this partial assignment is empty
-and hence trivially consistent.  The idea is to extend this partial assignment until it is a complete
-assignment that satisfies all constraints of the given $\texttt{CSP}$.
-\begin{enumerate}
-\item First, the augmented $\texttt{CSP}$ is split into its components.
-\item Next, if $\texttt{Assignment}$ is already a complete variable assignment, i.e.~if the dictionary
-      $\texttt{Assignment}$ has as many elements as there are variables, then it must be a solution of
-      the $\texttt{CSP}$ and, therefore, it is returned.
-\item Otherwise, we have to extend the partial $\texttt{Assignment}$.  In order to do so, we first have to
-      select a variable $\texttt{var}$ that has not yet been assigned a value in $\texttt{Assignment}$ so far.
-\item Next, it is tried to assign a $\texttt{value}$ to the selected variable $\texttt{var}$.  After assigning
-      a $\texttt{value}$ to $\texttt{var}$, we immediately check whether this assignment would be consistent
-      with the constraints using the procedure $\texttt{is\_consistent}$.
-      If the partial $\texttt{Assignment}$ turns out to be consistent, the partial $\texttt{Assignment}$
-      is extended to the new partial assignment
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{Assignment + \{ [var, value] \}}.
-      \\[0.2cm]
-      Then, the procedure $\texttt{bt\_search}$ is called recursively to complete this new partial assignment.
-      If this is successful, the resulting assignment is a solution that is returned.  Otherwise,
-      the recursive call of $\texttt{bt\_search}$ will instead raise an exception.  This exception is muted 
-      by the \texttt{check}-block that surrounds the call to $\texttt{bt\_search}$.  In that case, the
-      \texttt{for}-loop generates a new possible $\texttt{value}$ that can be assigned to the variable
-      $\texttt{var}$.  If all possible values have been tried and none was successful, the \texttt{for}-loop
-      ends and the \texttt{backtrack}-statement is executed.  Effectively, this statement raises an exception
-      that is caught by one of the \texttt{check}-blocks that are above the \texttt{backtrack}-statement in the
-      call stack.
-\end{enumerate}
-
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                  ]
-    is_consistent := procedure(var, value, Assignment, Constraints) {
-        NA := Assignment + { [var, value] };
-        return forall([F, Vars] in Constraints |
-                      var in Vars && Vars <= domain(NA) => eval_constraint(NA, F)
-                     );
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{Auxiliary procedures for the \ac{csp} solver shown in Figure \ref{fig:csp-backtrack-solver.stlx-1}}
-\label{fig:csp-backtrack-solver.stlx-2}
-\end{figure}
-
-We still need to discuss the implementation of the auxiliary procedure $\texttt{is\_consistent}$
-shown in \ref{fig:csp-backtrack-solver.stlx-2}.  This procedure takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
-$\texttt{Assignment}$ and a set of $\texttt{Constraints}$.  It is assumed that $\texttt{Assignment}$ is
-\blue{partially consistent} with respect to the set $\texttt{Constraints}$, i.e.~for every formula $\texttt{f}$
-occurring in $\texttt{Constraints}$ such that
-\\[0.2cm]
-\hspace*{1.3cm}
-$\texttt{vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{Assignment})$
-\\[0.2cm]
-holds, the formula $\texttt{f}$ evaluates to $\texttt{true}$ given the $\texttt{Assignment}$.  The purpose of
-$\texttt{is\_consistent}$ is to check, whether the extended assignment
-\\[0.2cm]
-\hspace*{1.3cm}
-$\texttt{NA} \;\texttt{:=}\;\texttt{Assignment} \cup \{ \pair(\texttt{var}, \texttt{value}) \}$
-\\[0.2cm]
-that assigns $\texttt{value}$ to the variable $\texttt{var}$ is still partially consistent with $\texttt{Constraints}$. 
-To this end, the \texttt{for}-loop iterates over all $\texttt{Formula}$ in $\texttt{Constraints}$. 
-However, we only have to check those $\texttt{Formula}$ that contain the variable $\texttt{var}$ and,
-furthermore, have the property that
-\\[0.2cm]
-\hspace*{1.3cm}
-$\texttt{Vars}(\texttt{Formula}) \subseteq \texttt{dom}(\texttt{NA})$,
-\\[0.2cm]
-i.e.~all variables occurring in $\texttt{Formula}$ need to have a value assigned in
-$\texttt{NA}$.  The reasoning is as follows:
-\begin{enumerate}
-\item If $\texttt{var}$ does not occur in $\texttt{Formula}$, then adding $\texttt{var}$ to
-      $\texttt{Assignment}$ cannot change the result of evaluating $\texttt{Formula}$ and as
-      $\texttt{Assignment}$ is assumed to be partially consistent with respect to $\texttt{Formula}$, 
-      $\texttt{NA}$ is also partially consistent with respect to $\texttt{Formula}$.
-\item If $\texttt{dom}(\texttt{NA}) \not\subseteq \texttt{Vars}(\texttt{Formula})$, then $\texttt{Formula}$ can not be evaluated anyway. 
-\end{enumerate}
-If we use backtracking, we can solve the 8 queens problem in less than a second.
+If we use program discussed in this section, we can solve the 8 queens problem in less than 20 milliseconds.
+Hence, for the eight queens problem backtracking is about a thousand times faster than brute force search.
 
 \section{Constraint Propagation}
 Once we choose a value for a variable, this choice influences the values that are still available for other variables.
@@ -789,7 +788,7 @@ variable  $\mathtt{x}$.
 \item In order to solve the unary constraints, we iterate over all unary constraints and shrink the set of
       values associated with the variable occurring in the constraint as dictated by the constraint.
       This is done using the function $\texttt{solve\_unary}$.
-\item Then, we start backtracking search using the function $\texttt{bt\_search}$.  
+\item Then, we start backtracking search using the function $\texttt{backtrack\_search}$.  
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -862,11 +861,11 @@ without violating the given constraint $\texttt{f}$.
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{Implementation of $\texttt{bt\_search}$.}
+\caption{Implementation of $\texttt{backtrack\_search}$.}
 \label{fig:csp-constraint-propagation.stlx:bt_search}
 \end{figure}
 
-The procedure $\texttt{bt\_search}$ shown in \myFig{csp-constraint-propagation.stlx:bt_search} is called with a
+The procedure $\texttt{backtrack\_search}$ shown in \myFig{csp-constraint-propagation.stlx:bt_search} is called with a
 partial $\texttt{Assignment}$ that is guaranteed to be consistent, a set of $\texttt{Variables}$, a dictionary
 $\texttt{ValuesPerVar}$ associating every variable with the set of values that are admissible for this variable and a
 set of annotated $\texttt{Constraints}$.  It tries to complete $\texttt{Assignment}$ and thereby compute a
@@ -889,7 +888,7 @@ solution of the $\texttt{CSP}$.
       This procedure updates the values that are still allowed for the variables of the $\texttt{CSP}$ once the
       value $\texttt{val}$ has been assigned to the variable $\texttt{x}$.
 \item Finally, the partial variable $\texttt{Assignment}$ is updated to include the assignment of 
-      $\texttt{val}$ to $\texttt{x}$ and the recursive call to $\texttt{bt\_search}$ tries to complete this new
+      $\texttt{val}$ to $\texttt{x}$ and the recursive call to $\texttt{backtrack\_search}$ tries to complete this new
       assignment. 
 \end{enumerate}
 
