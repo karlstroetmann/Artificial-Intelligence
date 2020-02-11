@@ -1006,6 +1006,7 @@ I have tested the program described in this section using the eight queens puzzl
 10 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in the next exercise.
 It solves this puzzle in 17 milliseconds.  To compare, the backtracking algorithm shown in the previous section
 takes roughly 10 minutes to solve this puzzle.
+\pagebreak
 
 \exercise
 There are many different versions of the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  
@@ -1039,15 +1040,14 @@ In order to solve the puzzle, we also have to know the following facts:
 \item they smoke {\color{blue}different} brands of cigarettes. 
 \end{enumerate}
 Formulate the zebra puzzle as a constraint satisfaction problem and solve the puzzle using the program
-discussed in this section.  You should also try to solve the puzzle using the constraint solver discussed in
-the previous section that uses only backtracking.  Compare the results.  A framework for solving the zebra
+discussed in this section.  A framework for solving the zebra
 puzzle can be found at 
 \\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/zebra-csp.stlx}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/zebra-csp.stlx}
+\hspace*{0.0cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}
 \\[0.2cm]
 When coding the zebra puzzle as a \ac{csp} you should be careful to name the variables correctly.  A single
-spelling error in one of the constraints can easily result in an unsolvable problem.
+spelling error can break your program.
 \eoxs
 
 \begin{table}[h]
