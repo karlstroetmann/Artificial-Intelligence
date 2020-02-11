@@ -1632,7 +1632,6 @@ the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipy
         Explored = set()
         while not Frontier.isEmpty():
             _, state = Frontier.pop()
-            Explored.add(state)
             if state == goal:
                 return PathDict[state]
             stateDist = Distance[state]
@@ -1646,6 +1645,7 @@ the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipy
                     Frontier.insert( (newEstimate, ns) )
                     if oldEstimate != None:
                         Frontier.delete( (oldEstimate, ns) )
+            Explored.add(state)
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{A path based implementation of $\textrm{A}^*$ search.}
@@ -1673,16 +1673,18 @@ $\texttt{start}$ to $\texttt{goal}$.
 
 \proof
 In order to prove this theorem, we first need to discuss a number of notions that are  needed in
-order to improve our understanding of the $\textrm{A}^*$ algorithm.  The first of these notions is the notion of \blue{explored}
-states.  A state is said to have been \blue{explored} iff it has been
-removed from the priority queue $\texttt{Frontier}$. 
-To emphasize this notion I have added the set $\texttt{Explored}$ in the implementation of $\textrm{A}^*$ search that
-is shown in Figure \ref{fig:A-Star-Search-Path.ipynb} on page \pageref{fig:A-Star-Search-Path.ipynb}.  A state
-is explored once it has been removed from the priority queue $\texttt{Frontier}$.  Note that the variable
-$\texttt{Explored}$ serves no purpose in the implementation of $\textrm{A}^*$ search:  This variable is only
-written to but the algorithm never reads this variable.  I have added the variable $\texttt{Explored}$ to aid
-in our proof.  Furthermore, we define a state as \blue{visited} iff it has been entered into the 
-dictionary $\texttt{Distance}$, i.e.~a state $s$ is visited iff $\mathtt{Distance}[s]$ is defined.
+order to improve our understanding of the $\textrm{A}^*$ algorithm.
+\begin{enumerate}[(a)]
+\item A state has been \blue{visited} iff it has been entered into the dictionary $\texttt{Distance}$, i.e.~a
+      state $s$ is visited iff $\mathtt{Distance}[s]$ is defined.   Note that in this case also
+      $\mathtt{PathDict}[s]$ is defined.  
+\item A state is said to have been \blue{explored} iff all of its neighbouring states have been visited.
+\end{enumerate}
+To emphasize the notion of explored states I have added the set $\texttt{Explored}$ in the implementation of $\textrm{A}^*$ search that
+is shown in Figure \ref{fig:A-Star-Search-Path.ipynb} on page \pageref{fig:A-Star-Search-Path.ipynb}.  
+Note that the variable $\texttt{Explored}$ serves no purpose in the implementation of $\textrm{A}^*$ search:
+This variable is only written to but the algorithm never reads this variable.  
+
 Before we prove the theorem, let us establish the following auxiliary claim:
 \vspace*{0.2cm}
 
@@ -1699,7 +1701,7 @@ We establish this claim by a straightforward computational induction.
            $[\texttt{start}]$.  This path connects the node $\texttt{start}$ with the node $\texttt{start}$.
            Obviously, this path has the length $0$ and that is exactly the value that is entered in the
            dictionary $\texttt{Distance}$ in line 3.
-\item[IS:] If we add in line 21 the path
+\item[IS:] If we add in line 20 the path
            \\[0.2cm]
            \hspace*{1.3cm}
            $\texttt{PathDict}[\texttt{state}] + [\texttt{ns}]$
