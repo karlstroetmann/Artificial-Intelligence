@@ -1091,7 +1091,6 @@ magazine.  Write a program that transforms this sudoku into a constraint satisfa
 resulting \ac{csp} using the constraint satisfaction solver developed in this section.  A framework for solving sudoku
 puzzles can be found at:
 \\[0.2cm]
-\hspace*{1.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Sudoku-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Sudoku-Frame.ipynb}
 
 
@@ -1212,7 +1211,7 @@ $\texttt{Var}(f) = \{ x \} \cup R$ \quad where $x \not\in R$,
 i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R$ is the set of all variables occurring
 in $f$ that are different from $x$.  Furthermore, assume that we have a dictionary $\texttt{ValuesPerVar}$ such that
 for every variable $y$, the dictionary entry $\texttt{ValuesPerVar}[y]$ is the set of values that can be substituted
-for the variable $y$.  Now  \blue{a value $v$ is consistent for $x$ with respect to the constraint $f$} 
+for the variable $y$.  Formally, we define: \blue{A value $v$ is consistent for $x$ with respect to the constraint $f$} 
 iff the partial assignment $\{ \pair(x, v) \}$ can be extended to an assignment $A$ satisfying the constraint $f$,
 i.e.~for every variable $y \in R$ we have to find a value $w \in \texttt{ValuesPerVar}[y]$ such that the resulting
 assignment $A$ satisfies the equations
