@@ -230,7 +230,7 @@ in \myFig{eight-queens.txt}.
   \caption{A solution of the eight queens problem.}
   \label{fig:eight-queens.txt}
 \end{figure}
-Later, when we implement procedures to solve  \ac{csp}s, we will represent variable assignments and partial
+Later, when we implement functions to solve  \ac{csp}s, we will represent variable assignments and partial
 variable assignments as \textsl{Python} \blue{dictionaries}.  For example, $A$ would then be represented as the
 dictionary 
 \\[0.2cm]
@@ -346,15 +346,15 @@ An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ip
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     def solve(P):
         return brute_force_search({}, P)
 
@@ -373,13 +373,13 @@ An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ip
             result = brute_force_search(NewAss, csp)
             if result != None:
                 return result
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Solving a \ac{csp} via brute force search.}
 \label{fig:Brute-Force-Solver.ipynb}
 \end{figure}
 
-The procedure $\texttt{solve}$ gets a constraint satisfaction problem $P$ as its input.  
+The function $\texttt{solve}$ gets a constraint satisfaction problem $P$ as its input.  
 This $\texttt{CSP}$ is given as a triple of the form  
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -405,7 +405,7 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
 \item If all variables have been assigned a value, the dictionary $\texttt{Assignment}$ will have the same
       number of entries as the set $\texttt{Variables}$ has elements.  Hence, in that case
       $\texttt{Assignment}$ is a complete assignment of all variables and we now have to test whether
-      all constraints are satisfied.  This is done using the auxiliary procedure
+      all constraints are satisfied.  This is done using the auxiliary function
       $\texttt{check\_all\_constraints}$ that is shown in \myFig{Brute-Force-Solver.ipynb-2}. 
       If the current $\texttt{Assignment}$ does indeed satisfy all constraints, it is a solution to the given
       \ac{csp} and is therefore returned.
@@ -428,21 +428,21 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = last,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = last,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
     def check_all_constraints(Assignment, Constraints):
         A = Assignment.copy()
         return all(eval(f, A) for f in Constraints)
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
-\caption{Auxiliary procedures for brute force search.}
+\caption{Auxiliary functions for brute force search.}
 \label{fig:Brute-Force-Solver.ipynb-2}
 \end{figure}
 
@@ -477,21 +477,21 @@ when compared to the baseline of brute force search.
 
 \myFig{Backtrack-Solver.ipynb} shows a simple \ac{csp} solver 
 that employs backtracking.  \index{backtracking}
-We discuss this program next.  The procedure $\texttt{solve}$ takes a constraint
+We discuss this program next.  The function $\texttt{solve}$ takes a constraint
 satisfaction problem $\mathtt{P}$ as input and tries to find a solution.  
 
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     def solve(P):
         Variables, Values, Constraints = P
         csp = (Variables, Values, [(f, collect_variables(f)) for f in Constraints])
@@ -514,7 +514,7 @@ satisfaction problem $\mathtt{P}$ as input and tries to find a solution.
             except Backtrack:
                 continue
         raise Backtrack()  
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{A backtracking \ac{csp} solver.}
 \label{fig:Backtrack-Solver.ipynb}
@@ -523,7 +523,7 @@ satisfaction problem $\mathtt{P}$ as input and tries to find a solution.
 \begin{enumerate}
 \item First, the \ac{csp} \texttt{P} is split into its components.
 \item Next, for every constraint $\texttt{f}$ of the given \ac{csp}, we compute the set of variables that
-      are used in $\texttt{f}$.  This is done using the procedure $\texttt{collect\_variables}$ that is shown in
+      are used in $\texttt{f}$.  This is done using the function $\texttt{collect\_variables}$ that is shown in
       Figure \ref{fig:collect_variables.py} on page \pageref{fig:collect_variables.py}.
       These variables are then stored together with the constraint $\texttt{f}$ and
       the correspondingly modified data structure is stored in the variable \texttt{csp} and is called an
@@ -534,8 +534,8 @@ satisfaction problem $\mathtt{P}$ as input and tries to find a solution.
       stored as a dictionary, we only need to check the constraint $\texttt{f}$ iff all of the variables occurring
       in $\texttt{f}$ are elements of the domain of $\texttt{Assignment}$.   It would be wasteful to compute
       these variables every time.
-\item Next, we call the procedure $\texttt{backtrack\_search}$ to compute a solution of $\texttt{CSP}$.
-      This procedure is enclosed in a \texttt{try}-\texttt{except}-block that catches exceptions of class
+\item Next, we call the function $\texttt{backtrack\_search}$ to compute a solution of $\texttt{CSP}$.
+      This function is enclosed in a \texttt{try}-\texttt{except}-block that catches exceptions of class
       \texttt{Backtrack}.  This class is defined as follows:
       
 \begin{verbatim}
@@ -544,11 +544,11 @@ satisfaction problem $\mathtt{P}$ as input and tries to find a solution.
 \end{verbatim}
       Its only purpose is to create a name for the special kind of exceptions used to administer backtracking.
       The reason for enclosing the call to \texttt{backtrack\_search} in a \texttt{try}-\texttt{except}-block
-      is that the procedure $\texttt{backtrack\_search}$ either returns a solution or, if it is not
+      is that the function $\texttt{backtrack\_search}$ either returns a solution or, if it is not
       able to find a solution, it raises an exception of class \texttt{Backtrack}.
       The \texttt{try}-\texttt{except}-block ensures that this exception is silently discarded.
 \end{enumerate}
-Next, we discuss the implementation of the function $\texttt{backtrack\_search}$.  This procedure receives a partial assignment
+Next, we discuss the implementation of the function $\texttt{backtrack\_search}$.  This function receives a partial assignment
 $\texttt{Assignment}$ as input together with an augmented \ac{csp}.  This partial assignment is
 \blue{consistent} with $\texttt{CSP}$:  If $\texttt{f}$ is a constraint of $\texttt{CSP}$ such that
 all the variables occurring in $\texttt{f}$ are members of $\texttt{dom}(\texttt{Assignment})$, then evaluating
@@ -572,14 +572,14 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
 \end{verbatim}    
 \item Next, we try to assign a $\texttt{value}$ to the selected variable $\texttt{var}$.  After assigning
       a $\texttt{value}$ to $\texttt{var}$, we immediately check whether this assignment would be consistent
-      with the constraints using the procedure $\texttt{is\_consistent}$.
+      with the constraints using the function $\texttt{is\_consistent}$.
       If the partial $\texttt{Assignment}$ turns out to be consistent, the partial $\texttt{Assignment}$
       is extended to the new partial assignment \texttt{NewAss} that satisfies
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{NewAss[var] = value}.
       \\[0.2cm]
-      Then, the procedure $\texttt{backtrack\_search}$ is called recursively to complete this new partial assignment.
+      Then, the function $\texttt{backtrack\_search}$ is called recursively to complete this new partial assignment.
       If this is successful, the resulting assignment is a solution that is returned.  Otherwise,
       the recursive call of $\texttt{backtrack\_search}$ will raise an exception.  This exception is muted 
       by the \texttt{try}-\texttt{except}-block that surrounds the call to $\texttt{backtrack\_search}$.  In that case, the
@@ -593,29 +593,29 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
+\begin{minted}[ frame         = lines, 
                   framesep      = 0.3cm, 
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
-                ]
+                ]{python3}
     def is_consistent(var, value, Assignment, Constraints):
         NewAssign      = Assignment.copy()
         NewAssign[var] = value
         return all(eval(f, NewAssign) for (f, Vs) in Constraints
                                       if  var in Vs and Vs <= NewAssign.keys()
                   )
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The definition of the function \texttt{is\_consistent}.}
 \label{fig:is_consistent.py}
 \end{figure}
 
-We still need to discuss the implementation of the auxiliary procedure $\texttt{is\_consistent}$
-shown in \ref{fig:is_consistent.py}.  This procedure takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
+We still need to discuss the implementation of the auxiliary function $\texttt{is\_consistent}$
+shown in \ref{fig:is_consistent.py}.  This function takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
 $\texttt{Assignment}$ and a set of $\texttt{Constraints}$ as arguments.  It is assumed that $\texttt{Assignment}$ is
 \blue{partially consistent} with respect to the set $\texttt{Constraints}$, i.e.~for every formula $\texttt{f}$
 occurring in $\texttt{Constraints}$ such that
@@ -649,24 +649,24 @@ $\texttt{NewAssign}$.  The reasoning is as follows:
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     import extractVariables as ev
     
     def collect_variables(expr):
         return { var for var in ev.extractVars(expr)
                      if  var not in dir(__builtins__)
                }
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
-\caption{The procedure \texttt{collectVars}.}
+\caption{The function \texttt{collectVars}.}
 \label{fig:collect_variables.py}
 \end{figure}
 Finally, let us discuss the function \texttt{collect\_variables} that is shown in \myFig{collect_variables.py}.
@@ -732,15 +732,15 @@ solved without backtracking.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.3cm,
-                  xrightmargin  = 0.3cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.3cm,
+                xrightmargin  = 0.3cm,
+              ]{python3}
     def solve(P):
         Variables, Values, Constraints = P
         Annotated    = { (f, collect_variables(f)) for f in Constraints }
@@ -758,7 +758,7 @@ solved without backtracking.
             return backtrack_search({}, ValuesPerVar, OtherConstrs)
         except Backtrack:
             return None
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Constraint Propagation.}
 \label{fig:Constraint-Propagation-Solver.ipynb:solve}
@@ -775,7 +775,7 @@ $\mathtt{ValuesPerVar}[\mathtt{y}]$ that can be assigned to those variables $\ma
 variable  $\mathtt{x}$. 
 
 \begin{enumerate}
-\item The procedure $\texttt{solve}$ receives a $\texttt{CSP}$.  This $\texttt{CSP}$ is first split into its
+\item The function $\texttt{solve}$ receives a $\texttt{CSP}$.  This $\texttt{CSP}$ is first split into its
       three components and the constraints are annotated with the sets of variables occurring in them.
       These annotated constraints are stored in the set \texttt{Annotated}.
 \item The most important data structure maintained by the function \texttt{solve} is the dictionary
@@ -798,15 +798,15 @@ variable  $\mathtt{x}$.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     def solve_unary(f, x, Values):
         Legal = { value for value in Values 
                         if  eval(f, { x: value })
@@ -814,7 +814,7 @@ variable  $\mathtt{x}$.
         if len(Legal) == 0:
             raise Backtrack()
         return Legal
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Implementation of $\texttt{solve\_unary}$.}
 \label{fig:Constraint-Propagation-Solver.ipynb:solve_unary}
@@ -829,15 +829,15 @@ raised since in that case the given \ac{csp} is unsolvable.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     def backtrack_search(Assignment, ValuesPerVar, Constraints):
         if len(Assignment) == len(ValuesPerVar):
             return Assignment
@@ -853,13 +853,13 @@ raised since in that case the given \ac{csp} is unsolvable.
             except Backtrack:
                 continue
         raise Backtrack()
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Implementation of $\texttt{backtrack\_search}$.}
 \label{fig:Constraint-Propagation-Solver.ipynb:backtrack_search}
 \end{figure}
 
-The procedure $\texttt{backtrack\_search}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:backtrack_search} is called with a
+The function $\texttt{backtrack\_search}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:backtrack_search} is called with a
 partial variable $\texttt{Assignment}$ that is guaranteed to be consistent, a dictionary
 $\texttt{ValuesPerVar}$ associating every variable with the set of values that might be substituted for this variable and a
 set of annotated $\texttt{Constraints}$.  It tries to complete $\texttt{Assignment}$ and thereby compute a
@@ -870,7 +870,7 @@ solution of the given \ac{csp}.
       dictionary $\mathtt{ValuesPerVar}$ has an entry for every variable, its size is the same as the number of
       variables. Therefore, $\mathtt{Assignment}$ is complete iff it has the same size as $\mathtt{ValuesPerVar}$.
 \item Otherwise, we choose a variable $\texttt{x}$ such that the number of values that can still be used to
-      instantiate $\texttt{x}$ is minimal.  This variable is computed using the procedure
+      instantiate $\texttt{x}$ is minimal.  This variable is computed using the function
       $\texttt{most\_constrained\_variable}$ that is shown in \myFig{Constraint-Propagation-Solver.ipynb:most_constrained_variable}.
       
       The logic behind choosing a maximally constrained variables is that these variables are the most
@@ -882,9 +882,9 @@ solution of the given \ac{csp}.
       the \texttt{for}-loop in this version of backtracking search is more efficient than the corresponding
       \texttt{for}-loop in backtracking search discussed in the previous section. 
 \item If it is consistent to assign $\texttt{v}$ to the variable $\texttt{x}$, we propagate the consequences
-      of this assignment using the procedure $\texttt{propagate}$ shown in
+      of this assignment using the function $\texttt{propagate}$ shown in
       \myFig{Constraint-Propagation-Solver.ipynb:propagate}.
-      This procedure updates the values that are still allowed for the variables of the\ac{csp} once the
+      This function updates the values that are still allowed for the variables of the\ac{csp} once the
       value $\texttt{v}$ has been assigned to the variable $\texttt{x}$.
 \item Finally, the partial variable $\texttt{Assignment}$ is updated to include the assignment of 
       $\texttt{v}$ to $\texttt{x}$ and the recursive call to $\texttt{backtrack\_search}$ tries to complete this new
@@ -893,15 +893,15 @@ solution of the given \ac{csp}.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     def most_constrained_variable(Assignment, ValuesPerVar):
         Unassigned = { (x, len(U)) for x, U in ValuesPerVar.items()
                                    if  x not in Assignment
@@ -910,17 +910,18 @@ solution of the given \ac{csp}.
         for x, lenU in Unassigned:
             if lenU == minSize:
                 return x
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Finding a most constrained variable.}
 \label{fig:Constraint-Propagation-Solver.ipynb:most_constrained_variable}
 \end{figure}
-\myFig{Constraint-Propagation-Solver.ipynb:most_constrained_variable} show the implementation of the procedure
-$\texttt{most\_constrained\_variable}$.  The procedure $\texttt{most\_constrained\_variable}$ takes a partial 
+
+\myFig{Constraint-Propagation-Solver.ipynb:most_constrained_variable} show the implementation of the function
+$\texttt{most\_constrained\_variable}$.  The function $\texttt{most\_constrained\_variable}$ takes a partial 
 $\texttt{Assignment}$ and a dictionary $\texttt{ValuesPerVar}$ returning for all variables the set of values
 that still might be tried for this variable.
 \begin{enumerate}
-\item First, this procedure computes the set of $\texttt{Unassigned}$ variables.  For every variable $\texttt{x}$ that
+\item First, this function computes the set of $\texttt{Unassigned}$ variables.  For every variable $\texttt{x}$ that
       has not yet been assigned a value in $\texttt{Assignment}$ this set contains the pair 
       $(\texttt{x}, \mathtt{len}(U))$, where $U$ is the set of values that still might be tried for the variable  $\texttt{x}$.
 \item Next, \texttt{minSize} is the minimal number of values still available for a variable.
@@ -929,15 +930,15 @@ that still might be tried for this variable.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     def propagate(x, v, Assignment, Constraints, ValuesPerVar):
         ValuesDict = ValuesPerVar.copy()
         ValuesDict[x] = { v }
@@ -958,7 +959,7 @@ that still might be tried for this variable.
                         raise Backtrack()
                     ValuesDict[y] = Legal
         return ValuesDict
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Constraint Propagation.}
 \label{fig:Constraint-Propagation-Solver.ipynb:propagate}
@@ -1130,7 +1131,7 @@ A na\"ive approach to solve this problem would be to code it as a constraint sat
 among others,  the
 following constraint:
 \\[0.2cm]
-\hspace*{1.3cm}
+\hspace*{0.0cm}
 $   (\texttt{S} \cdot 10^3 + \texttt{E} \cdot 10^2 + \texttt{N} \cdot 10 + \texttt{D}) 
   + (\texttt{M} \cdot 10^3 + \texttt{O} \cdot 10^2 + \texttt{R} \cdot 10 + \texttt{E})
   = \texttt{M} \cdot 10^4 + \texttt{O} \cdot 10^3 + \texttt{N} \cdot 10^2 + \texttt{E} \cdot 10 + \texttt{Y}
@@ -1138,38 +1139,45 @@ $.
 \\[0.2cm]
 The problem with this constraint is that it involves far too many variables.  As this constraint can only be
 checked when all the variables have values assigned to them, the backtracking search would essentially
-boil down to a mere brute force search.  We would have 8 variables and hence we would have to test $8^{10}$
-possible assignments. In order to do better, we have to perform the addition in Figure
+boil down to a mere brute force search.  We would have 8 variables that each could take 10 different values and
+hence we would have to test $10^{8}$ possible assignments. In order to do better, we have to perform the addition in Figure
  \ref{fig:send-more-money.pdf} column by column, just as it is taught in elementary school.
- \myFig{send-more-money.stlx} shows how this can be implemented in \textsc{SetlX}.
+ \myFig{Crypto-Arithmetic.ipynb} shows how this can be implemented in \textsl{Python}.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-   createCSP := procedure() {
-       Variables   := {"S", "E", "N", "D", "M", "O", "R", "Y", "C1", "C2", "C3"};
-       Values      := { 0 .. 9 };
-       Constraints := allDifferent({ "S", "E", "N", "D", "M", "O", "R", "Y" });
-       Constraints += { '(D + E) % 10 == Y', '(D + E) \ 10 == C1',
-                        '(N + R + C1) % 10 == E', '(N + R + C1) \ 10 == C2',
-                        '(E + O + C2) % 10 == N', '(E + O + C2) \ 10 == C3',
-                        '(S + M + C3) % 10 == O', '(S + M + C3) \ 10 == M'
-                      };
-       Constraints += { "S != 0", "M != 0" };
-       return [Variables, Values, Constraints];
-   };
-\end{Verbatim}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    def crypto_csp():
+        Digits       = { 'S', 'E', 'N', 'D', 'M', 'O', 'R', 'Y' }
+        Variables    = Digits | { 'C1', 'C2', 'C3' }
+        Values       = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }
+        Constraints  = allDifferent(Digits)
+        Constraints |= { '(D + E)      % 10 == Y', '(D + E)      // 10 == C1',
+                         '(N + R + C1) % 10 == E', '(N + R + C1) // 10 == C2',
+                         '(E + O + C2) % 10 == N', '(E + O + C2) // 10 == C3',
+                         '(S + M + C3) % 10 == O', '(S + M + C3) // 10 == M'
+                       }
+        Constraints |= { 'S != 0', 'M != 0' }
+        Constraints |= { 'C1 < 2', 'C2 < 2', 'C3 < 2' }
+        return Variables, Values, Constraints
+    
+    def allDifferent(Variables):
+        return { f'{x} != {y}' for x in Variables
+                               for y in Variables 
+                               if x < y 
+           }
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Formulating ``$\texttt{SEND} + \texttt{MORE} = \texttt{MONEY}$'' as a \ac{csp}.}
-\label{fig:send-more-money.stlx}
+\label{fig:Crypto-Arithmetic.ipynb}
 \end{figure}
 
 Notice that we have introduced three additional variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$''. 
@@ -1187,13 +1195,14 @@ variables as follows:
 $(\texttt{D} + \texttt{E})\; \texttt{\symbol{37}}\; 10 = \texttt{Y}$ \quad and \quad
 $(\texttt{D} + \texttt{E}) \;\texttt{\symbol{92}}\; 10 = \texttt{C1}$.
 \\[0.2cm]
-Here, the symbol ``$\texttt{\symbol{92}}$'' denotes 
-\href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, e.g.~we have $7 \texttt{\symbol{92}} 3 = 2$.
-If we try to solve the cryptarithmetic puzzle as coded in \myFig{send-more-money.stlx} using the
-constraint solver developed in the previous section, we will be disappointed: Solving the puzzle takes about 17
+Here, the symbol ``$\texttt{//}$'' denotes 
+\href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, 
+e.g.~we have $7 \;\texttt{//}\; 3 = 2$ because $7 = 2 \cdot 3 + 1$.
+If we try to solve the cryptarithmetic puzzle as coded in \myFig{Crypto-Arithmetic.ipynb} using the
+constraint solver developed in the previous section, we will be disappointed: Solving the puzzle takes about 7
 seconds on my computer.  The reason is that most constraints involve either three or four variables and
 therefore the effects of constraint propagation kick only in when many variables have already been initialized.
-However, we can solve the problem in a few seconds if we add the following constraints for the 
+However, we can solve the problem in less than 50 milliseconds if we add the following constraints for the 
 variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1208,19 +1217,21 @@ Assume that the formula $f$ is a constraint and the set of variables occurring i
 \hspace*{1.3cm}
 $\texttt{Var}(f) = \{ x \} \cup R$ \quad where $x \not\in R$,
 \\[0.2cm]
-i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R$ is the set of all variables occurring
+i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R = \{y_1, \cdots, y_n\}$ is the set of
+all variables occurring 
 in $f$ that are different from $x$.  Furthermore, assume that we have a dictionary $\texttt{ValuesPerVar}$ such that
 for every variable $y$, the dictionary entry $\texttt{ValuesPerVar}[y]$ is the set of values that can be substituted
-for the variable $y$.  Formally, we define: \blue{A value $v$ is consistent for $x$ with respect to the constraint $f$} 
-iff the partial assignment $\{ \pair(x, v) \}$ can be extended to an assignment $A$ satisfying the constraint $f$,
-i.e.~for every variable $y \in R$ we have to find a value $w \in \texttt{ValuesPerVar}[y]$ such that the resulting
-assignment $A$ satisfies the equations
+for the variable $y$.  Formally, we define: 
+\blue{A value $v$ is consistent for $x$ with respect to the constraint $f$} 
+iff the partial assignment $\{ x \mapsto v \}$ can be extended to an assignment $A$ satisfying the constraint $f$,
+i.e.~for every variable $y_i \in R$ we have to find a value $w_i \in \texttt{ValuesPerVar}[y_i]$ such that the resulting
+assignment $A = \{ x \mapsto v, y_1 \mapsto w_1, \cdots, y_n \mapsto w_n \}$ satisfies the equations
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{evaluate}(f, A) = \texttt{true}$.
 \\[0.2cm]
 Here, the function $\texttt{evaluate}$ takes a formula $f$ and an assignment $A$ and evaluates $f$ using the
-assignment $A$.  Now, \blue{consistency maintenance} works as follows.
+assignment $A$.  Now, \blue{consistency maintenance} works as follows. \index{consistency maintenance}
 \begin{enumerate}
 \item The dictionary $\texttt{ValuesPerVar}$ is initialized as follows:
       \\[0.2cm]
@@ -1235,13 +1246,17 @@ assignment $A$.  Now, \blue{consistency maintenance} works as follows.
 \item As long as the set $\texttt{UncheckedVariables}$ is not empty, we remove one variable $x$ from this set:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $x := \texttt{from}(\texttt{UncheckedVariables})$
+      $x := \texttt{UncheckedVariables}.\mathtt{pop}()$
 \item We iterate over all constraints $f$ such that $x$ occurs in $f$.  
       \begin{enumerate}
       \item For every value $v \in \texttt{ValuesPerVar}[x]$ we check whether $v$ is consistent with $f$.
-      \item If $v$ is not consistent with $f$, then $v$ is removed from $\texttt{ValuesPerVar}[x]$.
-            Furthermore, if $R$ is the set of all variables occurring in $f$ that are different from $x$, 
-            then this set $R$ is added to the set of $\texttt{UncheckedVariables}$.
+      \item If the value $v$ is not consistent with $f$, then $v$ is removed from $\texttt{ValuesPerVar}[x]$.
+            Furthermore, all variables \blue{connected} to $x$ are added to the set of 
+            \index{connected variables} 
+            $\texttt{UncheckedVariables}$.  Here we define y variable $y \not= x$ to be connected to $x$ if
+            there is some constraint $f$ such that both $x$ and $y$ occur in $f$.  The reason is that some of
+            their values might have become inconsistent by removing the value $v$ from
+            $\texttt{ValuesPerVar}[x]$.
       \end{enumerate}
 \item Once $\texttt{UncheckedVariables}$ is empty, the algorithm terminates.  Otherwise, we jump back to step 3
       and remove the next variable from the set $\texttt{UncheckedVariables}$.
@@ -1262,119 +1277,123 @@ variable from this set and hence the algorithm terminates eventually.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-    enforceConsistency := procedure(rw ValuesPerVar, Var2Formulas, Annotated, Connected) {
-        UncheckedVars := domain(Var2Formulas);
-        while (UncheckedVars != {}) {
-            variable    := from(UncheckedVars);
-            Constraints := Var2Formulas[variable];
-            Values      := ValuesPerVar[variable];
-            RemovedVals := {};
-            for (f in Constraints) {
-                OtherVars := Annotated[f] - { variable };
-                for (value in Values) {
-                    if(!existValues(variable, value, f, OtherVars, ValuesPerVar)) {
-                        RemovedVals   += { value };
-                        UncheckedVars += Connected[variable];
-                    }
-                }
-            }
-            Remaining := Values - RemovedVals;
-            if (Remaining == {}) { backtrack; }
-            ValuesPerVar[variable] := Remaining;
-        }
-    };
-\end{Verbatim}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    def enforce_consistency(ValuesPerVar, Var2Formulas, Annotated, Connected):
+        UncheckedVars = set(Var2Formulas.keys())
+        while len(UncheckedVars) > 0:
+            var         = UncheckedVars.pop()
+            Constraints = Var2Formulas[var]
+            Values      = ValuesPerVar[var]
+            RemovedVals = set()
+            for f in Constraints:
+                OtherVars = Annotated[f] - { var }
+                for value in Values:
+                    if not exists_values(var, value, f, OtherVars, ValuesPerVar):
+                        RemovedVals   |= { value }
+                        UncheckedVars |= Connected[var]
+            Remaining = Values - RemovedVals
+            if len(Remaining) == 0:
+                raise Backtrack()
+            ValuesPerVar[var] = Remaining
+\end{minted}
 \vspace*{-0.3cm}
-\caption{Consistency maintenance in \textsc{SetlX}.}
-\label{fig:csp-consistency.stlx:enforceConsistency}
+\caption{Consistency maintenance in \textsc{Python}.}
+\label{fig:Consistency-Solver.ipynb:enforce_consistency}
 \end{figure}
 
 \noindent
-\myFig{csp-consistency.stlx:enforceConsistency} shows how consistency maintenance can be implemented in \textsc{SetlX}.
-The procedure $\texttt{enforceConsistency}$ takes four arguments.
+\myFig{Consistency-Solver.ipynb:enforce_consistency} shows how consistency maintenance can be implemented in
+\textsl{Python}.
+The function $\texttt{enforce\_consistency}$ takes four arguments.
 \begin{enumerate}[(a)]
 \item $\texttt{ValuesPerVar}$ is a dictionary associating the set of possible values with each variable.
-\item $\texttt{Var2Formulas}$ is a dictionary.  For every variable $v$, $\texttt{Var2Formulas}[v]$ is
-      the set of those constraints $f$ such that $v$ occurs in $f$.
-\item $\texttt{Annotated}$ is the set of annnotated constraints, i.e. this set contains
-      pairs of the form $\pair(f, V)$ where $f$ is a constraint and $V$ is the set of all variables occurring
-      in $f$.  This argument is needed only for efficiency: In order to avoid computing the set $V$ of
-      variables occurring in a constraint $f$ every time the constraint $f$ is encountered, we compute these
-      sets at the beginning of our computation and store them in the dictionary $\texttt{Annnotated}$.
-\item $\texttt{Connected}$ is a dictionary that takes a variable $x$ and returns the set $V$ of all variables
-      that are related to $x$ via a common constraint $f$, i.e.~we have $y \in \texttt{Connected}[x]$
-      if there exists a constraint $f$ such that both $x$ and $y$ occur in $f$ and, furthermore, $x \not= y$.
+\item $\texttt{Var2Formulas}$ is a dictionary.  For every variable $x$, $\texttt{Var2Formulas}[x]$ is
+      the set of those constraints $f$ such that $x$ occurs in $f$.
+\item $\texttt{Annotated}$ is a dictionary mapping constraints to the set of variables occurring in them, 
+      i.e.~if $f$ is a constraint, then $\mathtt{Annotated}[f]$ is the set of variables
+      occurring in $f$.
+\item $\texttt{Connected}$ is a dictionary that takes a variable $x$ and returns the set of all variables
+      that are \blue{connected} to $x$ via a common constraint $f$, i.e.~we have $y \in \texttt{Connected}[x]$
+      iff there exists a constraint $f$ such that both $x$ and $y$ occur in $f$ and, furthermore, $x \not= y$.
 \end{enumerate}
-The procedure $\texttt{enforceConsistency}$ modifies the dictionary $\texttt{ValuesPerVar}$ so that once the
-procedure has terminated, for every variable $x$ the set
-$\texttt{ValuesPerVar}[x]$ is consistent with the constraints for $x$.  The implementation works as follows:
+The function $\texttt{enforce\_consistency}$ modifies the dictionary $\texttt{ValuesPerVar}$ so that once the
+function has terminated, for every variable $x$ the values in the set
+$\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The implementation works as follows:
 \begin{enumerate}
 \item Initially, all variables need to be checked for consistency.  Therefore, $\texttt{UncheckedVars}$
       is defined to be the set of all variables that occur in any of the constraints.
 \item The \texttt{while}-loop iterates as long as there are still variables $x$ left in $\texttt{UncheckedVars}$
       such that the consistency of $\texttt{ValuesPerVar}[x]$ has not been established.
-\item Next, a $\texttt{variable}$ is selected and removed from $\texttt{UncheckedVars}$. 
-\item $\texttt{Constraints}$ is the set of all constraints $f$ such that this $\texttt{variable}$ occurs in $f$.
-\item $\texttt{Values}$ is the set of those values that can be assigned to $\texttt{variable}$.
-\item $\texttt{RemovedVals}$ is the subset of those values that are found to be inconsistent with some constraint.
+\item Next, a variable $\texttt{var}$ is selected and removed from $\texttt{UncheckedVars}$. 
+\item $\texttt{Constraints}$ is the set of all constraints $f$ such that $\texttt{var}$ occurs in $f$.
+\item $\texttt{Values}$ is the set of those values that can be assigned to the variable $\texttt{var}$.
+\item $\texttt{RemovedVals}$ is the subset of those values that are found to be \blue{inconsistent} with some
+      constraint. 
 \item We iterate over all constraints $\texttt{f} \in \texttt{Constraints}$.
 \item $\texttt{OtherVars}$ is the set of variables occurring in $\texttt{f}$ that are different from 
-      the chosen $\texttt{variable}$.
-\item We iterate over all $\texttt{value} \in \texttt{Values}$ that can be substituted for $\texttt{variable}$
+      the chosen variable $\texttt{var}$.
+\item We iterate over all $\texttt{value} \in \texttt{Values}$ that can be substituted for the variable $\texttt{var}$
       and check whether $\texttt{value}$ is consistent with $\texttt{f}$.   To this end, we need to find values
       that can be assigned to the variables in the set $\texttt{OtherVars}$ such that $\texttt{f}$ evaluates as
-      $\texttt{true}$.  This is checked using the function $\texttt{existValues}$.
-\item If we do not find such values, then $\texttt{value}$ is inconsistent for
-      $\texttt{variable}$ w.r.t.~$\texttt{f}$ and needs to be removed from the set 
-      $\texttt{ValuesPerVar}[\texttt{variable}]$.  Furthermore, all variables that are connected to
-      $\texttt{variables}$ have to be added to the set $\texttt{UncheckedVars}$.  The reason is that once a
-      value is removed for $\texttt{variable}$, the value assigned to another variable $y$ occurring in a
-      constraint that mentions both $\texttt{variable}$ and $y$ might now become inconsistent.
-\item If there are no consistent values for $\texttt{variable}$ left, we have to backtrack.
+      $\texttt{true}$.  This is checked using the function $\texttt{exists\_values}$.
+\item If we do not find such values, then $\texttt{value}$ is inconsistent for the variables
+      $\texttt{var}$ w.r.t.~$\texttt{f}$ and needs to be removed from the set 
+      $\texttt{ValuesPerVar}[\texttt{var}]$.  Furthermore, all variables that are connected to
+      $\texttt{var}$ have to be added to the set $\texttt{UncheckedVars}$.  The reason is that once a
+      value is removed for the variable $\texttt{var}$, the value assigned to another variable $y$ occurring in a
+      constraint that mentions both $\texttt{var}$ and $y$ might now become inconsistent.
+\item If there are no consistent values for $\texttt{var}$ left, we have to backtrack.
+\item Otherwise, the set of values that are known to be consistent for \texttt{var} is stored
+      as \\ $\mathtt{ValuesPerVar}[\mathtt{var}]$.
 \end{enumerate}
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                  ]
-    existValues := procedure(var, val, f, Vars, ValuesPerVar) {
-        return exists( A in createAllAssignments(Vars, ValuesPerVar) 
-                     | eval_constraint(A + { [var, val] }, f)        );
-    };
-    createAllAssignments := procedure(Vars, ValuesPerVar) {
-        if (Vars == {}) {
-            return { {} };  // set containing empty assignment
-        }
-        var         := from(Vars);
-        Values      := ValuesPerVar[var];
-        Assignments := createAllAssignments(Vars, ValuesPerVar);
-        return { { [var, val] } + A : val in Values, A in Assignments };
-    };
-\end{Verbatim}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
+    def exists_values(var, val, f, Vars, ValuesPerVar):
+        Assignments = all_assignments(Vars, ValuesPerVar)
+        return any(eval(f, extend(A, var, val)) for A in Assignments)
+    
+    def extend(A, x, v):
+        B = A.copy()
+        B[x] = v
+        return B
+    
+    def all_assignments(Variables, ValuesPerVar):
+        Variables = set(Variables) # turn frozenset into a set
+        if len(Variables) == 0:
+            return [ {} ]  # list containing empty assignment
+        var         = Variables.pop()
+        Values      = ValuesPerVar[var]
+        Assignments = all_assignments(Variables, ValuesPerVar)
+        return [ extend(A, var, val) for A in Assignments 
+                                     for val in ValuesPerVar[var]
+               ]
+\end{minted}
 \vspace*{-0.3cm}
-\caption{The implementation of $\texttt{existValues}$.}
-\label{fig:csp-consistency.stlx:existValues}
+\caption{The implementation of $\texttt{exists\_value}$.}
+\label{fig:Consistency-Solver.ipynb:exists_values}
 \end{figure}
 
 \noindent
-\myFig{csp-consistency.stlx:existValues} shows the implementation of the function $\texttt{existValues}$ that
-is used in the implementation of $\texttt{enforceConsistency}$.  This procedure is called with five arguments.
+\myFig{Consistency-Solver.ipynb:exists_values} shows the implementation of the function $\texttt{exists\_values}$ that
+is used in the implementation of $\texttt{enforce\_consistency}$.  This function is called with five arguments.
 \begin{enumerate}[(a)]
 \item $\texttt{var}$ is variable.
 \item $\texttt{val}$ is a value that is to be assigned to $\texttt{var}$.
@@ -1383,13 +1402,16 @@ is used in the implementation of $\texttt{enforceConsistency}$.  This procedure 
       variables that occur in $\texttt{f}$ but that are different from $\texttt{var}$. 
 \item $\texttt{ValuesPerVar}$  is a dictionary associating the set of possible values with each variable.
 \end{enumerate}
-The procedure checks whether the partial assignment $\{ \pair(\texttt{var}, \texttt{val}) \}$ can be
+The function checks whether the partial assignment $\{ \texttt{var} \mapsto \texttt{val} \}$ can be
 extended so that the constraint $\texttt{f}$ is satisfied.  To this end it needs to create the set of all
-possible assignments.  This set is generated using the function $\texttt{createAllAssignments}$.  This function
+possible assignments.  This set is generated using the function $\texttt{all\_assignments}$.  This function
 gets a set of variables $\texttt{Vars}$ and a dictionary that assigns to every variable $\texttt{var}$ in
-$\texttt{Vars}$ the set of values that might be assigned to $\texttt{var}$.
+$\texttt{Vars}$ the set of values that might be assigned to $\texttt{var}$.  It returns a list containing all
+possible variable assignments.  The implementation proceeds as follows:
 \begin{enumerate}
-\item If the set of variables $\texttt{Vars}$ is empty, the empty set can serve as a dictionary that 
+\item As the argument $\mathtt{Variables}$ is a \texttt{frozenset} but we need to modify this set for the
+      recursive call of \texttt{all\_assignments}, we transform the \texttt{frozenset} into a \texttt{set}.
+\item If the set of variables $\texttt{Vars}$ is empty, the empty dictionary can serve as a mapping that 
       assigns a value to every variable in $\texttt{Vars}$.
 \item Otherwise, we remove a variable $\texttt{var}$ from $\texttt{Vars}$ and get the set of $\texttt{Values}$
       that can be assigned to $\texttt{var}$.  
@@ -1397,9 +1419,12 @@ $\texttt{Vars}$ the set of values that might be assigned to $\texttt{var}$.
       variables.
 \item Finally, the set of all possible assignments is the set of all combinations of assigning a value 
       $\texttt{val} \in \texttt{Values}$ to $\texttt{var}$ and assigning the remaining variables according to 
-      an assignment $\texttt{A} \in \texttt{Assignments}$.
+      an assignment $\texttt{A} \in \texttt{Assignments}$.  Here we have to make use of the function
+      \texttt{extend} that takes a dictionary \texttt{A}, a key \texttt{x} not occurring in \texttt{A} and a
+      value \texttt{v} and returns a new dictionary that maps \texttt{x} to \texttt{v} and otherwise coincides
+      with \texttt{A}.
 \end{enumerate}
-On one hand, consistency checking creates a lot of overhead.\footnote{
+On one hand, consistency checking is a pre-processing step creates a lot of overhead.\footnote{
   To be fair, the implementation shown in this section is far from optimal.  In particular, by remembering which
   combinations of variables and values work for a given formula, the overhead can be reduced significantly.  I have
   refrained from implementing this optimization because I did not want the code to get too complex.
@@ -1407,7 +1432,95 @@ On one hand, consistency checking creates a lot of overhead.\footnote{
 Therefore, it might actually slow down the
 solution of some constraint satisfaction problems that are easy to solve using just backtracking and
 propagation.  On the other hand, many difficult constraint satisfaction problems can not be solved
-without consistency checking.
+without consistency checking. 
+
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = bg,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.0cm,
+                 xrightmargin  = 0.0cm,
+               ]{python3}
+    def solve(P):
+        Variables, Values, Constraints = P
+        VarsInConstrs  = union([ collect_variables(f) for f in Constraints ])
+        MisspelledVars = (VarsInConstrs - Variables) | (Variables - VarsInConstrs)
+        if len(MisspelledVars) > 0:
+            print("Did you misspell any of the following Variables?")
+            for v in MisspelledVars:
+                print(v)
+        ValuesPerVar = { x: Values for x in Variables }
+        Annotated    = { f: collect_variables(f) for f in Constraints }
+        UnaryConstrs = { (f, V) for f, V in Annotated.items() 
+                                if  len(V) == 1 
+                       }
+        OtherConstrs = { (f, V) for f, V in Annotated.items() 
+                                if  len(V) >= 2 
+                       }
+        Connected    = {}
+        Var2Formulas = variables_2_formulas(OtherConstrs)
+        for x in Variables:
+            Connected[x] = union([ V for f, V in Annotated.items() 
+                                     if  x in V 
+                                 ]) - { x }
+        try:
+            for f, V in UnaryConstrs:
+                var               = arb(V)
+                ValuesPerVar[var] = solve_unary(f, var, ValuesPerVar[var])
+            enforce_consistency(ValuesPerVar, Var2Formulas, Annotated, Connected)
+            for x, Values in ValuesPerVar.items():
+                print(f'{x}: {Values}')
+            return backtrack_search({}, ValuesPerVar, OtherConstrs)
+        except Backtrack:
+            return None
+\end{minted}
+\vspace*{-0.3cm}
+\caption{A constraint solver with consistency checking as a preprocessing step.}
+\label{fig:Consistency-Solver.ipynb:solve}
+\end{figure}
+
+ \myFig{Consistency-Solver.ipynb:solve} shows how consistency checking is
+integrated into a constraint solver as a pre-processing step.
+The procedure $\texttt{solve}(P)$ takes a \blue{constraint satisfaction problem}
+$P$ as input.  The function \texttt{solve} converts the CSP $P$ into an \blue{augmented} \ac{csp} where every
+constraint $f$ is annotated with the variables occurring in $f$.  Furthermore, the function solve maintains the
+following data structures: 
+\begin{enumerate}
+\item \texttt{VarsInConstrs} is the set of all variables occurring in any constraint.
+\item \texttt{ValuesPerVar} is a dictionary mapping variables to sets of values.  For every variable $x$
+      occurring in a constraint of $P$, the expression $\texttt{ValuesPerVar}(x)$ is the set of values that can
+      be used to instantiate the variable $x$.  Initially, $\texttt{ValuesPerVar}(x)$ is set to
+      \texttt{Values}, but as the search for a solution proceeds, the sets $\texttt{ValuesPerVar}(x)$ are
+      reduced by removing any values that  cannot be part of a solution. 
+\item \texttt{Annotated} is a dictionary.  For every constraint $f$ we have that $\texttt{Annotated}[f]$ is the
+  set of all variables occurring in $f$. 
+\item \texttt{UnaryConstrs} is a set of pairs of the form $(f, V)$ where $f$ is a constraint containing only a
+      single variable and $V$ is the set containing just this variable. 
+\item \texttt{OtherConstrs} is a set of pairs of the form $(f, V)$ where $f$ is a constraint containing more
+      than one variable and $V$ is the set of all variables occurring in $f$. 
+\item \texttt{Connected} is a dictionary mapping variables to sets of variables.  If $x$ is a variable, then
+      $\texttt{Connected}[x]$ is the set of those variables $y$ such that there is a constraint $f$ that
+      mentions both the variable $x$ and the variable $y$. 
+\item \texttt{Var2Formulas} is a dictionary mapping variables to sets of formulas.  For every variable $x$,
+      $\texttt{Var2Formulas}[x]$ is the set of all those non-unary constraints $f$ such that $x$ occurs in $f$. 
+\end{enumerate}
+After initializing these data structures, the unary constraints are immediately solved.  Then the
+function \texttt{enforce\_consistency} performs  \blue{consistency maintenance}:  
+Formally, we define: A value $v$ is \blue{consistent} for $x$ with respect to the constraint $f$
+iff the partial assignment $\{ x \mapsto v \}$ can be extended to an assignment $A$ satisfying the constraint $f$,
+i.e. for every variable $\texttt{y}_i$ occurring in $f$ there is a value $w_i \in \texttt{ValuesPerVar}[y]$ such that  
+$$ \texttt{evaluate}\bigl(f, \{ x \mapsto v, y_1 \mapsto w_1, \cdots, y_n \mapsto w_n\}\bigr) = \texttt{True}. $$
+The call to \texttt{enforce\_consistency} shrinks the sets $\texttt{ValuesPerVars}[x]$ until all values in
+$\texttt{ValuesPerVars}[x]$ are consistent with respect to all constraints.
+
+Finally, \texttt{backtrack\_search} is called to solve the remaining constraint satisfaction problem by the
+means of both \blue{backtracking} and \blue{constraint propagation}. 
+
 
 \section{Local Search}
 There is another approach to solve constraint satisfaction problems.  This approach is known as
@@ -1446,7 +1559,7 @@ local search works as follows:
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    solve := procedure(n) {
+    solve := function(n) {
         Queens := [];
         for (row in [1 .. n]) {    // randomly place n queens
             Queens[row] := rnd({1 .. n});
@@ -1489,7 +1602,7 @@ local search works as follows:
 arbitrary constraint satisfaction problem, the program solves the $n$ queens problem.  We proceed to discuss
 this program line by line.
 \begin{enumerate}
-\item The procedure $\texttt{solve}$ takes one parameter $\texttt{n}$, which is the size of the chess board.  If
+\item The function $\texttt{solve}$ takes one parameter $\texttt{n}$, which is the size of the chess board.  If
       the computation is successful, $\texttt{solve(n)}$ returns a list of length $\texttt{n}$.  Lets call this
       list $\texttt{Queens}$. For every row $\texttt{r} \in \{1, \cdots, \texttt{n}\}$, the value $\texttt{Queens[r]}$ specifies that the queen 
       that resides in row $\texttt{r}$ is positioned in column $\texttt{Queens[r]}$.
@@ -1530,7 +1643,7 @@ this program line by line.
 \end{enumerate}
 There is a technical issue, that must be addressed:  It is possible there is just one row that exhibits the
 maximum number of conflicts.  It is further possible that, given the placements of the other queens, there is
-just one optimal column for this row.  In this case, the procedure $\texttt{solve}$ would loop forever.  To
+just one optimal column for this row.  In this case, the function $\texttt{solve}$ would loop forever.  To
 avoid this case, every 30 iterations we pick a random row to change.
 
 \begin{figure}[!ht]
@@ -1557,11 +1670,11 @@ avoid this case, every 30 iterations we pick a random row to change.
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{The procedure $\texttt{numConflicts}$.}
+\caption{The function $\texttt{numConflicts}$.}
 \label{fig:numConficts.stlx}
 \end{figure}
 
-The procedure $\texttt{numConficts}$ shown in \myFig{numConficts.stlx} implements the function
+The function $\texttt{numConficts}$ shown in \myFig{numConficts.stlx} implements the function
 $\texttt{numConficts}$.  Given a board $\texttt{Queens}$ that specifies the positions of the queens on the
 board and a $\texttt{row}$, this function computes the number of ways that the queen in $\texttt{row}$ is
 attacked by other queens.  If all queens are positioned in different rows, then there are only three ways left
