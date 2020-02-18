@@ -90,15 +90,15 @@ river, then the missionaries have a problem.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[ frame         = lines,
+                framesep      = 0.3cm,
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.3cm,
+                xrightmargin  = 0.3cm,
+              ]{python3}
     problem = lambda m, i: 0 < m < i
 
     noProblem = lambda m, i: not problem(m, i) and not problem(3 - m, 3 - i)
@@ -120,7 +120,7 @@ river, then the missionaries have a problem.
 
     start = (3, 3, 1)
     goal  = (0, 0, 0)
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The missionary and cannibals problem coded as a search problem.}
 \label{fig:missionaries.stlx}
@@ -304,15 +304,15 @@ entire state space in memory.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     to_list = lambda State: [list(row) for row in State]
     
     to_tuple = lambda State: tuple(tuple(row) for row in State)
@@ -349,7 +349,7 @@ entire state space in memory.
              (3, 4, 5), 
              (6, 7, 8)
            )
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The $3 \times 3$ sliding puzzle.}
 \label{fig:Sliding-Puzzle.ipynb}
@@ -430,15 +430,15 @@ $s \in \mathtt{next\_states}(\mathtt{Parent}[s])$.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states):
         Frontier = { start }
         Visited  = set()
@@ -454,7 +454,7 @@ $s \in \mathtt{next\_states}(\mathtt{Parent}[s])$.
                             return path_to(goal, Parent)
             Visited |= Frontier
             Frontier = NewFrontier
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Breadth first search.}
 \label{fig:Breadth-First-Search.ipynb}
@@ -484,21 +484,21 @@ breadth first search in \textsl{Python}.  We discuss this implementation line by
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def path_to(state, Parent):
         p = Parent[state]
         if p == state:
             return [state]
         return path_to(p, Parent) + [state]
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The function $\mathtt{pathTo}()$.}
 \label{fig:pathTo.stlx}
@@ -615,15 +615,15 @@ implementation uses two methods from the class \texttt{deque}:
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                  ]
+                  ]{python3}
     from collections import deque
                   
     def search(start, goal, next_states):
@@ -640,7 +640,7 @@ implementation uses two methods from the class \texttt{deque}:
                 if ns not in Visited and ns not in Parent:
                     Parent[ns] = state
                     Frontier.append(ns)
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{A queue based implementation of breadth first search.}
 \label{fig:Breadth-First-Search-Queue.ipynb}
@@ -666,15 +666,15 @@ $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the who
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states):
         Stack  = deque([start])
         Parent = { start: start }
@@ -686,7 +686,7 @@ $\mathtt{goal}$ that is far away from $\mathtt{start}$ without exploring the who
                 if ns not in Parent:
                     Parent[ns] = state
                     Stack.append(ns)
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The depth first search algorithm.}
 \label{fig:Depth-First-Search-Stack.ipynb}
@@ -725,15 +725,15 @@ implementation is shown in \myFig{depth-first-search-recursive.stlx}.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states):
         return dfs(start, goal, next_states, [start])
     
@@ -745,7 +745,7 @@ implementation is shown in \myFig{depth-first-search-recursive.stlx}.
                 Result = dfs(ns, goal, next_states, Path + [ns])
                 if Result != None:
                     return Result
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{A recursive implementation of depth first search.}
 \label{fig:depth-first-search-recursive.stlx}
@@ -808,15 +808,15 @@ implements this strategy.  We proceed to discuss the details of this program.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states):
         limit = 1
         while True:
@@ -837,7 +837,7 @@ implements this strategy.  We proceed to discuss the details of this program.
             for ns in next_states(state):
                 if ns not in Path:
                     Stack.append(Path + [ns])
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Iterative deepening implemented in \textsl{Python}.}
 \label{fig:Iterative-Deepening.ipynb}
@@ -994,15 +994,15 @@ keeping a two trillion states in memory is impossible on most devices.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states):        
         FrontierA = { start }
         VisitedA  = set()           # set of nodes expanded starting from start
@@ -1031,7 +1031,7 @@ keeping a two trillion states in memory is impossible on most devices.
                         if ns in VisitedA:
                             return combinePaths(ns, ParentA, ParentB)
             FrontierB = NewFrontier
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Bidirectional breadth first search.}
 \label{fig:Bidirectional-BFS.ipynb}
@@ -1067,20 +1067,20 @@ since the portion of the search space that needs to be computed is just too big 
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def combinePaths(state, ParentA, ParentB):
             Path1 = path_to(state, ParentA)
             Path2 = path_to(state, ParentB)
             return Path1[:-1] + Path2[::-1] # Path2 is reversed
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Combining two paths.}
 \label{fig:combine-paths.stlx}
@@ -1271,15 +1271,15 @@ In the following, we will discuss several heuristics for the sliding puzzle.
 
       \begin{figure}[!ht]
         \centering
-        \begin{Verbatim}[ frame         = lines,
+        \begin{minted}[ frame         = lines,
                           framesep      = 0.3cm,
                           firstnumber   = 1,
-                          labelposition = bottomline,
+                          bgcolor       = bg,
                           numbers       = left,
                           numbersep     = -0.2cm,
                           xleftmargin   = 0.8cm,
                           xrightmargin  = 0.8cm,
-                        ]
+                        ]{python3}
     def manhattan(stateA, stateB):
         n = len(stateA)
         result = 0
@@ -1290,7 +1290,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
                     rowB, colB = find_tile(tile, stateB)
                     result += abs(rowA - rowB) + abs(colA - colB)
         return result
-    \end{Verbatim}
+    \end{minted}
     \vspace*{-0.3cm}
     \caption{The Manhattan distance between two states.}
     \label{fig:manhattan.py}
@@ -1330,15 +1330,15 @@ We need only two functions from the module `heapq`:
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states, heuristic):
         PrioQueue = [ (heuristic(start, goal), [start]) ]
         while len(PrioQueue) > 0:
@@ -1350,7 +1350,7 @@ We need only two functions from the module `heapq`:
                 if ns not in Path:
                     d = heuristic(ns, goal)
                     heapq.heappush(PrioQueue, (d, Path + [ns]))
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The best first search algorithm.}
 \label{fig:Best-First-Search.ipynb}
@@ -1424,15 +1424,15 @@ The details of the $\mathrm{A}^*$ algorithm are given in
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     import Set
 
     def search(start, goal, next_states, heuristic):
@@ -1457,7 +1457,7 @@ The details of the $\mathrm{A}^*$ algorithm are given in
                     Frontier.insert( (newEstimate, ns) )
                     if oldEstimate != None:
                         Frontier.delete( (oldEstimate, ns) )
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The A$^*$ search algorithm.}
 \label{fig:A-Star-Search.ipynb}
@@ -1613,15 +1613,15 @@ the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipy
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
+\begin{minted}[ frame         = lines, 
                   framesep      = 0.3cm, 
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+              ]{python3}
     def search(start, goal, next_states, heuristic):
         PathDict = { start: [start] }
         Distance = { start: 0 }           
@@ -1646,7 +1646,7 @@ the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipy
                     if oldEstimate != None:
                         Frontier.delete( (oldEstimate, ns) )
             Explored.add(state)
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{A path based implementation of $\textrm{A}^*$ search.}
 \label{fig:A-Star-Search-Path.ipynb}
@@ -1897,15 +1897,15 @@ the $\mathtt{goal}$ is eventually found.
 \section{Bidirectional $\mathrm{A}^*$ Search}
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states, heuristic):
         estimate  = heuristic(start, goal)
         ParentA   = { start: start };      ParentB   = { goal : goal  }
@@ -1947,7 +1947,7 @@ the $\mathtt{goal}$ is eventually found.
                             FrontierB.delete( (oldEstimate, ns) )
                     if DistanceA.get(ns, None) != None:
                         return combinePaths(ns, ParentA, ParentB)                    
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Bidirectional $\mathrm{A}^*$ search.}
 \label{fig:Bidirectional-A-Star-Search.ipynb}
@@ -2016,15 +2016,15 @@ shows an implementation of \ac{ida} search.  We proceed to discuss this program.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states, heuristic):
         limit = heuristic(start, goal)
         while True:
@@ -2049,7 +2049,7 @@ shows an implementation of \ac{ida} search.  We proceed to discuss this program.
                     return Solution
                 smallest = min(smallest, Solution)
         return smallest
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{Iterative deepening $\textrm{A}^*$ search.}
 \label{fig:iterative-deepening-a-star.stlx}
@@ -2183,15 +2183,15 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
-                ]
+                ]{python3}
     def search(start, goal, next_states, heuristic, size):
         Parent   = { start:start }
         Distance = { start: 0 }           
@@ -2216,7 +2216,7 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
                         Frontier.delete( (oldEstimate, ns) )
         Path = id_search(goal, start, next_states, heuristic, Distance)
         return path_to(Path[-1], Parent) + Path[::-1][1:]
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{I}.}
 \label{fig:A-Star-Ida-Star.ipynb-1}
@@ -2299,15 +2299,15 @@ and \myFig{A-Star-Ida-Star.ipynb-2}.  We begin with a discussion of the function
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines,
+\begin{minted}[ frame         = lines,
                   framesep      = 0.3cm,
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = bg,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
-                ]
+                ]{python3}
     def id_search(goal, start, next_states, heuristic, Distance):
         limit = 0
         while True:
@@ -2333,7 +2333,7 @@ and \myFig{A-Star-Ida-Star.ipynb-2}.  We begin with a discussion of the function
                     return result
                 smallest = min(smallest, result)
         return smallest 
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{II}.}
 \label{fig:A-Star-Ida-Star.ipynb-2}
