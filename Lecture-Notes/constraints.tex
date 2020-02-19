@@ -1530,11 +1530,11 @@ $\mathcal{C}$ of the form
 \hspace*{1.3cm}
 $\mathcal{P} := \langle \texttt{Variables}, \texttt{Values}, \texttt{Constraints} \rangle$,
 \\[0.2cm] 
-local search works as follows:
+local search works as follows: \index{local search}
 \begin{enumerate}
 \item Initialize the values of the variables in $\texttt{Variables}$ randomly.  
 \item If all $\texttt{Constraints}$ are satisfied, return the solution.
-\item For every  $x \in \texttt{Variables}$, count the number of \underline{unsatisfied} constraints that involve the
+\item For every  $x \in \texttt{Variables}$, count the number of \blue{unsatisfied} constraints that involve the
       variable $x$. 
 \item Set $\texttt{maxNum}$ to be the maximum of these numbers, i.e.~$\texttt{maxNum}$ is the maximal number of
       unsatisfied constraints for any variable.
@@ -1545,106 +1545,124 @@ local search works as follows:
 
       If there is more than one value $d$ with this property, choose the value $d$ randomly from those values
       that minimize the number of unsatisfied constraints.
-\item Goto step 2 and repeat until either a solution is found or the sun rises in the west.
+\item Rinse and repeat until a solution is found or the sun rises in the west.
 \end{enumerate}
+
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-    solve := function(n) {
-        Queens := [];
-        for (row in [1 .. n]) {    // randomly place n queens
-            Queens[row] := rnd({1 .. n});
-        }
-        iteration := 0;
-        lastRow   := 0;
-        while (n > 3) {  // there is no solution for n <= 3
-            // printBoard(Queens);
-            Conflicts := { [numConflicts(Queens, row), row] : row in {1..n} - {lastRow} };
-            [maxNum, _] := last(Conflicts);  // select queen with most conflicts
-            if (maxNum == 0) { // no conflicts, solution found 
-                return Queens;
-            }
-            if (iteration % 30 != 0) { // avoid infinite loops
-                row := rnd({ row : [num,row] in Conflicts | num == maxNum });
-            } else {
-                row := rnd({ 1 .. n });
-            }
-            lastRow   := row;
-            Conflicts := {};
-            for (col in [1 .. n]) {  
-                Board      := Queens;
-                Board[row] := col;
-                Conflicts  += { [numConflicts(Board, row), col] };
-            }
-            [minNum, _] := first(Conflicts); 
-            newColumn   := rnd({ col : [num, col] in Conflicts | num == minNum });
-            Queens[row] := newColumn;
-            iteration += 1;
-        }
-    };
-\end{Verbatim}
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = bg,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.0cm,
+                 xrightmargin  = 0.0cm,
+               ]{python3}
+   def solve(P):
+       Variables, Values, Constraints = P
+       Variables = list(Variables)  
+       Values    = list(Values)   
+       Annotated = { (f, collect_variables(f)) for f in Constraints }
+       Assign    = { x: random.choice(Values) for x in Variables }
+       iteration = 0
+       lastVar   = arb(Variables)
+       while True:
+           Conflicts = [ (numConflicts(x, Assign, Annotated), x) for x in Variables
+                                                                 if  x != lastVar
+                       ]
+           maxNum, _ = Set.last(cast_to_Set(Conflicts))
+           if maxNum == 0 and numConflicts(lastVar, Assign, Annotated) == 0:           
+               return Assign
+           if iteration % 10  == 0:    # avoid infinite loop
+               x = random.choice(Variables)
+           else:     # choose var with max number of conflicts
+               FaultyVars = [ var for (num, var) in Conflicts if  num == maxNum ]
+               x = random.choice(FaultyVars)
+           Conflicts = [ (numConflicts(x, extend(Assign, x, val), Annotated), val) 
+                         for val in Values 
+                       ]
+           if iteration % 10 == 0:       # avoid infinite loop
+               newVal = random.choice(Values) 
+           else:
+               minNum, _  = Set.first(cast_to_Set(Conflicts))
+               ValuesForX = [ val for (n, val) in Conflicts if n == minNum ]
+               newVal     = random.choice(ValuesForX)
+           Assign[x] = newVal
+           lastVar   = x
+           iteration += 1
+\end{minted}
 \vspace*{-0.3cm}
-\caption{Solving the $n$ queens problem using local search.}
-\label{fig:constraints.stlx}
+\caption{A constraint solver using local search.}
+\label{fig:Local-Search.ipynb:solve}
 \end{figure}
 
+
 \noindent
-\myFig{constraints.stlx} shows an implementation of these ideas in \textsc{SetlX}.  Instead of solving an
-arbitrary constraint satisfaction problem, the program solves the $n$ queens problem.  We proceed to discuss
+\myFig{Local-Search.ipynb:solve} shows an implementation of these ideas in \textsl{Python}.  We proceed to discuss
 this program line by line.
 \begin{enumerate}
-\item The function $\texttt{solve}$ takes one parameter $\texttt{n}$, which is the size of the chess board.  If
-      the computation is successful, $\texttt{solve(n)}$ returns a list of length $\texttt{n}$.  Lets call this
-      list $\texttt{Queens}$. For every row $\texttt{r} \in \{1, \cdots, \texttt{n}\}$, the value $\texttt{Queens[r]}$ specifies that the queen 
-      that resides in row $\texttt{r}$ is positioned in column $\texttt{Queens[r]}$.
-\item The \texttt{for} loop initializes the positions of the queens to random values from the set
-      $\{1, \cdots, \texttt{n}\}$.  Effectively, for every row on the chess board, this puts a queen in a
-      random column.
-\item The variable $\texttt{iteration}$ counts the number of times that we need to reassign a queen in a given
-      row.
-\item The variable $\texttt{lastRow}$ remembers the row that was changed in the last iteration.
-      We have to remember this value as it would not make sense to reposition a queen in the same row twice
-      without changing any other queen in between.
-\item All the remaining statements are surrounded by a \texttt{while} loop that is only terminated once a
-      solution has been found.  The \texttt{while} loop checks that \texttt{n} is bigger than $3$ since
-      otherwise the problem is unsolvable and local search can not figure out that a problem is unsolvable.
-\item The variable $\texttt{Conflicts}$ is a set of pairs of the form $[c, r]$, where $c$ is the number of
-      times the queen in row $r$ is attacked by other queens.  Hence, $c$ is the same as the number of
-      unsatisfied constraints for the variable specifying the column of the queen in row $r$.
-\item $\texttt{maxNum}$ is the maximum of the number of conflicts for any row.  The computation of
-      \texttt{maxNum} rests on the fact that sets are ordered in \textsc{SetlX} and therefore the last element
-      of the set \texttt{Conflicts} contains the pair $[c, r]$ such that the number of conflicts is maximal. 
-\item If this number is $0$, then all constraints are satisfied and the list $\texttt{Queens}$ is a solution to the
-      $\texttt{n}$ queens problem.
-\item Otherwise, we compute those rows that exhibit the maximal number of conflicts.  From these rows
-      we select one $\texttt{row}$ randomly.
-\item The reason for enclosing the assignment to $\texttt{row}$ in an \texttt{if} statement is explained later. 
-      On a first reading of  this program,  this \texttt{if} statement should be ignored.
-\item Now that we have identified the $\texttt{row}$ where the number of conflicts is biggest, we need to
-      reassign $\texttt{Queens[row]}$.  Of course, when reassigning this variable, we would like to have fewer
-      conflicts after the reassignment.  Hence, we test all columns to find the best column that can be
-      assigned for the queen in the given $\texttt{row}$.  This is done in a \texttt{for} loop that runs over
-      all possible columns.  The set $\texttt{Conflicts}$ that is maintained in this loop is a set of pairs
-      of the form $[k, c]$ where $k$ is the number of times the queen in $\texttt{row}$ would be attacked if it
-      would be placed in column $c$.
-\item We compute the minimum number of conflicts that is possible for the queen in $\texttt{row}$ and assign it
-      to $\texttt{minNum}$.
-\item From those columns that minimize the number of violated constraints, we choose a column randomly
-      and assign it for the specified $\texttt{row}$.
+\item The function $\texttt{solve}$ takes one parameter $P$, which is a \ac{csp}.  If
+      the computation is successful, $\texttt{solve(P)}$ returns a dictionary that encodes a solution of the
+      given \ac{csp} by mapping variables to values.
+\item The sets \texttt{Variables} and \texttt{Values} are turned to lists.  This is necessary because the
+      function
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{random.choice}(L)$
+      \\[0.2cm]
+      that is used to select a random element from $L$ expects that its argument $L$ to be indexable, i.e.~for
+      a number $k \in \{0, \cdots, \mathtt{len}(L)-1\}$ the expression $L[k]$ needs to be defined.
+\item \texttt{Annotated} is a list of pairs of the form $(f, V)$ where $f$ is a constraint and $V$ is the set
+       of variables occurring in $f$.
+\item \texttt{Assign} is a dictionary mapping all variables form the set \texttt{Variables} to values from the
+      set \texttt{Values}.  Initially the values are assigned randomly.
+\item The variable \texttt{iteration} counts the number of times that we have changed the assignment
+      \texttt{Assign} by reassigning a variable.
+\item If we have reassigned a variable $x$ in the last iteration of the loop, then we do not want to reassign
+      it again.  Therefore, the variable \texttt{lastVar} stores the variable that has been reassigned in the
+      previous iteration.
+\item At the beginning of the \texttt{while} loop, we count the number of conflicts for all variables, i.e.~if
+      $x$ is a variable that is different from the variable that has been reassigned in the last iteration,
+      then we count the number of \blue{conflicts} \index{conflict} that $x$ causes.  This number is defined 
+      as the number of constraints $f$ such that
+      \begin{enumerate}
+      \item $x$ occurs in $f$ and
+      \item $f$ is not satisfied.
+      \end{enumerate}
+      This is done using the function \texttt{numConflicts} shown in \myFig{Local-Search.ipynb:numConflicts}.
+      The list \texttt{Conflicts} defined in line 10 contains pairs of the form $(n, x)$ where $x$ is a
+      variable and $n$ is the number of conflicts that this variable is involved in.
+\item In line 13 the list \texttt{Conflicts} is turned into a set that is represented as an ordered binary set.
+      This set is effectively a 
+      priority queue that is ordered by the number of conflicts.  We pick the variable with the most conflicts
+      from this set and store the number of conflicts in \texttt{maxNum}, i.e.~\texttt{maxNum} is the maximum
+      number of conflicts that any variable is involved in.
+\item Now if \texttt{maxNum} is $0$ and additionally the variable \texttt{lastVar} that is excluded from the
+      computation of the set \texttt{Conflicts} has no conflicts, then the given \ac{csp} has been solved and
+      the solution is returned.
+\item Otherwise, the list  \texttt{FaultyVars} defined in line 19 collects those variables that have a maximal
+      number of conflicts.  
+\item In line \texttt{20} we choose a random variable \texttt{x} from this set as the variable to be
+      reassigned.  However, this is only done nine out of ten times.  In order to avoid running into an
+      infinite where we keep changing the same variables, every tenth iteration instead of choosing \texttt{x}
+      as the variable violating the most constraints we choose \texttt{x} randomly.  This is controlled by the
+      test \texttt{iteration \% 10 == 0} in line 16.
+\item Line 21 computes a list \texttt{Conflicts} that this time contains pairs of the form $(n, v)$ where $n$ 
+      is the number of conflicts that the variable \texttt{x} would cause if we would assign the value $v$ to
+      \texttt{x}.
+\item Line 27 casts the list \texttt{Conflicts} into a set that is represented as an ordered binary set.
+      This set is effectively a priority queue that is ordered by the number of conflicts.  we pick the
+      smallest number of conflicts that any value $v$ causes when \texttt{x} is assigned to $v$.
+\item \texttt{ValuesForX} is the list of those values that cause only \texttt{minNum} conflicts when assigned
+      to \texttt{x}. 
+\item \texttt{newVal} is a random element from this list that is then assigned to \texttt{x}.
+      Again, this is only done 9 out of ten times.  The tenth time a random value is assigned to \texttt{x}.
+\item In line 31 we remember that we have reassigned \texttt{x} in this iteration so that we don't reassign
+      \texttt{x} in the next iteration again.
 \end{enumerate}
-There is a technical issue, that must be addressed:  It is possible there is just one row that exhibits the
-maximum number of conflicts.  It is further possible that, given the placements of the other queens, there is
-just one optimal column for this row.  In this case, the function $\texttt{solve}$ would loop forever.  To
-avoid this case, every 30 iterations we pick a random row to change.
+
 
 \begin{figure}[!ht]
 \centering
@@ -1657,36 +1675,27 @@ avoid this case, every 30 iterations we pick a random row to change.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    numConflicts := procedure(Queens, row) {
-        n      := #Queens;
-        result := 0;
-        for (r in {1 .. n} | r != row) {
-            if ( Queens[r] == Queens[row]                     ||
-                 abs(row - r) == abs(Queens[row] - Queens[r])
-               )
-            { result += 1; }
-        }
-        return result;
-    };
+    def numConflicts(x, Assign, Annotated):
+        NewAssign = Assign.copy()
+        return len([ (f, V) for (f, V) in Annotated 
+                            if  x in V and not eval(f, NewAssign) 
+                   ])
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The function $\texttt{numConflicts}$.}
-\label{fig:numConficts.stlx}
+\label{fig:Local-Search.ipynb:numConflicts}
 \end{figure}
 
-The function $\texttt{numConficts}$ shown in \myFig{numConficts.stlx} implements the function
-$\texttt{numConficts}$.  Given a board $\texttt{Queens}$ that specifies the positions of the queens on the
-board and a $\texttt{row}$, this function computes the number of ways that the queen in $\texttt{row}$ is
-attacked by other queens.  If all queens are positioned in different rows, then there are only three ways left
-that a queen can be attacked by another queen.
-\begin{enumerate}
-\item The queen in row $\texttt{r}$ could be positioned in the same column as the queen in $\texttt{row}$.
-\item The queen in row $\texttt{r}$ could be positioned in the same falling or rising diagonal as the queen in
-      $\texttt{row}$.  These diagonals are specified in line 6 of Figure \ref{fig:numConficts.stlx}.
-\end{enumerate}
+The function $\texttt{numConficts}$ is shown in \myFig{Local-Search.ipynb:numConflicts}.  If $x$ is a variable,
+\texttt{Assign} is a variable assignment and \texttt{Annotated} is a list of pairs of the form $(f, V)$ where
+$f$ is a constraint and $V$ is the set of variables occurring in $f$, then 
+$\mathtt{numConficts}(x,\mathtt{Assign}, \mathtt{Annotated})$
+is the number of conflicts caused by the variable $x$.
+
+
 Using the program discussed in this section, the n queens problem can be solved for a $\texttt{n} = 1000$ in
 30 minutes.  As the memory requirements for local search are small, even much higher problem sizes can be
-tackled if sufficient time is available.  Hence, it seems that local search is much better than the algorithms
+tackled if sufficient time is available.  Hence, it seems that local search is better than the algorithms
 discussed previously.  However, we have to note that local search is \blue{incomplete}:  If a
 constraint satisfaction problem $\mathcal{P}$ has no solution, then local search loops forever.  Therefore, in
 practise a \blue{dual approach} is used to solve a constraint satisfaction problem.  The constraint solver
