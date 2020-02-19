@@ -321,3 +321,54 @@ def pop(self):
     return self.mLeft.pop()
 
 Set.pop = pop
+
+# The method $t.\texttt{first}()$ take an AVL tree $t$ and removes and returns the smallest key that is present in $t$.  It is specified as follows:
+#   - $\texttt{Nil}.\texttt{first}() = \Omega$
+#   - $\texttt{Node}(k,\texttt{Nil}, r).\texttt{first}() = k
+#   - $l \not=\texttt{Nil} \rightarrow := \texttt{Node}(k, l, r).\texttt{first}() = l.\texttt{first}()$
+
+# In[13]:
+
+def first(self):
+    if self.mKey == None:
+        raise KeyError
+    if self.mLeft.mKey == None:
+        return self.mKey
+    return self.mLeft.first()
+
+Set.first = first
+
+# The method $t.\texttt{pop_last}()$ take an AVL tree $t$ and removes and returns the largest key that is present in $t$.  It is specified as follows:
+#   - $\texttt{Nil}.\texttt{pop_last}() = \Omega$
+#   - $\texttt{Node}(k, l, \texttt{Nil}).\texttt{pop_last}() = \langle k, l\rangle$
+#   - $r \not=\texttt{Nil} \wedge \langle k',r'\rangle := r.\texttt{pop_last}() \rightarrow
+#      \texttt{Node}(k, l, r).\texttt{pop_last}() = \langle k', \texttt{Node}(k, l, r')\rangle$
+
+# In[13]:
+
+def pop_last(self):
+    if self.mKey == None:
+        raise KeyError
+    if self.mRight.mKey == None:
+        key = self.mKey
+        self._update(self.mLeft)
+        return key
+    return self.mRight.pop_last()
+
+Set.pop_last = pop_last
+
+# The method $t.\texttt{last}()$ take an AVL tree $t$ and returns the largest key that is present in $t$.  It is specified as follows:
+#   - $\texttt{Nil}.\texttt{last}() = \Omega$
+#   - $\texttt{Node}(k, l, \texttt{Nil}).\texttt{last}() = k$
+#   - $r \not=\texttt{Nil} \rightarrow := \texttt{Node}(k, l, r).\texttt{pop_last}() = r.\texttt{last}()$
+
+# In[13]:
+
+def last(self):
+    if self.mKey == None:
+        raise KeyError
+    if self.mRight.mKey == None:
+        return self.mKey
+    return self.mRight.last()
+
+Set.last = last

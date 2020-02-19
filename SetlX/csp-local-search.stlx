@@ -15,8 +15,7 @@ varsTerm := procedure(f) {
     }
 };
 
-// Given a partial assignment of variable, this procedure tries to complete
-// this assignment so that the given CSP is solved.
+// This procedure solves the given CSP using local search.
 solve := procedure(CSP) {
     [Vars, Values, Constraints] := CSP;
     Annotated := { [f, collectVars(f)] : f in Constraints };
