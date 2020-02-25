@@ -2,7 +2,7 @@
 One major breakthrough for the field of artificial intelligence happened in 1997 when the chess-playing computer
 \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue} was able to beat the World Chess
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
-While \blue{Deep Blue} was based on special hardware, according to the
+While \blue{Deep Blue} \index{deep blue} was based on special hardware, according to the
 \href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 8th
 of February 2020, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
 on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3495.  
@@ -11,18 +11,19 @@ To compare, according to the
 World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
 just 2862.  Hence, he wouldn't stand a chance to win a game against Stockfish.  In 2017, at the 
 \href{https://en.wikipedia.org/wiki/Future_of_Go_Summit}{Future of Go Summit},  the computer program
-\href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} was able to beat
-\href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie}, who was at that time considered to be the best human
+\href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} \index{AlphaGo} was able to beat
+\href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie}, \index{Ke Jie} 
+who was at that time considered to be the best human
 \href{https://en.wikipedia.org/wiki/Go_(game)}{Go} player in the world. 
 Besides Go and chess, there are many other games where today the performance of a computer exceeds the
 performance of human players.  To name just one more example, in 2019 the program
-\href{https://en.wikipedia.org/wiki/Pluribus_(poker_bot)}{Pluribus} was able to  
+\href{https://en.wikipedia.org/wiki/Pluribus_(poker_bot)}{Pluribus} \index{Pluribus} was able to  
 \href{https://arstechnica.com/science/2019/07/facebook-ai-pluribus-defeats-top-poker-professionals-in-6-player-texas-holdem/}{beat}
 fifteen professional poker players in six-player no-limit 
 \href{https://en.wikipedia.org/wiki/Texas_hold_%27em}{Texas Hold'em poker} resoundingly.
 
 In this chapter we want to investigate how a computer can play a game.  To this end we define a
-\blue{game} $\mathcal{G}$ as a six-tuple
+\blue{game} $\mathcal{G}$ as a six-tuple \index{game}
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{G} = \langle \texttt{States}, s_0, \texttt{Players}, \texttt{nextStates}, \texttt{finished},\texttt{utility} \rangle$
@@ -33,7 +34,7 @@ where the components are interpreted as follows:
 \item $s_0 \in \texttt{States}$ is the \blue{start state}.
 \item $\texttt{Players}$ is  the list of \blue{players} of the game.  The first element in \texttt{Players} is
       the player to start the game and after that the players take turns.  As we only consider \blue{two person}
-      games, we assume that \texttt{Players} is a list of length two.
+      games, we assume that \texttt{Players} is a list of length two.  \index{two person games}
 \item $\texttt{nextStates}$ is a function that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the set of
       states that can be reached if the player $p$ has to make a move in the state $s$.  Hence, the signature of
       $\texttt{nextStates}$ is given as follows:
@@ -49,7 +50,7 @@ where the components are interpreted as follows:
       Here, $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} := \{ \texttt{true}, \texttt{false} \}$.
   
       Using the function $\texttt{finished}$, we define the set $\texttt{TerminalStates}$ as the set of those
-      states such that the game has finished,  i.e.~we define
+      states such that the game has finished,  i.e.~we define \index{terminal state}
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{TerminalStates} := \{ s \in \texttt{States} \mid \texttt{finished}(s) \}$.
@@ -62,7 +63,7 @@ where the components are interpreted as follows:
       \hspace*{1.3cm}
       $\texttt{utility}: \texttt{TerminalStates} \times \texttt{Players} \rightarrow \{ -1, 0, +1\}$.
 \end{enumerate}
-In this chapter we will only consider so called \blue{two person, zero sum games}.  
+In this chapter we will only consider so called \blue{two person, zero sum games}.  \index{zero sum game}
 This means that the list $\texttt{Players}$ has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -74,7 +75,7 @@ then the game is called a \blue{zero sum game} iff we have
 $\forall s \in \texttt{TerminalStates}:\texttt{utility}(s, \texttt{A}) + \texttt{utility}(s, \texttt{B}) = 0$,
 \\[0.2cm]
 i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\texttt{B}$ and vice versa.
-Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{Go} and 
+Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{go} and 
 \href{https://en.wikipedia.org/wiki/Chess}{chess} are two person, zero sum games.
 We proceed to discuss an example.
 
@@ -84,7 +85,8 @@ $3 \times 3$.  On every turn, one player puts an ``\texttt{X}'' on one of the fr
 the other player puts an ``$\texttt{O}$'' onto a free square when it is his turn.  If the first player manages
 to place three \texttt{X}s in a row, column, or diagonal, she has won the game.  Similarly, if the second
 player manages to put three \texttt{O}s in a row, column, or diagonal, this player is the winner.  Otherwise,
-the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of tic-tac-toe.
+the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementation of tic-tac-toe.
+\index{tic-tac-toe}
 
 
 \begin{figure}[!ht]
@@ -95,126 +97,135 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
                 ]
-    players    := [] |-> [ "X", "O" ];  
-    startState := [] |-> [ [ " " : col in [1..3]] : row in [1..3] ];
-    nextStates := procedure(State, player) {
-        Empty  := empty(State);
-        Result := {};
-        for ([row, col] in Empty) {
-            NextState           := State;
-            NextState[row][col] := player;
-            Result              += { NextState };
-        }
-        return Result;
-    };
-    empty := S |-> {[row,col] : row in [1..3], col in [1..3] | S[row][col] == " "};
-    utility := procedure(State, player) {
-        for (Pairs in all_lines()) {
-            Marks := { State[row][col] : [row, col] in Pairs };
-            if (#Marks == 1 && Marks != { " " }) {
-                if (Marks == { player }) { return  1; } else { return -1; }
-            }
-        }
-        if (forall(row in [1..3], col in [1..3] | State[row][col] != " ")) {
-            return 0;   
-        }
-    };
-    all_lines := closure() {
-        Lines := { { [row, col] : col in [1..3] } : row in [1..3] };
-        Lines += { { [row, col] : row in [1..3] } : col in [1..3] };
-        Lines += { { [idx, idx] : idx in [1..3] } };
-        Lines += { { [1, 3], [2, 2], [3, 1] } };
-        return Lines;
-    };
-    finished := procedure(State) {
-        return utility(State, "X") != om;
-    };
+    Players  = [ "X", "O" ]
+    Start    = tuple( tuple(" " for col in range(3)) for row in range(3))
+    to_list  = lambda State: [list(row) for row in State]
+    to_tuple = lambda State: tuple(tuple(row) for row in State)
+    
+    def empty(S):
+        return [ (row, col) for row in range(3)
+                            for col in range(3)
+                            if  S[row][col] == ' ' 
+               ]
+    
+    def next_states(State, player):
+        Empty  = empty(State)
+        Result = []
+        for row, col in Empty:
+            NextState           = to_list(State)
+            NextState[row][col] = player
+            Result.append( to_tuple(NextState) )
+        return Result
+    
+    All_Lines = [ [ (row, col) for col in range(3) ] for row in range(3) ] \
+              + [ [ (row, col) for row in range(3) ] for col in range(3) ] \
+              + [ [ (idx,   idx) for idx in range(3) ] ]                   \
+              + [ [ (idx, 2-idx) for idx in range(3) ] ]
+    
+    def utility(State, player):
+        for Pairs in All_Lines:
+            Marks = { State[row][col] for row, col in Pairs }
+            if len(Marks) == 1 and  Marks != { ' ' }: 
+                if Marks == { player }:
+                    return  1
+                else:
+                    return -1
+        for row in range(3):
+            for col in range(3):
+                if State[row][col] == ' ':
+                    return None   
+        return 0            
+    
+    finished = lambda State: utility(State, "X") != None
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{A \textsc{SetlX} description of tic-tac-toe.}
-\label{fig:ttt.stlx}
+\caption{A \textsl{Python} implementation of tic-tac-toe.}
+\label{fig:Tic-Tac-Toe.ipynb}
 \end{figure}
  
 
 \begin{enumerate}
-\item The function $\texttt{players}$ returns the list $\texttt{Players}$.  Traditionally, the players in
-      tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.  As this function does not take any arguments, 
-      you might well ask why we use a function to define the list of players.  The reason is that
-      \textsc{SetlX} does  not provide global variables.  Therefore, the definition
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{players := [ "X", "O" ];}
-      \\[0.2cm]
-      would not work, as the variable \texttt{players} would be undefined inside of the function
-      \texttt{play\_game} where it is needed later.   This function is defined in Figure \ref{fig:game.stlx}
-      and will be discussed in Section \ref{sec:minimax}.
-\item The function $\texttt{startState}$ returns the start state, which is an empty board.
-      States are represented as list of lists.  The entries in these lists are the characters 
+\item The variable $\texttt{Players}$ stores the list of players.  Traditionally, the players in
+      tic-tac-toe are called ``\texttt{X}'' and ``\texttt{O}''.  
+\item The variable $\texttt{Start}$ stores the start state, which is an empty board.
+      States are represented as tuples of tuples.  If $S$ is a state and $r,c \in \{0,1,2\}$,
+      then $S[r][c]$ is the mark in row $r$ and column $c$.
+      To represent states we have to use immutable data types, i.e.~tuples instead of lists, as we need to
+      store states in sets later.  The entries in the inner tuples are the characters 
       ``\texttt{X}'', ``\texttt{O}'', and the blank character ``\texttt{ }''.
-      As the  $\texttt{StartState}$ is the empty board, it is represented as a list of three lists
+      As the state  $\texttt{Start}$ is the empty board, it is represented as a tuple of three tuples
       containing three blanks each:
       \begin{Verbatim}
-      [ [" ", " ", " "], 
-        [" ", " ", " "], 
-        [" ", " ", " "]
-      ].     
+      ( (' ', ' ', ' '), 
+        (' ', ' ', ' '), 
+        (' ', ' ', ' ')
+      ).     
       \end{Verbatim}
-\item The function $\texttt{nextStates}$ takes a $\texttt{State}$ and a $\texttt{player}$ and computes the set
+\item As we need to manipulate States, we need a function that converts them into lists of lists.
+      This function is called \texttt{to\_list}.
+\item We also need to convert the lists of lists back into tuples of tuples.  This is achieved by the function
+      \texttt{to\_tuple}.
+\item Given a state $S$ the function $\mathtt{empty}(S)$ returns the list of pairs 
+      $(\mathtt{row}, \mathtt{col})$ such that $S[\mathtt{row}][\mathtt{col}]$ is a blank character.  These pairs are
+      the coordinates of the fields on the board $S$ that are not yet occupied by either an \texttt{"X"} or an
+      \texttt{"O"}.   
+\item The function $\texttt{next\_states}$ takes a $\texttt{State}$ and a $\texttt{player}$ and computes the list
       of states that can be reached from $\texttt{State}$ if $\texttt{player}$ is to move next.
       To this end, it first computes the set of \blue{empty} positions, i.e. those positions that have not yet
       been marked by either player. Every position is represented as pair of the
-      form $[\texttt{row}, \texttt{col}]$ where $\texttt{row}$ specifies the row and $\texttt{col}$ specifies
-      the column of the position.  The position $[\texttt{row}, \texttt{col}]$ is \blue{empty} in
+      form $(\texttt{row}, \texttt{col})$ where $\texttt{row}$ specifies the row and $\texttt{col}$ specifies
+      the column of the position.  The position $(\texttt{row}, \texttt{col})$ is \blue{empty} in
       $\texttt{State}$ iff
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{State}[\texttt{row}][\texttt{col}] = \texttt{\symbol{34}\;\;\symbol{34}}$.
       \\[0.2cm]
       The computation of the empty position has been sourced out to the function $\texttt{empty}$.
-      The function $\texttt{nextStates}$ then iterates over the set of empty positions. For every 
-      empty position $[\texttt{row}, \texttt{col}]$ it creates a new state $\texttt{NextState}$ that results
+      The function $\texttt{nextStates}$ then iterates over these empty positions. For every 
+      empty position $(\texttt{row}, \texttt{col})$ it creates a new state $\texttt{NextState}$ that results
       from the current $\texttt{State}$ by putting the mark of $\texttt{player}$ in this position.  
-      The resulting states are collected in the set $\texttt{Result}$ and returned.
-\item The function $\texttt{empty}$ takes a state $\texttt{S}$ and returns the set of positions that are empty
-      in this state.
-\item The function $\texttt{utility}$ takes a $\texttt{State}$ and a $\texttt{player}$.  If the game is 
+      The resulting states are collected in the list $\texttt{Result}$ and returned.
+
+      Note that we had to turn the \texttt{State} into a list of list in order to manipulate it.
+      The manipulated State is then cast into a tuple of tuples.
+\item The function $\texttt{utility}$ takes a $\texttt{State}$ and a $\texttt{player}$ as arguments.  If the game is 
       finished in the given $\texttt{State}$, it returns the value that this $\texttt{State}$ has for the
-      current $\texttt{player}$.  If the outcome of the game is not yet decided, the undefined value $\Omega$
+      current $\texttt{player}$.  If the outcome of the game is not yet decided, the value $\mathtt{None}$
       is returned instead. 
  
       In order to achieve its goal, the procedure first computes the set of all sets of coordinate pairs that 
       either specify a horizontal, vertical, or diagonal line on a $3 \times 3$ tic-tac-toe board.  Concretely,
-      the function \texttt{all\_lines} returns the following set:
+      the variable \texttt{All\_Lines} has the following value:
       \\[0.2cm]
       \hspace*{1.3cm}
       $
       \begin{array}{ll}
-      \Bigl\{ & \bigl\{[1, 1], [1, 2], [1, 3]\bigr\}, \;
-                \bigl\{[2, 1], [2, 2], [2, 3]\bigr\}, \;
-                \bigl\{[3, 1], [3, 2], [3, 3]\bigr\},   \\
-              & \bigl\{[1, 1], [2, 1], [3, 1]\bigr\}, \;
-                \bigl\{[1, 2], [2, 2], [3, 2]\bigr\}, \;
-                \bigl\{[1, 3], [2, 3], [3, 3]\bigr\},   \\
-              & \bigl\{[1, 1], [2, 2], [3, 3]\bigr\}, \;
-                \bigl\{[3, 1], [2, 2], [1, 3]\bigr\}    \\
-      \Bigr\}
+       \Bigl[ & \bigl[(1, 1), (1, 2), (1, 3)\bigr], \;
+                \bigl[(2, 1), (2, 2), (2, 3)\bigr], \;
+                \bigl[(3, 1), (3, 2), (3, 3)\bigr],   \\[0.1cm]
+              & \bigl[(1, 1), (2, 1), (3, 1)\bigr], \;
+                \bigl[(1, 2), (2, 2), (3, 2)\bigr], \;
+                \bigl[(1, 3), (2, 3), (3, 3)\bigr],   \\[0.1cm]
+              & \bigl[(1, 1), (2, 2), (3, 3)\bigr], \;
+                \bigl[(3, 1), (2, 2), (1, 3)\bigr]    \\
+       \Bigr]
       \end{array}
       $
       \\[0.2cm]
       The first line in this expression gives the set of pairs defining the rows, the second line defines 
-      the columns, and the last line yields the diagonals.  Given a state $\texttt{State}$ and a set
+      the columns, and the last line yields the tow diagonals.  Given a state $\texttt{State}$ and a set
       $\texttt{Pairs}$, the set 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Marks := \{ State[row][col] : [row, col] in Pairs \}}
+      \texttt{Marks = \{ State[row][col] : [row, col] in Pairs \}}
       \\[0.2cm]
       is the set of all marks in the line specified by $\texttt{Pairs}$.  For example, if 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Pairs := \{ [1, 1], [2, 2], [3, 3] \}},
+      \texttt{Pairs = \{ [1, 1], [2, 2], [3, 3] \}},
       \\[0.2cm]
       then $\texttt{Marks}$ is the set of marks on the falling diagonal.
       The game is decided if all entries in a set of the form 
@@ -222,61 +233,39 @@ the game is drawn.  \myFig{ttt.stlx} shows a \textsc{SetlX} implementation of ti
       \hspace*{1.3cm}
       \texttt{Marks := \{ State[row][col] : [row, col] in Pairs \}}
       \\[0.2cm]
-      where \texttt{Pairs} is a set from \texttt{all\_lines} either have the value
+      where \texttt{Pairs} is a list from \texttt{all\_lines} either have the value
       ``$\texttt{X}$'' or the value ``$\texttt{O}$''.  In this case, the set \texttt{Marks} has exactly one
       element which is different from the blank.  If this element is the same as $\texttt{player}$, then the
       game is \blue{won} by $\texttt{player}$, otherwise it must be the mark of his opponent and hence the game
       is \blue{lost} for him. 
 
-      Finally, if there are no more empty squares left, then the game is a \blue{draw}.
-\item The auxiliary procedure $\texttt{all\_lines}$ computes the sets of coordinate pairs that 
-      either specify a horizontal, vertical, or diagonal line.
-      \begin{enumerate}
-      \item For any $\mathrm{row} \in \{1,2,3\}$ the set 
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            \texttt{\{ [row, col] : col in [1..3]\}} 
-            \\[0.2cm]
-            forms a horizontal line. 
-      \item Likewise, for any $\mathrm{col} \in \{1,2,3\}$ the set 
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            \texttt{\{ [row, col] : row in [1..3]\}} 
-            \\[0.2cm]
-            forms a vertical line. 
-      \item Given that the top row is indexed with 1, and the bottom row is row number 3, the set
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            \texttt{\{ [idx, idx] : idx in [1..3] \}};
-            \\[0.2cm]
-            is the falling diagonal.
-      \item Finally, the set
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            \texttt{\{ [3, 1], [2, 2], [1, 3] \}}
-            \\[0.2cm]
-            is the rising diagonal.  
-      \end{enumerate}
-\item The procedure $\texttt{finished}$ takes a $\texttt{State}$ and checks whether the game is finished.
+      If there are any empty squares on the board but the game has not yet been decided,
+      then the function returns \texttt{None}.  Finally, if there are no more empty squares left, the game is a
+      \blue{draw}. 
+\item The function $\texttt{finished}$ takes a $\texttt{State}$ and checks whether the game is finished.
       To this end it computes the $\texttt{utility}$ of the state for the player ``$\texttt{X}$''.  
-      If this $\texttt{utility}$ is different from $\Omega$, the game is finished.  Note that it does make no
+      If this $\texttt{utility}$ is different from $\mathtt{None}$, then game is finished.  Note that it does make no
       difference whether we take the utility of the state for the player ``$\texttt{X}$'' or for the player
       ``$\texttt{O}$'': If the game is finished for  ``$\texttt{X}$'', then it is also finished for ``$\texttt{O}$'' and vice versa.
 \end{enumerate}
 
 \section{The Minimax Algorithm \label{sec:minimax}}
+\index{minimax algorithm}
 Having defined the notion of a game, our next task is to come up with an algorithm that can play a game.  The
 algorithm that is easiest to explain is the \href{https://en.wikipedia.org/wiki/Minimax}{minimax algorithm}.  This
-algorithm is based on the notion of the \blue{value} of a state.  To this end, we define a function
+algorithm is based on the notion of the \blue{value} of a state.  Conceptually, the notion of the \emph{value}
+of a state is an extension of the notion of the \emph{utility}.  While the utility is only defined for terminal
+states, the value is defined for all states.  Formally, we define a function
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{value}: \texttt{States} \times \texttt{Players} \rightarrow \{-1, 0, +1\}$
 \\[0.2cm]
 that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the value of $s$ provided both the player $p$ and his
-opponent play \blue{optimally}.  The easiest way to define this function is via recursion.  The base case is simple:
+opponent play \blue{optimally}.  The easiest way to define this function is via recursion.  As the
+\texttt{value} function is an extension of the \texttt{utility} function, The base case is as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{finished}(s) \rightarrow \texttt{value}(s, p) = \texttt{utility}(s, p)$.
+$\texttt{finished}(s) \rightarrow \texttt{value}(s, p) = \texttt{utility}(s, p)$. \hspace*{\fill} (1)
 \\[0.2cm]
 If the game is not yet finished, assume that player $o$ is the opponent of player $p$.  Then we define
 \\[0.2cm]
@@ -285,17 +274,17 @@ $\neg \texttt{finished}(s) \rightarrow
  \texttt{value}(s, p) = \max\bigl(\bigl\{
                      -\texttt{value}(n, o) \mid n \in \texttt{nextStates}(s, p)
                      \bigr\}\bigr)
-$.
+$.  \hspace*{\fill} (2)
 \\[0.2cm]
 The reason is that, if the game is not finished yet, the player $p$ has to evaluate all possible moves.  
 From these, the player $p$ will choose the move that maximizes the value of the game for herself.  In order to
 do so, the player $p$ computes the set 
 $\texttt{nextStates}(s, p)$ of all states that can be reached from the state $s$ in any one move of the player $p$.
-Now if $n$ is a state that results from player $p$ making some move, then it is the turn of the other player
+Now if $n$ is a state that results from player $p$ making some move, then in state $n$ it is the turn of the other player
 $o$ to make a move.  Hence, in order to evaluate the state $n$, we have to call the function $\texttt{value}$
 recursively as $\texttt{value}(n,o)$.   Since the gains of the other player $o$ are the losses of the player
 $p$, we have to take the negative of  $\texttt{value}(n, o)$.
-\myFig{game.stlx} shows an implementation of this strategy.
+\myFig{Minimax.ipynb} shows an implementation of this strategy.
 
 
 \begin{figure}[!ht]
@@ -309,57 +298,77 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    other := p |-> ([o : o in players() | o != p])[1];
-    value := cachedProcedure(State, player) {  // dynamic programming
-        if (finished(State)) {
-            return utility(State, player);
-        }
-        return max({ -value(ns, other(player)): ns in nextStates(State,player) });
-    };
-    best_move := procedure(State, player) {
-        NS      := nextStates(State, player);
-        bestVal := value(State, player);
-        return [bestVal, rnd({ ns : ns in NS | -value(ns, other(player)) == bestVal })];
-    };
-    play_game := procedure() {
-        State := startState();
-        print(stateToString(State));
-        while (true) {
-            firstPlayer  := players()[1];
-            [val, State] := best_move(State, firstPlayer);
-            print("For me, the game has the value $val$. My move:");
-            print(stateToString(State));
-            if (finished(State)) { 
-                final_msg(State); 
-                break;
-            }
-            State := getMove(State);
-            print(stateToString(State));
-            if (finished(State)) { 
-                final_msg(State);
-                break;
-            }
-        }
-    };
+    other = lambda p: [o for o in Players if o != p][0]
+  
+    Cache = {}
+
+    def memoize(f):
+        global Cache
+
+        def f_memoized(*args):
+            if args in Cache:
+                return Cache[args]
+            result = f(*args)
+            Cache[args] = result
+            return result
+
+        return f_memoized
+  
+    @memoize    
+    def value(State, player):
+        if finished(State): return utility(State, player)
+        return max([-value(ns, other(player)) for ns in next_states(State, player)])
+    
+    def best_move(State, player):
+        NS        = next_states(State, player)
+        bestVal   = value(State, player)
+        BestMoves = [s for s in NS if -value(s, other(player)) == bestVal]
+        BestState = random.choice(BestMoves)
+        return bestVal, BestState
+
+    def play_game(canvas):
+        State = Start
+        while (True):
+            firstPlayer = Players[0]
+            val, State  = best_move(State, firstPlayer);
+            draw(State, canvas)
+            if finished(State):
+                final_msg(State)
+                break
+            State = get_move(State)
+            draw(State, canvas)
+            if finished(State):
+                final_msg(State)
+                break    
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{The Minimax algorithm.}
-\label{fig:game.stlx}
+\label{fig:Minimax.ipynb}
 \end{figure}
 \begin{enumerate}
 \item Given a player $\texttt{p}$, the function $\texttt{other}$ computes the other player,
-      which is the first element of the list of all players that are different from $p$.
-      This works because we assume that there are just two players.  Therefore the list of all players
-      different from the player $\texttt{p}$ contains exactly one element.
-\item The implementation of the function $\texttt{value}$ follows the reasoning outlined above.
-      However, note that we have implemented the function $\texttt{value}$ as a $\texttt{cachedProcedure}$, i.e.~as a
-      procedure that \blue{memorizes} its results.  Hence, when the function $\texttt{value}$ is called a
+      which is the first element of the list $\texttt{Players}$ that is different from $p$.
+      This works because we assume that there are just two players and these players are the two elements of
+      the list $\texttt{Players}$ that has been defined in the notebook defining the game.
+\item $\texttt{Cache}$ is a dictionary that is initially empty.  This dictionary is used as a memory cache by 
+      the function $\texttt{memoize}$.
+\item The function $\mathtt{memoize}$ is a second order function that takes a function $f$ as its argument.
+      It creates a \blue{memoized} version of the function $f$:  This memoized version of $f$, which is called
+      $\mathtt{f\_memoized}$, first tries to retrieve the value of $f$ from the dictionary $\texttt{Cache}$.
+      If this is successful, the function returns the cached value.  Otherwise, the function $f$ is called
+      to compute the result.  This result is then stored in the $\mathtt{Cache}$ before it is returned.
+      The function $\mathtt{memoize}$ returns the memoized version of $f$.
+      \index{memoization}
+\item The implementation of the function $\texttt{value}$ implements the formulas $(1)$ and $(2)$ that were
+      used to define the function $\mathtt{value}$ abstractly.
+      However, note that we have preceded the definition of the function $\texttt{value}$ with the
+      \blue{decorator} \texttt{@memoize}, which turns the function \texttt{value} into a memoized function.
+      Hence, when the function $\texttt{value}$ is called a
       second time with the same pair of arguments, it does not recompute the value but rather the value is
-      looked up in a so called \blue{cache} that stores all previous results computed by the function $\texttt{value}$.  To
+      looked up from the variable $\texttt{Cache}$ that stores all previous results computed by the function $\texttt{value}$.  To
       understand why this is important, 
       let us consider how many states would be explored in the case of tic-tac-toe if we would not use the idea
-      of memorizing previous results, a technique which is know as 
-      \href{https://en.wikipedia.org/wiki/Memoization}{memoization}.  In this case, we have 9 moves for player
+      of memorizing previous results.  In this case, we have 9 moves for player
       \texttt{X} from the start state, then 8 moves for player \texttt{O}, then again 7 moves for
       player \texttt{O}.  If we disregard the fact that some games are decided after fewer than 9 moves,
       the function $\texttt{value}$ needs to consider 
@@ -380,13 +389,15 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
 
       As we have to evaluate not just terminal states but all states, the saving is actually a bit smaller that
       2880.  The next exercise explores this in more detail.
-\item The function $\texttt{best\_move}$ takes a $\texttt{State}$ and a $\texttt{player}$ and returns a pair $\pair(v,s)$
+\item The function $\texttt{best\_move}$ takes a $\texttt{State}$ and a $\texttt{player}$ and returns a pair $(v,s)$
       where $s$ is a state that is optimal for the $\texttt{player}$ and such that $s$ can be reached in one step from
       $\texttt{State}$.  Furthermore, $v$ is the value of this state.
       \begin{enumerate}[(a)]
       \item To this end, it first computes the set $\texttt{NS}$ of all states that can be reached 
             from the given $\texttt{State}$ in one step if $\texttt{player}$ is to move next.
       \item $\texttt{bestValue}$ is the best value that $\texttt{player}$ can achieve in the given $\texttt{State}$.
+      \item $\texttt{BestMoves}$ is the set of states that  $\texttt{player}$ can move to and that are optimal
+            for her.
       \item The function returns randomly one of those states $\texttt{ns} \in \texttt{NS}$ such that 
             the value of $\texttt{ns}$ is optimal, i.e.~is equal to $\texttt{bestValue}$.
             We use randomization here since we want to have more interesting games.  If we would always choose
@@ -398,15 +409,14 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
       \item Initially, $\texttt{State}$ is the $\texttt{startState}$.
       \item As long as the game is not finished, the procedure keeps running.
       \item We assume that the computer goes first and therefore define  \texttt{firstPlayer} as the first
-            element of the list $\texttt{players}()$.  Next, the function $\texttt{best\_move}$ is used to
+            element of the list $\texttt{Players}$.  Next, the function $\texttt{best\_move}$ is used to
             compute the state that results from the best move of $\texttt{firstPlayer}$.
+            This resulting state is then shown.
       \item After that, it is checked whether the game is finished.
       \item If the game is not  yet finished, the user is asked to make its move via the function
-            $\texttt{getMove}$ that takes a $\texttt{State}$, displays it, and asks the user to enter a move.
+            $\texttt{get\_move}$ that asks the user to enter a move.
             The state resulting from this move is then returned and displayed.
 
-            Note that we do not check the legality of the move entered by the user.  This feature can be used
-            for exploration and cheating.
       \item Next, we have to check whether the game is finished after the  move of the user has been executed.
       \item The \texttt{while}-loop keeps iterating until the game is finished.
             We do not have to put a test into the condition of this \texttt{while}-loop as we call the function
@@ -443,12 +453,12 @@ if he has more rows, columns, or diagonals of three \texttt{O}s than the player 
 or diagonals of three \texttt{X}s.  Otherwise, the game is a draw. 
 \begin{enumerate}[(a)]
 \item Derive a formula to compute the size of the game tree of simplified tic-tac-toe.
-\item Write a short program to evaluate the formula derived in part (c) of this exercise.
+\item Write a short program to evaluate the formula derived in part (a) of this exercise.
 \item Derive a formula that gives the number of all states of simplified tic-tac-toe.  
 
       \textbf{Notice} that this question does not ask for the number of all terminal states but rather asks for
       all states. 
-\item Write a short program to evaluate the formula derived in part (a) of this exercise.
+\item Write a short program to evaluate the formula derived in part (c) of this exercise.
 \end{enumerate}
 
 \section{\href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-Pruning}}
