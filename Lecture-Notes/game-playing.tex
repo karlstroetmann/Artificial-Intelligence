@@ -91,15 +91,15 @@ the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementa
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
     Players  = [ "X", "O" ]
     Start    = tuple( tuple(" " for col in range(3)) for row in range(3))
     to_list  = lambda State: [list(row) for row in State]
@@ -140,7 +140,7 @@ the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementa
         return 0            
     
     finished = lambda State: utility(State, "X") != None
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{A \textsl{Python} implementation of tic-tac-toe.}
 \label{fig:Tic-Tac-Toe.ipynb}
@@ -289,15 +289,15 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
     other = lambda p: [o for o in Players if o != p][0]
   
     Cache = {}
@@ -340,7 +340,7 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
             if finished(State):
                 final_msg(State)
                 break    
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The Minimax algorithm.}
 \label{fig:Minimax.ipynb}
