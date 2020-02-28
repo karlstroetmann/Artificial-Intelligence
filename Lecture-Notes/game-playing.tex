@@ -94,7 +94,7 @@ the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementa
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -141,7 +141,7 @@ the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementa
     
     finished = lambda State: utility(State, "X") != None
 \end{minted}
-\vspace*{-0.3cm}
+\vspace*{-1.0cm}
 \caption{A \textsl{Python} implementation of tic-tac-toe.}
 \label{fig:Tic-Tac-Toe.ipynb}
 \end{figure}
@@ -292,7 +292,7 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -341,7 +341,7 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
                 final_msg(State)
                 break    
 \end{minted}
-\vspace*{-0.3cm}
+\vspace*{-1.0cm}
 \caption{The Minimax algorithm.}
 \label{fig:Minimax.ipynb}
 \end{figure}
@@ -489,7 +489,7 @@ related by the following requirements:
 \end{enumerate}
 Therefore, $\texttt{alphaBeta}(\texttt{State}, \texttt{player})$  is only an \blue{approximation} of
 $\texttt{value}(\texttt{State}, \texttt{player})$.  However, it turns out that this approximation is all that
-is needed.  \myFig{game-alpha-beta.stlx} shows an implementation of the function $\texttt{alphaBeta}$ that
+is needed.  \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta} shows an implementation of the function $\texttt{alphaBeta}$ that
 satisfies the specification given above.  Once the function $\texttt{alphaBeta}$ is implemented, the function
 $\texttt{value}$ can then be computed as 
 \\[0.2cm]
@@ -503,7 +503,7 @@ specification of $\texttt{alphaBeta}$ guarantees that the equation
 $\texttt{value}(s,p) = \texttt{alphaBeta}(s,p,-1,+1)$
 \\[0.2cm]
 holds.  Since $\texttt{alphaBeta}$ is implemented as a recursive procedure, 
-the fact that the implementation of $\texttt{alphaBeta}$ shown in \myFig{game-alpha-beta.stlx} satisfies the
+the fact that the implementation of $\texttt{alphaBeta}$ shown in \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta} satisfies the
 specification given above can be established by computational induction.  A proof by computational induction
 can be found in an
 \href{https://pdfs.semanticscholar.org/dce2/6118156e5bc287bca2465a62e75af39c7e85.pdf}{article} by Donald
@@ -513,37 +513,34 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]
-    alphaBeta := cachedProcedure(State, player, alpha := -1, beta := 1) {
-        if (finished(State)) {
-            return utility(State, player);
-        }
-        val := alpha;
-        for (ns in nextStates(State, player)) {
-            val := max({ val, -alphaBeta(ns, other(player), -beta, -alpha) });
-            if (val >= beta) {
-                return val;
-            }
-            alpha := max({ val, alpha });
-        }
-        return val;
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    def alphaBeta(State, player, alpha, beta):
+        if finished(State):
+            return utility(State, player)
+        val = alpha
+        for ns in next_states(State, player):
+            val = max(val, -value(ns, other(player), -beta, -alpha))
+            if val >= beta:
+                return val
+            alpha = max(val, alpha)
+        return val
+\end{minted}
+\vspace*{-1.0cm}
 \caption{$\alpha$-$\beta$-Pruning.}
-\label{fig:game-alpha-beta.stlx}
+\label{fig:Alpha-Beta-Pruning.ipynb:alphaBeta}
 \end{figure}
 
 \noindent
-We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
+We proceed to discuss the implementation of the function $\texttt{alphaBeta}$, which is shown in
+\myFig{Alpha-Beta-Pruning.ipynb:alphaBeta}.
 \begin{enumerate}
 \item If $\texttt{State}$ is a terminal state, the function returns the $\texttt{utility}$ of the given
       $\texttt{State}$ with respect to $\texttt{player}$.
@@ -558,11 +555,16 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
       \\[0.2cm]
       instead of returning the true value of the given $\texttt{State}$, the function
       $\texttt{alphaBeta}(\texttt{State},\texttt{player},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
-\item Next, we iterate over all successor states $\texttt{ns} \in \texttt{nextStates}(\texttt{State}, \texttt{player})$.
+\item Next, we iterate over all successor states $\texttt{ns} \in \texttt{next\_states}(\texttt{State}, \texttt{player})$.
 \item We have to recursively evaluate the states $\texttt{ns}$ with respect to the opponent  $\texttt{other}(\texttt{player})$.
       Since the value of a state for the opponent is the negative of the value for
       $\texttt{player}$, we have to exchange the roles of $\alpha$ and $\beta$ and prefix them with a negative
-      sign.
+      sign.  Note that in the recursive call we do not call the function $\mathtt{alphaBeta}$ directly, but
+      rather we call the function $\mathtt{value}$.  This function is a wrapper for the function
+      $\mathtt{alphaBeta}$.  The purpose of this wrapper is to \blue{memoize} the function
+      $\mathtt{alphaBeta}$.  This is more complicated now due to the presence of the parameters $\alpha$ and $\beta$.
+      The details will be explained below when we discuss the function $\texttt{value}$ that is shown in Figure
+      \ref{fig:Alpha-Beta-Pruning.ipynb:value}.
 \item As the specification of $\texttt{alphaBeta}$ ask us to compute the value of $\texttt{State}$ only in
       those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
       value $\texttt{val}$ that is at least as big as $\beta$ we can \blue{stop any further evaluation} of the successor
@@ -575,6 +577,98 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$.
       This is the reason for assigning to $\texttt{alpha}$ the maximum of $\texttt{val}$ and $\texttt{alpha}$.
 \end{enumerate}
 
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
+    def value(State, player, alpha=-1, beta=1):
+        global Cache
+        if State in Cache:
+            val, a, b = Cache[State]
+            if a <= alpha and beta <= b:
+                return val
+            else:
+                alpha = min(alpha, a)
+                beta  = max(beta , b)
+                val   = alphaBeta(State, player, alpha, beta)
+                Cache[State] = val, alpha, beta
+                return val
+        else:
+            val = alphaBeta(State, player, alpha, beta)
+            Cache[State] = val, alpha, beta
+            return val                
+\end{minted}
+\vspace*{-1.0cm}
+\caption{The function $\mathtt{value}$ that memoizes the function $\mathtt{alphaBeta}$.}
+\label{fig:Alpha-Beta-Pruning.ipynb:value}
+\end{figure}
+The function $\texttt{value}$ shown in Figure \ref{fig:Alpha-Beta-Pruning.ipynb:value} is merely a wrapper of
+the function $\mathtt{alphaBeta}$ that memoizes the results of $\mathtt{alphaBeta}$.  This is more complicated
+now because of the parameters $\alpha$ and $\beta$.  Of course, we could just use the decorator
+\texttt{\@memoize}.  The problem with this approach is that the function $\mathtt{alphaBeta}$ might be called
+with the same value for its parameters $\mathtt{State}$ and $\mathtt{player}$, but different values for the
+parameters $\mathtt{alpha}$ and $\mathtt{beta}$.  This would have two consequences:
+\begin{enumerate}
+\item The directory $\mathtt{Cache}$ would require much more memory as there are many more combinations of the parameters
+      of the function $\texttt{alphaBeta}$ then there had been combinations for the function $\mathtt{value}$ when
+      we had implemented the minimax algorithm.  
+\item The directory $\texttt{Cache}$ would become much less useful than in our implementation of the minimax
+      algorithm because we would have many cache misses.  
+\end{enumerate}
+The solution is to ensure that any $\mathtt{State}$ is stored at most once in $\mathtt{Cache}$.  But instead of storing just the
+value, we also have to store the values of the parameters $\mathtt{alpha}$ and $\mathtt{beta}$ that have been
+used to compute the value of the given $\mathtt{State}$, i.e.~we now have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{Cache}[\mathtt{State}] = (\mathtt{value}, \mathtt{alpha}, \mathtt{beta})$
+\\[0.2cm]
+if we have computed that
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}$.
+\\[0.2cm]
+It turns out that there is no need to store the argument $\mathtt{player}$ since in the games that we consider
+this information can always be computed from the $\mathtt{State}$.
+
+Now the crucial idea of our implementation the function $\mathtt{value}$ is the following:  If we ever want to
+compute 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta})$
+\\[0.2cm]
+and we have that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{Cache}[\mathtt{State}] = (\mathtt{value}, a, b)$,
+\\[0.2cm]
+then we have to check whether the interval $[\mathtt{alpha}, \mathtt{beta}]$ is \blue{more general} than the
+interval $[a,b]$, i.e.~we have to check that
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \leq \mathtt{alpha}$ \quad and \quad $\mathtt{\beta} \leq b$ 
+\\[0.2cm]
+holds.  In this case we know that indeed
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}$
+\\[0.2cm]
+and hence we can use the value stored in the $\mathtt{Cache}$.  If the inequations $a \leq \mathtt{alpha}$ and
+$\mathtt{\beta} \leq b$  are not satisfied, then we compute
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \min(\mathtt{alpha}, a), \max(\mathtt{beta}, b))$
+\\[0.2cm]
+and store the resulting value together with the new interval $[\min(\mathtt{alpha}, a), \max(\mathtt{beta},
+b)]$ in the $\mathtt{Cache}$. 
+This way, the value stored in the $\mathtt{Cache}$ is more general than the previous value stored and we can
+expect more cache hits later.
 
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
