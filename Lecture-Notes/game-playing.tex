@@ -676,54 +676,60 @@ $\texttt{States}$ is so big that even the fastest computer does not stand a chan
 completely.  For example, it is believed\footnote{
   For reference, compare the wikipedia article on the so-called
   \href{https://en.wikipedia.org/wiki/Shannon_number}{Shannon number}.
-  The Shannon number estimates that there are at most $10^{120}$ different states in chess.  However, if we
-  discount those states where any of the player has made an obviously ridiculous move, we are left with
-  approximately $10^{40}$ different states.
-} that in chess there are about $10^{40}$ different states that could occur in a reasonable game.
+  The Shannon number estimates that there are at least $10^{120}$ different plays in chess.  However, the
+  number of states is estimated to be about $10^{50}$. 
+}
+that in chess there are about $10^{50}$ different states that could occur in a game.
 Hence, it is impossible to explore all possible states in chess.  Instead, we have to limit
 the exploration in a way that is similar to the way professional players evaluate their game:  Usually, a
 player considers all variations of the game for, say, the next three moves.  After a given number of moves, the
 value of a position is estimated using an \blue{evaluation function}.  This function \blue{approximates} the true
 value of a given state via a heuristic.
 
-In order to implement this idea, we add a parameter $\texttt{limit}$ to the procedure $\texttt{value}$.  On
-every recursive invocation of the function $\texttt{value}$, the function $\texttt{limit}$ is decreased.  Once the limit reaches $0$,
-instead of invoking the function $\texttt{value}$ again recursively, we try to estimate the value of
+In order to implement this idea, we add a parameter $\texttt{limit}$ to the procedure $\texttt{alphaBeta}$ that
+was shown in the previous section.  On
+every recursive invocation of the function $\texttt{alphaBeta}$, the parameter $\texttt{limit}$ is decreased.
+Once the limit reaches $0$, instead of invoking the function $\texttt{alphaBeta}$ again recursively, we try to
+estimate the value of 
 the given $\texttt{State}$ using our \blue{evaluation function}.  This leads to the code shown in
-\myFig{game-limit.stlx}. 
+\myFig{Game.ipynb}. 
 
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
+\begin{minted}[ frame         = lines, 
                   framesep      = 0.3cm, 
                   firstnumber   = 1,
-                  labelposition = bottomline,
+                  bgcolor       = sepia,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
-                ]
-    value := cachedProcedure(State, player, limit, alpha := -1, beta := 1) {
-        if (finished(State)) {
-            return utility(State, player);
-        }
-        if (limit == 0) { return heuristic(State, player); }  
-        val := alpha;
-        for (ns in nextStates(State, player)) {
-            val := max({val, -value(ns, other(player), limit - 1, -beta, -alpha)});
-            if (val >= beta) {
-                return val;
-            }
-            alpha := max({val, alpha});
-        }
-        return val;
-    };
-\end{Verbatim}
-\vspace*{-0.3cm}
+                ]{python3}
+    def alphaBeta(State, player, limit, heuristic, alpha=-1, beta=1):
+        if finished(State):
+            return utility(State, player)
+        if limit == 0:
+            return heuristic(State, player)
+        val = alpha
+        for ns in next_states(State, player):
+            val_ns = value(ns, other(player), limit-1, heuristic, -beta, -alpha)
+            val    = max(val, -val_ns)
+            if val >= beta:
+                return val
+            alpha = max(val, alpha)
+        return val
+\end{minted}
+\vspace*{-1.0cm}
 \caption{Depth-limited $\alpha$-$\beta$-pruning.}
-\label{fig:game-limit.stlx}
+\label{fig:Game.ipynb}
 \end{figure}
+When we compare this Figure with \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta}, the only difference is in line 4
+where we test whether the $\mathtt{limit}$ is $0$.  In this case, instead of trying to recursively evaluate the
+states reachable from $\mathtt{State}$, we evaluate the $\mathtt{State}$ with our $\mathtt{heuristic}$ function.
+Later in the recursive calls of the function \texttt{value} we have to take care to decrease the parameter
+$\mathtt{limit}$.
+
 For a game like tic-tac-toe it is difficult to come up with a decent heuristic.  A very crude approach would be
 to define:
 \\[0.2cm]
@@ -767,50 +773,13 @@ Read up on the game \href{https://en.wikipedia.org/wiki/Connect_Four}{Connect Fo
 \hspace*{1.3cm}
 \href{http://www.connectfour.org/connect-4-online.php}{\texttt{http://www.connectfour.org/connect-4-online.php}}
 \\[0.2cm]
-Your task is to implement this game.  At the address
+Your task is to implement this game.  On my github page (\texttt{https://github.com/karlstroetmann}) at
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/connect-four-frame.stlx}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/connect-four-frame.stlx}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Connect-Four-Frame.ipynb}{Artificial-Intelligence/blob/master/Python/Connect-Four-Frame.ipynb} 
 \\[0.2cm]
-is a frame that can be used to solve this exercise.  In this frame, only the following procedures need to be
-implemented. 
-\begin{enumerate}
-\item The procedure $\texttt{nextStates}(s, p)$ is called with a state $s$ and a player $p$.
-      It is supposed to return the set of all states that can be reached from the given state $s$ if player $p$
-      is next to make a move.  In order to implement this function efficiently, you should make use of the
-      function $\texttt{find\_empty}$ that is described below.  
-\item The procedure $\texttt{find\_empty}(s, c)$ is called with a state $s$ and a column $c$.  It searches the
-      column $c$ of the board specified by $s$ bottom up for the first empty square.  Once an empty square is found, 
-      the corresponding row is returned.  If all the squares in the column $c$ are filled, then the number $7$
-      is returned instead.
-\item The procedure $\texttt{utility}(s, p)$ is called with a state $s$ and a player $p$.
-      It computes the utility that this state has for player $p$ if player $p$ is the next to move.
-      For efficiency reasons, the implementation of $\texttt{utility}$ should make use of the auxiliary functions
-      $\texttt{all\_lines}$ and $\texttt{last\_line\_filled}$ that are described below.
-\item The procedure $\texttt{all\_lines}()$ takes no arguments.  It is supposed to compute all sets of coordinates that form
-      a line of four consecutive squares.  For example, one such set would be the set
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\{ \pair(1,1), \pair(1,2), \pair(1,3), \pair(1,4) \}$.
-      \\[0.2cm]
-      This set would be the vertical line that starts at $\pair(1,1)$.  The horizontal line that starts at the
-      location  $\pair(1,1)$ is the set
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\{ \pair(1,1), \pair(2,1), \pair(3,1), \pair(4,1) \}$,
-      \\[0.2cm]
-      while the rising diagonal starting at $\pair(1,1)$ is represented by the set
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\{ \pair(1,1), \pair(2,2), \pair(3,3), \pair(4,4) \}$.
-      \\[0.2cm]
-      Note that the procedure $\texttt{all\_lines}$ should be implemented as a \texttt{cachedProcedure}.  This
-      way it is guaranteed that the necessary computation is only performed once.
-\item The procedure $\texttt{last\_line\_filled}(s)$ takes a state $s$.  It checks whether the game is drawn.
-      The game is drawn iff the board is completely filled.  This can be checked most efficiently by checking
-      the final row of the board.  If this row is completely filled, all other rows must have  been filled, too.
-\end{enumerate}
-Once you have a working implementation of \blue{Connect Four}, try to improve the strength of your program by
+is a frame  that can be used to solve this exercise.  
+Once you have a running implementation of \blue{Connect Four}, try to improve the strength of your program by
 adding a non-trivial heuristic to evaluate non-terminal states.  As an example of a non-trivial heuristic you
 can define a \blue{triple} as a set of three marks of either \texttt{X}s or \texttt{O}s in a row that is
 followed by a blank space.  The blank space could also be between the marks.  Now if there is a state $s$ that
@@ -818,9 +787,6 @@ has $a$ triples of \texttt{X}s and $b$ triples of \texttt{O}s and the game is no
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \texttt{value}(s, \texttt{X}, \texttt{limit}, \alpha, \beta) = \frac{a - b}{10}$ \quad if $\texttt{limit} = 0$.
-\\[0.2cm]
-In order to implement a heuristic of this kind you have to change line 5 in the implementation of the
-function \texttt{value} shown in Figure \ref{fig:game-limit.stlx} on page \pageref{fig:game-limit.stlx}.
 \eox
 
 %%% Local Variables:
