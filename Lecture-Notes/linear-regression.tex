@@ -104,7 +104,7 @@ derivatives have to be equal to $0$.
 Assume that we have been given a set of $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$  
 and that we have calculated the parameters $\vartheta_0$ and $\vartheta_1$ according to Equation
 \ref{eq:theta0} and Equation \ref{eq:theta1}.  Provided that not all $x_i$ have the same value, these
-formul\ae\ will return two numbers for $\vartheta_0$ and $\vartheta_1$ that define a linear model for
+formulae will return two numbers for $\vartheta_0$ and $\vartheta_1$ that define a linear model for
 $\mathbf{y}$ in terms of $\mathbf{x}$.  However, at the moment we still lack a number that tells us how good
 this linear model really is.  In order to judge the quality of the linear model given by 
 \\[0.2cm]
@@ -152,13 +152,12 @@ left if we use our linear model to predict the values of $\mathbf{y}$ given the 
   \mathtt{R}^2 := \frac{\mathtt{Var}(\mathbf{y}) - \mathtt{MSE}(\vartheta_0, \vartheta_1)}{\mathtt{Var}(\mathbf{y})} 
                 = 1 - \frac{\mathtt{MSE}(\vartheta_0, \vartheta_1)}{\mathtt{Var}(\mathbf{y})}.
 \end{equation}
-Here $\mathtt{MSE}$ is short for $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ where we have substituted the values
-from equation \ref{eq:theta0} and \ref{eq:theta1}.  The statistic $\mathtt{R}^2$ measures the quality of our
+The statistic $\mathtt{R}^2$ measures the quality of our
 model: If it is small, then our model does not explain the variation of the value of $\mathbf{y}$ when the value of $\mathbf{x}$
 changes.  On the other hand, if it is near to $100\%$, then our model does a good job in explaining the 
 variation of $\mathbf{y}$ when $\mathbf{x}$ changes.
 
-Since the formul\ae\ for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
+Since the formulae for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
 denominator $m-1$, this denominator can be cancelled when $\mathtt{R}^2$ is computed.  To this
 end we define the \blue{total sum of squares} $\mathtt{TSS}$ as
 \\[0.2cm]
@@ -194,7 +193,7 @@ determine the fuel consumption of cars.  \myFig{cars.csv} shows the head of the 
 which I have adapted from the file
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{http://www-bcf.usc.edu/~gareth/ISL/Auto.csv}{\texttt{http://www-bcf.usc.edu/\symbol{126}gareth/ISL/Auto.csv}}.
+\href{http://faculty.marshall.usc.edu/gareth-james/ISL/Auto.csv}{\texttt{http://faculty.marshall.usc.edu/gareth-james/ISL/Auto.csv}}.
 \\[0.2cm]
 \myFig{cars.csv} shows the column headers and the first ten data entries contained in this file.  
 Altogether, this file contains data 392 different car models.
@@ -228,7 +227,7 @@ Altogether, this file contains data 392 different car models.
 \end{figure}
 
 The file ``\texttt{cars.csv}'' is part of the data set accompanying the excellent book 
-\href{http://www-bcf.usc.edu/~gareth/ISL/index.html}{Introduction to Statistical Learning} by Gareth James,
+\href{http://faculty.marshall.usc.edu/gareth-james/ISL/}{Introduction to Statistical Learning} by Gareth James,
 Daniela Witten, Trevor Hastie, and Robert Tibshirani \cite{james:2014}.  The file 
 ``\texttt{cars.csv}''  contains the fuel consumption of a number of different cars that were in widespread use during
 the seventies and early eighties of the last century.  The first column of this data set gives the 
@@ -239,6 +238,7 @@ $\mathrm{B}$. Furthermore, besides the miles per gallon, for every car the follo
 \begin{enumerate}
 \item $\mathtt{cyl}$ is the number of cylinders,
 \item $\mathtt{displacement}$ is the engine displacement in cubic inches, 
+      (100 cubic inch is 1.63871 litres)
 \item $\mathtt{hp}$ is the engine power given in units of \href{https://en.wikipedia.org/wiki/Horsepower}{horsepower},
 \item $\mathtt{weight}$ is the weight in pounds (1 pound is the same as $0.453592$ kg),
 \item $\mathtt{acc}$ is the acceleration given as the time in seconds needed to accelerate from 0 miles per
@@ -255,10 +255,11 @@ To this end, I have written the function \texttt{simple\_linear\_regression} sho
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
-                xleftmargin   = 0.8cm,
-                xrightmargin  = 0.8cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
               ]{python3}
     def simple_linear_regression(X, Y):
         """
@@ -335,6 +336,7 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -343,22 +345,21 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
     import csv
     import numpy as np
     
-    if __name__ == '__main__':
-        with open('cars.csv') as input_file:
-            reader       = csv.reader(input_file, delimiter=',')
-            line_count   = 0
-            kpl          = []
-            displacement = []
-            for row in reader:
-                if line_count != 0:  # skip header of file
-                    kpl .append(float(row[0]) * 0.00425144) 
-                    displacement.append(float(row[2]) * 0.0163871)  
-                line_count += 1
-        m  = len(displacement)
-        X  = np.array(displacement)
-        Y  = np.array([1 / kpl[i] for i in range(m)])
-        R2 = simple_linear_regression(X, Y)
-        print(f'The explained variance is {R2}%')
+    with open('cars.csv') as input_file:
+        reader       = csv.reader(input_file, delimiter=',')
+        line_count   = 0
+        kpl          = []
+        displacement = []
+        for row in reader:
+            if line_count != 0:  # skip header of file
+                kpl .append(float(row[0]) * 0.00425144) 
+                displacement.append(float(row[2]) * 0.0163871)  
+            line_count += 1
+    m  = len(displacement)
+    X  = np.array(displacement)
+    Y  = np.array([1 / kpl[i] for i in range(m)])
+    R2 = simple_linear_regression(X, Y)
+    print(f'The explained variance is {R2}%')
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Calling the procedure $\mathtt{simple\_linear\_regression}$.}
@@ -428,8 +429,8 @@ of the fuel consumption.
 \section{General Linear Regression}
 In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
 To take the example of the fuel consumption of a car further, in general we would expect that the fuel consumption
-of a car depends not only on the mass of the car but is also related to the other parameters.
-For example, it seems reasonable to assume that the engine displacement of the car should influence its fuel consumption.
+of a car depends not only on the engine displacement of the car but is also related to the other parameters.
+For example, it seems reasonable to assume that the mas of the car should influence its fuel consumption.
 To be able to model this kind of behaviour,  we present the theory of   
 \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
 In a \blue{general regression problem} we are given a list of $m$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
@@ -493,9 +494,8 @@ $\mathbf{w}' := \langle w_1, \cdots, w_p, b \rangle^\top$ \quad where $\langle w
 Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$F(\mathbf{x}) = \mathbf{w} \cdot \mathbf{x} + b = \mathbf{w}' \cdot \mathbf{x}'$,
+$F(\mathbf{x}) = \mathbf{x}^\top \cdot \mathbf{w} + b = \mathbf{x}'^\top \cdot \mathbf{w}'$.
 \\[0.2cm]
-where $\mathbf{w}' \cdot \mathbf{x}'$ denotes the dot product of the vectors $\mathbf{w}'$ and $\mathbf{x}'$.
 Hence, the bias has been incorporated into the weight vector at the cost of appending the number $1$ at the end of
 input vector $\mathbf{x}$.  As we want to use this simplification, from now on we assume that the input vectors
 $\mathbf{x}^{(i)}$ have all been extended so that their last component is $1$.  Using this
