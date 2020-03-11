@@ -2,7 +2,8 @@
 A great deal of the current success of artificial intelligence is due to recent advances in
 \href{https://en.wikipedia.org/wiki/Machine_learning}{machine learning}.  
 In order to get a first taste of what machine learning is about, we introduce 
-\href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression} in this chapter, since linear regression
+\href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression} \index{linear regression}
+in this chapter, since linear regression
 is one of the most basic algorithms in machine learning.  It is also the foundation for more advanced
 forms of machine learning like \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} and 
 \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
@@ -11,26 +12,28 @@ learning can already be illustrated with linear regression.  Therefore it is onl
 study of machine learning with the study of linear regression.
 
 \section{Simple Linear Regression}
+\index{simple linear regression}
 Assume we want to know how the \href{https://en.wikipedia.org/wiki/Engine_displacement}{engine displacement} of
-a car engine relates to its fuel consumption.  One approach to understand this relation would be to derive a
-theoretical model that is able to predict the fuel consumption from the engine displacement by using the
+a car engine relates to its \blue{fuel consumption}.  One approach to understand this relation would be to derive a
+\blue{theoretical model} that is able to predict the fuel consumption from the engine displacement by using the
 appropriate laws of physics and chemistry.  However, due to our lack of understanding of the underlying theory,
-this is not an option for us.  Instead, we will look at different engines and compare 
-their engine displacement with the corresponding fuel consumption.  This way, we will collect a set of  
-$m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
+this is not an option for us.  Instead, we follow a \blue{statistical approach} and collect data from a large number
+of cars.  For these cars, we compare their engine displacement with the corresponding fuel consumption.  This
+way, we will collect a set of $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
 where $x_i$ is the engine displacement of the engine in the $i$-th car, while $y_i$ is the fuel consumption of the
-$i$-th car.  We call $x$ the \blue{independent variable}, while $y$ is the 
-\blue{dependent variable}.  We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
+$i$-th car.  We call $x$ the \blue{independent variable}, \index{independent variable} while $y$ is the 
+\blue{dependent variable}.  \index{dependent variable} We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{x} := \langle x_1, \cdots, x_m \rangle^\top$ \quad and \quad
 $\mathbf{y} := \langle y_1, \cdots, y_m \rangle^\top$.
 \\[0.2cm]
 Here, the operator $^\top$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transposition operator},
+\index{transposition operator}
 i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.  By using the transposition operator I am
 able to write these vectors in a single line.
 
-In linear regression, we use a \blue{linear hypothesis} 
+In linear regression, we use a \blue{linear hypothesis} \index{linear hypothesis}
 and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via a linear
 equation of the form
 \\[0.2cm]
@@ -41,7 +44,7 @@ We do not expect this equation to hold exactly.  The reason is that there are ma
 engine displacement that influence the fuel consumption.  For example, both the weight of a car and its 
 \href{https://en.wikipedia.org/wiki/Automotive_aerodynamics}{aerodynamics} certainly influence the fuel consumption.  
 We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the 
-\blue{\underline{m}ean \underline{s}quared \underline{e}rror}, which is defined as 
+\blue{\underline{m}ean \underline{s}quared \underline{e}rror}, \index{mean squared error} which is defined as 
 \begin{equation}
   \label{eq:mse}
  \mathtt{MSE}(\vartheta_0, \vartheta_1) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2,
@@ -53,24 +56,27 @@ is minimized.  It can be shown that the solution to this minimization problem is
       \vartheta_0 = \bar{\mathbf{y}} - \vartheta_1 \cdot \bar{\mathbf{x}}.
 \end{equation}
 This solution makes use of the values $r_{x,y}$, $s_x$, and $s_y$.  In order to define these values, we first
-define the \blue{sample mean values} $\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ of $\mathbf{x}$ and $\mathbf{y}$ respectively, i.e.~we have 
+define the \blue{sample mean values} \index{sample mean value}
+$\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ of $\mathbf{x}$ and $\mathbf{y}$ respectively, i.e.~we have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \bar{\mathbf{x}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
 $\ds \bar{\mathbf{y}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m y_i$.
 \\[0.2cm]
-Furthermore, $s_x$ and $s_y$ are the \blue{sample standard deviations} of $\mathbf{x}$ and $\mathbf{y}$, i.e.~we have
+Furthermore, $s_x$ and $s_y$ are the \blue{sample standard deviations} \index{sample standard deviation}
+of $\mathbf{x}$ and $\mathbf{y}$, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds s_x = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\;}$ \quad and \quad
 $\ds s_y = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2\;}$.
 \\[0.2cm]
-Next, $\mathrm{Cov}[\mathbf{x}, \mathbf{y}]$ is the \blue{sample covariance} and is defined as 
+Next, $\mathrm{Cov}[\mathbf{x}, \mathbf{y}]$ is the \blue{sample covariance} \index{sample covariance} and is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathrm{Cov}[\mathbf{x}, \mathbf{y}] = \frac{1}{(m-1)} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)$.
 \\[0.2cm]
-Finally, $r_{x,y}$ is the \blue{sample correlation coefficient} that is defined as
+Finally, $r_{x,y}$ is the \blue{sample correlation coefficient} \index{sample correlation coefficient} that is
+defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds r_{x,y} = \frac{1}{(m-1) \cdot s_x \cdot s_y} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)
@@ -78,7 +84,8 @@ $\ds r_{x,y} = \frac{1}{(m-1) \cdot s_x \cdot s_y} \cdot \sum\limits_{i=1}^m \bi
 $.
 \\[0.2cm]
 The number $r_{x,y}$ is also known as the
-\href{https://en.wikipedia.org/wiki/Pearson_correlation_coefficient}{Pearson correlation coefficient} or
+\href{https://en.wikipedia.org/wiki/Pearson_correlation_coefficient}{Pearson correlation coefficient} 
+\index{Pearson correlation coefficient} or \index{Pearson's r}
 \blue{Pearson's \textrm{r}}.  It is named after \href{https://en.wikipedia.org/wiki/Karl_Pearson}{Karl Pearson}
 (1857 -- 1936).
 Note that the formula for the parameter $\vartheta_1$ can be simplified to  
@@ -114,7 +121,7 @@ $y = \vartheta_0 + \vartheta_1 \cdot x$
 we can compute the mean squared error according to Equation \ref{eq:mse}.  However, the mean squared error 
 is an absolute number that, by itself, is difficult to interpret.  The reason is that the variable $\mathbf{y}$ might be
 inherently noisy and we have to relate this noise to the mean squared error.  Now the noise contained in $\mathbf{y}$
-can be measured by the \blue{sample variance} of $\mathbf{y}$ and is given by the formula
+can be measured by the \blue{sample variance} \index{sample variance} of $\mathbf{y}$ and is given by the formula
 \begin{equation}
   \label{eq:var}
   \mathtt{Var}(y) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2.
@@ -144,9 +151,11 @@ The mean squared error is an absolute value and, therefore, difficult to interpr
 \hspace*{1.3cm}
 $\ds \frac{\mathtt{MSE}(\vartheta_0, \vartheta_1)}{\mathtt{Var}(y)}$
 \\[0.2cm]
-is called \blue{the proportion of the unexplained variance} because it is the variance that is still
+is called the \blue{proportion of the unexplained variance} \index{proportion of unexplained variance}
+because it is the variance that is still
 left if we use our linear model to predict the values of $\mathbf{y}$ given the values of $\mathbf{x}$.  The
-\blue{proportion of the explained variance} which is also known as the \blue{$\mathtt{R}^2$ statistic} is defined as 
+\blue{proportion of the explained variance} \index{proportion of explained variance}
+which is also known as the \blue{$\mathtt{R}^2$ statistic} \index{$R^2$} is defined as 
 \begin{equation}
   \label{eq:Rsquare}
   \mathtt{R}^2 := \frac{\mathtt{Var}(\mathbf{y}) - \mathtt{MSE}(\vartheta_0, \vartheta_1)}{\mathtt{Var}(\mathbf{y})} 
@@ -159,12 +168,12 @@ variation of $\mathbf{y}$ when $\mathbf{x}$ changes.
 
 Since the formulae for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
 denominator $m-1$, this denominator can be cancelled when $\mathtt{R}^2$ is computed.  To this
-end we define the \blue{total sum of squares} $\mathtt{TSS}$ as
+end we define the \blue{total sum of squares} $\mathtt{TSS}$ \index{total sum of squares} \index{TSS} as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds\mathtt{TSS} := \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2 = (m-1) \cdot \mathtt{Var}(\mathbf{y})$
 \\[0.2cm]
-and the \blue{residual sum of squares} $\mathtt{RSS}$ as
+and the \blue{residual sum of squares} \index{residual sum of squares} $\mathtt{RSS}$ \index{RSS} as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds\mathtt{RSS} := \sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2
@@ -255,7 +264,7 @@ To this end, I have written the function \texttt{simple\_linear\_regression} sho
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = sepia,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -336,7 +345,7 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = sepia,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -427,15 +436,17 @@ of the fuel consumption.
 
 
 \section{General Linear Regression}
+\index{general linear regression}
 In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
 To take the example of the fuel consumption of a car further, in general we would expect that the fuel consumption
 of a car depends not only on the engine displacement of the car but is also related to the other parameters.
-For example, it seems reasonable to assume that the mas of the car should influence its fuel consumption.
+For example, it seems reasonable to assume that the mass of the car should influence its fuel consumption.
 To be able to model this kind of behaviour,  we present the theory of   
 \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
 In a \blue{general regression problem} we are given a list of $m$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
 where $\mathbf{x}^{(i)} \in \mathbb{R}^p$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1,\cdots,m\}$.  The
-number $p$ is called the number of \blue{features}, while the pairs are called the \blue{training examples}.
+number $p$ is called the number of \blue{features}, while the pairs are called the \blue{training examples}. 
+\index{training example}
 Our goal is to compute a function 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -448,18 +459,19 @@ for all $i\in\{1,\cdots,m\}$, i.e.~we want to have
 $F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ \quad for all $i\in\{1,\cdots,m\}$.
 \\[0.2cm]
 In order to make the notation $F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ more precise, we
-define the \blue{mean squared error} 
+define the \blue{mean squared error} \index{mean squared error} \index{MSE}
 \begin{equation}
   \label{eq:squared-error-1}
   \mathtt{MSE} := \frac{1}{m-1} \cdot \sum\limits_{i=1}^{m} \Bigl(F\bigl(\mathbf{x}^{(i)}\bigr) - y^{(i)}\Bigr)^2. 
 \end{equation}
 Then, given the list of training examples $[\langle \mathbf{x}^{(1)}, y^{(1)} \rangle, \cdots, \langle
 \mathbf{x}^{n}, y^{(n)} \rangle]$, our goal is to minimize $\mathtt{MSE}$.  
-In order to proceed, we need to have a \blue{model} for the function $F$.  The simplest model is a linear
-model, i.e.~we assume that $F$ is given as 
+In order to proceed, we need to have a \blue{model} for the function $F$.  The simplest model is a 
+\blue{linear model}, \index{linear model} i.e.~we assume that $F$ is given as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds F(\mathbf{x}) = \sum\limits_{j=1}^p w_j \cdot x_j + b = \mathbf{x}^\top \cdot \mathbf{w} + b$ \quad where $\mathbf{w} \in \mathbb{R}^p$ and $b\in\mathbb{R}$.
+$\ds F(\mathbf{x}) = \sum\limits_{j=1}^p w_j \cdot x_j + b = \mathbf{x}^\top \cdot \mathbf{w} + b$ 
+\quad where  $\mathbf{w} \in \mathbb{R}^p$ and $b\in\mathbb{R}$.
 \\[0.2cm]
 Here, the expression $\mathbf{x}^\top \cdot \mathbf{w}$ denotes the matrix product of the vector
 $\mathbf{x}^\top$, which is viewed as a $1$-by-$m$ matrix, and the vector $\mathbf{w}$, where $\mathbf{w}$ is
@@ -469,7 +481,7 @@ At this point you might wonder why it is useful to introduce matrix notation her
 that this notation shortens the formula and, furthermore, is more efficient to implement since most
 programming languages used in machine learning have special library support for matrix operations.  
 Provided the computer is equipped with a graphics card,  some
-programming languages are even able to delegate matrix operations to the graphics unit.  This results in a
+programming languages are even able to delegate matrix operations to the graphics card.  This results in a
 considerable speed-up.
 
 The definition of $F$ given above is the model used in
@@ -517,7 +529,7 @@ itself.  To this end, we first define the vector $\mathbf{y}$ as follows:
 $\mathbf{y} := \langle y^{(1)}, \cdots, y^{(m)} \rangle^\top$.
 \\[0.2cm]
 Note that $\mathbf{y} \in \mathbb{R}^m$ since it has a component for all of the $m$ training
-examples.  Next, we define the \blue{design matrix} $X$ as follows:
+examples.  Next, we define the \blue{design matrix} \index{design matrix} $X$ as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $X := \left(
@@ -529,7 +541,7 @@ $X := \left(
   \right)   
 $
 \\[0.2cm]
-In the literature, $X$ is also called the \blue{feature matrix}.
+In the literature, $X$ is also called the \blue{feature matrix}. \index{feature matrix}
 If $X$ is defined in this way, the row vectors of the matrix $X$ are the transpositions of the vectors $\mathbf{x}^{(i)}$.
 Then we have the following:
 \\[0.2cm]
@@ -565,7 +577,8 @@ vector $\mathbf{w}$ appropriately.  A necessary condition for $\mathtt{MSE}(\mat
 \hspace*{1.3cm}
 $\nabla \mathtt{MSE}(\mathbf{w}) = \mathbf{0}$,
 \\[0.2cm]
-i.e.~the gradient of $\mathtt{MSE}(\mathbf{w})$ with respect to $\mathbf{w}$ needs to be zero.  In order to prepare for the computation of
+i.e.~the \href{https://en.wikipedia.org/wiki/Gradient}{gradient} \index{gradient} of $\mathtt{MSE}(\mathbf{w})$ with respect to
+$\mathbf{w}$ needs to be zero.  In order to prepare for the computation of 
 $\nabla \mathtt{MSE}(\mathbf{w})$, we first compute the gradient of two simpler functions.
 
 \subsubsection{Computing the Gradient of $f(\mathbf{x}) = \mathbf{x}^\top \cdot C \cdot \mathbf{x}$}
@@ -640,7 +653,8 @@ $\ds \nabla g(\mathbf{x}) = A^\top \cdot \mathbf{b}$.
 Prove this equation.
 
 \subsection{Deriving the Normal Equation}
-Next, we derive the so called \blue{normal equation} for linear regression.  To this end, we first
+Next, we derive the so called \blue{normal equation} \index{normal equation}
+for linear regression.  To this end, we first
 expand the product in equation (\ref{eq:squared-error-3}):
 \\[0.2cm]
 \hspace*{0.3cm}
@@ -724,7 +738,7 @@ This equation can be rewritten as
  \colorbox{red}{\framebox{\colorbox{yellow}{\framebox{
  $\ds\bigl(X^\top \cdot X\bigr) \cdot \mathbf{w} = X^\top \cdot \mathbf{y}$.}}}} 
 \end{equation}
-This equation is called the \blue{normal equation}.  
+This equation is called the \blue{normal equation}.  \index{normal equation}
 
 \remark
 Although the matrix $X^\top \cdot X$ will often be invertible, for numerical reasons it is not
@@ -772,6 +786,7 @@ takes four arguments:
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -853,6 +868,7 @@ containing a similar program is available at
  blob/master/Python/Linear-Regression.ipynb}}.
 
 \section{Polynomial Regression}
+\index{polynomial regression}
 Sometimes the model of linear regression is not flexible enough.  One way to extend it is to add higher order
 features.  For example, assume that we have two features $x_1$ and $x_2$ and that there is a dependent variable
 $y$ that,  can be computed from $x_1$ and $x_2$ but that depends on $x_1$ and $x_2$ in a non-linear way.
@@ -870,9 +886,9 @@ equation
 \hspace*{1.3cm}
 $y = \sqrt{x_1}$.
 \\[0.2cm]
-Furthermore, let us assume that in our data set there is a second independent variable which is strongly
-linearly correlated to $x_2$.\footnote{
-  We add this second variable in order be able to show the effect of over-fitting.
+Furthermore, let us assume that in our data set there is a second independent variable $x_2$ which is strongly
+linearly correlated to $x_1$.\footnote{
+  We add this second variable in order be able to show the effect of overfitting.
 }
 In our toy example we will assume that $x_2$ is $x_1$ plus some small random noise.
 Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Regression.ipynb} shows a
@@ -885,6 +901,7 @@ Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Reg
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -893,17 +910,18 @@ Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Reg
     import numpy                as np
     import sklearn.linear_model as lm
     
-    N  = 20
-    X1 = np.array([k                          for k in range(N)])
-    X2 = np.array([k + 0.2 * np.random.rand() for k in range(N)])
-    X1 = np.reshape(X1, (N, 1))
-    X2 = np.reshape(X2, (N, 1))
-    X  = np.hstack([X1, X2])
-    Y  = np.array([np.sqrt(x[0]) for x in X1])
-    
+    N  = 20                     # number of data points
+    X1 = np.array([k for k in range(N)])
+    X2 = np.array([k + 0.2 * (np.random.rand() - 0.5) for k in range(N)])
+    Y  = np.sqrt(X1)            # Y is the square root of X1
+    X1 = np.reshape(X1, (N, 1)) # turn X1 into an N x 1 matrix
+    X2 = np.reshape(X2, (N, 1)) # turn X2 into an N x 1 matrix
+    X  = np.hstack([X1, X2])    # combine X1 and X2 into an N x 2 matrix
+        
     from sklearn.model_selection import train_test_split
     
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=1)
+    X_train, X_test, Y_train, Y_test = \
+        train_test_split(X, Y, test_size=0.2, random_state=1)
     
     def linear_regression(X_train, Y_train, X_test, Y_test):
         M = lm.LinearRegression()
@@ -921,7 +939,8 @@ Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Reg
     X_test_quadratic  = quadratic.fit_transform(X_test)
     quadratic.get_feature_names(['x1', 'x2'])
     
-    M, s1, s2 = linear_regression(X_train_quadratic, Y_train, X_test_quadratic, Y_test)
+    M, s1, s2 = \
+        linear_regression(X_train_quadratic, Y_train, X_test_quadratic, Y_test)
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Polynomial Regression}
@@ -932,11 +951,17 @@ Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Reg
 \item In line 4 we set \texttt{N} to 20.  This is the number of data points that we will generate.
 \item The vector \texttt{X1} contains the numbers form 0 up to $n-1$.
 \item The vector \texttt{X2} contains the same numbers but perturbed by some random noise.
-\item Next, we reshape these vectors and stack them into the design matrix \texttt{X}.
+      The function \texttt{numpy.random.rand()} returns a $[0, 1.0]$.  Therefore, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{0.2 * (np.random.rand() - 0.5)}
+      \\[0.2cm]
+      is a random number in the interval $[-0.1, +0.1]$.
 \item The dependent variable \texttt{Y} is the computed as the square root of the numbers in \texttt{X1}.
+\item Next, we reshape these vectors and stack them into the design matrix \texttt{X}.
 \item In line 14, we split the data into a training set and a test set.  We will not use the test data set for
       training, but will only use it to evaluate our results in the end.  This way we make sure that our model
-      is able to generalize from the data it has seen.
+      is able to \blue{generalize} from the data it has seen.
 
       In a real world situation, this dataset would be too small to be split into a training set and a test set.
       However, in a real world situation we would have more data and I wanted to keep this example simple.
@@ -945,7 +970,7 @@ Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Reg
 \item The function $\mathtt{linear\_regression}$ takes both the training data and the test data.
       It uses the training data to build a linear model.  Then it uses the test data to compute the proportion
       of explained variance.
-\item Line 23 trains a linear model from the test data and evaluates this model with the help of the training
+    \item Line 24 trains a linear model from the training data and evaluates this model with the help of the test
       data.  The proportion of the explained variance is $93\%$ for the training set, but only $88\%$ for the
       test set.
   
@@ -979,16 +1004,18 @@ Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Reg
 
 Having tried second order terms, we are tempted to go further and try all terms up to the fourth order.
 If we do this, the proportion of explained variance on the training set improves to $99.99\%$.  However, on the
-test set we get a proportion of explained variance of $96\%$, which is also an improvement.
+test set we get a proportion of explained variance of $96\%$ which, although an improvement, 
+is much worse than the explained variance on the training set.
 Figure \ref{fig:sqrt-4.pdf} on page \pageref{fig:sqrt-4.pdf} shows the corresponding model.
 
 If we get even bolder and try all terms up to the sixth order, 
 the proportion of explained variance on the training set improves to $100\%$.  However, on the
-test set we the proportion of explained variance drops of $86.5\%$.  This is called \blue{over-fitting}:
+test set we the proportion of explained variance drops of $86.5\%$.  This is called \blue{overfitting}:
+\index{overfitting}
 Our model is now so complex that it can essentially remember all the training examples it has seen.  However,
 it is unable to generalize from these training examples.  Figure \ref{fig:sqrt-6.pdf} on page
 \pageref{fig:sqrt-6.pdf} shows the corresponding model.  We see that regression curve gets wiggly, which is
-also an indication of \blue{overfitting}.
+also an indication that we are experiencing overfitting.
 
 \begin{figure}[!th]
 \epsfig{file=Figures/sqrt-4.pdf, scale=0.8}
@@ -1003,7 +1030,8 @@ also an indication of \blue{overfitting}.
 \end{figure}
 
 \section{Ridge Regression}
-In linear regression, our goal is to minimize the mean squared error that has defined as
+\index{ridge regression}
+In linear regression, our goal is to minimize the mean squared error that has been defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $
@@ -1012,8 +1040,8 @@ $
   \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \Bigl(\bigl(\mathbf{x}^{(i)})^\top \cdot \mathbf{w}  - y^{(i)}\Bigr)^2.
 $
 \\[0.2cm]
-The previous example has shown that sometimes minimizing the mean squared error leads to over-fitting.
-One way to avoid over-fitting is called \blue{ridge-regression}.  Instead of minimizing the mean squared error,
+The previous example has shown that sometimes minimizing the mean squared error leads to overfitting.
+One way to avoid overfitting is called \blue{ridge-regression}.  Instead of minimizing the mean squared error,
 we instead minimize the expression
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1024,15 +1052,17 @@ $
   + \lambda \cdot \mathbf{w}^2.
 $
 \\[0.2cm]
-Here, the parameter $\lambda$ is called the \blue{regularization parameter}.  If $\lambda$ is not too small,
+Here, the parameter $\lambda$ is called the \blue{regularization parameter}.  \index{regularization parameter}
+If $\lambda$ is not too small,
 then minimizing $\mathtt{RegMSE}(\mathbf{w})$ forces us to find parameters $\mathbf{w}$ that are small.  This
 prevents the model from getting to complex and this prevents over-fitting.  Figure \ref{fig:sqrt-6ridge.pdf} on
 page \pageref{fig:sqrt-6ridge.pdf} show the model we get when setting $\lambda = 0.05$.  In this case the
 proportion of explained variance is $99.97\%$
-on the training set and $99.78\%$ on the test set.  This clearly shows that the model generalizes will to
+on the training set and $99.78\%$ on the test set.  This clearly shows that the model does generalize to
 example that it has not seen.
 
-The regularization parameter is a so called \blue{hyper parameter}, that is usually determined by
+The regularization parameter $\lambda$ is a so called \blue{hyper parameter} \index{hyper parameter}
+ that is usually determined by
 \href{https://en.wikipedia.org/wiki/Cross-validation_(statistics)}{cross  validation}.  This sound complicated,
 but actually is very simple:  We split the training set into $k$ parts.  Then we remove one of these parts and
 train the model on the remaining $k-1$ parts.  We use the removed part to try to find the best value for our
@@ -1040,7 +1070,7 @@ hyper parameter by trial and error.  We do this for all of the $k$ parts.  In ea
 different optimal value $\lambda_k$.  Finally, we take the mean $\bar{\lambda}$ of all values $\lambda_k$ that
 we have found in our $k$ experiments.
 Following that we use the complete training set one last time to find a model that uses the value
-$\bar{\lambda}$.  It is important to keep the training set untouched while searching for the best value of $\lambda$.
+$\bar{\lambda}$.  It is important to keep the test set untouched while searching for the best value of $\lambda$.
 
 
 
