@@ -72,9 +72,9 @@ is always a natural number, in this case the first feature would be a
  once in an email with a length of several thousand  characters.  To this end, we would then define the first feature as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \texttt{feature}(o, 1) := \frac{\mathtt{count}(\texttt{"pharmacy"}, o)}{\cnt o}$, 
+$\ds \texttt{feature}(o, 1) := \frac{\mathtt{count}(\texttt{"pharmacy"}, o)}{\mathtt{len}(o)}$, 
 \\[0.2cm]
-where $\cnt o$ defines the number of characters in the string $o$.  In this case, the first feature would be a
+where $\mathtt{len}(o)$ defines the number of characters in the string $o$.  In this case, the first feature would be a
 \blue{continuous} feature and as this is the most general case, unless stated otherwise, we deal with the continuous
 case. 
 
@@ -104,13 +104,13 @@ for most objects of $o \in S$ but not for all of them.  The \blue{accuracy} of o
 of those objects that are classified correctly, i.e.~
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathtt{accuracy} := \frac{\;\cnt \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\;}{\cnt S}$.
+$\ds \mathtt{accuracy} := \frac{\;\mathtt{len}\bigl( \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\bigr)\;}{\mathtt{len}(S)}$.
 \\[0.2cm]
 If the set $S$ is infinite, this equation has to be interpreted as a limit, i.e.~we can define
 $S_n$ as the set of strings that have a length of at most $n$.  Then, the accuracy can be defined as a limit:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathtt{accuracy} := \lim\limits_{n\rightarrow\infty}\frac{\;\cnt \{ o \in S_n \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\;}{\cnt S_n}$.
+$\ds \mathtt{accuracy} := \lim\limits_{n\rightarrow\infty}\frac{\mathtt{len}\bigl(\{ o \in S_n \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\bigr)\;}{\mathtt{len}(S_n)}$.
 \\[0.2cm]
 The function $\mathtt{model}$ is usually determined by a set of \blue{parameters} or \blue{weights} $\mathbf{w}$. In
 this case, we have
@@ -178,7 +178,6 @@ from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we defin
 
       i.e.~$y_i$ is the class of the $i$-th object.
 \end{enumerate}
-Mathematically, our goal is to maximize the accuracy of our model as a function of the parameters $\mathbf{w}$.
 
 \subsection{Applications of Classification}
 Besides spam detection, there are many other classification problems that can be solved using machine learning.  To give
@@ -220,7 +219,7 @@ of a function
 $f: \mathbb{R}^n \rightarrow \mathbb{R}$.
 \\[0.2cm]
 For example, when we discuss \blue{logistic regression} in the next section, we will have to find the maximum
-of the likelihood function.  To proceed, let us introduce the \blue{$\arg\max$} function.  The idea is that
+of the \blue{likelihood} function.  To proceed, let us introduce the \blue{$\arg\max$} function.  The idea is that
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f$
@@ -428,7 +427,7 @@ we want to choose the weight vector $\mathbf{w}$ in a way such that the accuracy
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathtt{accuracy}(\mathbf{w}) := 
-\frac{\;\cnt \bigl\{ \mathbf{o} \in S \bigm| \mathtt{model}(\mathtt{feature}\bigl(\mathbf{o}),\mathbf{w}\bigr) = \mathtt{classify}(\mathbf{o})\bigr\}\;}{\cnt S}$
+\frac{\;\mathtt{len}\bigl(\bigl\{ \mathbf{o} \in S \bigm| \mathtt{model}(\mathtt{feature}\bigl(\mathbf{o}),\mathbf{w}\bigr) = \mathtt{classify}(\mathbf{o})\bigr\}\bigr)\;}{\mathtt{len}(S)}$
 \\[0.2cm]
 is maximized.  However, there is a snag:  The accuracy is not a smooth function of the weight vector
 $\mathbf{w}$.  It can't be a smooth function because the number of errors of our model is a natural number and not a real number
