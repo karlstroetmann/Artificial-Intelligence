@@ -25,7 +25,8 @@ $C = \{ \mathtt{spam}, \mathtt{ham} \}$.
 \\[0.2cm]
 Our goal is to compute the function \texttt{classify}.  In order to do this, we use an approach known as
 \href{https://en.wikipedia.org/wiki/Supervised_learning}{supervised learning}:  We take a subset $S_\textsl{train} \subseteq S$ of
-emails where we already know whether the emails are spam or not.  This set $S_\textsl{train}$ is called the \blue{training set}.
+emails where we already know whether the emails are spam or not.  This set $S_\textsl{train}$ is called the
+\blue{training set}. \index{training set}
 Next, we define a set of $D$ \blue{features} for every $o \in S$.  These features have to be \blue{computable},
 i.e.~we must have a function
 \\[0.2cm]
@@ -40,7 +41,8 @@ Booleans.  If
 \hspace*{1.3cm}
 $\texttt{feature}(o, j) \in \mathbb{B}$ \quad for all $o \in S$,
 \\[0.2cm]
-then the $j$-th feature is called a \blue{binary feature}.  If we encode $\mathtt{false}$ as $-1$ and $\mathtt{true}$ as
+then the $j$-th feature is called a \blue{binary feature}.  \index{binary feature}
+If we encode $\mathtt{false}$ as $-1$ and $\mathtt{true}$ as
 $+1$, then the set of Boolean values $\mathbb{B}$ can be considered a subset of $\mathbb{R}$ and hence Boolean features can be considered
 as real numbers.  For example, in the case of spam detection, the first feature
 could be the occurrence of the string ``\texttt{pharmacy}''.  In this case, we would have
@@ -67,7 +69,8 @@ As the value of
 \\[0.2cm]
 is always a natural number, in this case the first feature would be a
  \blue{discrete} feature.  However, we can be even more precise: Instead of just counting the number of occurrences of
- ``\texttt{pharmacy}'' we can compute its \blue{frequency}.  After all, there is a difference whether the
+ ``\texttt{pharmacy}'' we can compute its \blue{frequency}.  \index{frequency}
+ After all, there is a difference whether the
  string ``\texttt{pharmacy}'' occurs once in an email  containing but a hundred characters or whether is occurs
  once in an email with a length of several thousand  characters.  To this end, we would then define the first feature as
 \\[0.2cm]
@@ -100,8 +103,8 @@ Most of the time, the function \texttt{guess} will only \blue{approximate} the f
 \hspace*{1.3cm}
 $\mathtt{guess}(o) = \mathtt{classify}(o)$
 \\[0.2cm]
-for most objects of $o \in S$ but not for all of them.  The \blue{accuracy} of our model is defined as the fraction
-of those objects that are classified correctly, i.e.~
+for most objects of $o \in S$ but not for all of them.  The \blue{accuracy} \index{accuracy} of our model is
+defined as the fraction of those objects that are classified correctly, i.e.~
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathtt{accuracy} := \frac{\;\mathtt{len}\bigl( \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\bigr)\;}{\mathtt{len}(S)}$.
@@ -121,7 +124,7 @@ $\mathtt{model}(\mathbf{x}) = \mathtt{model}(\mathbf{x},\,\mathbf{w})$
 where $\mathbf{x}$ is the vector of features, while $\mathbf{w}$ is the vector of weights.  Later, when we
 introduce \blue{logistic regression}, we will assume that the number of weights is one more than the number of
 features.  Then, the weights specify the relative importance of the different features. Furthermore, there will
-be a weight that is interpreted as a \blue{bias term}.
+be a weight that is interpreted as a \blue{bias term}. \index{bias term}
 
 When it comes to the choice of model, it is important to understand that, at least in practical applications,
 \underline{all} models are wrong.  Nevertheless, \underline{some} models are useful.  There are two reasons for this:
@@ -152,14 +155,15 @@ A set $S$ of objects and a set $C$ of classes are given.  Our goal is to approxi
 \hspace*{1.3cm}
 $\mathtt{classify}: S \rightarrow C$
 \\[0.2cm]
-using certain \blue{features} of our objects.  The function $\mathtt{classify}$ is then approximated using a function
+using certain \blue{features} \index{feature} of our objects.  The function $\mathtt{classify}$ is then approximated using a function
 \texttt{model} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{model}\bigl(\mathtt{feature}(o,1), \cdots, \mathtt{feature}(o,D), \mathbf{w}\bigr) \approx \mathtt{classify}(o)$.
 \\[0.2cm]
 The model depends on a vector of parameters $\mathbf{w}$.  In order to \blue{learn} these parameters, we are given a 
-\blue{training set} $S_\textsl{train}$ that is a subset of $S$.  As we are dealing with \blue{supervised learning}, the function 
+\blue{training set} $S_\textsl{train}$ that is a subset of $S$.  As we are dealing with \blue{supervised learning},
+\index{supervised learning} the function 
 $\mathtt{classify}$ is known for all objects $o \in S_\textsl{train}$.   Our goal is to determine the parameters $\mathbf{w}$ such that the
 number of mistakes we make on the training set is minimized.  
 
@@ -195,7 +199,7 @@ to name but a few of the possible features.  Based on these symptoms, the genera
 illness, i.e.~the set of classes for the classification problem would be
 \\[0.2cm]
 \hspace*{1.3cm}
-$\{ \mathtt{commonCold}, \mathtt{pneumonia}, \mathtt{asthma}, \mathtt{flu}, \cdots, \mathtt{unknown} \}$.
+$\{ \mathtt{commonCold}, \mathtt{pneumonia}, \mathtt{asthma}, \mathtt{flu}, \texttt{Covid-19}, \cdots, \mathtt{unknown} \}$.
 \\[0.2cm]
 Hence, the task of disease diagnosis is a classification problem.  This was one of the earliest problem that was tackled
 by artificial intelligence.  As of today, 
@@ -212,6 +216,7 @@ diagnosed more accurately by a computer than by a specialist.  One such example 
 \end{enumerate}
 
 \section{Digression: The Method of Gradient Ascent \label{section:gradient-ascent}}
+\index{gradient ascent}
 In machine learning, it is often the case that we have to find either the \blue{maximum} or the \blue{minimum}
 of a function 
 \\[0.2cm]
@@ -219,7 +224,8 @@ of a function
 $f: \mathbb{R}^n \rightarrow \mathbb{R}$.
 \\[0.2cm]
 For example, when we discuss \blue{logistic regression} in the next section, we will have to find the maximum
-of the \blue{likelihood} function.  To proceed, let us introduce the \blue{$\arg\max$} function.  The idea is that
+of the \blue{likelihood} function.  To proceed, let us introduce the \blue{$\arg\max$} function.
+\index{arg max function} The idea is that
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f$
@@ -372,6 +378,7 @@ Next, let us discuss the implementation of gradient ascent.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
+                bgcolor       = bg,
                 mathescape,
                 numbers       = left,
                 numbersep     = -0.2cm,
@@ -418,12 +425,13 @@ state of the art algorithm.  For example, in \href{https://www.python.org}{Pytho
 from the package \texttt{scipy.optimize} offers various algorithms for minimization.
 
 \section{Logistic Regression}
+\index{logistic regression}
 If we have a model such that 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{model}(\mathbf{x}, \mathbf{w}) \approx \mathtt{classify}(\mathbf{x})$
 \\[0.2cm]
-we want to choose the weight vector $\mathbf{w}$ in a way such that the accuracy 
+holds, then we want to choose the weight vector $\mathbf{w}$ in a way such that the accuracy 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathtt{accuracy}(\mathbf{w}) := 
@@ -441,13 +449,14 @@ define this function and state some of its properties.
 
 \subsection{The Sigmoid Function}
 \begin{Definition}[Sigmoid Function\label{def:sigmoid}]
-The \href{https://en.wikipedia.org/wiki/Sigmoid_function}{sigmoid function} $S: \mathbb{R} \rightarrow [0, 1]$ is defined as 
+  The \href{https://en.wikipedia.org/wiki/Sigmoid_function}{sigmoid function} $S: \mathbb{R} \rightarrow [0, 1]$
+  \index{sigmoid function} is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds S(t) = \frac{1}{1 + \exp(-t)}$.  
 \\[0.2cm]
 Figure \ref{fig:sigmoid.eps} on page \pageref{fig:sigmoid.eps} shows the sigmoid function.
-The sigmoid function is also known as the \blue{logistic function}.
+The sigmoid function is also known as the \blue{logistic function} \index{logistic function}.
 \eox
 \end{Definition}
 
@@ -479,10 +488,11 @@ As the sigmoid function is monotonically increasing, this shows that indeed
 \hspace*{1.3cm}
 $0 \leq S(t) \leq 1$  \quad for all $t \in \mathbb{R}$.
 \\[0.2cm]
-Therefore, the value of the sigmoid function can be interpreted as a probability.
+Therefore, the value of the sigmoid function can be interpreted as a \blue{probability}.
 Another important property of the sigmoid function is its symmetry.  Figure \ref{fig:sigmoid.eps} shows that if the
 sigmoid function is shifted down by $\frac{1}{2}$, the resulting function is 
-\href{https://en.wikipedia.org/wiki/Point_reflection}{centrally symmetric}, i.e.~we have
+\href{https://en.wikipedia.org/wiki/Point_reflection}{centrally symmetric}, \index{centrally symmetric}
+i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds S(-t) - \frac{1}{2} = -\Bigl(S(t) - \frac{1}{2}\Bigr)$.
@@ -501,7 +511,7 @@ $
 1 - S(t) & = & \ds 1 - \frac{1}{1 + \exp(-t)}             & \mbox{(by definition of $S(t)$)}           \\[0.5cm]
          & = & \ds \frac{1 + \exp(-t) - 1}{1 + \exp(-t)}  & \mbox{(common denominator)}                \\[0.5cm]
          & = & \ds \frac{\exp(-t)}{1 + \exp(-t)}          &                                          \\[0.5cm]
-         & = & \ds \frac{1}{\exp(+t) + 1}                 & \mbox{(expand fraction by $\exp(t)$)}      \\[0.5cm]
+         & = & \ds \frac{1}{\exp(t) + 1}                  & \mbox{(expand fraction by $\exp(t)$)}      \\[0.5cm]
          & = & \ds \frac{1}{1 + \exp(+t)}                 &                                          \\[0.5cm]
          & = & S(-t)                                      & \mbox{(by definition of $S(-t)$)}. \qquad _\Box
 \end{array}
@@ -551,6 +561,7 @@ This shows that the inverse of the sigmoid function is given as
 $\ds S^{-1} (y) = \ln\left(\frac{y}{1-y}\right)$.}}} 
 \\[0.2cm]
 This function is known as the \href{https://en.wikipedia.org/wiki/Logit}{logit function}.
+\index{logit function}
 Next, let us compute the derivative of $S(t)$, i.e.~$\ds S'(t) =\frac{\mathrm{d}S}{\mathtt{d}t}$.  We have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -598,7 +609,8 @@ As this is our most important result, we highlight it:
 
 
 \subsection{The Model of Logistic Regression}
-In logistic regression we deal with \blue{binary classification}, i.e.~we assume that we just need to decide
+In logistic regression we deal with \blue{binary classification}, \index{binary classification}
+i.e.~we assume that we just need to decide
 whether a given object is a member of a given class or not.  We use the following model to compute the \blue{probability} that an
 object $o$ with features $\mathbf{x}$ will be of the given class: 
 \\[0.2cm]
