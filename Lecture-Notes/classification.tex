@@ -625,7 +625,8 @@ i.e. we have
 \hspace*{1.3cm}
 $\mathbf{x} \cdot \mathbf{w} = \sum\limits_{i=1}^D x_i \cdot w_i$.
 \\[0.2cm] 
-To simplify calculations, it is assumed that $\mathbf{x}$ contains a \blue{constant feature} that always takes the value of $1$.
+To simplify calculations, it is assumed that $\mathbf{x}$ contains a \blue{constant feature} \index{constant feature}
+that always takes the value of $1$.
 Seeing this model the first time you might think that this model is not very general and that it can only be
 applied in very special circumstances.  However, the fact is that the features $x_i$ can be functions of arbitrary complexity
 and hence this model is much more general than it appears on first sight.
@@ -646,9 +647,11 @@ single equation
 \\[0.2cm]
 Given $N$ objects $o_1, \cdots, o_n $ with feature vectors $\mathbf{x}_1, \cdots, \mathbf{x}_n$ and classes
 $y_1,\cdots,y_n$, we
-want to determine the weight vector $\mathbf{w}$ such that the \blue{likelihood} $\ell(\mathbf{X}, \mathbf{y})$ of all of our
+want to determine the weight vector $\mathbf{w}$ such that the \blue{likelihood} $\ell(\mathbf{X}, \mathbf{y})$
+\index{likelihood} of all of our
 observations is maximized.  This approach is called the 
-\href{https://en.wikipedia.org/wiki/Maximum_likelihood_estimation}{maximum likelihood estimation} of the weights.
+\href{https://en.wikipedia.org/wiki/Maximum_likelihood_estimation}{maximum likelihood estimation}
+\index{maximum likelihood estimation} of the weights.
 As we assume that the probabilities of different observations are independent, the individual
 probabilities have to be multiplied to compute the overall likelihood $\ell(\mathbf{X}, \mathbf{y},\mathbf{w})$ 
 of a given training set:
@@ -660,7 +663,8 @@ Here, we have combined the different attribute vectors $\mathbf{x}_i$ into the m
 $\mathbf{x}_i$ is the $i$-th row of the matrix $\mathbf{X}$.  Since it is
 easier to work with sums than with products, instead of maximizing the function
 $\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ we instead maximize the logarithm of
-$\ell(\mathbf{X},\mathbf{y},\mathbf{w})$.  This logarithm is called the \blue{log-likelihood} and is defined as 
+$\ell(\mathbf{X},\mathbf{y},\mathbf{w})$.  This logarithm is called the \blue{log-likelihood}
+\index{log-likelihood} and is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) := \ln\bigl(\ell(\mathbf{X},\mathbf{y},\mathbf{w})\bigr)$. 
@@ -681,10 +685,11 @@ $\ds \ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) =
 $.}}}
 \\[0.2cm]
 Our goal is to choose the weights $\mathbf{w}$ such that the likelihood is maximized.  Since this is the same as maximizing the log-likelihood, we
-need to determine those values of the coefficients $\mathbf{w}$ that satisfy
+need to determine the gradient of the log-likelihood with respect to the weights $w_j$, i.e.~we need to compute
+the partial derivatives
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) = 0$.
+$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ \quad for all $j\in\{1,\cdots,D\}$.
 \\[0.2cm]
 In order to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ with respect to the
 coefficients $\mathbf{w}$ we need to compute the partial derivative of the dot product $\mathbf{x}_i \cdot
@@ -733,7 +738,7 @@ $\ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot
 \\[0.2cm]
 These are $D$ equations for the $D$ variables $w_1, \cdots, w_D$.  Due to the occurrence of the sigmoid function, these
 equations are nonlinear.  We can not solve these equations explicitly.  Nevertheless, our computation of the
-gradient of the log-likelihood was not for in vain:  We will use the method of gradient ascent in order to find
+gradient of the log-likelihood was not in vain:  We will use the method of gradient ascent in order to find
 the value of $\mathbf{w}$ that maximizes the log-likelihood.  This method has been outlined in the previous section.
 
 \subsection{Implementing Logistic Regression}
@@ -796,6 +801,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -842,7 +848,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \begin{enumerate}
 \item First, we \texttt{import} the module \texttt{numpy}.  This module provides us with the 
       functions \texttt{log} and \texttt{exp} for computing the logarithm and the exponential of a number or
-      vector.  Furthermore, we need this module because the gradient of the log-likelihood is a vector and for
+      a vector.  Furthermore, we need this module because the gradient of the log-likelihood is a vector and for
       efficiency reasons this vector should be stored as a NumPy array.
 \item Line 3 implements the sigmoid function
 
