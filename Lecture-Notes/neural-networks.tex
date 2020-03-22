@@ -8,12 +8,12 @@ networks:
       ``\href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine Translation}''
       and, as the name suggests, is based on neural networks. 
 \item \href{https://www.deepl.com/translator}{DeepL} is another translator that is based on neural networks.      
-\item \href{https://de.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
+\item \href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
       \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Ke_Jie}{beaten} 
-      beaten the world champion \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie} in the game of
+      the world champion \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie} in the game of
       \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}. AlphaGo has been succeeded by
       \href{https://en.wikipedia.org/wiki/AlphaZero}{AlphaZero}, which is even stronger than AlphaGo.
-\item \href{https://www.tensorflow.org/tutorials/image_recognition}{Image recognition} is best done via neural networks.
+\item \blue{Image recognition} is best done via neural networks.
 \item \href{https://en.wikipedia.org/wiki/Autonomous_car}{Autonomous driving} makes heavy use of neural networks.
 \end{enumerate}
 The list given above is far from being complete.  In this chapter, we will only discuss 
@@ -43,7 +43,7 @@ We proceed to give an overview of the content of this chapter.
 \item In order to find the minimum of the cost function efficiently, we need an improved version of
       \blue{gradient descent}.  This improved version is known as \blue{stochastic gradient descent}.
 \item After having covered the theory, we implement a simple neural network that is able to recognize
-      handwritten digits.
+      \blue{handwritten digits}.
 \item Finally, we discuss \href{https://www.tensorflow.org}{TensorFlow}, which is an open source software
       library for machine learning in general and neural networks in particular.
 \end{enumerate}
@@ -65,20 +65,21 @@ $\mathbb{R}$ of the real numbers.  This function is defined as follows:
 \hspace*{1.3cm}
 $\ds \mathbf{x} \mapsto a(\mathbf{x} \cdot \mathbf{w} + b)$.
 \\[0.2cm]
-Here, $a$ is called the \blue{activation function}.  In our applications, we will use the sigmoid
-function as our activation function.  This function has been defined previously in Definition \ref{def:sigmoid}
-on page \pageref{def:sigmoid} as follows:
+Here, $a$ is called the \blue{activation function}.  \index{activation function} In our applications, we will
+use the sigmoid function as our activation function.  This function has been defined previously in Definition
+\ref{def:sigmoid} on page \pageref{def:sigmoid} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
 \\[0.2cm]
 Another useful activation function is the so called
-\href{https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}{ReLU function}, which is defined as 
+\href{https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}{ReLU function}, \index{ReLU function}
+which is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $a(t) = \max(0, x)$.
 \\[0.2cm]
-The abbreviation ReLU is short for \blue{rectified linear unit}.
+The abbreviation ReLU is short for \blue{rectified linear unit}. \index{rectified linear unit}
 The function modelling the neuron can be written more explicitly using index notation.  If
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -89,7 +90,7 @@ is the weight vector and
 \hspace*{1.3cm}
 $\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
 \\[0.2cm]
-is the input vector, then we have
+is the input vector, and $b\in \mathbb{R}$ is the \blue{bias}, \index{bias} then we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathbf{x} \mapsto S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
@@ -107,18 +108,19 @@ weight vector $\mathbf{w}$.
   \label{fig:nn1.pdf}
 \end{figure}
 
-A \blue{feedforward neural network} is a layered network of neurons.  Formally, the \blue{topology} of a neural network is
+A \blue{feedforward neural network} \index{feed forward neural network} is a layered network of neurons.
+Formally, the \blue{topology} \index{topology} of a neural network is 
 given by a number $L \in \mathbb{N}$ and a list $[m(1), \cdots, m(L)]$ of $L$ natural numbers.  The number
-$L$ is called the \blue{number of layers} and for $i \in \{2,\cdots,L\}$ the number $m(i)$ is the number of
-neurons in the $l$-th layer.  The first layer is called the \blue{input layer}.  The input layer does not contain
-neurons but instead just contains \blue{input nodes}.  The last layer (i.e.~the
-layer with index $L$) is called the \blue{output layer} and the remaining layers are called 
-\blue{hidden layers}.  If there is more than one hidden layer, the neural network is called a
-\blue{deep neural network}.  Figure \ref{fig:nn1.pdf} on page \pageref{fig:nn1.pdf} shows
-a small neural network with two hidden layers.  Including the input layer it has four layers and its topology
-is given by the list $[3, 6, 4, 2]$.  A larger neural network with three hidden layers is shown in Figure
-\ref{fig:nn2.pdf} on page \pageref{fig:nn2.pdf}.  I have written a small Jupyter notebook that can be used to
-draw diagrams of this kind. This notebook is available at
+$L$ is called the \blue{number of layers} \index{number of layers} and for $i \in \{2,\cdots,L\}$ the number $m(i)$ is the number of
+neurons in the $l$-th layer.  The first layer is called the \blue{input layer}. \index{input layer}
+The input layer does not contain neurons but instead just contains \blue{input nodes}. \index{input node} The
+last layer (i.e.~the layer with index $L$) is called the \blue{output layer} \index{output layer} and the
+remaining layers are called \blue{hidden layers}.  \index{hidden layer} If there is more than one hidden layer,
+the neural network is called a \blue{deep neural network}. \index{deep neural network} Figure \ref{fig:nn1.pdf}
+on page \pageref{fig:nn1.pdf} shows a small neural network with two hidden layers.  Including the input layer
+it has four layers and its topology is given by the list $[3, 6, 4, 2]$.  A larger neural network with three
+hidden layers is shown in Figure \ref{fig:nn2.pdf} on page \pageref{fig:nn2.pdf}.  I have written a small
+Jupyter notebook that can be used to draw diagrams of this kind. This notebook is available at
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/NN-Architecture.ipynb}{NN-Architecture.ipynb}
 in the \texttt{Python} subdirectory of my GitHub repository for this lecture. 
 
@@ -131,13 +133,14 @@ in the \texttt{Python} subdirectory of my GitHub repository for this lecture.
 \end{figure}
 
 
-If the topology of a neural network is  $[m(1), \cdots, m(L)]$, the \blue{input dimension} is defined as
-$m(1)$.  Similarly, the \blue{output dimension} is defined as $m(L)$.
-The feedforward neural networks discussed in this chapter are \blue{fully connected}:  Every node in the $l$-th
-layer is connected to every node in the $(l+1)$-th layer via a \blue{weight}. 
+If the topology of a neural network is  $[m(1), \cdots, m(L)]$, the \blue{input dimension} \index{input dimension}
+is defined as $m(1)$.  Similarly, the \blue{output dimension} \index{output dimension} is defined as $m(L)$.
+The feedforward neural networks discussed in this chapter are \blue{fully connected}:  \index{fully connected}
+Every node in the $l$-th layer is connected to every node in the $(l+1)$-th layer via a \blue{weight}.
+\index{weight of NN}
 The weight $w_{j,k}^{(l)}$ is the weight of the connection from the $k$-th neuron in layer $l-1$ to
-the $j$-th neuron in layer $l$.  The weights in layer $l$ are combined into the \blue{weight matrix} $W^{(l)}$ of
-the layer $l$: This matrix is defined as
+the $j$-th neuron in layer $l$.  The weights in layer $l$ are combined into the \blue{weight matrix} $W^{(l)}$
+\index{weight matrix} of the layer $l$: This matrix is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds W^{(l)} := \bigl( w_{j,k}^{(l)} \bigr)$.
@@ -148,7 +151,7 @@ Note that $W^{(l)}$ is an $m(l) \times m(l-1)$ matrix, i.e.~we have
 $\ds W^{(l)} \in \mathbb{R}^{m(l) \times m(l-1)}$.
 \\[0.2cm]
 The $j$-th neuron in layer $l$ has the \blue{bias} $b_j^{(l)}$.  These biases of layer $l$ are combined into
-the \blue{bias vector}
+the \blue{bias vector} \index{bias vector}
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle^\top$.
@@ -172,13 +175,13 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
        \tag{FF2}
 \end{equation}
 \end{enumerate}
-The \blue{activation vector} of layer $l$ is defined as
+The \blue{activation vector} \index{activation vector} of layer $l$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{a}^{(l)}(\mathbf{x}) := \langle a_1^{(l)}(\mathbf{x}), \cdots, a_{m(l)}^{(l)}(\mathbf{x}) \rangle^\top$.
 \\[0.2cm]
-Using vector notation, the \blue{feed forward equations} (\ref{eq:FF1}) and (\ref{eq:FF2}) can be
-rewritten as follows:
+Using vector notation, the \blue{feed forward equations} \index{feed forward equations}
+(\ref{eq:FF1}) and (\ref{eq:FF2}) can be rewritten as follows:
 \begin{align}
   \label{eq:FF1v}
   \mathbf{a}^{(1)}(\mathbf{x}) & := \mathbf{x},
@@ -243,7 +246,7 @@ $\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) = \mathbf{y}^{(i)}$ \quad for all $i \in
 \\[0.2cm]
 Unfortunately, in general we will not be able to achieve equality for all  $i \in \{1,\cdots,n\}$.
 Therefore, our goal is to minimize the \blue{error} instead.  To be more precise, the 
-\blue{quadratic error cost function} is defined as 
+\blue{quadratic error cost function} \index{quadratic error cost function} is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
@@ -260,12 +263,16 @@ $\ds C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)},
 $,
 \\[0.2cm]
 i.e.~$C_{\mathbf{x},\mathbf{y}}$ is the part of the cost function that is associated with a single training example $\pair(\mathbf{x},\mathbf{y})$.
-Then, we have
+Then we have
 \\[0.2cm]
-$\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
-     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) := 
- \frac{1}{n} \cdot \sum\limits_{i=1}^n C_{\mathbf{x^{(i)}}, \mathbf{y}^{(i)}}\Bigr(W^{(2)}, \cdots W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr) 
-$.
+\hspace*{1.3cm}
+$
+\begin{array}{cl}
+    & \ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)};
+     \mathbf{x}^{(1)}, \mathbf{y}^{(1)}, \cdots, \mathbf{x}^{(n)},\mathbf{y}^{(n)} \Bigr) \\
+:= & \ds \frac{1}{n} \cdot \sum\limits_{i=1}^n C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}\Bigr(W^{(2)}, \cdots W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr).
+\end{array}
+$
 \\[0.2cm]
 As the notation
 \\[0.2cm]
@@ -275,8 +282,9 @@ $C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cd
 is far too heavy, we will abbreviate this term as $C_{\mathbf{x}, \mathbf{y}}$ in the following
 discussion of the backpropagation algorithm.  Similarly, we abbreviate the quadratic error cost function as $C$.
 Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $\mathbf{b}^{(l)}$ such that the
-quadratic error cost function $C$ is minimized.  We will use a variation of gradient descent to
-find this minimum\footnote{
+quadratic error cost function $C$ is minimized.  We will use a variation of
+\href{https://ml-cheatsheet.readthedocs.io/en/latest/gradient_descent.html}{gradient descent} to
+\index{gradient descent} find this minimum\footnote{
   In logistic regression we have tried to \emph{maximize} the log-likelihood.  Here, instead
   we \emph{minimize} the quadratic error cost function.  Hence, instead of gradient \emph{ascent} we use
   gradient \emph{descent}.  
@@ -290,18 +298,16 @@ for the goal that we want to achieve.
 There are three reasons for the recent success of neural networks.
 \begin{enumerate}
 \item The computing power that is available today has vastly increased in the last 20 years.
-      For example, today the \href{https://en.wikipedia.org/wiki/AMD_RX_Vega_series}{AMD Radeon Vega \texttt{VII}}
-      graphic card offers about 13.8 teraflops in single precision performance.  It consumes about 300 watt.
-      Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which was the most powerful supercomputer in 2000:
-      According to the article ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
-      it  offered a performance of 7.2 teraflops.  It needed 6 megawatt to operate.  The cost to build ASCI White was about $110,000,000\,\symbol{36}$.
-      To compare, the AMD RX Vega \texttt{VII} costs $699\,\symbol{36}$.
-
-      The Nvidia \href{https://www.nvidia.com/en-us/titan/titan-v/}{Titan V} comes at $2,999\,\symbol{36}$ and
-      offers a stunning 110 teraflops for \href{https://en.wikipedia.org/wiki/Deep_learning}{deep learning} via
-      the \href{https://en.wikipedia.org/wiki/CUDA}{\textsc{Cuda}} \textsc{Api}.
+      For example, today the
+      \href{https://www.nvidia.com/en-us/deep-learning-ai/products/titan-rtx/}{Nvidia Titan RTX}
+      graphic card offers  130 teraflops in single precision performance.  It needs a power supply that
+      outputs 650 watt.  Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which
+      was the most powerful supercomputer in 2000: According to the article
+      ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
+      it  offered a performance of 7.2 teraflops and needed 6 megawatt to operate.  The cost to build ASCI
+      White was about $110,000,000\,\symbol{36}$.   To compare, the Nvidia Titan RTX costs $2,499\,\symbol{36}$.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
-      \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} by
+      \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} \index{backpropagation} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
       The backpropagation algorithm had first been discovered by Arthur E.~Bryson, Jr.~and Yu-Chi Ho
       \cite{bryson:1969}.  In recent years, there have been a number of other theoretical advances that have
@@ -323,7 +329,7 @@ $\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-
 \quad for all  $j \in \{1, \cdots, m(l)\}$ and $l \in \{2,\cdots,L\}$.
 \\[0.2cm]
 Of course, the term  $a_k^{(l-1)}$ really is a function of the input vector $\mathbf{x}$.  However, it is better to suppress
-this dependence in the notation since otherwise the formul\ae\ get too cluttered.
+this dependence in the notation since otherwise the formulas get too cluttered.
 Essentially, $z_j^{(l)}$ is the input to the sigmoid function when the activation $a_j^{(l)}$ is computed,
 i.e.~we have
 \\[0.2cm]
@@ -339,7 +345,7 @@ $\ds\varepsilon_j^{(l)} := \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z
 \\[0.2cm]
 that is we regard $C_{\mathbf{x}, \mathbf{y}}$ as a function of the $z_j^{(l)}$ and take the partial
 derivatives according to these variables.  
-Note that $\varepsilon_j^{(l)}$ does depend on both $\mathbf{x}$ and $\mathbf{y}$.  
+Note that $\varepsilon_j^{(l)}$ depends on both $\mathbf{x}$ and $\mathbf{y}$.  
 We call  $\varepsilon_j^{(l)}$ the \blue{error in the $j$-th neuron in the $l$-th layer}. 
 Since the notation would
 get too cumbersome if we would write this as $\varepsilon(\mathbf{x}, \mathbf{y})_j^{(l)}$, we regard the training
@@ -355,11 +361,11 @@ $\boldsymbol{\varepsilon}^{(l)} := \left(
   \right)
 $.
 \\[0.2cm]
-The vector $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}.
+The vector $\boldsymbol{\varepsilon}^{(l)}$ is called the \blue{error in layer $l$}. \index{error in layer $l$}
 
 \subsection{The Hadamard Product}
 Later, we will have need of the \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product} 
-of two vectors.  Assume that $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$.  The \blue{Hadamard product} of
+\index{Hadamard product} of two vectors.  Assume that $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$.  The \blue{Hadamard product} of
 $\mathbf{x}$ and $\mathbf{y}$ is a \blue{vector} that is defined by multiplying the vectors $\mathbf{x}$ and $\mathbf{y}$ elementwise:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -397,7 +403,8 @@ use the \href{http://www.numpy.org}{NumPy} package to represent vectors.  In Num
 vectors $\mathtt{x}$ and $\mathtt{y}$ is computed by the expression $\mathtt{x} * \mathtt{y}$.
 
 \subsection{Backpropagation: The Equations}
-Now we are ready to state the \blue{backpropagation equations}.  The first of these four equations reads as follows:
+Now we are ready to state the \blue{backpropagation equations}.  \index{backpropagation equations}
+The first of these four equations reads as follows:
 \begin{equation}
   \label{eq:BP1}
   \varepsilon^{(L)}_j = (a_j^{(L)} - y_j) \cdot S'\bigl(z_j^{(L)}\bigr)
@@ -452,7 +459,9 @@ This equation is more succinct in vectorized notation:
 Note that this equation computes the error in layer $l$ for $l < L$ in terms
 of the error in layer $l+1$:  The error 
 $\boldsymbol{\varepsilon}^{(l+1)}$ at layer $l+1$ is \blue{propagated backwards} through the neural network to produce the
-error $\boldsymbol{\varepsilon}^{(l)}$ at layer $l$.  This is the reason for calling the associated algorithm \blue{backpropagation}.
+error $\boldsymbol{\varepsilon}^{(l)}$ at layer $l$.  This is the reason for calling the associated algorithm
+\blue{backpropagation}.  \index{backpropagation}
+
 
 Next, we have to compute the partial derivative of $C_{\mathbf{x}, \mathbf{y}}$ with respect to the bias of the
 $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
@@ -462,8 +471,12 @@ $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
   \quad \mbox{for all $j \in \{1,\cdots,m(l)\}$ and $l \in \{2, \cdots,L\}$.}
   \tag{BP3}
 \end{equation}
-This equation shows the reason for defining the error terms $\varepsilon_j^{(l)}$.
-In vectorized notation, this equation takes the following form:
+This equation shows the reason for defining the error terms $\varepsilon_j^{(l)}$:  What we really need to
+compute is the partial derivative of $C_{\mathbf{x},\mathbf{y}}$ with respect to the biases and the weights.
+The equation (BP3) and the equation (BP4) below show how this can be done once we have computed the error terms
+$\varepsilon_j^{(l)}$.
+
+In vectorized notation, the equation (BP3) takes the following form:
 \begin{equation}
   \label{eq:BP3v}
   \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
@@ -490,8 +503,8 @@ Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-
 product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
 row vector $\bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ that is regarded as an $1 \times m(l-1)$ matrix.
 
-As the backpropagation equations are at the very core of the theory of neural networks, we highlight the
-vectorized form of these equations:
+As the backpropagation equations \index{backpropagation equations} are at the very core of the theory of neural
+networks, we highlight the vectorized form of these equations:
 \\[0.2cm]
 \hspace*{0.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
@@ -499,7 +512,7 @@ vectorized form of these equations:
 $
 \begin{array}[h]{llr}
   \ds \boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)
-     & & \mbox{\hspace*{4cm}(BP1v)}  \\[0.2cm]
+     & & \mbox{\hspace*{3.2cm}(BP1v)}  \\[0.2cm]
   \ds \boldsymbol{\varepsilon}^{(l)} = \Bigl(\bigl(W^{(l+1)}\bigr)^\top \cdot \boldsymbol{\varepsilon}^{(l+1)}\Bigr) \odot
   S'\bigl(\mathbf{z}^{(l)}\bigr) & \mbox{for all $l \in \{2, \cdots, L-1\}$} &
   \mbox{(BP2v)}  \\[0.3cm]
@@ -536,10 +549,12 @@ versions of these equations since this is more efficient for two reasons:
 \subsection{A Proof of the Backpropagation Equations}
 Since we are living in a time of fake news and alternative facts where
 \href{https://www.theguardian.com/us-news/2018/aug/19/truth-isnt-truth-rudy-giuliani-trump-alternative-facts-orwellian}{truth isn't truth} 
-and not even a president can be trusted,  you should not lightly believe the validity of the backpropagation equations.  Instead, 
+and not even a president can be trusted,  you should not gullibly trust in the validity of the backpropagation
+equations.  Instead,  
 we have to \textbf{prove} the backpropagation equations.  Although the proof is a bit tedious, it should be
 accessible: We only need the \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} from calculus and the 
-\href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} from \href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariate calculus}.
+\href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{chain rule} from
+\href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariable calculus}. \index{chain rule}
 
 Lets us start with the proof of equations \ref{eq:BP1}.
 Remember that we have defined the numbers $\varepsilon_j^{(l)}$ as
@@ -596,7 +611,7 @@ Thus we have proven equation \ref{eq:BP1}.
 
 We proceed to prove equation \ref{eq:BP2}.  To this end we compute $\varepsilon_j^{(l)}$ for $l < L$.  
 This time, we need the chain rule of multivariate calculus.  As a reminder, the chain rule in multivariate calculus
-works as follows: Assume that the functions
+works as follows: \index{chain rule, multivariate calculus} Assume that the functions
 \\[0.2cm]
 \hspace*{1.3cm}
 $f: \mathbb{R}^k \rightarrow \mathbb{R}$ \quad and \quad
@@ -736,7 +751,7 @@ $.
 \\[0.2cm]
 In practical applications of neural networks, the number of training examples is usually big.  For example, 
 when we later develop a neural network to classify handwritten digits, we will have $60,000$ training examples.  More
-ambitious projects that use neural networks to classify objects in images use millions of training examples.
+ambitious projects that use neural networks to recognize objects in images use millions of training examples.
 When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a
 bias vector $b^{(l)}$ we have to compute the sums 
 \\[0.2cm]
@@ -747,7 +762,8 @@ $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{
 \\[0.2cm]
 over all training examples in order to perform a single step of gradient descent.  If $n$ is large, this is
 computationally costly.  Note that these sums can be regarded as computing average values.  In 
-\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{stochastic gradient descent}, 
+\href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{stochastic gradient descent},
+\index{stochastic gradient descent}
 we approximate these sums by randomly choosing a small subset of the training examples.  In
 order to formulate this approximation in a convenient notation, let us assume that instead of using all $n$
 training examples, we just use the first $m$ training examples.  Then we approximate the sums shown above as follows:
@@ -772,6 +788,7 @@ gradient descent, then the approximations given above can speed up the learning 
 \section{Implementation}
 Next, we will take a look at a neural network that is able to recognize handwritten digits.  The
 \href{http://yann.lecun.com/exdb/mnist/}{\textsc{Mnist} database of handwritten digits}
+\index{MNIST database of handwritten digits}
 contains $70\,000$ images of handwritten digits. These images have a size of $28 \times 28$ pixels.
 Figure \ref{fig:mnist_imgs} shows the first 18 images. 
 
@@ -782,15 +799,23 @@ Figure \ref{fig:mnist_imgs} shows the first 18 images.
   \caption{The first 18 images of the \textsc{Mnist} dataset.}
   \label{fig:mnist_imgs}
 \end{figure}
-
-We will use the first $60\,000$ of these images to train a neural network, while the remaining $10\,000$ images
-will be used to check the accuracy of the trained network.  As a matter of convenience, the images have been
-converted into one large pickled zip files.  You can download this file at the following address:
+The $70,000$ images are divided into three groups:
+\begin{enumerate}
+\item The first group contains $50,000$ images and is designated as the training set.
+\item The second group contains $10,000$ images and is designated as the validation set.
+\item The last group contains $10,000$ images and is designated as the test set.
+\end{enumerate}
+We will use the first $50\,000$ images to train a neural network, while the last group of $10\,000$ images
+will be used to check the accuracy of the trained network.  As we do not use any regularization, we will not
+use the validation set.
+As a matter of convenience, the images have been
+converted into one large \href{https://docs.python.org/3.7/library/pickle.html}{pickled} \index{pickle} zip
+files.  You can download this file at the following address: 
 \\[0.2cm]
-\hspace*{1.3cm}
+\hspace*{1.0cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/Python/mnist.pkl.gz}{https://github.com/karlstroetmann/Artificial-Intelligence/raw/master/Python/mnist.pkl.gz}
 \\[0.2cm]
-We will next describe a \textsl{Python} program that loads these images, trains a neural network on it, and
+Next, we describe a \textsl{Python} program that loads these images, trains a neural network on it, and
 finally evaluates the accuracy of the network.  The program is shown in the Figures
 \ref{fig:Digit-Regocnition.ipynb-1}, \ref{fig:Digit-Regocnition.ipynb-2}, \ref{fig:Digit-Regocnition.ipynb-3},
 and \ref{fig:Digit-Regocnition.ipynb-4}.
@@ -801,6 +826,7 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -820,24 +846,20 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
     def load_data():
         with gzip.open('mnist.pkl.gz', 'rb') as f:
             train, validate, test = pickle.load(f, encoding="latin1")
-        training_inputs   = [np.reshape(x, (784, 1)) for x in train[0]]
-        training_results  = [vectorized_result(y) for y in train[1]]
-        training_data     = zip(training_inputs, training_results)
-        validation_inputs = [np.reshape(x, (784, 1)) for x in validate[0]]
-        validation_data   = zip(validation_inputs, validate[1])
-        test_inputs       = [np.reshape(x, (784, 1)) for x in test[0]]
-        test_data         = zip(test_inputs, test[1])
-        training_data     = list(training_data)
-        validation_data   = list(validation_data)
-        test_data         = list(test_data)
-        return (training_data, validation_data, test_data)        
-
-    (training_data, validation_data, test_data) = load_data()
+        training_inputs    = [np.reshape(x, (784, 1)) for x in train[0]]
+        training_results   = [vectorized_result(y) for y in train[1]]
+        training_data      = list(zip(training_inputs, training_results))
+        test_inputs        = [np.reshape(x, (784, 1)) for x in test[0]]
+        test_data          = list(zip(test_inputs, test[1]))
+        return training_data, test_data
+    
+    training_data, test_data = load_data()
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Code to load the image files.}
 \label{fig:Digit-Regocnition.ipynb-1}
 \end{figure}
+
 The code on Figure \ref{fig:Digit-Regocnition.ipynb-1} on page \pageref{fig:Digit-Regocnition.ipynb-1} shows the
 code to load the image files.  We discuss it line by line.
 \begin{enumerate}
@@ -845,15 +867,15 @@ code to load the image files.  We discuss it line by line.
       uncompress the file.
 \item The format that has been used to store the images is called
       \href{https://docs.python.org/3.6/library/pickle.html}{pickle}.
-      This a binary format that can be used to serialize \textsl{Python} objects into binary strings.  These
+      This a binary format that can be used to \blue{serialize} \textsl{Python} objects into binary strings.  These
       strings can then be stored as files and later be used to restore the corresponding \textsl{Python} objects.  In order
       to read pickled objects, we import the module \texttt{pickle}.
 \item The images of the handwritten digits that we are going to import have a size of $28 \times 28$ pixels.
-      In this program, we will store the images as \texttt{numpy} arrays of size $28 \cdot 28 = 784$.
+      In this program, the images are stored as \texttt{numpy} arrays of size $28 \cdot 28 = 784$.
 \item In order to be able to display these images, we import \texttt{matplotlib}.
-\item Every image of a handwritten character is associated with a number $d \in \{0, \cdots, 0\}$.
+\item Every image of a handwritten character is associated with a number $d \in \{0, \cdots, 9\}$.
       We need to transform these numbers into the expected output of our neural network.  This neural network
-      will have 10 output nodes corresponding to these digits.  The $k$-th output node will be one
+      will have 10 output nodes corresponding to these digits.  The $k$-th output node will be $1$
       if the neural network has recognized the digit $k$, while all other output nodes will be $0$.
 
       The function $\texttt{vectorized\_result}(d)$ takes a digit $d \in \{0,\cdots,9\}$ and returns a
@@ -877,13 +899,16 @@ code to load the image files.  We discuss it line by line.
 \item The function \texttt{load\_data} reads the file \texttt{mnist.pkl.gz}, uncompresses it,
       and returns three lists:
       \begin{enumerate}
-      \item \texttt{training\_data} stores the first $50\,000$ images,
-      \item \texttt{validation\_data} holds $10\,000$ images that can be used for the validation of
-            hyper-parameters,   
+      \item \texttt{training\_data} stores the first $50\,000$ images.
+            The images are stored as pairs $(x,y)$: $x$ is a \texttt{numyp} array of shape $(784,1)$ and $y$ is a
+            \texttt{numpy} array of shape $(10, 1)$.
       \item \texttt{test\_data} holds the remaining $10\,000$ images.
+            $\texttt{test\_data}$ is a list containing $10,000$  pairs of the form $(\textbf{x}, y)$,
+            where $\textbf{x}$ is a 784-dimensional \texttt{numpy} array containing the input image, 
+            and $y \in \{0,\cdots,9\}$ is the corresponding digit value.            
       \end{enumerate}
-      The images are stored as pairs $(x,y)$: $x$ is a \texttt{numyp} array of shape $(784,1)$ and $y$ is a
-      \texttt{numpy} array of shape $(10, 1)$.
+      Note that the formats for training data and test data are different. 
+      For the training data $\textbf{y}$ is a vector, but for the test data $y$ is a number.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -891,6 +916,7 @@ code to load the image files.  We discuss it line by line.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = last,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -914,13 +940,13 @@ code to load the image files.  We discuss it line by line.
 Figure \ref{fig:Digit-Regocnition.ipynb-2} on page \pageref{fig:Digit-Regocnition.ipynb-2}
 shows the implementation of three utility functions.
 \begin{enumerate}
-\item The function $\mathtt{rndMatrix}(r, c)$ creates a matrix of shape $r, c)$ that is filled with
-      random numbers.  These numbers have Gaussian distribution with mean $0$ and variance
+\item The function $\mathtt{rndMatrix}(r, c)$ creates a matrix of shape $(r, c)$ that is filled with
+      random numbers.  These numbers have a Gaussian distribution with mean $0$ and variance
       $1/r$.  This function is used to initialize the weight matrices.  It is important that not all weights
       are initialized to the same number, for otherwise they would stay the same and then the different neurons
       would effectively all calculate the same feature instead of different features.  It is also important
-      that the weights are not to big for otherwise the associated neurons would \blue{saturate} and their
-      learning would be very slow.
+      that the weights are not too big for otherwise the associated neurons would \blue{saturate} and 
+      training would be very slow.
 \item The function $\texttt{sigmoid}(x)$ computes the sigmoid function.  If $x$ is a number,
       $\texttt{sigmoid}(x)$ computes
       \\[0.2cm]
@@ -937,7 +963,8 @@ shows the implementation of three utility functions.
       \hspace*{1.3cm}
       $S'(x) = S(x) \cdot \bigl(1 - S(x)\bigr)$
       \\[0.2cm]
-      $x$ can either be a number or a vector.
+      where $x$ can either be a number or an array
+      .
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -945,6 +972,7 @@ shows the implementation of three utility functions.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = last,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -1005,14 +1033,12 @@ represents a neural network with one hidden layer.
       recognition of handwritten digits has 784 inputs.  These inputs are the grey values of the $28 \times 28$
       pixels that constitute the image of the handwritten digit.
 \item The member variable \texttt{mHiddenSize}, specifies the number of neurons in the hidden layer.  We assume that
-      there is only one hidden layer.  I have experimented with 30 neurons, 60 neurons and $100$ neurons.
+      there is only one hidden layer.  I have experimented with 30 neurons, 40 neurons, 60 neurons, and $100$ neurons.
       \begin{enumerate}[(a)]
-      \item For 30 neurons, the computation took about 1 minute and 58 seconds and the trained neural network achieved an
+      \item For 30 neurons, the trained neural network achieved an
             accuracy of $94.8\symbol{37}$.
-      \item For 60 neurons, the computation took 2 minutes and 51 seconds the network achieved an accuracy of
-            $96.1\symbol{37}$.
-      \item If there are 100 neurons in the hidden layer, the computation took 3 minutes and 42 secondsseed and achieved an
-            accuracy of $97.8\symbol{37}$.
+      \item For 60 neurons, the network achieved an accuracy of $96.1\symbol{37}$.
+      \item If there are 100 neurons in the hidden layer, the network achieved an accuracy of $97.8\symbol{37}$.
 
             For 100 neurons, the number of weights in the hidden layer is $784 \cdot 100 = 78\,400$.
             Therefore, the number of weights is greater than the number of training examples.  Hence,
@@ -1028,32 +1054,37 @@ represents a neural network with one hidden layer.
       \item \texttt{mBiasesO} stores the bias vector of the output layer.
       \item \texttt{mWeightsH} stores the weight matrix $W^{(2)}$, which specifies the weights connecting the
             input layer with the hidden layer.
-      \item \texttt{mWeightsH} stores the weight matrix $W^{(3)}$, which specifies the weights connecting the
+      \item \texttt{mWeightsO} stores the weight matrix $W^{(3)}$, which specifies the weights connecting the
             hidden layer with the output layer.
       \end{enumerate}
 \item The function \texttt{feedforward} receives an image $\mathbf{x}$ of a digit that is stored as a vector of
       shape $(784,1)$ and computes the output of the
-      neural network for this image.  The code is a straightforward implementation of the equations (\ref{eq:FF1}) and (\ref{eq:FF2}).
+      neural network for this image.  The code is a straightforward implementation of the equations
+      (\ref{eq:FF1v}) and (\ref{eq:FF2v}).  These equations are repeated here for convenience:
+      \begin{enumerate}
+      \item $\mathbf{a}^{(1)}(\mathbf{x}) = \mathbf{x}$ \hspace*{\fill} (FF1v)
+      \item $\mathbf{a}^{(l)}(\mathbf{x}) = S\Bigl( W^{(l)} \cdot \mathbf{a}^{(l-1)}(\mathbf{x}) + \mathbf{b}^{(l)}\Bigr)$
+             \quad for all $l \in \{2, \cdots, L\}$. \hspace*{\fill} (FF2v)
+      \end{enumerate}
 \item The method \texttt{sgd} implements \blue{stochastic gradient descent}.   It receives 5 arguments.
       \begin{enumerate}
       \item \texttt{training\_data} is a list of pairs of the form $\bigl(\mathbf{x}^{(i)}, \mathbf{y}^{(i)}\bigr)$.
             Here, $\mathbf{x}^{(i)}$ is a vector of dimension $784$.  This vector contains the pixels of an image showing
             one of the handwritten digits from the training set.  $\mathbf{y}^{(i)}$ is the \blue{one-hot encoding} of the digit
             that is shown in the image $\mathbf{x}^{(i)}$.
-      \item \texttt{epochs} is the number of iterations of gradient descent.  In order to train the neural network to
-            recognize handwritten digits, we will use 30 iterations.
+      \item \texttt{epochs} is the number of iterations of gradient descent.      
       \item \texttt{mbs} is the size of the mini-batches that are used in stochastic gradient descent.
             I have achieved the fastest learning when I have used a mini-batch size of 10.  Using a mini-batch size
-            of 20 was slightly slower, but this parameter seems to be quite uncritical.
+            of 20 was slightly slower, but this parameter seems is not critical.
       \item \texttt{eta} is the learning rate.
-      \item \texttt{test\_data} is the list of test data.  These data are only used to check the accuracy, they are
-            not used to determine the weights or biases.
+      \item \texttt{test\_data} is the list of test data.  These data are only used to check the accuracy after
+            every epoch, they are not used to determine the weights or biases.
       \end{enumerate}
       The implementation of stochastic gradient descent executes a \texttt{for}-loop that runs \texttt{epoch} number
       of times.  At the beginning of each iteration, the training data are shuffled randomly.  Next, the data is
       chopped up into chunks of size \texttt{mbs}.  These chunks are called \blue{mini-batches}.  The inner
       \texttt{for}-loop iterates over all mini-batches and executes one step of gradient descent that only uses the
-      data from the mini-batch.  At the end of each iteration of the outer \texttt{for}-loop, the accuracy of the
+      data from the given mini-batch.  At the end of each iteration of the outer \texttt{for}-loop, the accuracy of the
       current version of the neural net is printed.
 \item The method \texttt{update\_mini\_batch} performs one step of gradient descent for the data from one mini-batch.
       It receives two arguments.
@@ -1091,6 +1122,7 @@ represents a neural network with one hidden layer.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = last,
+                bgcolor       = bg,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.5cm,
@@ -1113,12 +1145,13 @@ represents a neural network with one hidden layer.
             return (nabla_BH, nabla_BO, nabla_WH, nabla_WO)
         
         def evaluate(self, test_data):
-            test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
+            test_results = \
+                [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
             return sum(int(y1 == y2) for (y1, y2) in test_results)
         # end of class Network
             
-    net = Network(60)
-    net.sgd(training_data, 30, 20, 0.3, test_data)   
+    net = Network(40)
+    net.sgd(training_data, 60, 10, 0.1, test_data)   
 \end{minted}
 \vspace*{-0.3cm}
 \caption{The class \texttt{Network}, part \texttt{II}.}
@@ -1178,7 +1211,7 @@ proceeds as follows:
            S'\bigl(\mathbf{z}^{(2)}\bigr)
       $.
 \item Finally, the gradients of the cost function with respect to the bias
-      vector and the weight matrix of the hidden layer are computed.  This is completely to the computation of
+      vector and the weight matrix of the hidden layer are computed.  This is completely analogous to the computation of
       the corresponding gradients of the output layer.
 \item The method \texttt{evaluate} is used to evaluate the accuracy of the neural network on the test data.
 \item Finally, we see how the computation can be started by creating an object of class \texttt{Network} and
@@ -1186,8 +1219,7 @@ proceeds as follows:
 \end{enumerate}
 The program discussed in this section is available as a jupyter notebook at the following address:
 \\[0.2cm]
-\hspace*{0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Digit-Recognition.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Digit-Recognition.ipynb}.
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Digit-Recognition.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Digit-Recognition-NN.ipynb}.
 
 
 
