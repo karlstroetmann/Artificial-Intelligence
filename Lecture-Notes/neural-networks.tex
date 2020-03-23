@@ -736,10 +736,9 @@ example $\pair(\mathbf{x}, \mathbf{y})$.  However, when we train a neural networ
 examples into account.  If we have $n$ training examples
 \\[0.2cm]
 \hspace*{1.3cm}
-$\langle\mathbf{x}^{(1)}, \mathbf{y}^{(1)})\rangle$,
-$\langle\mathbf{x}^{(2)}, \mathbf{y}^{(2)})\rangle$,
+$\langle\mathbf{x}^{(1)}, \mathbf{y}^{(1)}\rangle$,
 $\cdots$,
-$\langle\mathbf{x}^{(n)}, \mathbf{y}^{(n)})\rangle$,
+$\langle\mathbf{x}^{(n)}, \mathbf{y}^{(n)}\rangle$,
 \\[0.2cm]
 then the quadratic error cost function has been previously defined as the sum
 \\[0.2cm]
@@ -749,8 +748,8 @@ $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}
  \frac{1}{2 \cdot n} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
 $.
 \\[0.2cm]
-In practical applications of neural networks, the number of training examples is usually big.  For example, 
-when we later develop a neural network to classify handwritten digits, we will have $60,000$ training examples.  More
+In practical applications of neural networks, the number $n$ of training examples is usually big.  For example, 
+when we later develop a neural network to classify handwritten digits, we will have $50,000$ training examples.  More
 ambitious projects that use neural networks to recognize objects in images use millions of training examples.
 When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a
 bias vector $b^{(l)}$ we have to compute the sums 
