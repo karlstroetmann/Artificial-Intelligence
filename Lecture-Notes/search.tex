@@ -825,7 +825,7 @@ implements this strategy.  We proceed to discuss the details of this program.
                 return Path
             limit += 1
     
-    def depth_limited_search(state, goal, next_states, limit):
+    def depth_limited_search(start, goal, next_states, limit):
         Stack = deque([[start]])
         while len(Stack) > 0:
             Path  = Stack.pop()
