@@ -1,0 +1,9 @@
+The following commands create the virtual environment "ai" that is used in
+the notebooks.
+
+conda create -n ai python=3 jupyter notebook
+conda activate ai
+conda install -c conda-forge jupyter_contrib_nbextensions
+conda install -c anaconda graphviz
+conda install -c conda-forge python-graphviz
+conda install -c anaconda ply
