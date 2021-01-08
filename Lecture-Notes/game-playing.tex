@@ -141,7 +141,6 @@ the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementa
     
     finished = lambda State: utility(State, "X") != None
 \end{minted}
-\vspace*{-1.0cm}
 \caption{A \textsl{Python} implementation of tic-tac-toe.}
 \label{fig:Tic-Tac-Toe.ipynb}
 \end{figure}
@@ -341,7 +340,6 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
                 final_msg(State)
                 break    
 \end{minted}
-\vspace*{-1.0cm}
 \caption{The Minimax algorithm.}
 \label{fig:Minimax.ipynb}
 \end{figure}
@@ -533,7 +531,6 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
             alpha = max(val, alpha)
         return val
 \end{minted}
-\vspace*{-1.0cm}
 \caption{$\alpha$-$\beta$-Pruning.}
 \label{fig:Alpha-Beta-Pruning.ipynb:alphaBeta}
 \end{figure}
@@ -605,7 +602,6 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$, w
             Cache[State] = val, alpha, beta
             return val                
 \end{minted}
-\vspace*{-1.0cm}
 \caption{The function $\mathtt{value}$ that memoizes the function $\mathtt{alphaBeta}$.}
 \label{fig:Alpha-Beta-Pruning.ipynb:value}
 \end{figure}
@@ -720,7 +716,6 @@ the given $\texttt{State}$ using our \blue{evaluation function}.  This leads to 
             alpha = max(val, alpha)
         return val
 \end{minted}
-\vspace*{-1.0cm}
 \caption{Depth-limited $\alpha$-$\beta$-pruning.}
 \label{fig:Game.ipynb}
 \end{figure}
