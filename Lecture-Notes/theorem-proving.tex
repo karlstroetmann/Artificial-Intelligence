@@ -1,0 +1,991 @@
+\chapter{Equational Theorem Proving}
+Mathematics, and in particular mathematical theorem proving is clearly related to the concept of intelligence.
+\blue{Automatic theorem proving} is the branch of artificial intelligence that investigates the use of
+artificial intelligence in mathematics.  The topic of \emph{automatic theorem proving} can easily fill more
+than one book.  For reasons of time we will restrict this chapter to deal with \blue{equational theorem proving}.  In
+\emph{equational theorem proving} we are given a set of axioms that are equations and we ask, which other
+equations can be followed from these axioms.  For example, a \blue{group} $\mathcal{G}$ is defined as a tuple
+of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{G} = \langle G, e, \cdot, i \rangle$
+\\[0.2cm]
+such that
+\begin{itemize}
+\item $G$ is a set.
+\item $e \in G$,
+
+      where $e$ is called the \blue{left-neutral element}.
+\item $\cdot: G \times G \rightarrow G$,
+
+      where $\cdot$ is called the \blue{multiplication} of the group $\mathcal{G}$.
+\item $i: G \rightarrow G$,
+
+      where for any $x \in G$ the element $i(x)$ is called the \blue{left-inverse} of $x$.
+\item Furthermore, the following \blue{axioms} have to be satisfied:
+      \begin{enumerate}
+      \item $e \cdot x = x$, 
+      \item $i(x) \cdot x = e$, 
+      \item $(x \cdot y) \cdot z = x \cdot (y \cdot z)$.
+      \end{enumerate}
+\end{itemize}
+In \href{https://en.wikipedia.org/wiki/Abstract_algebra}{abstract algebra}, it is shown that these axioms imply
+the equation 
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \cdot i(x) = e$, \quad i.e. the left inverse of $x$ is also a right inverse of $x$.
+\\[0.2cm]
+A possible proof runs as follows:
+$$
+\begin{array}{lcll}
+  x \cdot i(x) & = & e \cdot \bigl(x \cdot i(x)\bigr) & \mbox{because $e$ is left-neutral} \\
+               & = & \Bigl(i\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr)\Bigr) \cdot \bigl(x \cdot i(x)\bigr)
+                   & \mbox{because $i\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr) = e$} \\
+               & = & i\bigl(x \cdot i(x)\bigr) \cdot \Bigl(\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr)\Bigr)
+                   &  \mbox{associativity} \\
+               & = & i\bigl(x \cdot i(x)\bigr) \cdot \biggl(x \cdot \Bigl(i(x) \cdot \bigl(x \cdot i(x)\bigr)\Bigr)\biggr) 
+                   &  \mbox{associativity} \\
+               & = & i\bigl(x \cdot i(x)\bigr) \cdot \biggl(x \cdot \Bigl(\bigl(i(x) \cdot x\bigr) \cdot i(x)\Bigr)\biggr) 
+                   &  \mbox{associativity} \\
+               & = & i\bigl(x \cdot i(x)\bigr) \cdot \Bigl(x \cdot \bigl(e \cdot i(x)\bigr)\Bigr) 
+                   &  \mbox{because $i(x) \cdot x = e$} \\
+               & = & i\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr) 
+                   &  \mbox{because $e \cdot i(x) = i(x)$} \\
+               & = & e 
+                   & \mbox{because $i(z) \cdot z = e$ where $z = x \cdot i(x)$.}
+\end{array}
+$$
+Obviously, it is not trivial to come up with proofs of this kind.  Fortunately, there is a systematic approach to
+solve this and similar equational problems: In this chapter, we present an algorithm
+that can find equational proofs of the kind shown above.  This algorithm is known as the
+\href{https://en.wikipedia.org/wiki/Knuth–Bendix_completion_algorithm}{Knuth-Bendix completion algorithm}.  It
+was discovered by Donald E. Knuth and Peter B. Bendix \cite{knuth:1970}.
+
+The rest of this chapter is structured as follows.
+\begin{enumerate}
+\item In the next section, we will formally introduce \blue{equational proofs} and \blue{term rewriting}.
+\item After that, we discuss abstract properties of relations.  For example, we introduce the notion of 
+      \blue{confluence} and prove the \blue{Church-Rosser} theorem and \blue{Newman's lemma}.
+\item The third section discusses term orderings and introduces the \blue{Knuth-Bendix ordering}.
+\item The last section presents the \blue{Knuth-Bendix completion algorithm}      
+\end{enumerate}
+
+\section{Equational Proofs}
+This section defines the notion of an \blue{equational proof} precisely and discusses how equational proofs can
+be carried out via term rewriting.  In order to do this, we have to define a number of more elementary notions
+like \blue{functions symbols}, \blue{variables}, \blue{terms}, \blue{substitutions}, et cetera.  We begin with
+the notion of a signature.
+
+\begin{Definition}[Signature]
+  A \blue{signature} is a triple of the form
+  \\[0.2cm]
+  \hspace*{1.3cm} $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$,
+  \\[0.2cm]
+  where we have the following: 
+  \begin{enumerate}
+  \item $\mathcal{V}$ is the set of \blue{variables}. \index{variable}
+  \item $\mathcal{F}$ is the set of \blue{function symbols}. \index{function symbol}
+  \item $\textsl{arity}$ is a function with signature
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\textsl{arity}: \mathcal{F} \rightarrow \mathbb{N}$.
+        \\[0.2cm]
+        If we have $\textsl{arity}(f) = n$, then $f$ is said to be an \blue{$n$-ary function symbol}.
+  \item We have $\mathcal{V} \cap \mathcal{F} = \{\}$, i.e.~variables are different from function symbols. \eoxs
+  \end{enumerate}
+\end{Definition}
+
+\example
+The signature of \blue{group theory} $\Sigma_G$ can be defined as follows:
+\begin{enumerate}[(a)]
+\item $\mathcal{V} := \{ x, y, z \}$,
+\item $\mathcal{F} := \{ e, i, \cdot \}$,
+\item $\textsl{arity} := \{ e \mapsto 0, i \mapsto 1, \cdot \mapsto 2 \}$,
+  
+      i.e.~$e$ is a constant symbol, $i$ is a unary function symbol, and $\cdot$ is a binary function symbol.
+\item $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$. \eoxs
+\end{enumerate}
+
+\noindent
+Having defined the notion of a signature we proceed to define terms.
+
+\begin{Definition}[Term,  $\mathcal{T}_\Sigma$]
+  If $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is a signature, the set of
+  \blue{$\Sigma$-terms} \index{term} \index{$\Sigma$-term} \blue{$\mathcal{T}_\Sigma$}
+  \index{$\mathcal{T}_\Sigma$} is defined inductively:
+  \begin{enumerate}
+  \item For every variable $x \in \mathcal{V}$ we have $x \in \mathcal{T}_\Sigma$.
+  \item If $f \in \mathcal{F}$ and $\textsl{arity}(f) = 0$, then $f \in \mathcal{T}_\Sigma$.
+  \item If $f \in \mathcal{F}$ and $n := \textsl{arity}(f) > 0$ and, furthermore, $t_1,\cdots,t_n \el \mathcal{T}_\Sigma$,  then we have
+        \\[0.2cm]
+        \hspace*{1.3cm} $f(t_1,\cdots,t_n) \el \mathcal{T}_\Sigma$.
+        \eoxs
+  \end{enumerate}
+\end{Definition}
+
+\example
+Given the signature $\Sigma_G$ defined above, we have the following:
+\begin{enumerate}
+\item $x \in \mathcal{T}_{\Sigma_G}$,
+  
+      because very variable is a $\Sigma_{G}$-term.
+\item $e \in \mathcal{T}_{\Sigma_G}$.
+\item $\cdot(e,x) \in \mathcal{T}_{\Sigma_G}$.
+\item $\cdot\bigl(\cdot(x,y),z\bigr) \in \mathcal{T}_{\Sigma_G}$.
+\end{enumerate}
+
+\remark
+Later on we will often use an \blue{infix notation} for binary function symbols.  In general, if $f$ is a
+binary function symbol, then the term $f(t_1,t_2)$ is written as $t_1 \,f\; t_2$.  If this notation would
+result in an ambiguity because either $t_1$ or $t_2$ is also written in infix notation, then we use parenthesis
+to resolve the ambiguity.  For example, we will write
+\\[0.2cm]
+\hspace*{1.3cm}
+$(x \cdot y) \cdot z$ \quad instead of \quad $\cdot\bigl(\cdot(x,y),z\bigr) \in \mathcal{T}_{\Sigma_G}$.  
+\\[0.2cm]
+Note that we cannot write the term $\cdot\bigl(\cdot(x,y),z\bigr)$ as $x \cdot y \cdot z$ because that notation
+is ambiguous, since it can be interpreted as either $(x \cdot y) \cdot z$ or $x \cdot (y \cdot z)$.
+\eoxs
+
+\begin{Definition}[$\Sigma$-Equation]
+  Assume a signature $\Sigma$ is given.  A \blue{$\Sigma$-equation}\index{equation} is a pair $\pair(s,t)$ such
+  that both $s$ and $t$ are $\Sigma$-terms.  The $\Sigma$-equation $\pair(s,t)$ is written as
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $s \approx t$.  \eoxs
+\end{Definition}
+
+\remark
+We use the notation $s \approx t$ instead of the notation $s=t$ in order to distinguish between the notion of a
+$\Sigma$-\blue{equation} and the notion of \blue{equality} of terms.  So when $s$ and $t$ are $\Sigma$-terms and we
+write $s = t$ we do mean that $s$ and $t$ are literally the same terms, while writing $s \approx t$
+means that we are interested in the logical consequences that would follow from the assumption that the
+interpretation of $s$ and $t$ are the same in certain \blue{$\Sigma$-algebras}.  The notion of a $\Sigma$-algebra
+is defined next.  \eoxs
+
+\begin{Definition}[$\Sigma$-Algebra]
+  Assume a signature $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is given.  A
+  \blue{$\Sigma$-algebra}\footnote{
+    The notion of a $\Sigma$-algebra is a notion that is used both in logic and in
+    \href{https://en.wikipedia.org/wiki/Universal_algebra}{universal algebra}.  In universal algebra, a
+    $\Sigma$-algebra is also known as an \blue{algebraic structure}.  This notion is not related to and should
+    not be confused with the notion of a \blue{$\sigma$-algebra}, which is a notion used in the field of
+    \href{https://en.wikipedia.org/wiki/Measure_(mathematics)}{measure theory}.  Note that the notion used in
+    measure theory is always written with a lower case $\sigma$, while the notion used in logic is written with
+    a capital $\Sigma$. 
+  } is a pair of the form $\textfrak{A} = \pair(A, \mathcal{J})$ where:
+  \begin{enumerate}
+  \item $A$ is a nonempty set that is called the \blue{universe} of the $\Sigma$-algebra $\textfrak{A}$.
+  \item $\mathcal{J}$ is the \blue{interpretation} of the function symbols.  Technically, $\mathcal{J}$ is a
+        function that is defined on the set $\mathcal{F}$ of all function symbols.  For every function symbol
+        $f \in \mathcal{F}$ we have that 
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\mathcal{J}(f): A^{\textsl{arity}(f)} \rightarrow A$, 
+        \\[0.2cm]
+        i.e. $\mathcal{J}(f)$ is a function from $A^n$ to $A$ where $n$ is the arity of the function symbol
+        $f$.
+
+        If $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, then the function $\mathcal{J}(f)$ is 
+        usually written more concisely as $f^\textfrak{A}$. \eoxs
+  \end{enumerate}
+\end{Definition}
+
+\example
+In this example we construct a $\Sigma_G$-algebra where $\Sigma_G$ is the signature of group theory defined
+earlier.  We define $G := \{ 0, 1 \}$ and define the interpretations $\mathcal{J}(f)$ for $f \in \{e, i, \cdot
+\}$ as follows:
+\begin{enumerate}
+\item $\mathcal{J}(e) := 0$.
+\item $\mathcal{J}(i) := \bigl\{ 0 \mapsto 0, 1 \mapsto 1 \bigr\}$.
+\item $\mathcal{J}(\cdot) = \bigl\{ \pair(0,0) \mapsto 0,
+                                    \pair(0,1) \mapsto 1,
+                                    \pair(1,0) \mapsto 1,
+                                    \pair(1,1) \mapsto 0
+                            \bigr\}$.
+\end{enumerate}
+Then $\textfrak{G} = \pair(G, \mathcal{J})$ is a $\Sigma_G$-algebra.  \eoxs
+
+\begin{Definition}[Valid Equation]
+  If $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is a signature,
+  $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, and $I$ is a \blue{variable assignment}, i.e.~$I$
+  is a mapping of the form $I:\mathcal{V} \rightarrow A$,
+  then we can \blue{evaluate} $\Sigma$-terms in $\textfrak{A}$ as follows:
+  \begin{enumerate}
+  \item $\texttt{eval}(x, I) := I(x)$ \quad for all $x \in \mathcal{V}$.
+  \item $\texttt{eval}(c, I) := c^\textfrak{A}$ \quad for all constant symbols $c \in \mathcal{F}$.
+  \item $\texttt{eval}\bigl(f(t_1,\cdots,t_n)\bigr) := f^\textfrak{A}\bigl(\texttt{eval}(t_1,I),\cdots,\texttt{eval}(t_n,I)\bigr)$ 
+        \quad for all constant symbols $c \in \mathcal{F}$.
+  \end{enumerate}
+  A $\Sigma$-equation $s \approx t$ is \blue{valid} in the $\Sigma$-algebra $\textfrak{A}$ iff we have
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\texttt{eval}(s,I) = \texttt{eval}(t,I)$ for all variable assignments $I:\mathcal{V} \rightarrow A$.
+  \\[0.2cm]
+  This is written as
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\textfrak{A} \models s \approx t$
+  \\[0.2cm]
+  and we say that $\textfrak{A}$ \blue{satisfies} the equation $s \approx t$.
+  \eoxs
+\end{Definition}
+
+\example
+Continuing the previous example we have the following:
+\begin{enumerate}
+\item $\textfrak{G} \models e \cdot x \approx x$,
+\item $\textfrak{G} \models i(x) \cdot x \approx e$,
+\item $\textfrak{G} \models (x \cdot y) \cdot z \approx x \cdot (y \cdot z)$. \eoxs
+\end{enumerate}
+
+\begin{Definition}[$E$-Variety]
+  Assume that $\Sigma$ is a signature and $E$ is a set of $\Sigma$-equations.  The collection of all
+  $\Sigma$-structures that satisfy every equation from $E$ is called the \blue{$E$-variety}.  To put it differently,
+  the $\Sigma$-structure $\textfrak{A}$ is a member of the \blue{$E$-variety} iff
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\textfrak{A} \models s \approx t$ \quad for every equation $s \approx t$ in $E$. \eoxs
+\end{Definition}
+
+\example
+Define $E := \bigl\{ e \cdot x = x, i(x) \cdot x = e, (x \cdot y) \cdot z = x \cdot (y \cdot z) \bigr\}$.
+This set of equations defines the variety of \blue{groups}.  You can check that the $\Sigma_G$-algebra
+$\textfrak{G}$ is a member of this variety and hence it is a group.  
+\eoxs
+
+\begin{Definition}[Logical Consequence]
+  Given a set of $\Sigma$-equations $E$ it is natural to ask which other equations are logical consequences of
+  the equations in $E$.  Here we define the notion of a \blue{logical consequence} as follows: The equation 
+  $s \approx t$ is a \blue{logical consequence} of the set of equations $E$ iff we have
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\textfrak{A} \models s \approx t$ \quad for every $\Sigma$-algebra $\textfrak{A}$ that is a member of the 
+  $E$-variety.
+  \\[0.2cm]
+  If $s \approx t$ is a logical consequence of the set of equations $E$, then this is written as
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $E \models s \approx t$.
+  \\[0.2cm]
+  Therefore we have $E \models s \approx t$ if and only if every $\Sigma$-algebra that satisfies all equations
+  from $E$ also satisfies the equation $s \approx t$. \eoxs
+\end{Definition}
+
+\example
+If we define $E := \bigl\{ e \cdot x = x, i(x) \cdot x = e, (x \cdot y) \cdot z = x \cdot (y \cdot z) \bigr\}$,
+then we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$E \models x \cdot i(x) \approx e$.  \eox
+
+The notion $E \models s \approx t$ is a \blue{semantic notion}.  We cannot hope to implement this notion directly
+because if a set of equations $E$ and a possible logical consequence $s \approx t$ is given, there are, in
+general, infinitely many $\Sigma$-algebras that have to be checked.  Fortunately, the notion 
+$E \models s \approx t$ has a \blue{syntactical analog} $E \vdash s \approx t$ (read: $E$ proves $s \approx t$)
+that can be implemented and that is at least \blue{semi-decidable}, i.e.~we can write a program that given 
+a set of equations $E$ and an equation $s \approx t$ will return \texttt{True} if $E \vdash s \approx t$ holds, and will
+either return \texttt{False} or run forever if $E \vdash s \approx t$ does not hold.  Even more fortunately,
+\href{https://en.wikipedia.org/wiki/Gödel%27s_completeness_theorem}{G\"{o}dels completeness theorem} 
+implies that the syntactical notion coincides with the semantic notion, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$E \models s \approx t$ \quad if and only if \quad $E \vdash s \approx t$.
+
+\subsection{A Calculus for Equality}
+In this subsection we assume a signature $\Sigma$ and a set of $\Sigma$-equations $E$ to be given.  
+Our goal is to define the provability notion $E \vdash s \approx t$, which is read as \blue{$E$ proves $s \approx t$}.
+However, in order to do this we first need to define 
+the notion of a substitution.
+
+\begin{Definition}[$\Sigma$-Substitution]
+  Assume that a signature $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is given.
+  A \blue{$\Sigma$-substitution} $\sigma$ is a map of the form
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\sigma: \mathcal{V} \rightarrow \mathcal{T}_\Sigma$ 
+  \\[0.2cm]
+  such that the set $\textsl{dom}(\sigma) := \bigl\{ x \in \mathcal{V} \mid \sigma(x) \not= x \bigr\}$ is finite.
+  If we have $\textsl{dom}(\sigma) = \{ x_1, \cdots, x_n \}$ and $t_i = \sigma(x_i)$ for all $i = 1, \cdots, n$,
+  then we use the following notation:
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\sigma = \{ x_1 \mapsto t_1, \cdots, x_n \mapsto t_n \}$.   \eoxs
+\end{Definition}
+
+A substitution $\sigma = \{ x_1 \mapsto t_1, \cdots, x_n \mapsto t_n \}$ can be \blue{applied} to a term $t$
+by replacing the variables $x_i$ with the terms $t_i$.  We will use the postfix notation \blue{$t\sigma$} to denote the
+\blue{application} of the substitution $\sigma$ to the term $t$.  Formally, the notation $t \sigma$ is defined
+by induction on $t$:
+\begin{enumerate}
+\item $x \sigma := \sigma(x)$ \quad for all $x \in \mathcal{V}$.
+\item $c \sigma = c$ \quad for every constant $c \in \mathcal{F}$.
+\item $f(t_1, \cdots, t_n) \sigma := f\bigl(t_1\sigma, \cdots, t_n\sigma\bigr)$.
+\end{enumerate}
+Now we are ready to formally define the notion $E \vdash s \approx t$.  This notion is defined inductively.
+\begin{enumerate}
+\item $E \vdash s \approx t$ \quad for every $\Sigma$-equations $(s \approx t) \in E$. \hspace*{\fill} (\blue{Axioms})
+\item $E \vdash s \approx s$ \quad for every $\Sigma$-term $s$. \hspace*{\fill} (\blue{Reflexivity})
+\item If $E \vdash s \approx t$, then $E \vdash t \approx s$.  \hspace*{\fill} (\blue{Symmetry})
+\item If $E \vdash r \approx s$ and then $E \vdash s \approx t$, then $E \vdash r \approx t$.  
+      \hspace*{\fill} (\blue{Transitivity})
+\item If $\textsl{arity}(f) = n$ and $E \vdash s_i \approx t_i$ for all $i \in \{1,\cdots,n\}$, then
+      $E \models f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
+      \hspace*{\fill} (\blue{Congruence})
+\item If $E \vdash s \approx t$ and $\sigma$ is a $\Sigma$-substitution, then $E \vdash s\sigma \approx t\sigma$.
+      \hspace*{\fill} (\blue{Stability})
+\end{enumerate}
+The definition of $E \vdash s \approx t$ that has been given above is due to 
+\href{https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz}{Gottfried Wilhelm Leibniz}.
+
+\subsection{Equational Proofs}
+It turns out that, although it is possible to implement the notion $E \models s \approx t$ directly, it is more
+efficient to refine this notion a little bit.  To this end we need to introduce the notion of a \blue{position} $u$
+in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given position, and the notion of
+\blue{replacing} a subterm at a given position by another term.  We define these notions next.
+
+\begin{Definition}[Positions of a Term $t$, $\Pos(t)$] \hspace*{\fill} \\
+  Given a term $t$ the set of all \blue{positions} of $t$ is written as $\Pos(t)$ and is defined by
+  induction on $t$:
+  \begin{enumerate}
+  \item $\Pos(x) := \bigl\{ [] \bigr\}$ \quad for every variable $x$.
+  \item $\Pos(c) := \bigl\{ [] \bigr\}$ \quad for every constant $c$.
+  \item $\Pos\bigl(f(t_1,\cdots,t_n)\bigr) := 
+         \bigl\{ [] \bigr\} \cup \bigcup\limits_{i=1}^n \bigl\{ [i] + u \mid u \in \Pos(t_i) \bigr\}$ 
+        \quad for every term $f(t_1,\cdots,t_n)$. \eoxs
+  \end{enumerate}
+\end{Definition}
+
+\begin{Definition}[Subterm at a given Position, $t/u$] \hspace*{\fill} \\
+  Given a term $t$ and a position $t \in \Pos(t)$, the \blue{subterm of $t$ at position $u$} is
+  written as $t/u$.  This expression is defined by induction on $u$.
+  \begin{enumerate}
+  \item $t/[] := t$,
+  \item $f(t_1,\cdots,t_n)/\bigl([i]+u\bigr) := t_i/u$.  \eoxs
+  \end{enumerate}
+\end{Definition}
+
+\begin{Definition}[Subterm Replacement, \mbox{$t[u \mapsto s]$}] \hspace*{\fill} \\
+  Given a term $t$, a position $t \in \Pos(t)$, and a term $s$, the expression
+  $t[u \mapsto s]$ denotes the term that results from $t$ when the subterm $t/u$ is replaced by the term 
+  $s$.  This expression is defined by induction on $u$.
+  \begin{enumerate}
+  \item $t/\bigl[ [] \mapsto s \bigr] := s$,
+  \item $f(t_1,\cdots,t_n)\bigl[ [i]+u \mapsto s \bigr] := f(t_1, \cdots, t_{i-1},t_i[u \mapsto s], t_{i+1},\cdots, t_n)$.  
+        \eoxs
+  \end{enumerate}
+\end{Definition}
+  
+\example
+Define $t := (x \cdot y) \cdot z$.  Then we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\Pos\bigl((x \cdot y) \cdot z\bigr) = \bigl\{ [], [1], [1,1], [1,2], [2]\bigr\}$.
+\\[0.2cm]
+Furthermore, we have the following:
+\begin{enumerate}
+
+\item $\bigl((x \cdot y) \cdot z\bigr)/[] = (x \cdot y) \cdot z$,
+\item $\bigl((x \cdot y) \cdot z\bigr)/[1] = x \cdot y$, and
+\item $\bigl((x \cdot y) \cdot z\bigr)/[1,2] = y$.
+\end{enumerate}
+We also have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl((x \cdot y) \cdot z\bigr)\bigl[[1] \mapsto y \cdot x\bigr] = (y \cdot x) \cdot z$. \eox
+
+\begin{Definition}[$\leftrightarrow_E$]
+  Given a set of $\Sigma$-equations $E$ and two $\Sigma$-terms $s$ and $t$ we define that
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $s \leftrightarrow_E t$
+  \\[0.2cm]
+  holds if and only if the following conditions are satisfied:
+  \begin{enumerate}[(a)]
+  \item There exists an equation $l \approx r$  such that either $(l \approx r) \in E$ or $(r \approx l) \in  E$.
+  \item There is a position $u \in \Pos(s)$ and a substitution $\sigma$ such that $s/t = l\sigma$.
+  \item $t = s[u \mapsto r\sigma]$. \eox
+  \end{enumerate}
+\end{Definition}
+To put this is words: We have $s \leftrightarrow_E t$ iff there is an equation $l \approx r$ such that
+either the equation $l \approx r$ or the equation $r \approx l$ is an element of the set of equations $E$ and,
+furthermore, $s$ contains the subterm $l\sigma$ and $t$ results from $s$ by replacing the subterm $l\sigma$
+with the subterm $r\sigma$. 
+
+\example
+If we have $E = \bigl\{ i(x) \cdot x \approx e \bigr\}$ then
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl(i(a) \cdot a\bigr) \cdot b \;\leftrightarrow_E\; e \cdot b$
+\\[0.2cm]
+because the right hand side $e \cdot b$ results from the left hand side $\bigl(i(a) \cdot a\bigr) \cdot b$ by
+replacing the subterm $i(a) \cdot a$ that occurs at position $[1]$ by the term $e$.
+This is possible because the equation $i(x) \cdot x \approx e$ tell us that $i(a) \cdot a$ is equal to $e$.
+\eod
+
+Next, we define the relation $\leftrightarrow_E^*$ as the reflexive and transitive closure of the relation
+$\leftrightarrow_E$.
+\begin{Definition}[$\leftrightarrow_E^*$]
+  For $\Sigma$-terms $s$ and $t$ the notion $s \leftrightarrow_E^* t$ is defined inductively as follows:
+  \begin{enumerate}
+  \item We have $s \leftrightarrow_E^* s$ for every $\Sigma$-term $s$.
+  \item If $s \leftrightarrow_E t$, then $s \leftrightarrow_E^* t$.
+  \item If $u$ is a $\Sigma$-term such that both $s \leftrightarrow_E u$ and $u \leftrightarrow_E^* t$ holds,
+        then we have $s \leftrightarrow_E^* t$. \eod
+  \end{enumerate}
+\end{Definition}
+
+\noindent
+Given this definition it is now possible to show the following:
+\\[0.2cm]
+\hspace*{1.3cm}
+$E \vdash s \approx t$ \quad if and only if \quad $s \leftrightarrow_E^* t$.
+\\[0.2cm]
+For each of the two directions that has to be proven, the proof can be done by a straightforward but lengthy
+induction. 
+
+\subsection{Proofs via Rewriting}
+Implementing the relation $\leftrightarrow_E$ is rather inefficient because every equation from $E$ can
+be used in two different ways:  If $E$ contains the $l \approx r$ we can use this equation from left to right
+to replace a subterm of the form $l\sigma$ by the $r\sigma$, or we can use this equation from right to left by
+replacing a subterm of the form $r\sigma$ by $l\sigma$.  Additionally, unless we have derived the equation we
+want to prove, we don't know when to stop our proof efforts. It was the brilliant idea of Donald E.~Knuth who
+realized that, provided the equations can be ordered in a way such that the left hand side is always more
+complex than the right hand side, then it is possible to use these equations only in one direction, if certain
+additional equations are added to $E$ in this process.  To proceed, we need the following definition.
+
+\begin{Definition}[Rewrite Order] \hspace*{\fill} \\
+  A binary relation $\prec \;\subseteq\; \mathcal{T}_\Sigma \times \mathcal{T}_\Sigma$ is a
+  \blue{rewrite order} w.r.t.~a set of equations $E$ if and only if we have the following:
+  \begin{enumerate}
+  \item $\prec$ is a strict partial order on $\mathcal{T}_\Sigma$, i.e we have
+        \begin{enumerate}
+        \item $\neg (s \prec s)$ \hspace*{2.6cm} for all $s \in \mathcal{T}_\Sigma$, i.e $\prec$ is \blue{irreflexive}.
+        \item $r \prec s \wedge s \prec t \;\Rightarrow\; r \prec t$ \quad for all $r,s,t \in \mathcal{T}_\Sigma$,
+              i.e. $\prec$ is \blue{transitive}. 
+        \end{enumerate}
+    
+  \item $\prec$ is \blue{stable under substitutions}, i.e we have
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $r \prec l \;\Rightarrow\; r\sigma \prec l\sigma$ \quad for every substitution $\Sigma$.
+  \item $\prec$ is a \blue{congruence}, i.e we have
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $r \prec l \;\Rightarrow\; s[u \mapsto r] \prec s[u \mapsto l]$ for every $\Sigma$-term $s$ and every
+        $u \in\Pos(s)  $.
+  \item $r \prec l$ \quad for every equation $(l \approx r) \in E$.
+  
+        This means that all equations in $E$ are ordered such that the right hand side is smaller than the left
+        hand side w.r.t. $\prec$.
+  \item The relation $\prec$ is \blue{well-founded}, i.e.~there is no infinite sequence of the form
+        $(s_n)_{n\in\mathbb{N}}$ such that we have
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $s_{n+1} \prec s_n$ \quad for all $n \in \mathbb{N}$. \eod
+  \end{enumerate}
+\end{Definition}
+At the end of this chapter we will see an example of a rewrite order.  For now, we just assume that 
+the relation $\prec$ is a rewrite order w.r.t.~a given set of equations $R$.  The equations in $R$ will now be called
+\blue{rewrite rules}.  We proceed to define the relation $\rightarrow_R$ on $\mathcal{T}_\Sigma$.
+
+\begin{Definition}[Rewrite Relation $\rightarrow_R$] \hspace*{\fill} \\
+  Given a set of rewrite rules $R$ and two $\Sigma$-terms $s$ and $t$ we define that
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $s \rightarrow_R t$ \quad (read: $s$ rewrites to $t$)
+  \\[0.2cm]
+  if and only if the following conditions are satisfied:
+  \begin{enumerate}[(a)]
+  \item There exists a rewrite rule $(l \approx r) \in R$.
+  \item There is a position $u \in \Pos(s)$ and a substitution $\sigma$ such that $s/t = l\sigma$.
+  \item $t = s[u \mapsto r\sigma]$. \eox
+  \end{enumerate}
+\end{Definition}
+Similar to the definition of $\leftrightarrow_E^*$  we now define $\rightarrow_R^*$ as the reflexive and transitive closure of $\rightarrow_R$.
+\begin{Definition}[$\rightarrow_R^*$]
+  For $\Sigma$-terms $s$ and $t$ the notion $s \rightarrow_R^* t$ is defined inductively as follows:
+  \begin{enumerate}
+  \item We have $s \rightarrow_R^* s$ for every $\Sigma$-term $s$.
+  \item If $s \rightarrow_R t$, then $s \rightarrow_R^* t$.
+  \item If $u$ is a $\Sigma$-term such that both $s \rightarrow_R u$ and $u \rightarrow_R^* t$ holds,
+        then we have $s \rightarrow_R^* t$. \eod
+  \end{enumerate}
+\end{Definition}
+
+\begin{Definition}[Normal Form]
+  A $\Sigma$-term $s$ is in \blue{normal form} if there is no $\Sigma$-term $t$ such that $s \rightarrow_R t$,
+  i.e.~the term $s$ cannot be simplified anymore by rewriting. \eod
+\end{Definition}
+The basic idea of a \blue{rewrite proof} of an equation $s \approx t$ is now the following:
+\begin{enumerate}
+\item We rewrite $s$ using the rewrite rules from $R$ into a term $\widehat{s}$ that is in normal form:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $s \rightarrow_R s_1 \rightarrow_R s_2 \rightarrow_R \cdots \rightarrow_R s_m = \widehat{s}$
+\item Similarly, we rewrite $t$ using the rewrite rules from $R$ into a term $\widehat{t}$ that is in normal form:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $t \rightarrow_R t_1 \rightarrow_R t_2 \rightarrow_R \cdots \rightarrow_R t_n = \widehat{t}$.
+\item If the relation $s \rightarrow t$ is \blue{confluent} (this notion is defined in the next section),
+      then we have 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $s \leftrightarrow_E t \quad \Leftrightarrow \quad \widehat{s} = \widehat{t}$.
+\end{enumerate}
+This way, we can reduce the question whether $s \leftrightarrow_E^* t$ holds to the computation of normal
+forms.  The later can often be done quite efficiently.  The rest of this chapter proceeds as follows:
+\begin{enumerate}[(a)]
+\item In the next section we discuss the notion of  \blue{confluence} and prove a theorem that can be used
+      to show that a relation is confluent
+\item After that we discuss rewrite orderings in more detail.  In particular, we present the Knuth-Bendix order,
+      which is the rewrite order that we use later to construct a number of confluent term rewriting systems.
+\item Then, we present the \blue{Knuth-Bendix completion algorithm} that can enrich a set of equation so that
+      the rewrite relation $\rightarrow_R$ becomes confluent.
+\item Finally, we present an implementation of the Knuth-Bendix completion algorithm.  
+\end{enumerate}
+
+\section{Confluence}
+In this section we assume that a binary relation $\rightarrow$ is given on a set $M$, i.e.~we have
+$\rightarrow \;\subseteq\; M \times M$.  Instead of writing $(a, b) \in\; \rightarrow$ we use infix notation and write
+$a \rightarrow b$.  Furthermore, we assume that $\rightarrow$ is \blue{well-founded},
+i.e.~there is no infinite sequence $(x_n)_{n\in\mathbb{N}}$ such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$s_n \rightarrow s_{n+1}$ \quad holds for all $n\in\mathbb{N}$.
+\\[0.2cm]
+We denote the \blue{equivalence relation} generated by $\rightarrow$ as $\stackrel{_*}{\leftrightarrow}$ and the reflexive and
+transitive closure of $\rightarrow$ is written as $\stackrel{_*}{\rightarrow}$.
+
+\begin{Definition}[Confluence] \hspace*{\fill} \\
+  The relation $\rightarrow \;\subseteq\; M \times M$ is \blue{confluent} iff the following holds:
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\forall a, b, c \in M: \bigl(a \stackrel{_*}{\rightarrow} b \;\wedge\; a \stackrel{_*}{\rightarrow}c \quad\Rightarrow\quad
+   \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
+  $
+\end{Definition}
+The next theorem shows that confluence is all we need to reduce the relation $\stackrel{_*}{\leftrightarrow}$
+to the relation $\stackrel{_*}{\rightarrow}$. 
+
+\begin{Theorem}[Church-Rosser]
+  If the relation $\rightarrow \;\subseteq\; M \times M$ is confluent, then we have
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\forall a, b \in M:\bigl( a \stackrel{_*}{\leftrightarrow} b \;\Leftrightarrow\;
+   \exists c \in M: (a \stackrel{_*}{\rightarrow} c \;\wedge b \stackrel{_*}{\rightarrow} c)\bigr)$.
+ \end{Theorem}
+
+ \proof
+If $a \stackrel{_*}{\leftrightarrow} b$ then there is a finite sequence $(s_k)_{k\in \{0,\cdots,n\}}$ such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$a = s_0 \leftrightarrow s_1 \leftrightarrow \cdots \leftrightarrow s_{n-1} \leftrightarrow s_n = b$.
+\\[0.2cm]
+We prove by induction on $n$ that there is an element $c \in M$ such that both $a \stackrel{_*}{\rightarrow} c$ and
+$b \stackrel{_*}{\rightarrow} c$ holds.
+\begin{description}
+\item[Base Case:] $n = 0$.
+  
+      Then we have $a = b$ and we can define $c := a$.
+\item[Induction Step:] $n \mapsto n+1$
+      
+      We have $a = s_0 \leftrightarrow s_1 \leftrightarrow \cdots \leftrightarrow s_{n} \leftrightarrow s_{n+1} = b$.
+      By induction hypotheses we know that there exists a $d \in M$ such that
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $a \stackrel{_*}{\rightarrow} d$ \quad and \quad $s_{n} \stackrel{_*}{\rightarrow} d$ 
+      \\[0.2cm]
+      hold.  Furthermore, we either have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $s_{n} \rightarrow b$ \quad or \quad $b \rightarrow s_{n}$.
+      \\[0.2cm]
+      We discuss theses cases one by one.
+      \begin{enumerate}
+      \item Case: $s_n \rightarrow b$.
+
+        Since we also have $s_{n} \stackrel{_*}{\rightarrow} d$, the confluence of the relation $\rightarrow$ shows that
+        there is an element $c \in M$ such 
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $b \stackrel{_*}{\rightarrow} c$ \quad and \quad $d \stackrel{_*}{\rightarrow} c$ 
+        \\[0.2cm]
+        holds.  From $a \stackrel{_*}{\rightarrow} d$ and $d \stackrel{_*}{\rightarrow} c$ we have that $a \stackrel{_*}{\rightarrow} c$.  Since we already
+        know that $b \stackrel{_*}{\rightarrow} c$, the proof is complete in this case. 
+      \item Case: $b \rightarrow s_n$.
+
+        Since we have $b \rightarrow s_n$ and $s_n \stackrel{_*}{\rightarrow} d$, we can conclude
+        $b \stackrel{_*}{\rightarrow} d$.  Since we also have $a \stackrel{_*}{\rightarrow} d$, the proof is
+        complete if we define $c := d$.  \qed
+      \end{enumerate}
+\end{description}
+In general, it is hard to prove that a relation $\rightarrow$ is confluent.  Things get easier if the relation
+$\rightarrow$ is well-founded, since then there is a weaker notion than confluence that is already sufficient
+to guarantee confluence.
+
+\begin{Definition}[Local Confluence] \hspace*{\fill} \\
+  The relation $\rightarrow \;\subseteq\; M \times M$ is \blue{locally confluent} iff the following holds:
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\forall a, b, c \in M: \bigl(a \rightarrow b \;\wedge\; a \rightarrow c \quad\Rightarrow\quad
+   \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
+  $  
+\end{Definition}
+
+\begin{Theorem}[Transfinite Induction] \hspace*{\fill} \\
+  Assume the relation $\rightarrow \;\subseteq\; M \times M$ is well-founded and $F(x)$ is some formula.
+  If we have that
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\forall b \in M: \bigl( a \stackrel{_+}{\rightarrow} b \;\Rightarrow\; F(b)\bigr) \;\Rightarrow\; F(a)$ holds for all $a \in M$, \hspace*{\fill} (TI)
+  \\[0.2cm]
+  then we can conclude that $\forall a \in M: F(a)$ holds.
+\end{Theorem}
+
+\proof
+Above, $\stackrel{_+}{\rightarrow}$ denotes the transitive closure of $\rightarrow$.  We call $b$ a \blue{successor} of $a$
+if $a \stackrel{_+}{\rightarrow} b$ holds.  The proof principle of transfinite induction is correct for a well-founded
+relation because, first, if $a$ has no successors $b$, then the premise of (TI) which is
+\\[0.2cm]
+\hspace*{1.3cm}
+$\forall b \in M: \bigl( a \stackrel{_+}{\rightarrow} b \Rightarrow F(b)\bigr)$
+\\[0.2cm]
+is vacuously true and hence by (TI) we know that $F(a)$ has to be true for all $a \in M$ that have no
+successors.  Now assume $F(a)$ were false for some $a \in M$.  Then there must be a successor $a_1$ of $a$ such
+that $F(a_1)$ is false because otherwise $F(a)$ would be true.  But then there must be a successor $a_2$ of
+$a_2$ such that $F(a_2)$ is false.  Proceeding in this way we can construct an infinite sequence
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \stackrel{_+}{\rightarrow} a_1 \stackrel{_+}{\rightarrow} a_2 \stackrel{_+}{\rightarrow} \cdots \stackrel{_+}{\rightarrow} a_n \stackrel{_+}{\rightarrow} a_{n+1} \rightarrow
+\cdots
+$
+\\[0.2cm]
+such that $F(a_n)$ is false.  But this would contradict the well-foundedness of the relation $\rightarrow$.  Hence there can be no $a \in M$
+such that $F(a)$ is false. \qed
+
+\begin{Theorem}[Newman's Lemma] \hspace*{\fill} \\
+  If the relation $\rightarrow \;\subseteq\; M \times M$ is well-founded and locally confluent, then it is
+  already confluent.
+\end{Theorem}
+
+\proof
+Given any $a \in M$, we define the following formula:
+\\[0.2cm]
+\hspace*{1.3cm}
+$F(a) \;:=\; \forall b, c \in M: \bigl(a \stackrel{_*}{\rightarrow} b \;\wedge\; a \stackrel{_*}{\rightarrow}c \quad\Rightarrow\quad
+ \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
+$
+\\[0.2cm]
+We  prove that $F(a)$ holds for all $a \in M$ by transfinite induction.
+Therefore, in order to prove $F(a)$ we may assume that $F(b)$ already holds for all successors $b$ of $a$.
+So let us assume that we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \stackrel{_*}{\rightarrow} b$ \quad and \quad $a \stackrel{_*}{\rightarrow} c$.
+\\[0.2cm]
+We have to find an element $d \in M$ such that both $b \stackrel{_*}{\rightarrow} d$ and $c \stackrel{_*}{\rightarrow} d$ holds.
+Now since $a \stackrel{_*}{\rightarrow} b$, either $a = b$ or there is an element $b_1$ such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \rightarrow b_1 \stackrel{_*}{\rightarrow} b$
+\\[0.2cm]
+holds.  If $a = b$ we can define $d := c$ and because of $a \stackrel{_*}{\rightarrow} c$ we would then have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$b \stackrel{_*}{\rightarrow} d$ \quad and \quad $c \stackrel{_*}{\rightarrow} d$
+\\[0.2cm]
+and therefore, in the case $a = b$, we are done.  Similarly, since $a \stackrel{_*}{\rightarrow} c$ we either have
+$a = c$ or there is an element $c_1$ such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \rightarrow c_1 \stackrel{_*}{\rightarrow} c$
+\\[0.2cm]
+holds.  If $a = c$ we can define $d := b$ and because of $a \stackrel{_*}{\rightarrow} b$ we would then have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$b \stackrel{_*}{\rightarrow} d$ \quad and \quad $c \stackrel{_*}{\rightarrow} d$
+\\[0.2cm]
+and are done again.  Now the case that is left is the following:
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \rightarrow b_1 \stackrel{_*}{\rightarrow} b$ \quad and \quad $a \rightarrow c_1 \stackrel{_*}{\rightarrow} c$.
+\\[0.2cm]
+Since $\rightarrow$ is locally confluent and we have both $a \rightarrow b_1$ and  $a \rightarrow c_1$ 
+there exists an element $d_1$ such that we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$b_1 \stackrel{_*}{\rightarrow} d_1$ \quad and \quad $c_1 \stackrel{_*}{\rightarrow} d_1$.
+\\[0.2cm]
+Now as $b_1$ is a successor of $a$ and we have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$b_1 \stackrel{_*}{\rightarrow} b$ \quad and \quad $b_1 \stackrel{_*}{\rightarrow} d_1$,
+\\[0.2cm]
+our induction hypotheses tells us that there is an element $d_2$ such that we have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$b \stackrel{_*}{\rightarrow} d_2$ \quad and \quad $d_1 \stackrel{_*}{\rightarrow} d_2$.
+\\[0.2cm]
+Now we have $c_1 \stackrel{_*}{\rightarrow} d_1$ and $d_1 \stackrel{_*}{\rightarrow} d_2$, which implies
+\\[0.2cm]
+\hspace*{1.3cm}
+$c_1 \stackrel{_*}{\rightarrow} d_2$
+\\[0.2cm]
+As we also have $c_1 \stackrel{_*}{\rightarrow} c$ we have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$c_1 \stackrel{_*}{\rightarrow} d_2$ \quad and \quad $c_1 \stackrel{_*}{\rightarrow} c$.
+\\[0.2cm]
+Since $c_1$ is a successor of $a$, the induction hypotheses tells us that there is an element $d$ such that we
+have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$d_2 \stackrel{_*}{\rightarrow} d$ \quad and \quad $c \stackrel{_*}{\rightarrow} d$.
+\\[0.2cm]
+As we have $b \stackrel{_*}{\rightarrow} d_2$ and $d_2 \stackrel{_*}{\rightarrow} d$ we can conclude $b \stackrel{_*}{\rightarrow} d$.  Hence we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$b \stackrel{_*}{\rightarrow} d$ \quad  and \quad $c \stackrel{_*}{\rightarrow} d$
+\\[0.2cm]
+and the proof is complete.  Figure \ref{fig:newman.pdf} on page \pageref{fig:newman.pdf} shows how the
+different elements are related and conveys the idea of the proof in a concise way. \qed
+
+\begin{figure}[!ht]
+  \centering
+  \framebox{\epsfig{file=Figures/newman.pdf,scale=0.3}} 
+  \caption{The Proof of Newman's Lemma.}
+  \label{fig:newman.pdf}
+\end{figure}
+
+\section{The Knuth-Bendix Order}
+In this section we define the \blue{Knuth-Bendix order} $\prec$ on the set $\mathcal{T}_\Sigma$ of
+$\Sigma$-terms.  In order to do so, three prerequisites need to be satisfied:
+\begin{enumerate}
+\item We need to assign a \blue{weight} $w(f)$ to every function symbol $f$.  These weights are 
+      natural numbers.  In addition, there must be at most one function symbol $g$ such that $w(g) = 0$.
+      Furthermore, if $w(g) = 0$, then $g$ has to be a unary function symbol.
+\item We need to have a \blue{strict total order} $<$ on the set of function symbols, i.e. the following
+      conditions need to be satisfied:
+      \begin{enumerate}[(a)]
+      \item The relation $<$ is \blue{irreflexive}, that is we have $\neg (f < f)$ for all function symbols $f$.
+      \item The relation $<$ is \blue{transitive}, that is we have 
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $f < g \wedge g < h \Rightarrow f < h$ \quad for all function symbols $f$, $g$, and $h$.
+      \item The relation $<$ is \blue{total}, that is we have 
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $f < g \vee g < f$ \quad for all function symbols $f$ and $g$.
+      \end{enumerate}
+\item The order $<$ on the function symbols has to be \blue{admissible} with respect to the weight function
+      $w$, i.e. the following condition needs to be satisfied:
+   $$ w(f) = 0 \rightarrow \forall g:  \bigl(g \not=f \rightarrow g < f\bigr). $$
+      To put this in words: If the function symbol $f$ has a weight of $0$, then 
+      all other function symbols $g$ have to be smaller than $f$ w.r.t. the strict order $<$ and
+      Note that this implies that there can be at most one function symbol with $f$ such that $w(f) = 0$. 
+      This function function symbol $f$ is then the maximum w.r.t.~the order $<$.
+\end{enumerate}
+Given the function $w$ that assigns a weight to all function symbols, we can define the \blue{weight} $w(t)$ of a
+$\Sigma$-term $t$ by induction on $t$.
+\begin{enumerate}
+\item $w(x) := 1$ for all variables $x$,
+\item $w\bigl(f(t_1,\cdots,t_n)\bigr) := w(f) + \sum\limits_{i=1}^n w(t_i)$.
+\end{enumerate}
+Furthermore, we define the function
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{count}: \mathcal{T}_\Sigma \times \mathcal{V} \rightarrow \mathbb{N}$
+\\[0.2cm]
+that takes a term $t$ and a variable $x$ and returns the number of times that $x$ occurs in $t$.
+We define $\texttt{count}(t,x)$ by induction on $t$.
+\begin{enumerate}
+\item $\texttt{count}(x, x) := 1$ for every variable $x \in \mathcal{V}$.
+\item $\texttt{count}(x, y) := 0$ if $x \not= y$ for all variables $x,y \in \mathcal{V}$.
+\item $\texttt{count}\bigl(f(t_1,\cdots,t_n)\bigr) := \sum\limits_{i=1}^n \texttt{count}(t_i, x)$.
+\end{enumerate}
+Now we are ready the define the \blue{Knuth-Bendix order}.  Given two terms $s$ and $t$  
+we have $s \prec t$ iff one of the following two conditions hold:
+\begin{enumerate}
+\item $w(s) < w(t)$ and $\texttt{count}(s, x) \leq \texttt{count}(t, x)$
+       for all variables $x$ occurring in  $s$.
+\item $w(s) = w(t)$, $\texttt{count}(s, x) \leq \texttt{count}(t, x)$ for all variables $x$ occuring in $s$, and
+      one of the following subconditions holds:
+      \begin{enumerate}[(a)]
+      \item $t = f^n(s)$ where $n \geq 1$ and $f$ is the maximum w.r.t.~the order $<$ on function symbols,
+             i.e.~we have $g < f$ for all function symbols $g \not= f$.
+      \item $s = f(s_1,\cdots,s_m)$, $t=g(t_1,\cdots,t_n)$, and $f<g$.
+      \item $s = f(s_1,\cdots,s_m)$, $t=f(t_1,\cdots,t_m)$, and $[s_1,\cdots,s_m] \prec_{\textrm{lex}} [t_1,\cdots,t_m]$.
+     
+            Here, $\prec_{\textrm{lex}}$ denotes the \blue{lexicographic extension} of the ordering $\prec$ to
+            lists of terms.  It is defined as follows:
+            $$ [x] + R_1 \prec_{\textrm{lex}} [y] + R_2 \;\stackrel{_\textrm{def}}{\Longleftrightarrow}\;
+                 x \prec y \,\vee\, \bigl(x = y \wedge R_1 \prec_{\textrm{lex}} R_2\bigr)
+            $$
+     \end{enumerate}
+\end{enumerate}
+
+\begin{Theorem}
+  The Knuth-Bendix order is a rewrite order.
+\end{Theorem}
+
+\section{The Knuth-Bendix Algorithm}
+Assume we have been given a set $R$ of rewrite rules such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$r \prec l$ \quad holds for all $l \approx r$ in $R$.
+\\[0.2cm]
+Given two terms $s$ and $t$, the Church-Rosser Theorem tells us, that we can decide the question, whether
+$s \leftrightarrow_R^* t$ holds by rewriting $s$ and $t$ into normal forms, provided the relation
+$\rightarrow_R$ is confluent.  By Newman's Lemma we know that local confluence is sufficient.  Donald E.~Knuth
+and Peter B.~Bendix \cite{knuth:1970} have discovered a way to decide, whether the term rewriting relation
+$\rightarrow_R$ is locally confluent.  To understand their idea, we introduce the notion of a \blue{critical pair}.
+
+\begin{Definition}[Critical Pair] \hspace*{\fill} \\
+  A pair of $\Sigma$-terms $\langle s, t\rangle$ is a critical pair of the equation $l_1 \approx r_1$ and
+  the equation $l_2 \approx r_2$ if and only if all of the following conditions hold:
+  \begin{enumerate}[(a)]
+  \item There exists a position $u \in \Pos(l_1)$ such that $l_1/u$ is not a variable.
+  \item The subterm $l_1/u$ of $l_1$ is unifiable with $l_2$.  Assume that $\mu$ is a most general unifier
+        of $l_1/u$ and $l_2$, i.e.~we have
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\mu = \texttt{mgu}(l_1/u, l_2)$.
+  \item The term $s$ results from rewriting the term $l_1\mu$ by rewriting the subterm $l_1/u$
+        to the new subterm $r_2\mu$ using the rule $l_2 \approx r_2$:      
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $s = l_1\mu[u \leftarrow r_2\mu]$.
+  \item The term $t$ results from rewriting the term $l_1\mu$ into the term $r_1\mu$ using the rule
+        $l_1 \approx r_1$, i.e.~we have
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $t = r_1\mu$.  
+      \end{enumerate}
+      Hence, if the conditions given above are satisfied, then
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\bigl\langle l_1\mu[u \leftarrow r_2\mu],\; r_1\mu \bigr\rangle$
+      \\[0.2cm]
+      is a critical pair of $l_1 \approx r_1$ and $l_2 \approx r_2$. \eod
+\end{Definition}
+
+\example
+The following example assumes the signature $\Sigma_G$ from group theory as given.
+We start with the two equations $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(a) \cdot a \approx e$.
+Then $u = [1]$ is a position in the term $(x \cdot y) \cdot z$ and we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl((x \cdot y) \cdot z\bigr)/[1] = x \cdot y$, which is not a variable.
+\\[0.2cm]
+The term $x \cdot y$ can be unified with the term $i(a) \cdot a$ and we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mu := \texttt{mgu}\bigl(x \cdot y, i(a) \cdot a\bigr) = \{ x \mapsto i(a),\; y \mapsto a \}$.
+\\[0.2cm]
+Therefore we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl((x \cdot y) \cdot z\bigr)\mu = \bigl(i(a) \cdot a\bigr) \cdot z$
+\\[0.2cm]
+and the latter term can be rewritten by the equation $i(a) \cdot a \approx e$ into the term $e \cdot t$,
+i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl(i(a) \cdot a\bigr) \cdot z \rightarrow_{\{ i(a) \cdot a \approx e\}} e \cdot z$,
+\\[0.2cm]
+and by the equation $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ into the term $i(a) \cdot (a \cdot z)$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl(i(a) \cdot a\bigr) \cdot z \rightarrow_{\{ (x \cdot y) \cdot z \approx x \cdot (y \cdot z)\}} i(a) \cdot (a \cdot z)$.
+\\[0.2cm]
+Therefore, the pair
+\\[0.2cm]
+\hspace*{1.3cm}
+$\bigl\langle e \cdot z,\; i(a) \cdot (a \cdot z) \bigr\rangle$
+\\[0.2cm]
+is a critical pair of the two equations  $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(a) \cdot a \approx e$.
+\eox
+
+\remark
+If $\langle s, t\rangle$ is a critical pair from two equations in a set $R$, then the equation $s \approx t$
+follows from $R$, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$R \models s \approx t$. \eox
+
+
+\begin{Definition}[Confluent Critical Pair] \hspace*{\fill} \\
+  A critical pair $\langle s_1, s_2\rangle$ is \blue{confluent} w.r.t.~a rewrite relation $R$ iff there is a term
+  $t$ such that $t$ is in $R$-normal form and we have both
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $s_1 \rightarrow_R^* t$ \quad and \quad   $s_2 \rightarrow_R^* t$.  
+\end{Definition}
+
+\begin{Theorem}[Knuth-Bendix]
+  If $R$ is a set of rewrite equations so that all critical pairs between equations from $R$ are confluent,
+  then the rewrite relation $\rightarrow_R^*$ is confluent and hence the question, whether $R \models s \approx t$
+  can be decided by rewriting both $s$ and $t$ into normal forms $\widehat{s}$ and $\widehat{t}$:
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $s \rightarrow_R^* \widehat{s}$ \quad and \quad  $t \rightarrow_R^* \widehat{t}$ 
+  \\[0.2cm]
+  Then we have
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $R \models s \approx t$ \quad if and only if \quad $\widehat{s} = \widehat{t}$.
+\end{Theorem}
+
+\noindent
+To make the above theorem work, if we start with a set $E$ of equations, we first have to order them into a set
+of rewrite rules $R$.  In general, this will not be sufficient because there will be critical pairs that are
+not confluent. However, if we can orient these newly derived critical pairs into rewrite rules, we might be
+able to extend the set $R$ to a new set of rewrite $\widehat{R}$ such that all critical pairs from equations
+from $\widehat{R}$ are confluent.
+\vspace*{0.2cm}
+
+\noindent
+\textbf{Knuth-Bendix Algorithm}:  Given a set of equations $E$ the Knuth-Bendix algorithm proceeds as follows:
+\begin{enumerate}
+\item We define suitable weight for the function symbols occurring in $E$ and order the function symbols
+      such that every equation  $(s \approx t) \in E$ can be ordered as either $s \prec t$ or $t \prec s$.
+      If this is not possible, the algorithm fails.
+\item Otherwise, call $R$ the set of oriented rewrite rules that result from orienting the equations in $E$
+      into rewrite rules.
+\item Compute all critical pairs that can be build from equations in $R$.
+      \begin{enumerate}
+      \item If all critical pairs are confluent, then the rewrite relation $\rightarrow_R^*$ is confluent
+            and the algorithm is successful.
+      \item If we have found a critical pair $\langle s, t \rangle$ that is not confluent,
+            we orient the equation $s \approx t$ into a rewrite rule.  If this is impossible, the algorithm fails.
+            Otherwise, we add the oriented equation to $R$.
+            Now the set $R$ could generate additional critical pairs.
+            Hence we must go back to the beginning of step 3. \eod
+      \end{enumerate}
+\end{enumerate}
+
+\noindent
+The algorithm shown above can have three different outcomes:
+\begin{enumerate}
+\item It can fail because it has generated an equation that can not be oriented into a rewrite rule.
+\item It can stop with a set of rewrite rules $R$ such that $\rightarrow_R$ is confluent.
+\item It can run forever because an infinite set of critical pairs is generated.
+\end{enumerate} 
+My GitHub repository contains the Jupyter notebook
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/4%20Automatic%20Theorem%20Proving/Knuth-Bendix-Algorithm-KBO.ipynb}{Knuth-Bendix-Algorithm-KBO.ipynb}
+\\[0.2cm]
+which contains an implementation of the Knuth-Bendix algorithm.  It also contains a number of equational
+theories $E$ where the Knuth-Bendix algorithm is successful.
+
+\section{Literature}
+The book \blue{Term Rewriting and All That} by Franz Baader and Tobias Nipkow \cite{baader:1998} gives a much
+more detailed account of equational theorem proving via term rewriting.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% eval: (setenv "LANG" "en_US.UTF-8")
+%%% End:
