@@ -54,7 +54,8 @@ where \index{constraint satisfaction problem}
       The second component $\mathcal{J}$ defines the
       \blue{interpretations} of the function symbols and predicate symbols that are used in the formul\ae\
       defining the constraints.  In the following we assume that these interpretations are understood from the
-      context of the constraint satisfaction problem $\mathcal{P}$.  Later, when we discuss examples of constraint
+      context of the constraint satisfaction problem $\mathcal{P}$ and hence need not be specified explicitly.
+      Later, when we discuss examples of constraint 
       satisfaction problems, both the function symbols and the predicate symbols will be interpreted
       by functions written in \textsl{Python}.
 \end{enumerate}
@@ -67,9 +68,10 @@ Given a \ac{csp}
 a \blue{variable assignment} for $\mathcal{P}$ is a function \index{variable assignment}
 \\[0.2cm]
 \hspace*{1.3cm}
-$A: \mathtt{Vars} \rightarrow \mathtt{Values}$.
+$A: \mathtt{Vars} \rightarrow \mathtt{Values}$
 \\[0.2cm]
-A variable assignment $A$ is a \blue{solution} of the \ac{csp} $\mathcal{P}$ 
+that maps variables to values.  A variable assignment $A$ is a \blue{solution} \index{solution of a \ac{csp}}
+of the \ac{csp} $\mathcal{P}$  
 if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -87,7 +89,7 @@ set of those variables that are assigned a value different from $\Omega$, i.e.~w
 \hspace*{1.3cm}
 $\mathtt{dom}(B) := \bigl\{ x \in \mathtt{Vars} \mid B(x) \not= \Omega \bigr\}$.
 \\[0.2cm]
-We proceed to illustrate the definitions given so far by presenting two examples.
+We illustrate the definitions given so far by presenting two examples.
 
 
 \begin{figure}[!ht]
@@ -112,8 +114,8 @@ states in Australia:
 \item Victoria, abbreviated as $\mathrm{V}$, and
 \item Tasmania, abbreviated as $\mathrm{T}$.
 \end{enumerate}
-Figure \ref{fig:australia.pdf} would certainly look better if different states had been coloured with different
-colours.  For the purpose of 
+Figure \ref{fig:australia.pdf} would certainly look better if different states that share a common border had
+been coloured with different colours.  For the purpose of 
 this example let us assume that we have only three colours available.  The task is then to colour the different
 states in a way that no two neighbouring states share the same colour.  This task can be formalized as a
 constraint satisfaction problem.  To this end we define: 
@@ -167,7 +169,7 @@ Next, let us define the constraints.  There are two different types of constrain
       column.  To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{SameRow} := \bigl\{ \texttt{V}_i \not= \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
+      $\texttt{DifferentCol} := \bigl\{ \texttt{V}_i \not= \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
       Here the condition $j < i$ ensures that, for example,  while we have the constraint
       $\texttt{V}_2 \not=
@@ -184,7 +186,7 @@ Next, let us define the constraints.  There are two different types of constrain
       columns of these queens.  To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{SameDiagonal} := \bigl\{ |i  - j| \not= |\texttt{V}_i - \texttt{V}_j| \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
+      $\texttt{DifferentDiag} := \bigl\{ |i  - j| \not= |\texttt{V}_i - \texttt{V}_j| \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
       Essentially, these are just the linear equations for the straight lines with slope $1$ and $-1$.
 \end{enumerate}
@@ -278,15 +280,15 @@ queen can capture another queen.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.cm,
+              ]{python3}    
     def create_csp(n):
         S            = range(1, n+1)           
         Variables    = { f'V{i}' for i in S }
@@ -300,11 +302,12 @@ queen can capture another queen.
                                                         if  i < j 
                        }
         return (Variables, Values, SameRow | SameDiagonal)
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
-\caption{\textsl{Python} code to create the \ac{csp} representing the $n$-queens puzzle.}
+\caption{The eight queens problem as \ac{csp}.}
 \label{fig:N-Queens-Problem-CSP.ipynb}
 \end{figure}
+
 
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
 that we will be able to develop a so called \blue{constraint solver} that takes as input a \ac{csp}
@@ -315,7 +318,7 @@ an algorithm that solves a problem we confine ourselves to  specifying the probl
 general purpose problem solver do the job of finding the solution.  This approach of declarative programming 
 was one of the main ideas incorporated in the programming language
 \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to the promisses
-made in declarative programming as a viable general purpose programming method, constraint programming has
+as a viable general purpose programming language, constraint programming has
 proven to be very useful in a number of domains. 
 
 \subsection{Applications}
@@ -325,9 +328,10 @@ satisfaction problems.  The most important application seem to be variants of
 A simple example of a scheduling problem is the problem of generating a time table for a school.  A school has
 various teachers, each of which can teach some subjects but not others.  Furthermore, there are a number of
 classes that must be taught in different subjects.  The problem is then to assign teachers to classes and to
-create a time table.  In practice, \href{https://en.wikipedia.org/wiki/Crew_scheduling}{crew scheduling} is an
-important problem.  For example, airlines have to solve a crew scheduling problem in order to efficiently
-assign crews to aircrafts.
+create a time table.  A special case of sheduling problems is
+\href{https://en.wikipedia.org/wiki/Crew_scheduling}{crew scheduling}.  For example, airlines have to solve a
+crew scheduling problem in order to efficiently assign crews of pilots and crews of stewards to their
+aircrafts.  Stewards and pilots work in different crews as they have different required resting times.
 
 \section{Brute Force Search}
 The most straightforward algorithm to solve a \ac{csp} is to test all possible combinations of assigning
@@ -340,7 +344,7 @@ $8^8 = 2^{24} = 16,777,216$
 \\[0.2cm]
 different assignments that need to be tested.  Given the clock speed of modern computers, checking a million
 assignments per second is plausible.  Hence, this approach is able to solve the eight queens problem in
-about 20 seconds.  The approach of testing all possible combinations is known as
+about 30 seconds.  The approach of testing all possible combinations is known as
 \href{https://en.wikipedia.org/wiki/Brute-force_search}{brute force search}.  \index{brute force search}
 An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ipynb}. 
 
@@ -349,7 +353,7 @@ An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ip
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -396,8 +400,8 @@ implementation of this function is recursive and the function takes two argument
       \hspace*{1.3cm}
       $\texttt{csp} = (\texttt{Variables}, \texttt{Values}, \texttt{Constraints})$.
       \\[0.2cm]
-      Here, \texttt{Constraints} is a set of first order logic formul\ae\ that are given as strings.  These
-      strings have to follow the syntax of \textsl{Python} expressions so that they can be evaluated using the
+      Here, \texttt{Constraints} is a set of Boolean expressions that are given as strings.  These
+      strings have to follow the syntax of \textsl{Python} so that they can be evaluated using the
       \textsl{Python} function $\texttt{eval}$.
 \end{enumerate}
 The implementation of $\texttt{brute\_force\_search}$ works as follows:
@@ -431,7 +435,7 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = last,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -453,11 +457,11 @@ $\texttt{f}$ from the set $\texttt{Constraints}$, the function $\texttt{check\_a
 whether $\texttt{f}$ yields \texttt{True} under the given variable assignment.
 This check is done using the auxiliary function $\texttt{eval\_constraint}$.  
 
-When I tested this brute force search with the eight queens problem, it took about 20 seconds to
-compute a solution.  In contrast, the seven queens problem took roughly one second.  As we have
+When I tested this brute force search with the eight queens problem, it took about 30 seconds to
+compute a solution.  In contrast, the seven queens problem took about 1.7 second.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\frac{8^8}{7^7} \approx 20$ 
+$\ds\frac{8^8}{7^7} \approx 20$ \quad and \quad $30 / 1.7 \approx 18$ 
 \\[0.2cm]
 this shows that the computation time does indeed grow with the number of possible assignments that
 have to be checked.  However, the correspondence is not exact.  The reason is that we stop our
@@ -486,7 +490,7 @@ satisfaction problem $\mathtt{P}$ as input and tries to find a solution.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -596,7 +600,7 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
 \begin{minted}[ frame         = lines, 
                   framesep      = 0.3cm, 
                   firstnumber   = 1,
-                  bgcolor       = bg,
+                  bgcolor       = sepia,
                   numbers       = left,
                   numbersep     = -0.2cm,
                   xleftmargin   = 0.0cm,
@@ -652,7 +656,7 @@ $\texttt{NewAssign}$.  The reasoning is as follows:
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -677,7 +681,7 @@ the variable names, the function \texttt{collect\_variables} takes care to elimi
 This is done by making use of the fact that all function symbols that have been defined are a member of the
 list \texttt{dir(\_\_builtin\_\_)}. 
 
-If we use program discussed in this section, we can solve the 8 queens problem in less than 20 milliseconds.
+If we use the program discussed in this section, we can solve the 8 queens problem in about 22 milliseconds.
 Hence, for the eight queens problem backtracking is about a thousand times faster than brute force search.
 
 \section{Constraint Propagation}
@@ -735,7 +739,7 @@ solved without backtracking.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.3cm,
@@ -801,7 +805,7 @@ variable  $\mathtt{x}$.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -832,7 +836,7 @@ raised since in that case the given \ac{csp} is unsolvable.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -884,7 +888,7 @@ solution of the given \ac{csp}.
 \item If it is consistent to assign $\texttt{v}$ to the variable $\texttt{x}$, we propagate the consequences
       of this assignment using the function $\texttt{propagate}$ shown in
       \myFig{Constraint-Propagation-Solver.ipynb:propagate}.
-      This function updates the values that are still allowed for the variables of the\ac{csp} once the
+      This function updates the values that are still allowed for the variables of the \ac{csp} once the
       value $\texttt{v}$ has been assigned to the variable $\texttt{x}$.
 \item Finally, the partial variable $\texttt{Assignment}$ is updated to include the assignment of 
       $\texttt{v}$ to $\texttt{x}$ and the recursive call to $\texttt{backtrack\_search}$ tries to complete this new
@@ -896,7 +900,7 @@ solution of the given \ac{csp}.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -925,7 +929,7 @@ that still might be tried for this variable.
       has not yet been assigned a value in $\texttt{Assignment}$ this set contains the pair 
       $(\texttt{x}, \mathtt{len}(U))$, where $U$ is the set of values that still might be tried for the variable  $\texttt{x}$.
 \item Next, \texttt{minSize} is the minimal number of values still available for a variable.
-\item Finally, a variable \texttt{x} that has only \texttt{minSize} values available is returned.
+\item Finally, the first variable \texttt{x} that has only \texttt{minSize} values available is returned.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -933,7 +937,7 @@ that still might be tried for this variable.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -992,7 +996,7 @@ $\texttt{propagate}$ proceeds as follows.
       since we still need to assign values for these variables.
 \item If there is exactly one unbound variable $\texttt{y}$ in the constraint $\texttt{F}$, then we can test
       those values that satisfy \texttt{F} and recompute the set $\texttt{ValuesPerVar[x]}$.
-\item As the set $\texttt{UnboundVars}$ contains just a single variable in line 7,
+\item As the set $\texttt{UnboundVars}$ contains just a single variable in line 9,
       the function $\texttt{arb}$ returns this variable.
 \item In order to recompute the set $\texttt{ValuesPerVar[x]}$,  all values $\texttt{w}$ in
       $\texttt{ValuesPerVar[y]}$ are tested.  The set $\texttt{Legal}$ contains all values $\texttt{w}$ that can
@@ -1004,7 +1008,7 @@ $\texttt{propagate}$ proceeds as follows.
 \item Finally, the updated dictionary $\mathtt{ValuesPerVar}$ is returned.
 \end{enumerate}
 I have tested the program described in this section using the eight queens puzzle.  It takes about
-10 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in the next exercise.
+30 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in the next exercise.
 It solves this puzzle in 17 milliseconds.  To compare, the backtracking algorithm shown in the previous section
 takes roughly 10 minutes to solve this puzzle.
 \pagebreak
@@ -1149,7 +1153,7 @@ hence we would have to test $10^{8}$ possible assignments. In order to do better
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -1193,23 +1197,23 @@ variables as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $(\texttt{D} + \texttt{E})\; \texttt{\symbol{37}}\; 10 = \texttt{Y}$ \quad and \quad
-$(\texttt{D} + \texttt{E}) \;\texttt{\symbol{92}}\; 10 = \texttt{C1}$.
+$(\texttt{D} + \texttt{E}) \;\texttt{//}\; 10 = \texttt{C1}$.
 \\[0.2cm]
 Here, the symbol ``$\texttt{//}$'' denotes 
 \href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, 
 e.g.~we have $7 \;\texttt{//}\; 3 = 2$ because $7 = 2 \cdot 3 + 1$.
 If we try to solve the cryptarithmetic puzzle as coded in \myFig{Crypto-Arithmetic.ipynb} using the
-constraint solver developed in the previous section, we will be disappointed: Solving the puzzle takes about 7
-seconds on my computer.  The reason is that most constraints involve either three or four variables and
+constraint solver developed in the previous section, we will be disappointed: Solving the puzzle takes about
+half a second on my computer.  The reason is that most constraints involve either three or four variables and
 therefore the effects of constraint propagation kick only in when many variables have already been initialized.
-However, we can solve the problem in less than 50 milliseconds if we add the following constraints for the 
+However, we can solve the problem in less than 70 milliseconds if we add the following constraints for the 
 variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{"C1 < 2", "C2 < 2", "C3 < 2"}.
 \\[0.2cm]
-Although these constraints are certainly true, the problem with this approach is that we would prefer if our
-constraint solver could figure out these constraints by itself.  After all, since $\texttt{D}$ and
+Although these constraints are certainly true, the problem with this approach is that we would prefer our
+constraint solver to figure out these constraints by itself.  After all, since $\texttt{D}$ and
 $\texttt{E}$ are both less than $10$, there sum is obviously less than $20$ and hence the carry $\texttt{C1}$
 has to be less than $2$.  This line of reasoning is known as \blue{consistency maintenance}:
 Assume that the formula $f$ is a constraint and the set of variables occurring in $f$ has the form
@@ -1269,8 +1273,12 @@ variable $y$.  Although the set $\texttt{UncheckedVariables}$ can grow during th
 $\bigcup\limits_{x \in \mathtt{Vars}} \texttt{ValuesPerVar}[x]$ 
 \\[0.2cm]
 can never grow:  Every time the set $\texttt{UncheckedVariables}$ grows,
-for some variable $x$ the set $\texttt{ValuesPerVar}[x]$ shrinks.
-As the sets $\texttt{ValuesPerVar}[x]$ are finite for all variables $x$, the set
+for some variable $x$ the set
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{ValuesPerVar}[x]$ 
+\\[0.2cm] 
+shrinks.  As the sets $\texttt{ValuesPerVar}[x]$ are finite for all variables $x$, the set
 $\texttt{UncheckedVariables}$ can only grow a finite number of times. 
 Once the set $\texttt{UncheckedVariables}$ does not grow any more, every iteration of the algorithm removes one
 variable from this set and hence the algorithm terminates eventually.
@@ -1280,7 +1288,7 @@ variable from this set and hence the algorithm terminates eventually.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -1360,7 +1368,7 @@ $\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The imp
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -1424,14 +1432,14 @@ possible variable assignments.  The implementation proceeds as follows:
       value \texttt{v} and returns a new dictionary that maps \texttt{x} to \texttt{v} and otherwise coincides
       with \texttt{A}.
 \end{enumerate}
-On one hand, consistency checking is a pre-processing step creates a lot of overhead.\footnote{
+On one hand, consistency checking is a pre-processing step that creates a lot of overhead.\footnote{
   To be fair, the implementation shown in this section is far from optimal.  In particular, by remembering which
   combinations of variables and values work for a given formula, the overhead can be reduced significantly.  I have
   refrained from implementing this optimization because I did not want the code to get too complex.
 }
 Therefore, it might actually slow down the
 solution of some constraint satisfaction problems that are easy to solve using just backtracking and
-propagation.  On the other hand, many difficult constraint satisfaction problems can not be solved
+constraint propagation.  On the other hand, many difficult constraint satisfaction problems can not be solved
 without consistency checking. 
 
 
@@ -1440,7 +1448,7 @@ without consistency checking.
 \begin{minted}[ frame         = lines, 
                  framesep      = 0.3cm, 
                  firstnumber   = 1,
-                 bgcolor       = bg,
+                 bgcolor       = sepia,
                  numbers       = left,
                  numbersep     = -0.2cm,
                  xleftmargin   = 0.0cm,
@@ -1554,7 +1562,7 @@ local search works as follows: \index{local search}
 \begin{minted}[ frame         = lines, 
                  framesep      = 0.3cm, 
                  firstnumber   = 1,
-                 bgcolor       = bg,
+                 bgcolor       = sepia,
                  numbers       = left,
                  numbersep     = -0.2cm,
                  xleftmargin   = 0.0cm,
@@ -1666,21 +1674,21 @@ this program line by line.
 
 \begin{figure}[!ht]
 \centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  labelposition = bottomline,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.0cm,
+                 xrightmargin  = 0.0cm,
+               ]{python3}
     def numConflicts(x, Assign, Annotated):
         NewAssign = Assign.copy()
         return len([ (f, V) for (f, V) in Annotated 
                             if  x in V and not eval(f, NewAssign) 
                    ])
-\end{Verbatim}
+\end{minted}
 \vspace*{-0.3cm}
 \caption{The function $\texttt{numConflicts}$.}
 \label{fig:Local-Search.ipynb:numConflicts}
