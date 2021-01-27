@@ -1540,6 +1540,7 @@ $\mathcal{P} := \langle \texttt{Variables}, \texttt{Values}, \texttt{Constraints
 \\[0.2cm] 
 local search works as follows: \index{local search}
 \begin{enumerate}
+\item Use consistency checking as an optional pre-processing step.
 \item Initialize the values of the variables in $\texttt{Variables}$ randomly.  
 \item If all $\texttt{Constraints}$ are satisfied, return the solution.
 \item For every  $x \in \texttt{Variables}$, count the number of \blue{unsatisfied} constraints that involve the
@@ -1553,7 +1554,7 @@ local search works as follows: \index{local search}
 
       If there is more than one value $d$ with this property, choose the value $d$ randomly from those values
       that minimize the number of unsatisfied constraints.
-\item Rinse and repeat until a solution is found or the sun rises in the west.
+\item Rinse and repeat until a solution is found.
 \end{enumerate}
 
 
@@ -1568,69 +1569,110 @@ local search works as follows: \index{local search}
                  xleftmargin   = 0.0cm,
                  xrightmargin  = 0.0cm,
                ]{python3}
-   def solve(P):
-       Variables, Values, Constraints = P
-       Variables = list(Variables)  
-       Values    = list(Values)   
-       Annotated = { (f, collect_variables(f)) for f in Constraints }
-       Assign    = { x: random.choice(Values) for x in Variables }
-       iteration = 0
-       lastVar   = arb(Variables)
-       while True:
-           Conflicts = [ (numConflicts(x, Assign, Annotated), x) for x in Variables
-                                                                 if  x != lastVar
-                       ]
-           maxNum, _ = Set.last(cast_to_Set(Conflicts))
-           if maxNum == 0 and numConflicts(lastVar, Assign, Annotated) == 0:           
-               return Assign
-           if iteration % 10  == 0:    # avoid infinite loop
-               x = random.choice(Variables)
-           else:     # choose var with max number of conflicts
-               FaultyVars = [ var for (num, var) in Conflicts if  num == maxNum ]
-               x = random.choice(FaultyVars)
-           Conflicts = [ (numConflicts(x, extend(Assign, x, val), Annotated), val) 
-                         for val in Values 
-                       ]
-           if iteration % 10 == 0:       # avoid infinite loop
-               newVal = random.choice(Values) 
-           else:
-               minNum, _  = Set.first(cast_to_Set(Conflicts))
-               ValuesForX = [ val for (n, val) in Conflicts if n == minNum ]
-               newVal     = random.choice(ValuesForX)
-           Assign[x] = newVal
-           lastVar   = x
-           iteration += 1
+    def solve(P):
+        Variables, Values, Constraints = P
+        VarsInConstrs  = union([ collect_variables(f) for f in Constraints ])
+        MisspelledVars = (VarsInConstrs - Variables) | (Variables - VarsInConstrs)
+        if len(MisspelledVars) > 0:
+            print("Did you misspell any of the following Variables?")
+            for v in MisspelledVars:
+                print(v)
+        ValuesPerVar = { x: Values for x in Variables }
+        Annotated    = { f: collect_variables(f) for f in Constraints }
+        Connected    = {}
+        Var2Formulas = variables_2_formulas(Annotated)
+        for x in Variables:
+            Connected[x] = union([V for f, V in Annotated.items() if x in V]) - {x}
+        try:
+            enforce_consistency(ValuesPerVar, Var2Formulas, Annotated, Connected)
+        except Failure:
+            return None
+        return local_search(Variables, ValuesPerVar, Annotated)
 \end{minted}
 \vspace*{-0.3cm}
 \caption{A constraint solver using local search.}
 \label{fig:Local-Search.ipynb:solve}
 \end{figure}
 
+\myFig{Local-Search.ipynb:solve} shows the preprocessing step.  The function \texttt{solve} takes a constraint
+satisfaction problem \texttt{P} as its argument and performs consistency checking similar to the algorithm
+discussed in the previous section.  Following the preprocessing it call the function \texttt{local\_search}
+that solves the given \ac{csp}.
 
-\noindent
-\myFig{Local-Search.ipynb:solve} shows an implementation of these ideas in \textsl{Python}.  We proceed to discuss
-this program line by line.
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.0cm,
+                 xrightmargin  = 0.0cm,
+               ]{python3}
+    def local_search(Variables, ValuesPerVar, Annotated):
+        Variables = list(Variables) 
+        Assign    = { x: random.choice(list(ValuesPerVar[x])) for x in Variables }
+        iteration = 0
+        lastVar   = arb(Variables)
+        while True:
+            Conflicts = [(numConflicts(x, Assign, Annotated), x) for x in Variables
+                                                                 if  x != lastVar
+                        ]
+            maxNum, _ = Set.last(cast_to_Set(Conflicts))
+            if maxNum == 0 and numConflicts(lastVar, Assign, Annotated) == 0:      
+                print(f'Number of iterations: {iteration}')
+                return Assign
+            if iteration % 11 == 0:    # avoid infinite loop
+                x = random.choice(Variables)
+            else:     # choose var with max number of conflicts
+                FaultyVars = [ var for (num, var) in Conflicts if  num == maxNum ]
+                x = random.choice(FaultyVars)
+            if iteration % 13 == 0:       # avoid infinite loop
+                newVal = random.choice(list(ValuesPerVar[x])) 
+            else:
+                Conflicts = [ (numConflicts(x, extend(Assign, x, v), Annotated), v) 
+                              for v in ValuesPerVar[x] 
+                            ]
+                minNum, _  = Set.first(cast_to_Set(Conflicts))
+                ValuesForX = [ val for (n, val) in Conflicts if n == minNum ]
+                newVal     = random.choice(ValuesForX)
+            Assign[x]  = newVal
+            lastVar    = x
+            iteration += 1
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Implementation of local search.}
+\label{fig:Local-Search.ipynb:local_search}
+\end{figure}
+
+\myFig{Local-Search.ipynb:local_search} shows an implementation of \blue{local search} in \textsl{Python}.  We
+proceed to discuss this program line by line.
 \begin{enumerate}
-\item The function $\texttt{solve}$ takes one parameter $P$, which is a \ac{csp}.  If
-      the computation is successful, $\texttt{solve(P)}$ returns a dictionary that encodes a solution of the
+\item The function $\texttt{local\_search}$ takes three parameter.  
+      \begin{enumerate}[(a)]
+      \item \texttt{Variables} is the set of all variables occurring in the given \ac{csp}.
+      \item \texttt{ValuesPerVar} is a dictionary.  For every variable \texttt{x}, \texttt{ValuesPerVar[x]} is
+            the set of values that can be used to instantiate \texttt{x}.
+      \item \texttt{Annotated} is a dictionary.  For every constraint $f$, $\texttt{Annotated}[f]$ is the set
+            of variables occurring in $f$.
+      \end{enumerate}
+      If the computation is successful, $\texttt{local\_search}$ returns a dictionary that encodes a solution of the
       given \ac{csp} by mapping variables to values.
-\item The sets \texttt{Variables} and \texttt{Values} are turned to lists.  This is necessary because the
-      function
+\item The set \texttt{Variables} is turned into a list.  This is necessary because the function
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{random.choice}(L)$
       \\[0.2cm]
       that is used to select a random element from $L$ expects that its argument $L$ to be indexable, i.e.~for
       a number $k \in \{0, \cdots, \mathtt{len}(L)-1\}$ the expression $L[k]$ needs to be defined.
-\item \texttt{Annotated} is a list of pairs of the form $(f, V)$ where $f$ is a constraint and $V$ is the set
-       of variables occurring in $f$.
-\item \texttt{Assign} is a dictionary mapping all variables form the set \texttt{Variables} to values from the
+\item \texttt{Assign} is a dictionary mapping all variables from the set \texttt{Variables} to values from the
       set \texttt{Values}.  Initially the values are assigned randomly.
 \item The variable \texttt{iteration} counts the number of times that we have changed the assignment
       \texttt{Assign} by reassigning a variable.
 \item If we have reassigned a variable $x$ in the last iteration of the loop, then we do not want to reassign
-      it again.  Therefore, the variable \texttt{lastVar} stores the variable that has been reassigned in the
-      previous iteration.
+      it again in the next step.  Therefore, the variable \texttt{lastVar} stores the variable that has been
+      reassigned in the previous iteration.
 \item At the beginning of the \texttt{while} loop, we count the number of conflicts for all variables, i.e.~if
       $x$ is a variable that is different from the variable that has been reassigned in the last iteration,
       then we count the number of \blue{conflicts} \index{conflict} that $x$ causes.  This number is defined 
@@ -1640,9 +1682,9 @@ this program line by line.
       \item $f$ is not satisfied.
       \end{enumerate}
       This is done using the function \texttt{numConflicts} shown in \myFig{Local-Search.ipynb:numConflicts}.
-      The list \texttt{Conflicts} defined in line 10 contains pairs of the form $(n, x)$ where $x$ is a
+      The list \texttt{Conflicts} defined in line 7 contains pairs of the form $(n, x)$ where $x$ is a
       variable and $n$ is the number of conflicts that this variable is involved in.
-\item In line 13 the list \texttt{Conflicts} is turned into a set that is represented as an ordered binary set.
+\item In line 10 the list \texttt{Conflicts} is turned into a set that is represented as an ordered binary set.
       This set is effectively a 
       priority queue that is ordered by the number of conflicts.  We pick the variable with the most conflicts
       from this set and store the number of conflicts in \texttt{maxNum}, i.e.~\texttt{maxNum} is the maximum
@@ -1650,27 +1692,27 @@ this program line by line.
 \item Now if \texttt{maxNum} is $0$ and additionally the variable \texttt{lastVar} that is excluded from the
       computation of the set \texttt{Conflicts} has no conflicts, then the given \ac{csp} has been solved and
       the solution is returned.
-\item Otherwise, the list  \texttt{FaultyVars} defined in line 19 collects those variables that have a maximal
+\item Otherwise, the list  \texttt{FaultyVars} defined in line \texttt{17} collects those variables that have a maximal
       number of conflicts.  
-\item In line \texttt{20} we choose a random variable \texttt{x} from this set as the variable to be
-      reassigned.  However, this is only done nine out of ten times.  In order to avoid running into an
-      infinite where we keep changing the same variables, every tenth iteration instead of choosing \texttt{x}
+\item In line \texttt{18} we choose a random variable \texttt{x} from this list as the variable to be
+      reassigned.  However, this is only done ten out of eleven times.  In order to avoid running into an
+      infinite loop where we keep changing the same variables, every eleven$^\textrm{th}$ iteration instead of choosing \texttt{x}
       as the variable violating the most constraints we choose \texttt{x} randomly.  This is controlled by the
-      test \texttt{iteration \% 10 == 0} in line 16.
-\item Line 21 computes a list \texttt{Conflicts} that this time contains pairs of the form $(n, v)$ where $n$ 
+      test \texttt{iteration \% 11 == 0} in line 16.
+\item Line \texttt{22} computes a list \texttt{Conflicts} that this time contains pairs of the form $(n, v)$ where $n$ 
       is the number of conflicts that the variable \texttt{x} would cause if we would assign the value $v$ to
       \texttt{x}.
-\item Line 27 casts the list \texttt{Conflicts} into a set that is represented as an ordered binary set.
-      This set is effectively a priority queue that is ordered by the number of conflicts.  we pick the
+\item Line \texttt{25} casts the list \texttt{Conflicts} into a set that is represented as an ordered binary set.
+      This set is effectively a priority queue that is ordered by the number of conflicts.  We pick the
       smallest number of conflicts that any value $v$ causes when \texttt{x} is assigned to $v$.
 \item \texttt{ValuesForX} is the list of those values that cause only \texttt{minNum} conflicts when assigned
       to \texttt{x}. 
 \item \texttt{newVal} is a random element from this list that is then assigned to \texttt{x}.
-      Again, this is only done 9 out of ten times.  The tenth time a random value is assigned to \texttt{x}.
-\item In line 31 we remember that we have reassigned \texttt{x} in this iteration so that we don't reassign
+      Again, this is only done twelve out of thirteen times.  The thirteen$^\mathrm{th}$ time a random value is
+      assigned to \texttt{x} instead. 
+\item In line \texttt{29} we remember that we have reassigned \texttt{x} in this iteration so that we don't reassign
       \texttt{x} in the next iteration again.
 \end{enumerate}
-
 
 \begin{figure}[!ht]
 \centering
@@ -1703,8 +1745,9 @@ is the number of conflicts caused by the variable $x$.
 
 Using the program discussed in this section, the n queens problem can be solved for a $\texttt{n} = 1000$ in
 30 minutes.  As the memory requirements for local search are small, even much higher problem sizes can be
-tackled if sufficient time is available.  Hence, it seems that local search is better than the algorithms
-discussed previously.  However, we have to note that local search is \blue{incomplete}:  If a
+tackled if sufficient time is available.  It is a fact that often large problems, which are not inherently
+difficult, can be solved much faster with local search that with any other algorithm.  
+However, we have to note that local search is \blue{incomplete}:  If a
 constraint satisfaction problem $\mathcal{P}$ has no solution, then local search loops forever.  Therefore, in
 practise a \blue{dual approach} is used to solve a constraint satisfaction problem.  The constraint solver
 starts two threads: The first search does local search, the second thread tries to solve the problem via some
@@ -1714,6 +1757,10 @@ problem is unsolvable, this will  \blue{eventually} be discovered by backtrackin
 constraint satisfaction problem is \href{https://en.wikipedia.org/wiki/NP-completeness}{NP-complete}.  Hence,
 it is unlikely that there is an efficient algorithm that works \blue{always}.  However, today many practically
 relevant constraint satisfaction problems can be solved in a reasonably short time. 
+
+In this chapter we could only give a glimpse of the theory of constraint satisfaction problems.
+For further details on the theory of \ac{csp}s, consult the book \blue{constraint processing} by Rina Dechter
+\cite{dechter:2003}.
 
 %%% Local Variables:
 %%% mode: latex
