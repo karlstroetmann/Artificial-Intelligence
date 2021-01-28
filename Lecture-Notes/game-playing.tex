@@ -3,13 +3,13 @@ One major breakthrough for the field of artificial intelligence happened in 1997
 \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue} was able to beat the World Chess
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
 While \blue{Deep Blue} \index{deep blue} was based on special hardware, according to the
-\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 8th
-of February 2020, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
-on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3495.  
+\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 24th
+of January 2021, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
+on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3516.  
 To compare, according to the
-\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of February 2020, the current 
+\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of January 2021, the current 
 World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
-just 2862.  Hence, he wouldn't stand a chance to win a game against Stockfish.  In 2017, at the 
+2862.  Hence, he wouldn't stand a chance to win a game against Stockfish.  In 2017, at the 
 \href{https://en.wikipedia.org/wiki/Future_of_Go_Summit}{Future of Go Summit},  the computer program
 \href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} \index{AlphaGo} was able to beat
 \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie}, \index{Ke Jie} 
@@ -32,7 +32,7 @@ where the components are interpreted as follows:
 \begin{enumerate}
 \item $\texttt{States}$ is the set of all possible \blue{states} of the game.
 \item $s_0 \in \texttt{States}$ is the \blue{start state}.
-\item $\texttt{Players}$ is  the list of \blue{players} of the game.  The first element in \texttt{Players} is
+\item $\texttt{Players}$ is  the list of the \blue{players} of the game.  The first element in \texttt{Players} is
       the player to start the game and after that the players take turns.  As we only consider \blue{two person}
       games, we assume that \texttt{Players} is a list of length two.  \index{two person games}
 \item $\texttt{nextStates}$ is a function that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the set of
@@ -81,10 +81,11 @@ We proceed to discuss an example.
 
 \section{Tic-Tac-Toe}
 The game \href{https://en.wikipedia.org/wiki/Tic-tac-toe}{tic-tac-toe} is played on a square board of size 
-$3 \times 3$.  On every turn, one player puts an ``\texttt{X}'' on one of the free squares of the board, while
-the other player puts an ``$\texttt{O}$'' onto a free square when it is his turn.  If the first player manages
+$3 \times 3$.  On every turn, the first player puts an ``\texttt{X}'' on one of the free squares of the board
+when it is her turn, while
+the second player puts an ``$\texttt{O}$'' onto a free square when it is his turn.  If the first player manages
 to place three \texttt{X}s in a row, column, or diagonal, she has won the game.  Similarly, if the second
-player manages to put three \texttt{O}s in a row, column, or diagonal, this player is the winner.  Otherwise,
+player manages to put three \texttt{O}s in a row, column, or diagonal, he is the winner.  Otherwise,
 the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementation of tic-tac-toe.
 \index{tic-tac-toe}
 
