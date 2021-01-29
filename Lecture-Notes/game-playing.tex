@@ -22,8 +22,18 @@ performance of human players.  To name just one more example, in 2019 the progra
 fifteen professional poker players in six-player no-limit 
 \href{https://en.wikipedia.org/wiki/Texas_hold_%27em}{Texas Hold'em poker} resoundingly.
 
-In this chapter we want to investigate how a computer can play a game.  To this end we define a
-\blue{game} $\mathcal{G}$ as a six-tuple \index{game}
+This chapter is structured as follows:
+\begin{enumerate}
+\item We define the notion of deterministic two player zero sum games in the next section.
+\item To illustrate this definition we describe the game \blue{tic-tac-toe} in this framework.
+\item The \blue{minimax algorithm} is a simple algorithm to play games and is described next.
+\item \blue{Alpha-beta pruning} is an improvement of the minimax algorithm.
+\item Finally, we consider the case of those games that, due to memory limitations, can not be solved
+      with the pure version of alpha-beta pruning.  For these games we discuss \blue{depth-limited adversarial search}. 
+\end{enumerate}
+
+\section{Basic Definitions}
+In order to investigate how a computer can play a game we define a \blue{game} $\mathcal{G}$ as a six-tuple \index{game}
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{G} = \langle \texttt{States}, s_0, \texttt{Players}, \texttt{nextStates}, \texttt{finished},\texttt{utility} \rangle$
@@ -63,20 +73,20 @@ where the components are interpreted as follows:
       \hspace*{1.3cm}
       $\texttt{utility}: \texttt{TerminalStates} \times \texttt{Players} \rightarrow \{ -1, 0, +1\}$.
 \end{enumerate}
-In this chapter we will only consider so called \blue{two person, zero sum games}.  \index{zero sum game}
+In this chapter we will only consider so called \blue{two person zero sum games}.  
 This means that the list $\texttt{Players}$ has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Players} = \bigl[ \mathrm{A}, \mathrm{B} \bigr]$,
 \\[0.2cm]
-then the game is called a \blue{zero sum game} iff we have
+then the game is called a \blue{zero sum game} \index{zero sum game} iff we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\forall s \in \texttt{TerminalStates}:\texttt{utility}(s, \texttt{A}) + \texttt{utility}(s, \texttt{B}) = 0$,
 \\[0.2cm]
 i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\texttt{B}$ and vice versa.
 Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{go} and 
-\href{https://en.wikipedia.org/wiki/Chess}{chess} are two person, zero sum games.
+\href{https://en.wikipedia.org/wiki/Chess}{chess} are two person zero sum games.
 We proceed to discuss an example.
 
 \section{Tic-Tac-Toe}
@@ -86,7 +96,16 @@ when it is her turn, while
 the second player puts an ``$\texttt{O}$'' onto a free square when it is his turn.  If the first player manages
 to place three \texttt{X}s in a row, column, or diagonal, she has won the game.  Similarly, if the second
 player manages to put three \texttt{O}s in a row, column, or diagonal, he is the winner.  Otherwise,
-the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementation of tic-tac-toe.
+the game is drawn.  In this section we present two different implementations of \blue{tic-tac-toe}:
+\begin{enumerate}
+\item We begin with a naive implementation of tic-tac-toe that is easy to understand but has a high memory
+      footprint.
+\item After that, we present an implementation that is based on \blue{bitboards} and has only a fraction of the
+      memory requirements of the naive implementation.  
+\end{enumerate}
+
+\subsection{A Naive Implementation of Tic-Tac-Toe}
+\myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementation of tic-tac-toe.
 \index{tic-tac-toe}
 
 
@@ -203,20 +222,20 @@ the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementa
       \hspace*{1.3cm}
       $
       \begin{array}{ll}
-       \Bigl[ & \bigl[(1, 1), (1, 2), (1, 3)\bigr], \;
-                \bigl[(2, 1), (2, 2), (2, 3)\bigr], \;
-                \bigl[(3, 1), (3, 2), (3, 3)\bigr],   \\[0.1cm]
-              & \bigl[(1, 1), (2, 1), (3, 1)\bigr], \;
-                \bigl[(1, 2), (2, 2), (3, 2)\bigr], \;
-                \bigl[(1, 3), (2, 3), (3, 3)\bigr],   \\[0.1cm]
-              & \bigl[(1, 1), (2, 2), (3, 3)\bigr], \;
-                \bigl[(3, 1), (2, 2), (1, 3)\bigr]    \\
+       \Bigl[ & \bigl[(0, 0), (0, 1), (0, 2)\bigr], \;
+                \bigl[(1, 0), (1, 1), (1, 2)\bigr], \;
+                \bigl[(2, 0), (2, 1), (2, 2)\bigr],   \\[0.1cm]
+              & \bigl[(0, 0), (1, 0), (2, 0)\bigr], \;
+                \bigl[(0, 1), (1, 1), (2, 1)\bigr], \;
+                \bigl[(0, 2), (1, 2), (2, 2)\bigr],   \\[0.1cm]
+              & \bigl[(0, 0), (1, 1), (2, 2)\bigr], \;
+                \bigl[(2, 0), (1, 1), (0, 2)\bigr]    \\
        \Bigr]
       \end{array}
       $
       \\[0.2cm]
       The first line in this expression gives the set of pairs defining the rows, the second line defines 
-      the columns, and the last line yields the tow diagonals.  Given a state $\texttt{State}$ and a set
+      the columns, and the last line yields the two diagonals.  Given a state $\texttt{State}$ and a set
       $\texttt{Pairs}$, the set 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -248,21 +267,130 @@ the game is drawn.  \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementa
       difference whether we take the utility of the state for the player ``$\texttt{X}$'' or for the player
       ``$\texttt{O}$'': If the game is finished for  ``$\texttt{X}$'', then it is also finished for ``$\texttt{O}$'' and vice versa.
 \end{enumerate}
+The implementation shown so far has one important drawback: Every state needs 320 bytes in memory.
+This can be checked using the \textsl{Python} function \texttt{sys.getsizeof}.
+Therefore, we show a leaner implementation next.
+
+\subsection{A Bitboard-Based Implementation of Tic-Tac-Toe}
+If we have to reduce the memory requirements of the states, then we can store the states as integers.  The
+first nine bits of these integers store the position of the \texttt{X}es, while the next nine bits store the
+positions of the \texttt{O}s.  This kind of representation where a state is coded as a series of bit in an
+integer is known as a \blue{bitboard} \index{bitboard}.  This is much more efficient than storing states as
+tuples of tuples of characters.  \myFig{Tic-Tac-Toe-Bitboard.ipynb} shows an implementation of tic-tac-toe that
+is based on a \href{https://en.wikipedia.org/wiki/Bitboard}{bitboard}.  We proceed to discuss the details of
+this implementation.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    Players = [0, 1]
+    Start   = 0
+    
+    def set_bits(Bits):
+        result = 0
+        for b in Bits:
+            result |= 1 << b
+        return result
+
+    set_bit = lambda n: 1 << n
+
+    def empty(state):
+        Free  = { n for n in range(9) }
+        Free -= { n for n in range(9) if state & (1 << n) != 0 }
+        Free -= { n for n in range(9) if state & (1 << (9 + n)) != 0 }
+        return Free
+
+    def next_states(state, player):
+        Empty  = empty(state)
+        Result = []
+        for n in Empty:
+            next_state = state | set_bit(player * 9 + n)
+            Result.append(next_state)
+        return Result
+
+    All_Lines = [ set_bits([0,1,2]), set_bits([3,4,5]), set_bits([6,7,8]), 
+                  set_bits([0,3,6]), set_bits([1,4,7]), set_bits([2,5,8]), 
+                  set_bits([0,4,8]), set_bits([2,4,6]), 
+                ]
+
+    def utility(state, player):
+        for mask in All_Lines:
+            if state & mask == mask:
+                return 1 - 2 * player  # player 'X' has won
+            if (state >> 9) & mask == mask:
+                return -1 + 2 * player # player 'O' has won
+        # 511 == 2**9 - 1 = 0b1_1111_1111  
+        if (state & 511) | (state >> 9) != 511: # the board is not yet filled
+            return None
+        return 0 # it's a draw
+    
+    finished = lambda state: utility(state, 0) != None
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Tic-Tac-Toe implemented by a bitboard.}
+\label{fig:Tic-Tac-Toe-Bitboard.ipynb}
+\end{figure}
+
+\begin{enumerate}
+\item When we use bitboards to implement tic-tac-toe it is more convenient to store the players as numbers. The
+      first player \texttt{X} is encoded as the number $0$, while the second player \texttt{O} is encoded as
+      the number $1$. 
+\item In the state \texttt{Start}, no mark has been placed on the board.  Hence all bits are unset and therefore this
+      state is represented by the number $0$. 
+\item The function \texttt{set\_bits} takes a list of natural numbers as its argument \texttt{Bits}.  These numbers specify
+      the bits that should be set.  It returns an integer where all bits specified in the argument
+      \texttt{Bits} are set to $1$ and all other bits are set to $0$.
+\item The function \texttt{set\_bit} takes a natural number \texttt{n} as its argument.  It returns a number
+      where the $\texttt{n}^\mathrm{th}$ bit is set to $1$ and all other bits are set to $0$.
+\item Given a \texttt{state} that is represented as a number, the function \texttt{empty(state)} returns the
+      set of indexes of those cells such that neither player \texttt{X} nor player \texttt{O} has placed a mark
+      in the cell.
+
+      Note that there are 9 cells on the board.  Each of these cells can hold either an \texttt{'X'} or an
+      \texttt{'O'}.  If the $i^\textrm{th}$ cell is marked with a \texttt{'X'}, then the $i^\textrm{th}$ bit of
+      \texttt{state} is set.  If instead the $i^\textrm{th}$ cell is marked with an \texttt{'O'}, then the
+      $(9+i)^\textrm{th}$ bit of \texttt{state} is set.  If the $i^\textrm{th}$ cell is not yet marked, then both the
+      $i^\textrm{th}$ bit and the $(9+i)^\textrm{th}$ bit are $0$.   
+\item Given a \texttt{state} and the \texttt{player} who is next to move, the function \texttt{next\_states}
+      computes the set of states that can be reached from \texttt{state}.  Note that player \texttt{X} is
+      encoded as the number $0$, while player \texttt{O} is encoded as the number $1$.
+\item The global variable \texttt{All\_Lines} is a list of eight bit masks.  These masks can be used to test
+      whether there are three identical marks in a row, column, or diagonal. 
+\item The function \texttt{utility} takes two arguments:
+      \begin{enumerate}[(a)]
+      \item \texttt{state}  is an integer representing the board.
+      \item \texttt{player} specifies a player. Here player \texttt{X} is encoded as the number $0$, while
+            player \texttt{O} is encoded as the number $1$.
+      \end{enumerate}
+      The function returns $1$ if \texttt{player} has won the game, $-1$ if the game is lost for
+      \texttt{player}, $0$ if its a draw, and \texttt{None} if the game has not yet been decided.
+\item The function \texttt{finished} returns \texttt{True} if the game is over.
+\end{enumerate}
 
 \section{The Minimax Algorithm \label{sec:minimax}}
 \index{minimax algorithm}
 Having defined the notion of a game, our next task is to come up with an algorithm that can play a game.  The
-algorithm that is easiest to explain is the \href{https://en.wikipedia.org/wiki/Minimax}{minimax algorithm}.  This
-algorithm is based on the notion of the \blue{value} of a state.  Conceptually, the notion of the \emph{value}
-of a state is an extension of the notion of the \emph{utility}.  While the utility is only defined for terminal
+algorithm that is easiest to implement is the \href{https://en.wikipedia.org/wiki/Minimax}{minimax algorithm}.  This
+algorithm is based on the notion of the \blue{value} of a state. \index{value of a state}
+Conceptually, the notion of the \blue{value} of a state is an extension of the notion of the \blue{utility}
+\index{utility of a state} of a state.  While the utility is only defined for terminal
 states, the value is defined for all states.  Formally, we define a function
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{value}: \texttt{States} \times \texttt{Players} \rightarrow \{-1, 0, +1\}$
 \\[0.2cm]
-that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the value of $s$ provided both the player $p$ and his
-opponent play \blue{optimally}.  The easiest way to define this function is via recursion.  As the
-\texttt{value} function is an extension of the \texttt{utility} function, The base case is as follows:
+that takes a state $s \in \texttt{States}$ and a player $p \in \texttt{Players}$ and returns the value of the
+state $s$ provided that both the player $p$ and his opponent play \blue{optimally}.  The easiest way to define
+this function is via recursion.  As the 
+\texttt{value} function is an extension of the \texttt{utility} function, the base case is as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{finished}(s) \rightarrow \texttt{value}(s, p) = \texttt{utility}(s, p)$. \hspace*{\fill} (1)
@@ -272,7 +400,7 @@ If the game is not yet finished, assume that player $o$ is the opponent of playe
 \hspace*{1.3cm}
 $\neg \texttt{finished}(s) \rightarrow 
  \texttt{value}(s, p) = \max\bigl(\bigl\{
-                     -\texttt{value}(n, o) \mid n \in \texttt{nextStates}(s, p)
+                     -\texttt{value}(n, o) \bigm| n \in \texttt{nextStates}(s, p)
                      \bigr\}\bigr)
 $.  \hspace*{\fill} (2)
 \\[0.2cm]
@@ -386,8 +514,8 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
       Therefore, if we disregard the fact that some games are decided after fewer than nine moves,  there are a
       factor of $5! \cdot 4! = 2880$ less terminal states to evaluate if we use memoization!
 
-      As we have to evaluate not just terminal states but all states, the saving is actually a bit smaller that
-      2880.  The next exercise explores this in more detail.
+      As we have to evaluate not just terminal states but all states, the saving is actually a bit smaller than
+      $2880$.  The next exercise explores this in more detail.
 \item The function $\texttt{best\_move}$ takes a $\texttt{State}$ and a $\texttt{player}$ and returns a pair $(v,s)$
       where $s$ is a state that is optimal for the $\texttt{player}$ and such that $s$ can be reached in one step from
       $\texttt{State}$.  Furthermore, $v$ is the value of this state.
@@ -420,11 +548,11 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
       \item The \texttt{while}-loop keeps iterating until the game is finished.
             We do not have to put a test into the condition of this \texttt{while}-loop as we call the function
             $\texttt{finished}(\texttt{State})$ every time that a new $\texttt{State}$ has been reached.
-            If the game is finished, a message giving the result of the game is printed.
+            If the game is finished, a message giving the result of the game is printed and the function returns.
       \end{enumerate}
 \end{enumerate}
 In order to better understand the reason for using memoization in the implementation of the function
-\texttt{value} we introduce the following notions.
+\texttt{value} we introduce the following notion.
 \begin{Definition}[\blue{Game Tree}]
   Assume that
   \\[0.2cm]
