@@ -381,8 +381,8 @@ If states are represented as tuples of tuples, given a state $s$, the expression
 the row $r$ and column $c$, where counting of rows and columns starts from $0$.
 We have to represent states as tuples of tuples rather than lists of lists since
 tuples are immutable while lists are mutable and we need to store states in sets later.  In \textsl{Python},
-sets can only store immutable objects.  However, later we have to manipulate the states.  To this end, we have
-to first transform them to lists of lists, which can be manipulated.  After the manipulation these lists of
+sets can only store immutable objects.  However, we also have to manipulate the states.  To this end, we have
+to first transform the states to lists of lists, which can be manipulated.  After the manipulation these lists of
 lists have to be transformed back to tuples of tuples.
 We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb} line by line.
 \begin{enumerate}
@@ -590,9 +590,9 @@ Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes about 2 sec
 this problem on my computer\footnote{
   I happen to own an iMac from 2017.  This iMac is equipped with 32 Gigabytes of main memory and a
   quad core 3.4 GHz ``Intel Core i5'' processor.  I suspect this to be the I5-7500 (Kaby Lake) processor.
-}, while 181,439 states are touched.  The
+}, while 181,439 states are touched.  
 Again, we see that breadth first search touches nearly all the states reachable from the start state.
-If we measure the memory consumption, we discover that the program uses nearly 90 megabytes of memory.
+If we measure the memory consumption, we discover that the program uses about 90 megabytes of memory.
 
 Breadth first search has two important properties:
 \begin{enumerate}[(a)]

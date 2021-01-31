@@ -25,17 +25,17 @@ Machine learning is mostly responsible for the recent hype in AI.
 \section{Overview}
 This lecture consists of two parts.
 \begin{enumerate}
-\item The common theme of the first part symbolic AI via \blue{declarative programming}.  This approach is part
-      of symbolic  AI.  The main idea of declarative 
-      programming is that we start with a \blue{problem specification}.  This is usually a short description of
-      the problem that is to be solved.  This description is then fed into an \blue{automatic problem solver}
-      that returns a solution of the problem.  Originally, 
+\item The common theme of the first part symbolic AI is \blue{declarative programming}.  
+      The main idea of declarative programming is that we start with a \blue{formal problem specification}.
+      This is problem specification is a concise description of the problem that is to be solved, which is
+      then fed into an \blue{automatic problem solver} that returns a solution of the problem.  Originally, 
       \href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming} was a very general
       approach to problem solving.  The idea was that in order to solve a problem, the problem would first be
       formulated as a logic formula and an
       \href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem prover} would then be
-      able to solve the problem.  Unfortunately, in this generality the idea of declarative programming has
-      turned out to be unsuitable for real world problems for two reasons:
+      able to solve the problem.  The programming language \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}
+      was based on that paradigm.  Unfortunately, the idea of declarative programming has
+      turned out to be unsuitable as a general problem solving framework for two reasons:
       \begin{enumerate}
       \item First, it is very difficult to specify practical problems completely in a logical framework.
       \item Second, even in those cases where it feasible to completely specify a problem via logic formulae,
@@ -57,8 +57,8 @@ This lecture consists of two parts.
       \end{enumerate}
       Additionally we will cover \blue{automatic theorem proving}.  As we have already discussed 
       \blue{resolution theorem proving} in our lecture on
-      \href{https://github.com/karlstroetmann/Logic}{logic}, we discuss equational  
-      theorem proving in the last chapter of the first part of this lecture.
+      \href{https://github.com/karlstroetmann/Logic}{logic}, we discuss \blue{equational theorem proving} in
+      the last chapter of the first part of this lecture. 
 \item In the second part of this lecture we discuss \blue{machine learning}.  In the last ten years, a number of
       advances in machine learning have made it into the headlines of the news.  It is fair to say that
       currently machine learning is the hottest topic in computer science.  Among others, we discuss the following
