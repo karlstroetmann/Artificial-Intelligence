@@ -11,3 +11,11 @@ conda install -y -c anaconda ply
 conda install -y -c conda-forge ipycanvas
 pip install jedi==0.17.2
 pip install python-chess
+
+If starting the jupyter notebook generates lots of warning of the form
+
+  nbextension abc has duplicate listings in both uvw and xyz
+
+then the underlying problem can be solved via the following command:
+
+jupyter contrib nbextension uninstall --user
