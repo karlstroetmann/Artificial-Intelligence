@@ -715,35 +715,43 @@ $\texttt{goal}$ that is far away from $\texttt{start}$ without exploring the who
 \begin{figure}[!ht]
 \centering
 \begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]{python3}
+                framesep      = 0.3cm,
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
     def search(start, goal, next_states):
         Stack  = [start]
         Parent = { start: start }
         while len(Stack) > 0:
             state = Stack.pop()
             for ns in next_states(state):
-                if ns == goal:
-                    return path_to(state, Parent) + [goal]
                 if ns not in Parent:
                     Parent[ns] = state
                     Stack.append(ns)
-        return None
+                if ns == goal:
+                    return path_to(start, goal, Parent)
+    
+    def path_to(start, state, Parent):
+        Path = [state]
+        while state != start:
+            state = Parent[state]
+            Path  = [ state ] + Path
+        return Path
 \end{minted}
 \vspace*{-0.3cm}
 \caption{The depth first search algorithm.}
 \label{fig:Depth-First-Search-Stack.ipynb}
 \end{figure}
+
+
 The implementation of  \texttt{search} works as follows:
 \begin{enumerate}
 \item Any states that are encountered during the search are placed on top of the stack \texttt{Stack}.
-\item In order to record the information how a state has been added to the \texttt{Stack}, we have a dictionary
+\item In order to record the information how a state has been added to the \texttt{Stack}, we have the dictionary
       \texttt{Parent}.  For every state $s$ that is on \texttt{Stack}, $\texttt{Parent}[s]$ returns a state $p$
       such that $s \in \texttt{next\_states}(p)$,  i.e. $p$ is the state that immediately precedes $s$ on the
       path that leads from \texttt{start} to $s$.  
@@ -754,10 +762,14 @@ The implementation of  \texttt{search} works as follows:
       \texttt{Stack} that have not been encountered previously.  This is checked by testing 
       whether \texttt{ns} is in the domain of \texttt{Parent}.
 \item When the \texttt{goal} is reached,  a path leading from \texttt{start} to \texttt{goal} is returned.
+\item We have reimplemented the function \texttt{path\_to} using a \texttt{while} loop.  The reason is that 
+      the recursive implementation that we had used before is not viable when the path gets too long because
+      the recursion limit in \textsl{Python} is set to 3000 and hence the previous implementation of
+      \texttt{path\_to} would not work if the path exceeds a length of $3000$.
 \end{enumerate}
 When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes 264 milliseconds 
 on my computer to find a solution.  This is an improvement compared to breadth first search.
-The memory consumption is reduced to 14 megabytes.  This is still a lot and is due to the fact that we still
+The memory consumption is reduced to 3 megabytes.  This is still a lot and is due to the fact that we still
 have to maintain the set $\texttt{Parent}$.  Fortunately, we will 
 be able to get rid of the set $\texttt{Parent}$ when we develop a recursive implementation of depth first
 search in the following subsection. 
