@@ -780,7 +780,7 @@ first search is very far from being optimal.
 
 \subsection{A Recursive Implementation of Depth First Search}
 Sometimes, the depth first search algorithm is presented as a recursive algorithm, since this leads
-to an implementation that is slightly shorter and is easier to understand.  What is more, we no
+to an implementation that is slightly shorter and also easier to understand.  What is more, we no
 longer need the dictionary $\texttt{Parent}$ to record the parent of each node.  The resulting
 implementation is shown in \myFig{Depth-First-Search.ipynb}.
 
@@ -930,7 +930,7 @@ implements this strategy.  We proceed to discuss the details of this program.
 The nice thing about the program presented in this section is the fact that it uses only 136 kilobytes of
 memory.  The reason is that the $\texttt{Path}$ can never have a size that is longer than $\texttt{limit}$.
 However, when we run this program to solve the $3 \times 3$ sliding puzzle, the algorithm takes
-about 15 minutes.  There are two reasons for this:
+about 15 minutes.  However, it needs only 144 kilobytes.  There are two reasons for the long computation time:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
       to 31.  Essentially, all the computations done with a limit less than $31$ are wasted. However,
@@ -958,7 +958,7 @@ about 15 minutes.  There are two reasons for this:
 To check what is really going on, we can change the initial value of $\texttt{limit}$ that is set to $1$ in
 line 2 of \myFig{Iterative-Deepening.ipynb}.  If we set this value to $31$, which is one less that the
 value that is needed, the program needs about 5 minutes to compute the solution.  However, if this value is set to
-$32$, then the program is able to find the solution in about 4 seconds.  The reason is that in the case that 
+$32$, then the program is able to find the solution in less than two minutes.  The reason is that in the case that 
 $\texttt{limit}$ has the value $31$, the program has to check all possible lists $\texttt{Path}$ that have a
 length of at most $31$.  However, if $\texttt{limit}$ has the value $32$, it is sufficient to find any
 $\texttt{Path}$ of length $32$ that leads to the $\texttt{goal}$ and if that $\texttt{Path}$ has been found, the
@@ -1100,7 +1100,7 @@ Figure \ref{fig:Bidirectional-BFS.ipynb} on page \pageref{fig:Bidirectional-BFS.
 of bidirectional breadth first search.  Essentially, we have two copies of the breadth first program shown in
 Figure \ref{fig:Breadth-First-Search.ipynb}.  However, since the information that was stored in the set
 $\texttt{Visited}$ in the implementation of \ac{bfs} shown in Figure \ref{fig:Breadth-First-Search.ipynb} is
-also available in the dictionary $\texttt{Parent}$, we have removed the variable $\texttt{Parent}$ in our
+also available in the dictionary $\texttt{Parent}$, we have removed the variable $\texttt{Visited}$ in our
 implementation of bidirectional breadth first search.
 
 Let us discuss the details of the implementation.
@@ -1123,8 +1123,8 @@ Let us discuss the details of the implementation.
 \end{enumerate}
 On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 128
 milliseconds and uses 4 megabytes.  However, bidirectional breadth first search is still not able to solve the
-$4 \times 4$ sliding puzzle since the portion of the search space that needs to be computed is just too big to
-fit into memory. 
+more interesting cases of the $4 \times 4$ sliding puzzle since the portion of the search space that needs to
+be computed is just too big to fit into memory. 
 
 \begin{figure}[!ht]
 \centering
@@ -1148,7 +1148,7 @@ fit into memory.
 \end{figure}
 
 \section{Best First Search}
-Up to now, all the search algorithms we have discussed were essentially blind.  Given a state $s$ and
+Up to now, all the search algorithms we have discussed have been essentially blind.  Given a state $s$ and
 all of its neighbours, they had no idea which of the neighbours they should pick because they had no conception
 which of these neighbours might be more promising than the other neighbours.  Search algorithms that know nothing
 about the distance of a state to the goal are called \blue{blind}.  \index{blind search}
@@ -1156,7 +1156,7 @@ Russell and Norvig \cite{russell:2009} use the name \blue{uninformed search} ins
 \index{uninformed search} 
 
 If a human tries to solve a
-problem, she usually will develop a feeling that certain states are more favourable than other states because
+problem, she usually will develop an intuition that certain states are more favourable than other states because
 they seem to be closer to the solution.  In order to formalise this procedure, we next define the notion of a
 \blue{search heuristic}. \index{search heuristic}
 
@@ -1455,7 +1455,7 @@ implementation are as follows:
       distance is used as the priority in \texttt{PrioQueue}.
 \end{enumerate}
 Best first search solves the instance of the $3 \times 3$ puzzle shown in \myFig{8-puzzle.pdf} in 
-7 milliseconds and uses 100 kilobytes to do so.  However, the solution that is found takes 75 steps.  While
+5 milliseconds and uses 44 kilobytes to do so.  However, the solution that is found takes 75 steps.  While
 this is not as ridiculous as the solution found by depth first search, it is still far from an optimal
 solution.  Best first search is able to solve the $4 \times 4$ puzzle shown in
 \myFig{start-goal.stlx} in 12 seconds.  However, it needs 426 megabytes to do so.
@@ -1468,7 +1468,7 @@ this fact.
 We have seen that best first search can be very fast.  However, the solution returned by best first search is
 not optimal.  Next, we describe the \blue{$\mathrm{A}^*$ search algorithm}, which also uses a heuristic.  \index{A$^*$ search}
 If the heuristic used with the A$^*$ search algorithm is consistent, then the path that is computed by A$^*$
-search is a shortest path.
+search is guaranteed to be a shortest path.
 
 The $\mathrm{A}^*$ search algorithm works similar to best first search,
 but instead of using the heuristic as the priority, the priority $f(s)$ of every state $s$ is given as
