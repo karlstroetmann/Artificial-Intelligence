@@ -1,0 +1,14 @@
+version: '3.8'
+
+services: 
+    jupyter_container:
+        build:
+            context: .
+        init: true
+        ports:
+            - 8888:8888
+        volumes:
+            - jupyter_data:/home/jovyan/
+
+volumes:
+    jupyter_data:
