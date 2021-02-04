@@ -1,0 +1,8 @@
+conda-environment.txt
+*.md
+SetlX/*
+Lecture-Notes/*
+Lecture-Notes-SetlX/*
+.gitignore
+LICENSE
+docker-compose.yml
