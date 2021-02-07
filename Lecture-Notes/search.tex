@@ -1479,8 +1479,7 @@ $f(s) := g(s) + h(s)$,
 where $g(s)$ computes the length of the path leading from \texttt{start} to $s$ and $h(s)$ is the heuristical
 estimate of the distance from $s$ to $\texttt{goal}$.  Hence, $f(s)$ is the estimate of the \blue{total distance} that
 a path connecting $\texttt{start}$ and $\texttt{goal}$ via the state $s$ would use.
-The details of the $\mathrm{A}^*$ algorithm are given in
-\myFig{A-Star-Search.ipynb} and are discussed below. 
+The details of the $\mathrm{A}^*$ algorithm are given in \myFig{A-Star-Search.ipynb}.  We discuss the implementation below. 
 
 
 \begin{figure}[!ht]
@@ -2435,7 +2434,7 @@ because the queen in the first row is positioned in column 6, the queen in the s
 column 4, and so on.  The start state would then be the empty list and given a state $L$, all states from the
 set $\mathtt{nextState}(L)$ would be lists of the form $L + [c]$.  If $\#L = k$, then the state $l + [c]$ has
 $k+1$ queens, where the queen in row $k+1$ has been placed in column $c$.
-
+A frame for solving this problem is available at \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/N-Queens-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/N-Queens-Frame.ipynb}.
 
 
 \begin{figure}[!ht]
