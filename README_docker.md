@@ -31,7 +31,7 @@ docker-compose down
 
 ## Zugriff auf Jupyter
 
-[Jupyter Notebook](localhost:8888) öffnet den Zugriff auf Jupyter. Es wird kein Passwort oder Token benötigt.
+[Jupyter Notebook](http://localhost:8888) öffnet den Zugriff auf Jupyter. Es wird kein Passwort oder Token benötigt.
 
 ## Eingebundene Bibliotheken
 
