@@ -1,6 +1,6 @@
 FROM jupyter/minimal-notebook
 
-MAINTAINER "Christian Gommans <info@cgweb.net>"
+LABEL maintainer="Christian Gommans <info@cgweb.net>"
 
 ARG conda_env=ai
 
