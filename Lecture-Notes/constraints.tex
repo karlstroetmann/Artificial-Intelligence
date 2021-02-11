@@ -488,18 +488,25 @@ search as soon as a solution is found.  If we are lucky and the given \ac{csp} i
 might happen when we have checked only a small portion of the set of all possible assignments.
 
 \section{Backtracking Search}
-Due to the combinatorial explosion of the search space, brute force search is only viable when we deal with
-small problems containing just a handful of variables.  One approach to solve a \ac{csp} that is both
-conceptually simple and at least more efficient than brute force search is \blue{backtracking}.  The idea is to
-try to evaluate constraints as soon as possible:  If $C$ is a constraint and $B$ is a partial assignment such
-that all the variables occurring in $C$ have already been assigned a value in $B$ and the evaluation of $C$
+For the $n$ queens problem the number of possible variable assignments growth as fast as $n^n$.
+This growth is super-exponential and this is what usually happens when we scale a \ac{csp} up. 
+The reason is that the number of all variable assignments is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathrm{card}(\mathtt{Values})^{\mathrm{card}(\mathtt{Vars})}$,
+\\[0.2cm]
+where for a set $M$, the expression $\mathrm{card}(M)$ returns the number of elements of $M$.
+For this reason, \blue{brute force search} is often not successful.  One approach to solve a \ac{csp} that is
+both conceptually simple and at least more efficient than brute force search is \blue{backtracking}.  The idea
+is to try to evaluate constraints as soon as possible:  If $C$ is a constraint and $B$ is a partial assignment
+such that all the variables occurring in $C$ have already been assigned a value in $B$ and the evaluation of $C$
 fails, then there is no point in trying to complete the variable assignment $B$.  Hence, in backtracking we
 evaluate a constraint $C$ as soon as all of its variables have been assigned a value.  If $C$ is not valid, we
 backtrack and discard the current partial variable assignment.  This approach can result in huge time savings
 when compared to the baseline of brute force search.
 
 \myFig{Backtrack-Solver.ipynb} shows a simple \ac{csp} solver 
-that employs backtracking.  \index{backtracking}
+that employs the backtracking strategy.  \index{backtracking}
 We discuss this program next.  The function $\texttt{solve}$ takes a constraint
 satisfaction problem $\mathtt{P}$ as input and tries to find a solution.  
 
@@ -522,21 +529,6 @@ satisfaction problem $\mathtt{P}$ as input and tries to find a solution.
             return backtrack_search({}, csp)
         except Backtrack:
             return None
-        
-    def backtrack_search(Assignment, P):
-        Variables, Values, Constraints = P
-        if len(Assignment) == len(Variables):
-            return Assignment
-        var = arb(Variables - set(Assignment.keys()))
-        for value in Values:
-            try:
-                if is_consistent(var, value, Assignment, Constraints):
-                    NewAss = Assignment.copy()
-                    NewAss[var] = value
-                    return backtrack_search(NewAss, P)
-            except Backtrack:
-                continue
-        raise Backtrack()  
 \end{minted}
 \vspace*{-0.3cm}
 \caption{A backtracking \ac{csp} solver.}
@@ -571,28 +563,57 @@ satisfaction problem $\mathtt{P}$ as input and tries to find a solution.
       able to find a solution, it raises an exception of class \texttt{Backtrack}.
       The \texttt{try}-\texttt{except}-block ensures that this exception is silently discarded.
 \end{enumerate}
-Next, we discuss the implementation of the function $\texttt{backtrack\_search}$.  This function receives a partial assignment
-$\texttt{Assignment}$ as input together with an augmented \ac{csp}.  This partial assignment is
-\blue{consistent} with $\texttt{CSP}$:  If $\texttt{f}$ is a constraint of $\texttt{CSP}$ such that
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    def backtrack_search(Assignment, P):
+        Variables, Values, Constraints = P
+        if len(Assignment) == len(Variables):
+            return Assignment
+        var = arb(Variables - set(Assignment.keys()))
+        for value in Values:
+            try:
+                if is_consistent(var, value, Assignment, Constraints):
+                    NewAss = Assignment.copy()
+                    NewAss[var] = value
+                    return backtrack_search(NewAss, P)
+            except Backtrack:
+                continue
+        raise Backtrack()  
+\end{minted}
+\vspace*{-0.3cm}
+\caption{A backtracking \ac{csp} solver: The function \texttt{backtrack\_search}.}
+\label{fig:Backtrack-Solver.ipynb:backtrack_search}
+\end{figure}
+
+Next, we discuss the implementation of the function $\texttt{backtrack\_search}$  that is shown in
+\myFig{Backtrack-Solver.ipynb:backtrack_search}.  This function receives a partial assignment
+$\texttt{Assignment}$ as input together with an augmented \ac{csp} \texttt{P}.  This partial assignment is
+\blue{consistent} with $\texttt{P}$:  If $\texttt{f}$ is a constraint of $\texttt{CSP}$ such that
 all the variables occurring in $\texttt{f}$ are members of $\texttt{dom}(\texttt{Assignment})$, then evaluating
 $\texttt{f}$ using $\texttt{Assignment}$ yields $\texttt{true}$.  Initially, this partial assignment is empty
 and hence trivially consistent.  The idea is to extend this partial assignment until it is a complete
-assignment that satisfies all constraints of the given $\texttt{CSP}$.
+assignment.  We take care to ensure that the partial variable assignment remains consistent when it is
+extended.  This way, once the assignment is complete it has to satisfy all constraints of the given $\texttt{CSP}$.
 \begin{enumerate}
-\item First, the augmented \ac{csp} is split into its components.
+\item First, the augmented \ac{csp} \texttt{P} is split into its components.
 \item Next, if $\texttt{Assignment}$ is already a complete variable assignment, i.e.~if the dictionary
       $\texttt{Assignment}$ has as many elements as there are variables, then it must be a solution of
       the $\texttt{CSP}$ and, therefore, it is returned.  The reason is that the function
       \texttt{backtrack\_search} is only called with a \blue{consistent} partial assignment.
 \item Otherwise, we have to extend the partial $\texttt{Assignment}$.  In order to do so, we first have to
       select a variable $\texttt{var}$ that has not yet been assigned a value in $\texttt{Assignment}$ so far.
-      This is done in line 13 using the function \texttt{arb} that selects an arbitrary variable
-      from its input set.  This function is defined as follows:
-\begin{verbatim}
-    def arb(S):
-        for x in S:
-            return x
-\end{verbatim}    
+      This is done in line 5 using the function \texttt{arb} that selects an arbitrary variable
+      from its input set.  
 \item Next, we try to assign a $\texttt{value}$ to the selected variable $\texttt{var}$.  After assigning
       a $\texttt{value}$ to $\texttt{var}$, we immediately check whether this assignment would be consistent
       with the constraints using the function $\texttt{is\_consistent}$.
@@ -608,8 +629,11 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
       by the \texttt{try}-\texttt{except}-block that surrounds the call to $\texttt{backtrack\_search}$.  In that case, the
       \texttt{for}-loop generates a new $\texttt{value}$ that can be assigned to the variable
       $\texttt{var}$.  If all possible values have been tried and none was successful, the \texttt{for}-loop
-      ends and the \texttt{raise}-statement raises a \texttt{Backtrack} exception that is either called in the
-      function \texttt{backtrack\_search} or, if there is no solution, in the function \texttt{solve}.
+      ends and we have to \blue{backtrack}, i.e.~we have to reassign one of the variables that have been
+      assigned earlier.  This is done by raising a \texttt{Backtrack} exception.  This exception is then caught
+      by one of the prior invocations of \texttt{backtrack\_search}.  If all variable assignments have been
+      tried and none is successful, then the \texttt{Backtrack} exception propagates back to the function
+      \texttt{solve}, which will return \texttt{None} in that case.
 \end{enumerate}
 
 
@@ -638,7 +662,7 @@ assignment that satisfies all constraints of the given $\texttt{CSP}$.
 \end{figure}
 
 We still need to discuss the implementation of the auxiliary function $\texttt{is\_consistent}$
-shown in \ref{fig:is_consistent.py}.  This function takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
+shown in Figure \ref{fig:is_consistent.py}.  This function takes a variable $\texttt{var}$, a $\texttt{value}$, a partial 
 $\texttt{Assignment}$ and a set of $\texttt{Constraints}$ as arguments.  It is assumed that $\texttt{Assignment}$ is
 \blue{partially consistent} with respect to the set $\texttt{Constraints}$, i.e.~for every formula $\texttt{f}$
 occurring in $\texttt{Constraints}$ such that
@@ -646,28 +670,32 @@ occurring in $\texttt{Constraints}$ such that
 \hspace*{1.3cm}
 $\texttt{vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{Assignment})$
 \\[0.2cm]
-holds, the formula $\texttt{f}$ evaluates to $\texttt{true}$ given the $\texttt{Assignment}$.  The purpose of
+holds, the formula $\texttt{f}$ evaluates to $\texttt{True}$ given the $\texttt{Assignment}$.  The purpose of
 $\texttt{is\_consistent}$ is to check, whether the extended assignment
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{NewAssign} \;\texttt{:=}\;\texttt{Assignment} \cup \{ \texttt{var} \mapsto \texttt{value} \}$
 \\[0.2cm]
 that assigns $\texttt{value}$ to the variable $\texttt{var}$ is still partially consistent with $\texttt{Constraints}$. 
-To this end, the \texttt{for}-loop iterates over all $\texttt{Formula}$ in $\texttt{Constraints}$. 
-However, we only have to check those $\texttt{Formula}$ that contain the variable $\texttt{var}$ and,
+To this end, the \texttt{for}-loop iterates over all formul\ae\ \texttt{f} in $\texttt{Constraints}$. 
+However, we only have to check those formul\ae\ \texttt{f} that contain the variable $\texttt{var}$ and,
 furthermore, have the property that
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{Vars}(\texttt{Formula}) \subseteq \texttt{dom}(\texttt{NewAssign})$,
+$\texttt{Vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{NewAssign})$,
 \\[0.2cm]
-i.e.~all variables occurring in $\texttt{Formula}$ need to have a value assigned in
+i.e.~all variables occurring in the formula $\texttt{f}$ need to have a value assigned in
 $\texttt{NewAssign}$.  The reasoning is as follows:
 \begin{enumerate}
-\item If $\texttt{var}$ does not occur in $\texttt{Formula}$, then adding $\texttt{var}$ to
-      $\texttt{Assignment}$ cannot change the result of evaluating $\texttt{Formula}$ and as
-      $\texttt{Assignment}$ is assumed to be partially consistent with respect to $\texttt{Formula}$, 
-      $\texttt{NewAssign}$ is also partially consistent with respect to $\texttt{Formula}$.
-\item If $\texttt{dom}(\texttt{NewAssign}) \not\subseteq \texttt{Vars}(\texttt{Formula})$, then $\texttt{Formula}$ can not be evaluated anyway. 
+\item If $\texttt{var}$ does not occur in the formula $\texttt{f}$, then adding $\texttt{var}$ to
+      $\texttt{Assignment}$ cannot change the result of evaluating $\texttt{f}$ and as
+      $\texttt{Assignment}$ is assumed to be partially consistent with respect to $\texttt{f}$, 
+      $\texttt{NewAssign}$ is also partially consistent with respect to $\texttt{f}$.
+\item If $\texttt{dom}(\texttt{NewAssign}) \not\subseteq \texttt{Vars}(\texttt{f})$, then $\texttt{f}$ can not
+      be evaluated anyway. 
+
+      Note that the domain of a variable assignment \texttt{A} can be computed with the expression 
+      \texttt{A.keys()} since \texttt{A} is represented as a dictionary in \textsl{Python}.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -701,7 +729,50 @@ This is done by making use of the fact that all function symbols that have been 
 list \texttt{dir(\_\_builtin\_\_)}. 
 
 If we use the program discussed in this section, we can solve the 8 queens problem in about 22 milliseconds.
-Hence, for the eight queens problem backtracking is about a thousand times faster than brute force search.
+Hence, for the eight queens problem backtracking is more than a thousand times faster than brute force search.
+
+\exercise
+\index{zebra puzzle}
+There are many different versions of the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  
+The version below is taken from \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{Wikipedia}}.  The
+puzzle reads as follows:
+\begin{enumerate}[(a)]
+\item There are five houses.
+\item The Englishman lives in the red house.
+\item The Spaniard owns the dog.
+\item Coffee is drunk in the green house.
+\item The Ukrainian drinks tea.
+\item The green house is immediately to the right of the ivory house.
+\item The Old Gold smoker owns snails.
+\item Kools are smoked in the yellow house.
+\item Milk is drunk in the middle house.
+\item The Norwegian lives in the first house.
+\item The man who smokes Chesterfields lives in the house next to the man with the fox.
+\item Kools are smoked in the house next to the house where the horse is kept.
+\item The Lucky Strike smoker drinks orange juice.
+\item The Japanese smokes Parliaments.
+\item The Norwegian lives next to the blue house.
+\item Who drinks water? 
+\item Who owns the zebra?
+\end{enumerate}
+In order to solve the puzzle, we also have to know the following facts:
+\begin{itemize}
+\item Each of the five houses is painted in a {\color{blue}different} colour.
+\item The inhabitants of the five houses are of {\color{blue}different} nationalities, and
+\item they own {\color{blue}different} pets,  drink {\color{blue}different} beverages, and
+      smoke {\color{blue}different} brands of cigarettes. 
+\end{itemize}
+Formulate the zebra puzzle as a constraint satisfaction problem and solve the puzzle using the program
+discussed in this section.  A framework for solving the zebra
+puzzle can be found at:
+\\[0.2cm]
+\hspace*{0.0cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}
+\\[0.2cm]
+When coding the zebra puzzle as a \ac{csp} you should be careful to name the variables correctly.  A single
+spelling error can break your program.
+\eoxs
+
 
 \section{Constraint Propagation}
 \index{constraint propagation}
@@ -1027,53 +1098,10 @@ $\texttt{propagate}$ proceeds as follows.
 \item Finally, the updated dictionary $\mathtt{ValuesPerVar}$ is returned.
 \end{enumerate}
 I have tested the program described in this section using the eight queens puzzle.  It takes about
-30 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in the next exercise.
+30 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in a previous exercise.
 It solves this puzzle in 17 milliseconds.  To compare, the backtracking algorithm shown in the previous section
-takes roughly 10 minutes to solve this puzzle.
-\pagebreak
+takes roughly 10 seconds to solve this puzzle.
 
-\exercise
-\index{zebra puzzle}
-There are many different versions of the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{zebra puzzle}}.  
-The version below is taken from \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{\emph{Wikipedia}}.  The
-puzzle reads as follows:
-\begin{enumerate}
-\item There are five houses.
-\item The Englishman lives in the red house.
-\item The Spaniard owns the dog.
-\item Coffee is drunk in the green house.
-\item The Ukrainian drinks tea.
-\item The green house is immediately to the right of the ivory house.
-\item The Old Gold smoker owns snails.
-\item Kools are smoked in the yellow house.
-\item Milk is drunk in the middle house.
-\item The Norwegian lives in the first house.
-\item The man who smokes Chesterfields lives in the house next to the man with the fox.
-\item Kools are smoked in the house next to the house where the horse is kept.
-\item The Lucky Strike smoker drinks orange juice.
-\item The Japanese smokes Parliaments.
-\item The Norwegian lives next to the blue house.
-\item Who drinks water? 
-\item Who owns the zebra?
-\end{enumerate}
-In order to solve the puzzle, we also have to know the following facts:
-\begin{enumerate}
-\item Each of the five houses is painted in a {\color{blue}different} colour.
-\item The inhabitants of the five houses are of {\color{blue}different} nationalities,
-\item they own {\color{blue}different} pets, 
-\item they drink {\color{blue}different} beverages, and 
-\item they smoke {\color{blue}different} brands of cigarettes. 
-\end{enumerate}
-Formulate the zebra puzzle as a constraint satisfaction problem and solve the puzzle using the program
-discussed in this section.  A framework for solving the zebra
-puzzle can be found at 
-\\[0.2cm]
-\hspace*{0.0cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}
-\\[0.2cm]
-When coding the zebra puzzle as a \ac{csp} you should be careful to name the variables correctly.  A single
-spelling error can break your program.
-\eoxs
 
 \begin{table}[h]
   \centering
@@ -1251,7 +1279,7 @@ i.e.~for every variable $y_i \in R$ we have to find a value $w_i \in \texttt{Val
 assignment $A = \{ x \mapsto v, y_1 \mapsto w_1, \cdots, y_n \mapsto w_n \}$ satisfies the equations
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{evaluate}(f, A) = \texttt{true}$.
+$\texttt{evaluate}(f, A) = \texttt{True}$.
 \\[0.2cm]
 Here, the function $\texttt{evaluate}$ takes a formula $f$ and an assignment $A$ and evaluates $f$ using the
 assignment $A$.  Now, \blue{consistency maintenance} works as follows. \index{consistency maintenance}
@@ -1370,7 +1398,7 @@ $\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The imp
 \item We iterate over all $\texttt{value} \in \texttt{Values}$ that can be substituted for the variable $\texttt{var}$
       and check whether $\texttt{value}$ is consistent with $\texttt{f}$.   To this end, we need to find values
       that can be assigned to the variables in the set $\texttt{OtherVars}$ such that $\texttt{f}$ evaluates as
-      $\texttt{true}$.  This is checked using the function $\texttt{exists\_values}$.
+      $\texttt{True}$.  This is checked using the function $\texttt{exists\_values}$.
 \item If we do not find such values, then $\texttt{value}$ is inconsistent for the variables
       $\texttt{var}$ w.r.t.~$\texttt{f}$ and needs to be removed from the set 
       $\texttt{ValuesPerVar}[\texttt{var}]$.  Furthermore, all variables that are connected to
