@@ -11,7 +11,8 @@ states are \blue{variable assignments}.  This structure can be exploited to guid
 structured as follows: 
 \begin{enumerate}[(a)]
 \item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
-      notion, we present two examples.  After that, we discuss applications of constraint satisfaction problems.
+      notion, we present two examples: \blue{map colouring} and the \blue{eight queens puzzle}.  After that, we discuss
+      applications of constraint satisfaction problems. 
 \item The simplest algorithm to solve a constraint satisfaction problem is via \blue{brute force search}.
       The idea behind \emph{brute force search} is to test all possible \blue{variable assignments}.
 \item In most cases, the search space is so large that it is not feasible to enumerate all variable assignments.
@@ -24,7 +25,7 @@ structured as follows:
       can reduce the size of the search space considerably. 
 \item Finally, \blue{local search} is a completely different approach to solve
       constraint satisfaction problems.  This approach is especially useful if the constraint satisfaction
-      problem is huge, but not too complicated.
+      problem is huge, but not complicated.
 \end{enumerate}
 When we have finished our discussion of constraint satisfaction problems, we will have implemented a
 \blue{constraint solver} that is able to solve instances of the most difficult
@@ -59,7 +60,7 @@ where \index{constraint satisfaction problem}
       satisfaction problems, both the function symbols and the predicate symbols will be interpreted
       by functions written in \textsl{Python}.
 \end{enumerate}
-In the following, the abbreviation \ac{csp} is short for \blue{constraint satisfaction problem}.
+In the following, the abbreviation \blue{\ac{csp}} is short for \blue{constraint satisfaction problem}.
 Given a \ac{csp}
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -101,27 +102,29 @@ We illustrate the definitions given so far by presenting two examples.
 
 \subsection{Example: Map Colouring}
 \index{map coloring}
-In \href{https://en.wikipedia.org/wiki/Four_color_theorem}{map colouring} a map showing different state and their
+In \href{https://en.wikipedia.org/wiki/Four_color_theorem}{map colouring} a map showing different states and their
 borders is given and the task is to colour the different states such that no two states that have a common
-border share the same colour.  \myFig{australia.pdf} shows a map of Australia.  There are seven different
+border share the same colour.  \myFig{australia.pdf} shows a map of
+\href{https://en.wikipedia.org/wiki/Australia}{Australia}.  There are seven different 
 states in Australia:
 \begin{enumerate}
-\item Western Australia, abbreviated as $\mathrm{WA}$,
-\item Northern Territory, abbreviated as $\mathrm{NT}$,
-\item South Australia, abbreviated as $\mathrm{SA}$,
-\item Queensland, abbreviated as $\mathrm{Q}$,
-\item New South Wales, abbreviated as $\mathrm{NSW}$,
-\item Victoria, abbreviated as $\mathrm{V}$, and
-\item Tasmania, abbreviated as $\mathrm{T}$.
+\item \href{https://en.wikipedia.org/wiki/Western_Australia}{Western Australia}, abbreviated as $\mathrm{WA}$,
+\item \href{https://en.wikipedia.org/wiki/Northern_Territory}{Northern Territory}, abbreviated as $\mathrm{NT}$,
+\item \href{https://en.wikipedia.org/wiki/South_Australia}{South Australia}, abbreviated as $\mathrm{SA}$,
+\item \href{https://en.wikipedia.org/wiki/Queensland}{Queensland}, abbreviated as $\mathrm{Q}$,
+\item \href{https://en.wikipedia.org/wiki/New_South_Wales}{New South Wales}, abbreviated as $\mathrm{NSW}$,
+\item \href{https://en.wikipedia.org/wiki/Victoria_(Australia)}{Victoria}, abbreviated as $\mathrm{V}$, and
+\item \href{https://en.wikipedia.org/wiki/Tasmania}{Tasmania}, abbreviated as $\mathrm{T}$.
 \end{enumerate}
 Figure \ref{fig:australia.pdf} would certainly look better if different states that share a common border had
 been coloured with different colours.  For the purpose of 
-this example let us assume that we have only three colours available.  The task is then to colour the different
+this example let us assume that we only have the three colours \red{red}, \green{green}, and \blue{blue}
+available.  The task is then to colour the different 
 states in a way that no two neighbouring states share the same colour.  This task can be formalized as a
 constraint satisfaction problem.  To this end we define: 
 \begin{enumerate}
 \item $\texttt{Vars} := \{ \mathrm{WA}, \mathrm{NT}, \mathrm{SA}, \mathrm{Q}, \mathrm{NSW}, \mathrm{V}, \mathrm{T} \}$,
-\item $\texttt{Values} := \{ \texttt{red}, \texttt{green}, \texttt{blue} \}$,
+\item $\texttt{Values} := \{ \texttt{\red{red}}, \texttt{\green{green}}, \texttt{\blue{blue}} \}$,
 \item $\texttt{Constraints} := $ \\[0.2cm]
       \hspace*{0.8cm}
       $\bigl\{ \mathtt{WA} \not= \mathtt{NT},\, \mathtt{WA} \not= \mathtt{SA},\, \mathtt{SA} \not= \mathtt{Q},\, 
@@ -133,19 +136,19 @@ constraint satisfaction problem.  To this end we define:
 Then $\mathcal{P} := \langle \texttt{Vars},\, \texttt{Values},\, \texttt{Constraints} \rangle$ is a constraint satisfaction problem.  
 If we define the assignment $A$ such that
 \begin{enumerate}[(a)]
-\item $A(\mathrm{WA}) = \texttt{blue}$,
-\item $A(\mathrm{NT}) = \texttt{red}$,
-\item $A(\mathrm{SA}) = \texttt{green}$,
-\item $A(\mathrm{Q}) = \texttt{blue}$,
-\item $A(\mathrm{NSW}) = \texttt{red}$,
-\item $A(\mathrm{V}) = \texttt{blue}$,
-\item $A(\mathrm{T}) = \texttt{red}$,
+\item $A(\mathrm{WA}) = \texttt{\blue{blue}}$,
+\item $A(\mathrm{NT}) = \texttt{\red{red}}$,
+\item $A(\mathrm{SA}) = \texttt{\green{green}}$,
+\item $A(\mathrm{Q}) = \texttt{\blue{blue}}$,
+\item $A(\mathrm{NSW}) = \texttt{\red{red}}$,
+\item $A(\mathrm{V}) = \texttt{\blue{blue}}$,
+\item $A(\mathrm{T}) = \texttt{\red{red}}$,
 \end{enumerate}
 then it is straightforward to check that this assignment is indeed a solution to the constraint satisfaction problem $\mathcal{P}$.
 
 \subsection{Example: The Eight Queens Puzzle}
 \index{eight queens puzzle}
-The \href{https://en.wikipedia.org/wiki/Eight_queens_puzzle}{eight queens puzzle} asks to put 8 queens onto a
+The \href{https://en.wikipedia.org/wiki/Eight_queens_puzzle}{eight queens puzzle} asks to put 8 queens on a
 chessboard such that no queen can attack another queen.  In \href{https://en.wikipedia.org/wiki/Chess}{chess},
 a queen can attack all pieces that are either in the same row, the same column, or the same diagonal.  If we
 want to put 8 queens on a chessboard such that no two queens can attack each other, we have to put exactly one
@@ -158,14 +161,14 @@ satisfaction problem, we will use the following set of variables:  \index{8 quee
 $\texttt{Vars} := \{ \texttt{V}_1, \texttt{V}_2, \texttt{V}_3, \texttt{V}_4, \texttt{V}_5, \texttt{V}_6, \texttt{V}_7,\texttt{V}_8 \}$,
 \\[0.2cm]
 where for $i \in \{1,\cdots,8\}$ the variable $\texttt{V}_i$ specifies the column of the queen that is placed in
-row $i$.   As the columns run from one to eight, we define the set $\texttt{Values}$ as
+row $i$.   As the column numbers run from $1$ up to $8$, we define the set $\texttt{Values}$ as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Values} := \{1,2,3,4,5,6,7,8\}$.
 \\[0.2cm]
 Next, let us define the constraints.  There are two different types of constraints.
 \begin{enumerate}
-\item We have constraints that express that no two queens that are positioned in different rows share the same
+\item We need constraints that express that no two queens that are positioned in different rows share the same
       column.  To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -175,7 +178,7 @@ Next, let us define the constraints.  There are two different types of constrain
       $\texttt{V}_2 \not=
       \texttt{V}_1$ we do not also have the constraint  $\texttt{V}_1 \not= \texttt{V}_2$, as the latter 
       constraint would be redundant if the former constraint had already been established.
-\item We have constraints that express that no two queens positioned in different rows share the same 
+\item We need constraints that express that no two queens positioned in different rows share the same 
       diagonal.  The queens in row $i$ and row $j$ share the same diagonal iff the equation
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -193,7 +196,7 @@ Next, let us define the constraints.  There are two different types of constrain
 Then, the set of constraints is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{Constraints} := \texttt{SameRow} \cup \texttt{SameDiagonal}$
+$\texttt{Constraints} := \texttt{DifferentCol} \cup \texttt{DifferentDiag}$
 \\[0.2cm]
 and the eight queens problem can be stated as the constraint satisfaction problem
 \\[0.2cm]
@@ -209,7 +212,8 @@ $A(V_1) := 4,\; A(V_2) := 8,\; A(V_3) := 1,\; A(V_4) := 2,\; A(V_5) := 6,\; A(V_
 $A(V_7) := 7,\; A(V_8) := 5$,
 \\[0.2cm]
 then it is easy to see that this assignment is a solution of the eight queens problem.  This solution is shown
-in \myFig{eight-queens.txt}.
+in \myFig{eight-queens.txt}.  In this figure, we have numbered the rows from top to bottom, i.e.~the topmost
+row is row number $1$ and therefore the column of the queen in the first is determined by the variable $V_1$.
 
 
 \begin{figure}[!ht]
@@ -232,7 +236,7 @@ in \myFig{eight-queens.txt}.
   \caption{A solution of the eight queens problem.}
   \label{fig:eight-queens.txt}
 \end{figure}
-Later, when we implement functions to solve  \ac{csp}s, we will represent variable assignments and partial
+Later, when we develop algorithms to solve  \ac{csp}s, we will represent variable assignments and partial
 variable assignments as \textsl{Python} \blue{dictionaries}.  For example, $A$ would then be represented as the
 dictionary 
 \\[0.2cm]
@@ -247,7 +251,7 @@ If we define
 $B := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1 \bigr\}$,
 \\[0.2cm]
 then $B$ is a \blue{partial} variable assignment and $\texttt{dom}(B) = \{ \mathrm{V}_1, \mathrm{V}_2, \mathrm{V}_3 \}$.  This
-\emph{partial variable assignment} is shown in \myFig{eight-queens-partial.txt}.
+partial variable assignment is shown in \myFig{eight-queens-partial.txt}.
 
 \begin{figure}[!ht]
   \centering
@@ -276,7 +280,10 @@ then $B$ is a \blue{partial} variable assignment and $\texttt{dom}(B) = \{ \math
 encodes the eight queens puzzle.  The code shown in this figure is more general than necessary.  Given a natural
 number $n$, the function call $\texttt{create\_csp}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
 the eight queens problem to the problem of placing $n$ queens on a board of size $n$ times $n$ such that no
-queen can capture another queen.
+queen can capture another queen.  The fact that the n-queen problem is parameterized by the number of queens n
+gives us the ability to check how the running time of the algorithms for solving \ac{csp}s scales with the size
+of the problem. 
+
 
 \begin{figure}[!ht]
 \centering
@@ -304,7 +311,7 @@ queen can capture another queen.
         return (Variables, Values, SameRow | SameDiagonal)
 \end{minted}
 \vspace*{-0.3cm}
-\caption{The eight queens problem as \ac{csp}.}
+\caption{The $n$ queens problem formulated as a \ac{csp}.}
 \label{fig:N-Queens-Problem-CSP.ipynb}
 \end{figure}
 
@@ -312,14 +319,14 @@ queen can capture another queen.
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
 that we will be able to develop a so called \blue{constraint solver} that takes as input a \ac{csp}
 like the one produced by the program shown in Figure \ref{fig:N-Queens-Problem-CSP.ipynb} and that is capable of
-computing a solution.  In effect, this enables us to use
-\href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming}:  Instead of specifying
-an algorithm that solves a problem we confine ourselves to  specifying the problem precisely and then let a
-general purpose problem solver do the job of finding the solution.  This approach of declarative programming 
+computing a solution automatically.  In effect, this enables us to use
+\href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming}:  Instead of developing
+an algorithm that solves a given problem we confine ourselves to  specifying the problem precisely and then let a
+general purpose problem solver do the job of computing the solution.  This approach of declarative programming 
 was one of the main ideas incorporated in the programming language
-\href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to the promisses
-as a viable general purpose programming language, constraint programming has
-proven to be very useful in a number of domains. 
+\href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to its promisses
+as a viable general purpose programming language, constraint programming has proved to be very useful in a
+number of domains.  
 
 \subsection{Applications}
 Besides the toy problems discussed so far, there are a number of industrial applications of constraint
@@ -383,14 +390,15 @@ An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ip
 \label{fig:Brute-Force-Solver.ipynb}
 \end{figure}
 
-The function $\texttt{solve}$ gets a constraint satisfaction problem $P$ as its input.  
+The function $\texttt{solve}$ takes a constraint satisfaction problem $P$ as its input.  
 This $\texttt{CSP}$ is given as a triple of the form  
 \\[0.2cm]
 \hspace*{1.3cm}
 $P = (\texttt{Variables}, \texttt{Values}, \texttt{Constraints})$.
 \\[0.2cm]
-The sole purpose of $\texttt{search}$ is to call the function $\texttt{brute\_force\_search}$.  The
-implementation of this function is recursive and the function takes two arguments.
+The sole purpose of the function \texttt{solve} is to call the function \texttt{brute\_force\_search}, which
+needs an additional argument.  This argument is a \blue{partial variable assignment} that is initially empty.  Every
+recursive iteration of the function \texttt{brute\_force\_search} assigns one additional variable. 
 \begin{enumerate}
 \item $\texttt{Assignment}$ is a partial variable assignment.  Initially, this assignment will be the
       empty dictionary.  Every recursive call of $\texttt{brute\_force\_search}$ adds the assignment of one variable to
@@ -419,14 +427,15 @@ The implementation of $\texttt{brute\_force\_search}$ works as follows:
 \item If the assignment is not yet complete, we arbitrarily 
       pick a variable $\texttt{var}$ from the set of those $\texttt{Variables}$ that still have no value assigned.  
       Then, for every possible  $\texttt{value}$ in the set $\texttt{Values}$, we extend the current partial
-      $\texttt{Assignment}$ to the new assignment \texttt{NewAss} that satisfies
+      $\texttt{Assignment}$ to a new assignment \texttt{NewAss} that satisfies
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{NewAss[var] = value}.
       \\[0.2cm]
       Next, the algorithm recursively tries to find a solution for this new partial assignment.
-      If this recursive call succeeds, the solution it has computed is returned.  Otherwise, another
-      $\texttt{value}$ is tried.
+      If this recursive call succeeds, the solution it has computed is returned.  Otherwise, the next
+      for the given variable \texttt{var} is tried.
+\item If none of the values work for \texttt{var}, the function returns \texttt{None}.
 \end{enumerate}
 
 
@@ -455,15 +464,25 @@ its first input.  The second input is the set $\texttt{Constraints}$ which is a 
 expressions.  For all expressions
 $\texttt{f}$ from the set $\texttt{Constraints}$, the function $\texttt{check\_all\_constraints}$ checks
 whether $\texttt{f}$ yields \texttt{True} under the given variable assignment.
-This check is done using the auxiliary function $\texttt{eval\_constraint}$.  
+This check is done using the function $\texttt{eval}$, which is a predefined function.  
+This function takes two arguments: 
+\begin{enumerate}[(a)]
+\item The first argument is a \textsl{Python} expression \texttt{f}.
+\item The second argument is a variable assignment \texttt{A}, that is represented as a dictionary.
+\end{enumerate}
+The function \texttt{eval} evaluates the expression \texttt{f}.  In order to do this, any variables occurring
+in \texttt{f} are assigned values according to the variable assignment \texttt{A}.  As a side effect, the function
+\texttt{eval} changes the dictionary \texttt{A} that is used as its second argument.  This is the reason we have
+to make a copy of the \texttt{Assignment} that is given as the first argument of the function
+\texttt{check\_all\_constraints}. 
 
-When I tested this brute force search with the eight queens problem, it took about 30 seconds to
+When I tested the program discussed above with the eight queens problem, it took about 30 seconds to
 compute a solution.  In contrast, the seven queens problem took about 1.7 second.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds\frac{8^8}{7^7} \approx 20$ \quad and \quad $30 / 1.7 \approx 18$ 
 \\[0.2cm]
-this shows that the computation time does indeed grow with the number of possible assignments that
+this shows that the computation time does indeed roughly grow with the number of possible assignments that
 have to be checked.  However, the correspondence is not exact.  The reason is that we stop our
 search as soon as a solution is found.  If we are lucky and the given \ac{csp} is easy to solve, this
 might happen when we have checked only a small portion of the set of all possible assignments.
