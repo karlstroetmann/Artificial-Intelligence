@@ -2445,23 +2445,20 @@ A frame for solving this problem is available at
 \caption{A solution of the eight queens puzzle.}
 \label{fig:queens.pdf}
 \end{figure}
+\pagebreak
 
-
-
- \pagebreak
-
- \exercise
- The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher
- \href{https://en.wikipedia.org/wiki/Laozi}{Laozi} once said:
- \\[0.2cm]
- \hspace*{1.3cm}
- \textsl{``A journey of a thousand miles begins but with a single step''}.
- \\[0.2cm]
- This proverb is the foundation of \blue{taoistic search}.  The idea is, instead of trying to reach
- the goal directly, we rather define some intermediate states which are easier to reach than the goal state and
- that are nearer to the goal than the start state.  To make this idea more precise, consider the following instance of the
- 15-puzzle, where the states $\texttt{Start}$ and $\texttt{Goal}$ are given as follows:
- \begin{verbatim}
+\exercise
+The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher
+\href{https://en.wikipedia.org/wiki/Laozi}{Laozi} once said:
+\\[0.2cm]
+\hspace*{1.3cm}
+\textsl{``A journey of a thousand miles begins but with a single step''}.
+\\[0.2cm]
+This proverb is the foundation of \blue{taoistic search}.  The idea is, instead of trying to reach
+the goal directly, we rather define some intermediate states which are easier to reach than the goal state and
+that are nearer to the goal than the start state.  To make this idea more precise, consider the following instance of the
+15-puzzle, where the states $\texttt{Start}$ and $\texttt{Goal}$ are given as follows:
+\begin{verbatim}
         Start :=  +---+---+---+---+    Goal :=  +---+---+---+---+
                   |   |15 |14 | 8 |             |   | 1 | 2 | 3 |
                   +---+---+---+---+             +---+---+---+---+
@@ -2472,8 +2469,8 @@ A frame for solving this problem is available at
                   | 1 | 3 | 4 | 7 |             |12 |13 |14 |15 |
                   +---+---+---+---+             +---+---+---+---+
  \end{verbatim}
- In order to solve the puzzle, we could try to first move the tiles numbered with $14$ and $15$ into the lower right
- corner.  The resulting state would have the following form:
+ In order to solve this instance of the 15-puzzle, we could try to first move the tiles numbered with $14$ and
+ $15$ into the lower right  corner.  The resulting state would have the following form:
  \begin{verbatim}
                   +---+---+---+---+
                   | * | * | * | * |
