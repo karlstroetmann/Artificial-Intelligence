@@ -777,10 +777,10 @@ spelling error can break your program.
 \section{Constraint Propagation}
 \index{constraint propagation}
 Once we choose a value for a variable, this choice influences the values that are still available for other variables.
-For example, suppose that in order to solve the $n$ queens problem we place the queen in row 1 in the second
+For example, suppose that in order to solve the $n$ queens problem we place the queen in row one in the second
 column, then no other queen can be placed in 
-that column.   Additionally, the queen in row 2 can then not be placed in any of the first three columns.
-Abstractly, constraint propagation works as follows.
+that column.   Due to the constraints on diagonals, the queen in row two can then not be placed
+in any of the first three columns.  Abstractly, constraint propagation works as follows.
 \begin{enumerate}
 \item Before the search is started, we create a dictionary $\texttt{ValuesPerVar}$.  Initially, for every variable
       $\texttt{x}$,  the set
@@ -792,7 +792,7 @@ Abstractly, constraint propagation works as follows.
       value $\texttt{v}$ to the variable $\texttt{x}$ is inconsistent with the variable
       assignments that have already taken place for other variables, the value $\texttt{v}$ will be removed from the set
       $\texttt{ValuesPerVar[x]}$. 
-\item As long as the problem is not solved,  we choose a variable $\texttt{x}$ that has not been assigned a
+\item As long as the given \ac{csp} is not solved,  we choose a variable $\texttt{x}$ that has not been assigned a
       value yet.  This variable is chosen using the \blue{most constrained variable} heuristic:  We choose a
       variable $\texttt{x}$ such that the number of values in the set
       \\[0.2cm]
@@ -888,6 +888,8 @@ variable  $\mathtt{x}$.
       values associated with the variable occurring in the constraint as dictated by the constraint.
       This is done using the function $\texttt{solve\_unary}$.
 \item Then, we start backtracking search using the function $\texttt{backtrack\_search}$.  
+      Besides backtracking, the implementation of \texttt{backtrack\_search} that we present below
+      implements the \blue{most constraint variable} heuristic and \blue{constraint propagation}.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -956,7 +958,7 @@ raised since in that case the given \ac{csp} is unsolvable.
 The function $\texttt{backtrack\_search}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:backtrack_search} is called with a
 partial variable $\texttt{Assignment}$ that is guaranteed to be consistent, a dictionary
 $\texttt{ValuesPerVar}$ associating every variable with the set of values that might be substituted for this variable and a
-set of annotated $\texttt{Constraints}$.  It tries to complete $\texttt{Assignment}$ and thereby compute a
+set of annotated $\texttt{Constraints}$.  It tries to complete $\texttt{Assignment}$ and thereby computes a
 solution of the given \ac{csp}.  
 \begin{enumerate}
 \item If the partial $\texttt{Assignment}$ is already complete, i.e.~if it assigns a value to every variable, 
@@ -1001,9 +1003,7 @@ solution of the given \ac{csp}.
                                    if  x not in Assignment
                      }
         minSize = min(lenU for x, lenU in Unassigned)
-        for x, lenU in Unassigned:
-            if lenU == minSize:
-                return x
+        return arb({ x for x, lenU in Unassigned if lenU == minSize })
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Finding a most constrained variable.}
@@ -1012,14 +1012,14 @@ solution of the given \ac{csp}.
 
 \myFig{Constraint-Propagation-Solver.ipynb:most_constrained_variable} show the implementation of the function
 $\texttt{most\_constrained\_variable}$.  The function $\texttt{most\_constrained\_variable}$ takes a partial 
-$\texttt{Assignment}$ and a dictionary $\texttt{ValuesPerVar}$ returning for all variables the set of values
-that still might be tried for this variable.
+$\texttt{Assignment}$ and a dictionary $\texttt{ValuesPerVar}$ returning for all variables \texttt{x} the set
+of values \texttt{ValuesPerVar[x]} that can be assigned to \texttt{x}.
 \begin{enumerate}
 \item First, this function computes the set of $\texttt{Unassigned}$ variables.  For every variable $\texttt{x}$ that
       has not yet been assigned a value in $\texttt{Assignment}$ this set contains the pair 
       $(\texttt{x}, \mathtt{len}(U))$, where $U$ is the set of values that still might be tried for the variable  $\texttt{x}$.
-\item Next, \texttt{minSize} is the minimal number of values still available for a variable.
-\item Finally, the first variable \texttt{x} that has only \texttt{minSize} values available is returned.
+\item Next, \texttt{minSize} is the minimum size of the sets \texttt{ValuesPerVar[x]} for all unassigned variables.
+\item Finally, an arbitrary variable \texttt{x} that has only \texttt{minSize} values available is returned.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -1037,7 +1037,7 @@ that still might be tried for this variable.
         ValuesDict = ValuesPerVar.copy()
         ValuesDict[x] = { v }
         BoundVars = set(Assignment.keys())
-        for F, Vars in Constraints:
+        for f, Vars in Constraints:
             if x in Vars:
                 UnboundVars = Vars - BoundVars - { x }
                 if len(UnboundVars) == 1:
@@ -1047,7 +1047,7 @@ that still might be tried for this variable.
                         NewAssign = Assignment.copy()
                         NewAssign[x] = v
                         NewAssign[y] = w
-                        if eval(F, NewAssign):
+                        if eval(f, NewAssign):
                             Legal.add(w)
                     if len(Legal) == 0:
                         raise Backtrack()
@@ -1066,8 +1066,8 @@ The function $\texttt{propagate}$ shown in \myFig{Constraint-Propagation-Solver.
 \item $\texttt{Assignment}$ is a partial assignment that contains assignments for variables that are
       different from $\texttt{x}$.
 \item $\texttt{Constraints}$ is a set of annotated constraints, i.e.~this set contains pairs of the form 
-      $\texttt{(F, Vars)}$, where $\texttt{F}$ is a constraint and $\texttt{Vars}$ is the set of
-      variables occurring in $\texttt{F}$.
+      $\texttt{(f, Vars)}$, where $\texttt{f}$ is a constraint and $\texttt{Vars}$ is the set of
+      variables occurring in $\texttt{f}$.
 \item $\texttt{ValuesPerVar}$ is a dictionary assigning sets of values to all variables.
 \end{enumerate}
 The purpose of the function  $\texttt{propagate}$ is to restrict the values of variables different from
@@ -1079,27 +1079,27 @@ $\texttt{propagate}$ proceeds as follows.
 \item As $\texttt{x}$ is assigned the value $\texttt{v}$, the corresponding entry in the dictionary
       $\texttt{ValuesPerVar}$ is changed accordingly. 
 \item $\texttt{BoundVars}$ is the set of those variable that already have a value assigned.
-\item Next, $\texttt{propagate}$ iterates over all  constraints $\texttt{F}$ such that the variable
-      $\texttt{x}$ occurs in $\texttt{F}$.
-\item $\texttt{UnboundVars}$ is the set of those variables occurring in $\texttt{F}$ that are different from
-      $\texttt{x}$ and that do not yet have a value assigned.  These variables are called \emph{unbound variables} 
+\item Next, $\texttt{propagate}$ iterates over all  constraints $\texttt{f}$ such that the variable
+      $\texttt{x}$ occurs in $\texttt{f}$.
+\item $\texttt{UnboundVars}$ is the set of those variables occurring in $\texttt{f}$ that are different from
+      $\texttt{x}$ and that do not yet have a value assigned.  These variables are called \blue{unbound variables} 
       since we still need to assign values for these variables.
-\item If there is exactly one unbound variable $\texttt{y}$ in the constraint $\texttt{F}$, then we can test
-      those values that satisfy \texttt{F} and recompute the set $\texttt{ValuesPerVar[x]}$.
+\item If there is exactly one unbound variable $\texttt{y}$ in the constraint $\texttt{f}$, then we can test
+      those values that satisfy \texttt{f} and recompute the set $\texttt{ValuesPerVar[x]}$.
 \item As the set $\texttt{UnboundVars}$ contains just a single variable in line 9,
       the function $\texttt{arb}$ returns this variable.
 \item In order to recompute the set $\texttt{ValuesPerVar[x]}$,  all values $\texttt{w}$ in
       $\texttt{ValuesPerVar[y]}$ are tested.  The set $\texttt{Legal}$ contains all values $\texttt{w}$ that can
-      be assigned to the variable $\texttt{y}$ without violating the constraint $\texttt{F}$.
+      be assigned to the variable $\texttt{y}$ without violating the constraint $\texttt{f}$.
 \item If it turns out that $\texttt{Legal}$ is the empty set, then this means that the constraint
-      $\texttt{F}$ is inconsistent with assigning the value $\texttt{v}$ to the variable
-      $\texttt{x}$.  Hence, in this case the  search has to  $\texttt{backtrack}$.
+      $\texttt{f}$ is inconsistent with assigning the value $\texttt{v}$ to the variable
+      $\texttt{x}$.  Hence, in this case the  search has to  \blue{backtrack}.
 \item Otherwise, the set of admissible values for $\texttt{y}$ is updated to be the set $\texttt{Legal}$.
 \item Finally, the updated dictionary $\mathtt{ValuesPerVar}$ is returned.
 \end{enumerate}
 I have tested the program described in this section using the eight queens puzzle.  It takes about
-30 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in a previous exercise.
-It solves this puzzle in 17 milliseconds.  To compare, the backtracking algorithm shown in the previous section
+25 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in a previous exercise.
+It solves this puzzle in 20 milliseconds.  To compare, the backtracking algorithm shown in the previous section
 takes roughly 10 seconds to solve this puzzle.
 
 
