@@ -763,14 +763,7 @@ In order to solve the puzzle, we also have to know the following facts:
       smoke {\color{blue}different} brands of cigarettes. 
 \end{itemize}
 Formulate the zebra puzzle as a constraint satisfaction problem and solve the puzzle using the program
-discussed in this section.  A framework for solving the zebra
-puzzle can be found at:
-\\[0.2cm]
-\hspace*{0.0cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Zebra-Frame.ipynb}
-\\[0.2cm]
-When coding the zebra puzzle as a \ac{csp} you should be careful to name the variables correctly.  A single
-spelling error can break your program.
+discussed in this section.
 \eoxs
 
 
@@ -821,7 +814,7 @@ It turns out that elaborating the idea outline above can enhance the performance
 considerably.  \myFig{Constraint-Propagation-Solver.ipynb:solve} shows an implementation of 
 \blue{constraint propagation}.  In addition to the ideas described above, this implementation takes care of
 \blue{unary constraints}, i.e.~constraints that contain only a single variable, as these constraints can be
-solved without backtracking.
+solved prior to the other constraints without backtracking.
 
 
 \begin{figure}[!ht]
@@ -839,12 +832,8 @@ solved without backtracking.
         Variables, Values, Constraints = P
         Annotated    = { (f, collect_variables(f)) for f in Constraints }
         ValuesPerVar = { v: Values for v in Variables }
-        UnaryConstrs = { (f, V) for f, V in Annotated
-                                if  len(V) == 1
-                       }
-        OtherConstrs = { (f, V) for f, V in Annotated
-                                if  len(V) >= 2
-                       }
+        UnaryConstrs = { (f, V) for f, V in Annotated if len(V) == 1 }
+        OtherConstrs = { (f, V) for f, V in Annotated if len(V) >= 2 }
         try:
             for f, V in UnaryConstrs:
                 var = arb(V)
@@ -864,14 +853,14 @@ values are admissible for $\texttt{x}$.  To this end, we need a dictionary $\mat
 contains the set of possible values for every variable $\texttt{x}$.  Initially, this dictionary assigns the
 set $\texttt{Values}$ to every variable.  Next, we take care of the unary constraints and shrink these sets so
 that the unary constraints are satisfied.  Then, whenever we assign a value to a variable $\mathtt{x}$,  we
-inspect the constraints mentioning the variable $\mathtt{x}$ and shrink the set of values
-$\mathtt{ValuesPerVar}[\mathtt{y}]$ that can be assigned to those variables $\mathtt{y}$ that are constrained by the
-variable  $\mathtt{x}$. 
-
+inspect those constraints that mention the variable $\mathtt{x}$ and exactly one other yet unassigned variable
+$\texttt{y}$ and shrink the set of values $\mathtt{ValuesPerVar}[\mathtt{y}]$ that can be assigned to this
+variables $\mathtt{y}$.  This process is called \blue{constraint propagation} and is described in more detail
+below when we discuss the function \texttt{propagate}.
 \begin{enumerate}
 \item The function $\texttt{solve}$ receives a $\texttt{CSP}$.  This $\texttt{CSP}$ is first split into its
       three components and the constraints are annotated with the sets of variables occurring in them.
-      These annotated constraints are stored in the set \texttt{Annotated}.
+      These \blue{annotated constraints} are stored in the set \texttt{Annotated}.
 \item The most important data structure maintained by the function \texttt{solve} is the dictionary
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -904,9 +893,7 @@ variable  $\mathtt{x}$.
                 xrightmargin  = 0.0cm,
               ]{python3}
     def solve_unary(f, x, Values):
-        Legal = { value for value in Values 
-                        if  eval(f, { x: value })
-                }
+        Legal = { value for value in Values if eval(f, { x: value }) }
         if len(Legal) == 0:
             raise Backtrack()
         return Legal
@@ -917,8 +904,8 @@ variable  $\mathtt{x}$.
 \end{figure}
 
 The function $\texttt{solve\_unary}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:solve_unary} takes a unary
-constraint $\texttt{f}$, a variable $\texttt{x}$ and the set of values $\texttt{Values}$ that can be assigned to this
-variable.  It returns the subset of values that can be substituted for the variable $\texttt{var}$
+constraint $\texttt{f}$, the variable $\texttt{x}$ occurring in \texttt{f} and the set of values $\texttt{Values}$ that can be assigned to this
+variable.  It returns the subset of values that can be substituted for the variable $\texttt{x}$
 without violating the given constraint $\texttt{f}$.  If this set is empty, a \texttt{Backtrack} exception is
 raised since in that case the given \ac{csp} is unsolvable.
 
@@ -1060,7 +1047,8 @@ of values \texttt{ValuesPerVar[x]} that can be assigned to \texttt{x}.
 \end{figure}
 
 \noindent
-The function $\texttt{propagate}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:propagate} takes the following inputs:
+The function $\texttt{propagate}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:propagate} implements
+\blue{constraint propagation}.  It takes the following inputs:
 \begin{enumerate}[(a)]
 \item $\texttt{x}$ is a variable and $\texttt{v}$ is a value that is assigned to the variable $\texttt{x}$.
 \item $\texttt{Assignment}$ is a partial assignment that contains assignments for variables that are
