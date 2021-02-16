@@ -779,7 +779,7 @@ spelling error can break your program.
 Once we choose a value for a variable, this choice influences the values that are still available for other variables.
 For example, suppose that in order to solve the $n$ queens problem we place the queen in row one in the second
 column, then no other queen can be placed in 
-that column.   Due to the constraints on diagonals, the queen in row two can then not be placed
+that column.   Furthermore, due to the constraints on diagonals, the queen in row two can not be placed
 in any of the first three columns.  Abstractly, constraint propagation works as follows.
 \begin{enumerate}
 \item Before the search is started, we create a dictionary $\texttt{ValuesPerVar}$.  Initially, for every variable
