@@ -799,7 +799,8 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       values left that can be used to instantiate it.
 \item Once we have picked a variable $\texttt{x}$, we next iterate over all values $\texttt{v}$ in
       $\texttt{ValuesPerVar[x]}$.  If assigning the value $\texttt{v}$ to the variable $\texttt{x}$ does not
-      violate a constraint, we \blue{propagate} the consequences of this assignment:
+      violate a constraint, assign the value $\texttt{v}$ to the variable $\texttt{x}$ and then we
+      \blue{propagate} the consequences of this assignment: 
       \begin{enumerate}
       \item For every constraint $\texttt{F}$ that mentions only the variable $\texttt{x}$ and one other variable
             $\texttt{y}$ that has not yet been instantiated, we compute the set $\texttt{Legal}$ of those values from 
@@ -1267,9 +1268,9 @@ i.e.~for every variable $y_i \in R$ we have to find a value $w_i \in \texttt{Val
 assignment $A = \{ x \mapsto v, y_1 \mapsto w_1, \cdots, y_n \mapsto w_n \}$ satisfies the equations
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{evaluate}(f, A) = \texttt{True}$.
+$\texttt{eval}(f, A) = \texttt{True}$.
 \\[0.2cm]
-Here, the function $\texttt{evaluate}$ takes a formula $f$ and an assignment $A$ and evaluates $f$ using the
+Here, the function $\texttt{eval}$ takes a formula $f$ and an assignment $A$ and evaluates $f$ using the
 assignment $A$.  Now, \blue{consistency maintenance} works as follows. \index{consistency maintenance}
 \begin{enumerate}
 \item The dictionary $\texttt{ValuesPerVar}$ is initialized as follows:
