@@ -1239,9 +1239,9 @@ Here, the symbol ``$\texttt{//}$'' denotes
 e.g.~we have $7 \;\texttt{//}\; 3 = 2$ because $7 = 2 \cdot 3 + 1$.
 If we try to solve the cryptarithmetic puzzle as coded in \myFig{Crypto-Arithmetic.ipynb} using the
 constraint solver developed in the previous section, we will be disappointed: Solving the puzzle takes about
-half a second on my computer.  The reason is that most constraints involve either three or four variables and
+four seconds on my computer.  The reason is that most constraints involve either three or four variables and
 therefore the effects of constraint propagation kick only in when many variables have already been initialized.
-However, we can solve the problem in less than 70 milliseconds if we add the following constraints for the 
+However, we can solve the problem in less than 50 milliseconds if we add the following constraints for the 
 variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1258,7 +1258,7 @@ $\texttt{Var}(f) = \{ x \} \cup R$ \quad where $x \not\in R$,
 \\[0.2cm]
 i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R = \{y_1, \cdots, y_n\}$ is the set of
 all variables occurring 
-in $f$ that are different from $x$.  Furthermore, assume that we have a dictionary $\texttt{ValuesPerVar}$ such that
+in $f$ that are different from $x$.  In addition, assume that we have a dictionary $\texttt{ValuesPerVar}$ such that
 for every variable $y$, the dictionary entry $\texttt{ValuesPerVar}[y]$ is the set of values that can be substituted
 for the variable $y$.  Formally, we define: 
 \blue{A value $v$ is consistent for $x$ with respect to the constraint $f$} 
