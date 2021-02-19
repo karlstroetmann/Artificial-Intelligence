@@ -36,18 +36,18 @@ Formally, we define a
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problem} as a triple
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{P} := \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \rangle$
+$\mathcal{P} := \langle \texttt{Vars}, \texttt{Values}, \texttt{Constraints} \rangle$
 \\[0.2cm]
 where \index{constraint satisfaction problem}
 \begin{enumerate}[(a)]
-\item $\mathtt{Vars}$ is a set of strings which serve as \blue{variables},
-\item $\mathtt{Values}$ is a set of \blue{values} that can be assigned to the variables in $\mathtt{Vars}$.
-\item $\mathtt{Constraints}$ is a set of formul\ae\ from \blue{first order logic}.  Each of these formul\ae\ is
+\item $\texttt{Vars}$ is a set of strings which serve as \blue{variables},
+\item $\texttt{Values}$ is a set of \blue{values} that can be assigned to the variables in $\texttt{Vars}$.
+\item $\texttt{Constraints}$ is a set of formul\ae\ from \blue{first order logic}.  Each of these formul\ae\ is
       called a \blue{constraint} of $\mathcal{P}$.
 
       In order to be able to interpret these formul\ae, we need a \blue{first order structure} $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
       Here, $\mathcal{U}$ is the \blue{universe} of $\mathcal{S}$ and we will assume that this
-      universe is identical to the set $\mathtt{Values}$, that is we have
+      universe is identical to the set $\texttt{Values}$, that is we have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathcal{U} = \texttt{Values}$.
@@ -64,31 +64,31 @@ In the following, the abbreviation \blue{\ac{csp}} is short for \blue{constraint
 Given a \ac{csp}
 \\[0.2cm]
 \hspace*{1.3cm}
- $\mathcal{P} = \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \rangle$, 
+ $\mathcal{P} = \langle \texttt{Vars}, \texttt{Values}, \texttt{Constraints} \rangle$, 
 \\[0.2cm]
 a \blue{variable assignment} for $\mathcal{P}$ is a function \index{variable assignment}
 \\[0.2cm]
 \hspace*{1.3cm}
-$A: \mathtt{Vars} \rightarrow \mathtt{Values}$
+$A: \texttt{Vars} \rightarrow \texttt{Values}$
 \\[0.2cm]
 that maps variables to values.  A variable assignment $A$ is a \blue{solution} \index{solution of a \ac{csp}}
 of the \ac{csp} $\mathcal{P}$  
 if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{eval}(f, A) = \mathtt{true}$ \quad for all $f \in \mathtt{Constraints}$.
+$\texttt{eval}(f, A) = \texttt{true}$ \quad for all $f \in \texttt{Constraints}$.
 \\[0.2cm]
 Finally, a \blue{partial variable assignment} $B$ for $\mathcal{P}$ is a function \index{partial variable assignment}
 \\[0.2cm]
 \hspace*{1.3cm}
-$B: \mathtt{Vars} \rightarrow \mathtt{Values} \cup \{ \Omega \}$ \quad where $\Omega$ denotes the undefined value.
+$B: \texttt{Vars} \rightarrow \texttt{Values} \cup \{ \Omega \}$ \quad where $\Omega$ denotes the undefined value.
 \\[0.2cm]
 Hence, a partial variable assignment does not assign values to all variables.  Instead, it assigns values only
-to a subset of the set $\mathtt{Vars}$.  The \blue{domain} $\mathtt{dom}(B)$ of a partial variable assignment $B$ is the
+to a subset of the set $\texttt{Vars}$.  The \blue{domain} $\texttt{dom}(B)$ of a partial variable assignment $B$ is the
 set of those variables that are assigned a value different from $\Omega$, i.e.~we define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{dom}(B) := \bigl\{ x \in \mathtt{Vars} \mid B(x) \not= \Omega \bigr\}$.
+$\texttt{dom}(B) := \bigl\{ x \in \texttt{Vars} \mid B(x) \not= \Omega \bigr\}$.
 \\[0.2cm]
 We illustrate the definitions given so far by presenting two examples.
 
@@ -127,10 +127,10 @@ constraint satisfaction problem.  To this end we define:
 \item $\texttt{Values} := \{ \texttt{\red{red}}, \texttt{\green{green}}, \texttt{\blue{blue}} \}$,
 \item $\texttt{Constraints} := $ \\[0.2cm]
       \hspace*{0.8cm}
-      $\bigl\{ \mathtt{WA} \not= \mathtt{NT},\, \mathtt{WA} \not= \mathtt{SA},\, \mathtt{SA} \not= \mathtt{Q},\, 
-                \mathtt{NT} \not= \mathtt{Q},\,
-                \mathtt{SA} \not= \mathtt{Q},\, \mathtt{SA} \not= \mathtt{NSW},\, \mathtt{SA} \not= \mathtt{V},\,
-                \mathtt{Q} \not= \mathtt{NSW},\, \mathtt{NSW} \not= \mathtt{V},\, \mathtt{V} \not= \mathtt{T}
+      $\bigl\{ \texttt{WA} \not= \texttt{NT},\, \texttt{WA} \not= \texttt{SA},\, \texttt{SA} \not= \texttt{Q},\, 
+                \texttt{NT} \not= \texttt{Q},\,
+                \texttt{SA} \not= \texttt{Q},\, \texttt{SA} \not= \texttt{NSW},\, \texttt{SA} \not= \texttt{V},\,
+                \texttt{Q} \not= \texttt{NSW},\, \texttt{NSW} \not= \texttt{V},\, \texttt{V} \not= \texttt{T}
        \bigr\}$.
 \end{enumerate}
 Then $\mathcal{P} := \langle \texttt{Vars},\, \texttt{Values},\, \texttt{Constraints} \rangle$ is a constraint satisfaction problem.  
@@ -493,7 +493,7 @@ This growth is super-exponential and this is what usually happens when we scale 
 The reason is that the number of all variable assignments is given as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathrm{card}(\mathtt{Values})^{\mathrm{card}(\mathtt{Vars})}$,
+$\mathrm{card}(\texttt{Values})^{\mathrm{card}(\texttt{Vars})}$,
 \\[0.2cm]
 where for a set $M$, the expression $\mathrm{card}(M)$ returns the number of elements of $M$.
 For this reason, \blue{brute force search} is often not successful.  One approach to solve a \ac{csp} that is
@@ -508,7 +508,7 @@ when compared to the baseline of brute force search.
 \myFig{Backtrack-Solver.ipynb} shows a simple \ac{csp} solver 
 that employs the backtracking strategy.  \index{backtracking}
 We discuss this program next.  The function $\texttt{solve}$ takes a constraint
-satisfaction problem $\mathtt{P}$ as input and tries to find a solution.  
+satisfaction problem $\texttt{P}$ as input and tries to find a solution.  
 
 
 \begin{figure}[!ht]
@@ -786,7 +786,8 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       assignments that have already taken place for other variables, the value $\texttt{v}$ will be removed from the set
       $\texttt{ValuesPerVar[x]}$. 
 \item As long as the given \ac{csp} is not solved,  we choose a variable $\texttt{x}$ that has not been assigned a
-      value yet.  This variable is chosen using the \blue{most constrained variable} heuristic:  We choose a
+      value yet.  This variable is chosen using the \blue{most constrained variable}
+      \index{most constrained variable heuristic} heuristic:  We choose a
       variable $\texttt{x}$ such that the number of values in the set
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -798,18 +799,27 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       for the most difficult variables first.  A variable is more difficult to get right if it has only a few
       values left that can be used to instantiate it.
 \item Once we have picked a variable $\texttt{x}$, we next iterate over all values $\texttt{v}$ in
-      $\texttt{ValuesPerVar[x]}$.  If assigning the value $\texttt{v}$ to the variable $\texttt{x}$ does not
-      violate a constraint, assign the value $\texttt{v}$ to the variable $\texttt{x}$ and then we
+      $\texttt{ValuesPerVar[x]}$.  If the problem is hard, then it pays of to sort the value using the
+      \blue{least constraining value}\index{least constraining value heuristic} heuristic:  The idea is that
+      we compute for all values in  $\texttt{ValuesPerVar[x]}$ how much they constrain the values 
+      of other variables.  The details of how this is done will be given later.  Once we have picked a value
+      $\texttt{v}$ for the variable $\texttt{x}$, we assign the value $\texttt{v}$ to the variable $\texttt{x}$ and then we
       \blue{propagate} the consequences of this assignment: 
       \begin{enumerate}
-      \item For every constraint $\texttt{F}$ that mentions only the variable $\texttt{x}$ and one other variable
+      \item For every constraint $\texttt{f}$ that mentions only the variable $\texttt{x}$ and one other variable
             $\texttt{y}$ that has not yet been instantiated, we compute the set $\texttt{Legal}$ of those values from 
             $\texttt{ValuesPerVar[y]}$ that can be assigned to $\texttt{y}$ without violating the constraint
-            $\texttt{F}$.
+            $\texttt{f}$.
             
       \item Then, the set $\texttt{ValuesPerVar[y]}$ is updated to the set $\texttt{Legal}$ and we go back to
             step 2.
       \end{enumerate}
+      Finally, we can explain how the \blue{least constraining value} heuristic orders the values:  For every value
+      $\texttt{v}$ from the set $\texttt{ValuesPerVar[x]}$ the heuristic computes the \blue{shrinkage number},
+      which is the number of values that have to be removed from the sets $\texttt{ValuesPerVar[y]}$ where
+      $\texttt{y}$ is any variable that is different form $\texttt{x}$ and that have not yet been assigned.
+      Then the different values are ordered ascendingly with respect to their shrinkage number.  Hence value 
+      with a low shrinkage number are tried before values with a higher shrinkage number.
 \end{enumerate}
 It turns out that elaborating the idea outlined above can enhance the performance of backtracking search
 considerably.  \myFig{Constraint-Propagation-Solver.ipynb:solve} shows an implementation of 
@@ -829,7 +839,7 @@ solved prior to the other constraints without backtracking.
                 xleftmargin   = 0.3cm,
                 xrightmargin  = 0.3cm,
               ]{python3}
-    def solve(P):
+    def solve(P, lcv=True):
         Variables, Values, Constraints = P
         Annotated    = { (f, collect_variables(f)) for f in Constraints }
         ValuesPerVar = { v: Values for v in Variables }
@@ -839,7 +849,7 @@ solved prior to the other constraints without backtracking.
             for f, V in UnaryConstrs:
                 var = arb(V)
                 ValuesPerVar[var] = solve_unary(f, var, ValuesPerVar[var])
-            return backtrack_search({}, ValuesPerVar, OtherConstrs)
+            return backtrack_search({}, ValuesPerVar, OtherConstrs, lcv)
         except Backtrack:
             return None
 \end{minted}
@@ -850,18 +860,23 @@ solved prior to the other constraints without backtracking.
 
 In order to implement constraint propagation, it is necessary to administer the values that can be used
 to instantiate the different variables separately, i.e.~for every variable $\texttt{x}$ we need to know which
-values are admissible for $\texttt{x}$.  To this end, we need a dictionary $\mathtt{ValuesPerVar}$ that
+values are admissible for $\texttt{x}$.  To this end, we need a dictionary $\texttt{ValuesPerVar}$ that
 contains the set of possible values for every variable $\texttt{x}$.  Initially, this dictionary assigns the
 set $\texttt{Values}$ to every variable.  Next, we take care of the unary constraints and shrink these sets so
-that the unary constraints are satisfied.  Then, whenever we assign a value to a variable $\mathtt{x}$,  we
-inspect those constraints that mention the variable $\mathtt{x}$ and exactly one other yet unassigned variable
-$\texttt{y}$ and shrink the set of values $\mathtt{ValuesPerVar}[\mathtt{y}]$ that can be assigned to this
-variables $\mathtt{y}$.  This process is called \blue{constraint propagation} and is described in more detail
+that the unary constraints are satisfied.  Then, whenever we assign a value to a variable $\texttt{x}$,  we
+inspect those constraints that mention the variable $\texttt{x}$ and exactly one other yet unassigned variable
+$\texttt{y}$ and shrink the set of values $\texttt{ValuesPerVar}[\texttt{y}]$ that can be assigned to this
+variables $\texttt{y}$.  This process is called \blue{constraint propagation} and is described in more detail
 below when we discuss the function \texttt{propagate}.
 \begin{enumerate}
-\item The function $\texttt{solve}$ receives a $\texttt{CSP}$.  This $\texttt{CSP}$ is first split into its
+\item The function $\texttt{solve}$ receives a \ac{csp} \texttt{P} and a Boolean flag \texttt{lcv}.  
+      The \ac{csp} \texttt{P} is first split into its
       three components and the constraints are annotated with the sets of variables occurring in them.
       These \blue{annotated constraints} are stored in the set \texttt{Annotated}.
+
+      The flag \texttt{lcv} controls whether we order the values using the least constraining value heuristic.
+      If this flag is \texttt{True}, the least constraining value heuristic is used.  Otherwise the values
+      are ordered arbitrarily.
 \item The most important data structure maintained by the function \texttt{solve} is the dictionary
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -922,18 +937,20 @@ raised since in that case the given \ac{csp} is unsolvable.
                 xleftmargin   = 0.0cm,
                 xrightmargin  = 0.0cm,
               ]{python3}
-    def backtrack_search(Assignment, ValuesPerVar, Constraints):
+    def backtrack_search(Assignment, ValuesPerVar, Constraints, lcv):
         if len(Assignment) == len(ValuesPerVar):
             return Assignment
         x = most_constrained_variable(Assignment, ValuesPerVar)
-        for v in ValuesPerVar[x]:
+        if lcv:
+            ValueList = least_constraining(x, ValuesPerVar, Assignment, Constraints)
+        else:
+            ValueList = ValuesPerVar[x]
+        for v in ValueList: 
             try:
-                if is_consistent(x, v, Assignment, Constraints):
-                    NewValues = propagate(x, v, Assignment, 
-                                          Constraints, ValuesPerVar)
-                    NewAssign = Assignment.copy()
-                    NewAssign[x] = v
-                    return backtrack_search(NewAssign, NewValues, Constraints)
+                NewValues = propagate(x, v, Assignment, Constraints, ValuesPerVar)
+                NewAssign = Assignment.copy()
+                NewAssign[x] = v
+                return backtrack_search(NewAssign, NewValues, Constraints, lcv)
             except Backtrack:
                 continue
         raise Backtrack()
@@ -945,23 +962,38 @@ raised since in that case the given \ac{csp} is unsolvable.
 
 The function $\texttt{backtrack\_search}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:backtrack_search} is called with a
 partial variable $\texttt{Assignment}$ that is guaranteed to be consistent, a dictionary
-$\texttt{ValuesPerVar}$ associating every variable with the set of values that might be substituted for this variable and a
-set of annotated $\texttt{Constraints}$.  It tries to complete $\texttt{Assignment}$ and thereby computes a
+$\texttt{ValuesPerVar}$ associating every variable with the set of values that might be substituted for this variable, a
+set of annotated $\texttt{Constraints}$, and a Boolean flag \texttt{lcv} that controls whether the
+least constraining value heuristic is used.  It tries to complete $\texttt{Assignment}$ and thereby computes a
 solution of the given \ac{csp}.  
 \begin{enumerate}
 \item If the partial $\texttt{Assignment}$ is already complete, i.e.~if it assigns a value to every variable, 
       then a solution to the given \ac{csp} has been found and this solution is returned.  As the
-      dictionary $\mathtt{ValuesPerVar}$ has an entry for every variable, its size is the same as the number of
-      variables. Therefore, $\mathtt{Assignment}$ is complete iff it has the same size as $\mathtt{ValuesPerVar}$.
+      dictionary $\texttt{ValuesPerVar}$ has an entry for every variable, its size is the same as the number of
+      variables. Therefore, $\texttt{Assignment}$ is complete iff it has the same size as $\texttt{ValuesPerVar}$.
 \item Otherwise, we choose a variable $\texttt{x}$ such that the number of values that can still be used to
-      instantiate $\texttt{x}$ is minimal.  This variable is computed using the function
+      instantiate $\texttt{x}$ is minimal.  This strategy is known as the \blue{most constrained variable heuristic}. 
+      The variable $\texttt{x}$ is computed using the function
       $\texttt{most\_constrained\_variable}$ that is shown in \myFig{Constraint-Propagation-Solver.ipynb:most_constrained_variable}.
       
       The logic behind choosing a maximally constrained variables is that these variables are the most
       difficult to get right.  If we have a partial assignment that is inconsistent, then we will discover this
       fact earlier if we try the most difficult variables first.  This might save us a lot of unnecessary
       backtracking. 
-\item Next, all values that are still available for $\texttt{x}$ are tried.  Note that since
+\item Next, we try to find a value that can be assigned to the variable $\texttt{x}$.
+      If the \blue{least constraining value heuristic} is used, we try those values first that have the
+      smallest \blue{shrinkage number}.  Given a variable $\texttt{x}$, the shrinkage number for assigning the
+      value $\texttt{v}$ to $\texttt{x}$ is the total number of values 
+      that have to be removed from the sets $\texttt{ValuesPerVar[y]}$ when $\texttt{x}$ is set to $\texttt{v}$.
+      Here $\texttt{y}$ ranges over all variables that are yet unassigned and are different from $\texttt{x}$.
+
+      The function $\texttt{least\_constraining}$ returns a list of all values $\texttt{v}$
+      that can be substituted for $\texttt{x}$.  This list is sorted ascendingly w.r.t.~the shrinkage number of
+      $\texttt{v}$.  However, the function is only used if the flag $\texttt{lcv}$ is set.  The reason is that
+      computing the shrinkage number is computationally quite expensive.  Therefore, this only pays of for hard
+      problems.  If the flag is not set, the values are tried in an arbitrary order.
+
+      Note that since
       $\texttt{ValuesPerVar[x]}$ is, in general, smaller than the set of all values of the \ac{csp},
       the \texttt{for}-loop in this version of backtracking search is more efficient than the corresponding
       \texttt{for}-loop in backtracking search discussed in the previous section. 
@@ -998,17 +1030,145 @@ solution of the given \ac{csp}.
 \label{fig:Constraint-Propagation-Solver.ipynb:most_constrained_variable}
 \end{figure}
 
-\myFig{Constraint-Propagation-Solver.ipynb:most_constrained_variable} show the implementation of the function
+\myFig{Constraint-Propagation-Solver.ipynb:most_constrained_variable} shows the implementation of the function
 $\texttt{most\_constrained\_variable}$.  The function $\texttt{most\_constrained\_variable}$ takes a partial 
 $\texttt{Assignment}$ and a dictionary $\texttt{ValuesPerVar}$ returning for all variables \texttt{x} the set
 of values \texttt{ValuesPerVar[x]} that can be assigned to \texttt{x}.
 \begin{enumerate}
 \item First, this function computes the set of $\texttt{Unassigned}$ variables.  For every variable $\texttt{x}$ that
       has not yet been assigned a value in $\texttt{Assignment}$ this set contains the pair 
-      $(\texttt{x}, \mathtt{len}(U))$, where $U$ is the set of values that still might be tried for the variable  $\texttt{x}$.
+      $(\texttt{x}, \texttt{len}(U))$, where $U$ is the set of values that still might be tried for the variable  $\texttt{x}$.
 \item Next, \texttt{minSize} is the minimum size of the sets \texttt{ValuesPerVar[x]} for all unassigned variables.
 \item Finally, an arbitrary variable \texttt{x} that has only \texttt{minSize} values available is returned.
 \end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.0cm,
+                 xrightmargin  = 0.0cm,
+               ]{python3}
+    def least_constraining(x, ValuesPerVar, Assignment, Constraints):
+        NumbersValues = []
+        for value in ValuesPerVar[x]:
+            num_removed = shrinkage(x, value, Assignment, ValuesPerVar, Constraints)
+            if num_removed != math.inf:
+                NumbersValues.append( (num_removed, value) )
+        NumbersValues.sort(key=lambda p: p[0])
+        return [val for _, val in NumbersValues]\end{minted}
+\vspace*{-0.3cm}
+\caption{Finding the least constraining value.}
+\label{fig:Constraint-Propagation-Solver.ipynb:least_constraining}
+\end{figure} 
+
+\myFig{Constraint-Propagation-Solver.ipynb:least_constraining} shows the implementation of the function 
+$\texttt{least\_constraining}$.  This function takes four arguments.
+\begin{enumerate}
+\item $\texttt{x}$ is the variable that needs to be assigned a value next.
+\item $\texttt{ValuesPerVar}$ is a dictionary.  For every variable $\texttt{y}$ that has not yet been assigned
+      a value, $\texttt{ValuesPerVar[y]}$ is the set of values that can be assigned to $\texttt{y}$ without
+      violating a constraint.
+\item $\texttt{Assignment}$ is a partial variable assignment.
+\item $\texttt{Constraints}$ is a set of annotated constraints.
+\end{enumerate}
+The purpose of the function $\texttt{least\_constraining}$ is to compute the shrinkage numbers of every value
+$\texttt{v}$ in $\texttt{ValuesPerVar[x]}$ and to sort these values according to their shrinkage numbers.
+To this end the list $\texttt{NumbersValues}$ is a list of pairs of the form $(n, v)$ where $v$ is a value and
+$n$ is the shrinkage number of $v$.  To compute this list, the function $\texttt{shrinkage}$ computes the
+number of values that had to be removed from all sets $\texttt{ValuesPerVar[y]}$ when $\texttt{x}$ is set to 
+$\texttt{value}$.  The function $\texttt{shrinkage}$ returns the number $\texttt{math.inf}$ to signal the fact
+that it has found the assignment $\{ \texttt{x} \mapsto \texttt{value} \}$ to be inconsistent.
+After all shrinkage numbers have been computed, the list $\texttt{NumbersValues}$ is sorted ascendingly
+w.r.t.~the shrinkage numbers.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    def shrinkage(x, value, Assignment, ValuesPerVar, Constraints):
+        count     = 0   # number of values removed from ValuesPerVar
+        BoundVars = set(Assignment.keys())
+        for f, Vars in Constraints:
+            if x in Vars:
+                UnboundVars = Vars - BoundVars - { x }
+                if len(UnboundVars) == 1:
+                    y = arb(UnboundVars)
+                    Legal = set()
+                    for w in ValuesPerVar[y]:
+                        NewAssign = Assignment.copy()
+                        NewAssign[x] = value
+                        NewAssign[y] = w
+                        if eval(f, NewAssign):
+                            Legal.add(w)
+                        else:
+                            count += 1
+                    if len(Legal) == 0:
+                        return math.inf
+        return count           
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Computing the shrinkage number.}
+\label{fig:Constraint-Propagation-Solver.ipynb:shrinkage}
+\end{figure}
+
+\noindent
+The function $\texttt{shrinkage}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:shrinkage} computes
+the \blue{shrinkage numbers} of the given $\texttt{value}$ that is assigned to the variable $\texttt{x}$
+It takes the following inputs:
+\begin{enumerate}[(a)]
+\item $\texttt{x}$ is a variable and $\texttt{value}$ is the value that is assigned to the variable $\texttt{x}$.
+\item $\texttt{Assignment}$ is a partial assignment that contains assignments for variables that are
+      different from $\texttt{x}$.
+\item $\texttt{ValuesPerVar}$ is a dictionary assigning sets of values to all variables.
+\item $\texttt{Constraints}$ is a set of annotated constraints, i.e.~this set contains pairs of the form 
+      $\texttt{(f, Vars)}$, where $\texttt{f}$ is a constraint and $\texttt{Vars}$ is the set of
+      variables occurring in $\texttt{f}$.
+\end{enumerate}
+The function $\texttt{shrinkage}$ has to compute the number of values that have to be removed from the set
+$\texttt{ValuesPerVar}[y]$ for all variables $\texttt{y}$ that are different from $\texttt{x}$ and that are
+still unbound.  The function is implemented as follows:
+\begin{enumerate}
+\item $\texttt{count}$ is the number of values that have to be removed form $\texttt{ValuesPerVar[y]}$ 
+      for some variable $\texttt{y}$ if we set the variable $\texttt{x}$ to the value $\texttt{v}$.  
+      Initially, $\texttt{count}$ is set to $0$.
+\item $\texttt{BoundVars}$ is the set of those variable that already have a value assigned.
+\item Next, $\texttt{shrinkage}$ iterates over all  constraints $\texttt{f}$ such that the variable
+      $\texttt{x}$ occurs in $\texttt{f}$.
+\item $\texttt{UnboundVars}$ is the set of those variables occurring in $\texttt{f}$ that are different from
+      $\texttt{x}$ and that do not yet have a value assigned.  These variables are called \blue{unbound variables} 
+      since we still need to assign values for these variables.
+\item If the set $\texttt{UnboundVars}$ contains just a single variable,
+      the function $\texttt{arb}$ returns this variable $\texttt{y}$.
+\item Now we have to find those values $\texttt{w}$ that can be assigned to $\texttt{y}$ without violating the
+      constraint $\texttt{f}$.  Each time we find a value $\texttt{w}$ from $\texttt{ValuesPerVar[y]}$ such that
+      the assignment
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{Assignment} \cup \{ \texttt{x} \mapsto \texttt{v}, \texttt{y} \mapsto \texttt{w} \}$
+      \\[0.2cm]
+      violates the constraint $\texttt{f}$, we increase the number $\texttt{count}$ since the value $\texttt{w}$
+      has to be removed from $\texttt{ValuesPerVar[y]}$.  If the constraint $\texttt{f}$ is not violated,
+      the value $\texttt{w}$ is added to the set $\texttt{Legal}$ of values that may be assigned to $\texttt{y}$.
+\item If, after all values form $\texttt{ValuesPerVar[y]}$ have been tested, it turns out that
+      $\texttt{Legal}$ is still empty, then this means that the constraint $\texttt{f}$ is inconsistent with
+      assigning the value $\texttt{v}$ to the variable $\texttt{x}$ because 
+      once we assign $\texttt{v}$ to $\texttt{x}$ we won't be able to find a value $\texttt{w}$ that can be
+      assigned to $\texttt{y}$.  
+      In this case the function $\texttt{shrinkage}$ returns $\texttt{math.inf}$ to signal this inconsistency.
+\end{enumerate}
+
 
 \begin{figure}[!ht]
 \centering
@@ -1047,6 +1207,8 @@ of values \texttt{ValuesPerVar[x]} that can be assigned to \texttt{x}.
 \label{fig:Constraint-Propagation-Solver.ipynb:propagate}
 \end{figure}
 
+
+
 \noindent
 The function $\texttt{propagate}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:propagate} implements
 \blue{constraint propagation}.  It takes the following inputs:
@@ -1071,8 +1233,7 @@ $\texttt{propagate}$ proceeds as follows.
 \item Next, $\texttt{propagate}$ iterates over all  constraints $\texttt{f}$ such that the variable
       $\texttt{x}$ occurs in $\texttt{f}$.
 \item $\texttt{UnboundVars}$ is the set of those variables occurring in $\texttt{f}$ that are different from
-      $\texttt{x}$ and that do not yet have a value assigned.  These variables are called \blue{unbound variables} 
-      since we still need to assign values for these variables.
+      $\texttt{x}$ and that do not yet have a value assigned.  
 \item If there is exactly one unbound variable $\texttt{y}$ in the constraint $\texttt{f}$, then we can test
       those values that satisfy \texttt{f} and recompute the set $\texttt{ValuesPerVar[x]}$.
 \item As the set $\texttt{UnboundVars}$ contains just a single variable in line 9,
@@ -1084,12 +1245,12 @@ $\texttt{propagate}$ proceeds as follows.
       $\texttt{f}$ is inconsistent with assigning the value $\texttt{v}$ to the variable
       $\texttt{x}$.  Hence, in this case the  search has to  \blue{backtrack}.
 \item Otherwise, the set of admissible values for $\texttt{y}$ is updated to be the set $\texttt{Legal}$.
-\item Finally, the updated dictionary $\mathtt{ValuesPerVar}$ is returned.
+\item Finally, the updated dictionary $\texttt{ValuesPerVar}$ is returned.
 \end{enumerate}
 I have tested the program described in this section using the eight queens puzzle.  It takes about
-25 milliseconds to find a solution.  I have also tested it with the Zebra Puzzle described in a previous exercise.
-It solves this puzzle in 20 milliseconds.  To compare, the backtracking algorithm shown in the previous section
-takes roughly 10 seconds to solve this puzzle.
+18 milliseconds to find a solution if the least constraining value heuristic is not used.  I have also tested
+it with the Zebra Puzzle described in a previous exercise.  It solves this puzzle in 21 milliseconds.  To
+compare, the backtracking algorithm shown in the previous section takes roughly 10 seconds to solve this puzzle.
 
 
 \begin{table}[h]
@@ -1135,7 +1296,7 @@ puzzles can be found at:
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Sudoku-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Sudoku-Frame.ipynb}
 
 
-\section{Consistency Checking \label{sec:consistency}}
+\section{Consistency Checking \label{sec:consistency}$^*$}
 So far, the constraints in the constraints satisfaction problems discussed are either \blue{unary constraints} 
 or \blue{binary constraints}:  A \blue{unary} constraint is a constraint $\texttt{f}$
 such that the formula $\texttt{f}$ contains only one variable, while a \blue{binary} constraint
@@ -1286,7 +1447,7 @@ assignment $A$.  Now, \blue{consistency maintenance} works as follows. \index{co
 \item As long as the set $\texttt{UncheckedVariables}$ is not empty, we remove one variable $x$ from this set:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $x := \texttt{UncheckedVariables}.\mathtt{pop}()$
+      $x := \texttt{UncheckedVariables}.\texttt{pop}()$
 \item We iterate over all constraints $f$ such that $x$ occurs in $f$.  
       \begin{enumerate}
       \item For every value $v \in \texttt{ValuesPerVar}[x]$ we check whether $v$ is consistent with $f$.
@@ -1306,7 +1467,7 @@ $\texttt{UncheckedVariables}$ or it removes a value from one of the sets $\textt
 variable $y$.  Although the set $\texttt{UncheckedVariables}$ can grow during the algorithm,  the union
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigcup\limits_{x \in \mathtt{Vars}} \texttt{ValuesPerVar}[x]$ 
+$\bigcup\limits_{x \in \texttt{Vars}} \texttt{ValuesPerVar}[x]$ 
 \\[0.2cm]
 can never grow:  Every time the set $\texttt{UncheckedVariables}$ grows,
 for some variable $x$ the set
@@ -1362,7 +1523,7 @@ The function $\texttt{enforce\_consistency}$ takes four arguments.
 \item $\texttt{Var2Formulas}$ is a dictionary.  For every variable $x$, $\texttt{Var2Formulas}[x]$ is
       the set of those constraints $f$ such that $x$ occurs in $f$.
 \item $\texttt{Annotated}$ is a dictionary mapping constraints to the set of variables occurring in them, 
-      i.e.~if $f$ is a constraint, then $\mathtt{Annotated}[f]$ is the set of variables
+      i.e.~if $f$ is a constraint, then $\texttt{Annotated}[f]$ is the set of variables
       occurring in $f$.
 \item $\texttt{Connected}$ is a dictionary that takes a variable $x$ and returns the set of all variables
       that are \blue{connected} to $x$ via a common constraint $f$, i.e.~we have $y \in \texttt{Connected}[x]$
@@ -1396,7 +1557,7 @@ $\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The imp
       constraint that mentions both $\texttt{var}$ and $y$ might now become inconsistent.
 \item If there are no consistent values for $\texttt{var}$ left, we have to backtrack.
 \item Otherwise, the set of values that are known to be consistent for \texttt{var} is stored
-      as \\ $\mathtt{ValuesPerVar}[\mathtt{var}]$.
+      as \\ $\texttt{ValuesPerVar}[\texttt{var}]$.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -1453,7 +1614,7 @@ gets a set of variables $\texttt{Vars}$ and a dictionary that assigns to every v
 $\texttt{Vars}$ the set of values that might be assigned to $\texttt{var}$.  It returns a list containing all
 possible variable assignments.  The implementation proceeds as follows:
 \begin{enumerate}
-\item As the argument $\mathtt{Variables}$ is a \texttt{frozenset} but we need to modify this set for the
+\item As the argument $\texttt{Variables}$ is a \texttt{frozenset} but we need to modify this set for the
       recursive call of \texttt{all\_assignments}, we transform the \texttt{frozenset} into a \texttt{set}.
 \item If the set of variables $\texttt{Vars}$ is empty, the empty dictionary can serve as a mapping that 
       assigns a value to every variable in $\texttt{Vars}$.
@@ -1566,7 +1727,7 @@ Finally, \texttt{backtrack\_search} is called to solve the remaining constraint 
 means of both \blue{backtracking} and \blue{constraint propagation}. 
 
 
-\section{Local Search}
+\section{Local Search$^*$}
 There is another approach to solve constraint satisfaction problems.  This approach is known as
 \blue{local search}.  The basic idea is simple: Given as constraint satisfaction problem 
 $\mathcal{C}$ of the form 
@@ -1701,7 +1862,7 @@ proceed to discuss this program line by line.
       $\texttt{random.choice}(L)$
       \\[0.2cm]
       that is used to select a random element from $L$ expects that its argument $L$ to be indexable, i.e.~for
-      a number $k \in \{0, \cdots, \mathtt{len}(L)-1\}$ the expression $L[k]$ needs to be defined.
+      a number $k \in \{0, \cdots, \texttt{len}(L)-1\}$ the expression $L[k]$ needs to be defined.
 \item \texttt{Assign} is a dictionary mapping all variables from the set \texttt{Variables} to values from the
       set \texttt{Values}.  Initially the values are assigned randomly.
 \item The variable \texttt{iteration} counts the number of times that we have changed the assignment
@@ -1775,7 +1936,7 @@ proceed to discuss this program line by line.
 The function $\texttt{numConficts}$ is shown in \myFig{Local-Search.ipynb:numConflicts}.  If $x$ is a variable,
 \texttt{Assign} is a variable assignment and \texttt{Annotated} is a list of pairs of the form $(f, V)$ where
 $f$ is a constraint and $V$ is the set of variables occurring in $f$, then 
-$\mathtt{numConficts}(x,\mathtt{Assign}, \mathtt{Annotated})$
+$\texttt{numConficts}(x,\texttt{Assign}, \texttt{Annotated})$
 is the number of conflicts caused by the variable $x$.
 
 
