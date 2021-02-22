@@ -1284,19 +1284,67 @@ compare, the backtracking algorithm shown in the previous section takes roughly 
   \label{tab:sudoku}
 \end{table}
 
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+               ]
+    Sudoku = [ ['*',  3 ,  9 , '*', '*', '*', '*', '*',  7 ], 
+               ['*', '*', '*',  7 , '*', '*',  4 ,  9 ,  2 ],
+               ['*', '*', '*', '*',  6 ,  5 , '*',  8 ,  3 ],
+               ['*', '*', '*',  6 , '*',  3 ,  2 ,  7 , '*'],
+               ['*', '*', '*', '*',  4 , '*',  8 , '*', '*'],
+               [ 5 ,  6 , '*', '*', '*', '*', '*', '*', '*'],
+               ['*', '*',  5 ,  2 , '*',  9 , '*', '*',  1 ],
+               ['*',  2 ,  1 , '*', '*', '*', '*',  4 , '*'],
+               [ 7 , '*', '*', '*', '*', '*',  5 , '*', '*']
+             ]
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{\textsl{Python} representation of the sudoku puzzle shown in Table \ref{tab:sudoku}.}
+\label{fig:Sudoku.ipynb}
+\end{figure}
+
 \exercise
 \index{sudoku}
 Table \ref{tab:sudoku} on page \pageref{tab:sudoku} shows a \href{https://en.wikipedia.org/wiki/Sudoku}{sudoku}
 that I have taken from the
 \href{http://sudoku.zeit.de/cgi-bin/sudoku/sudoku_kd_app_2016.pl?action=level&kd_nr=24091123601092&year=2018&month=03&day=23&level=-c+5}{Zeit Online}
-magazine.  Write a program that transforms this sudoku into a constraint satisfaction problem and solve the
-resulting \ac{csp} using the constraint satisfaction solver developed in this section.  A framework for solving sudoku
-puzzles can be found at:
-\\[0.2cm]
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Sudoku-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Sudoku-Frame.ipynb}
+magazine.  This sudoku can be represented in \textsl{Python} as the list of lists that is shown in Figure
+\ref{fig:Sudoku.ipynb}. 
+\begin{enumerate}[(a)]
+\item Implement a \textsl{Python} function \texttt{sudoku\_csp} that takes a description of a sudoku puzzle
+      and returns a \ac{csp} such that the solution of the \ac{csp} is a solution of the given sudoku puzzle.
+      A framework for turning a sudoku puzzle into a \ac{csp} can be found at:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/2 Constraint
+        Solver/Sudoku-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/\\
+      \hspace*{2.6cm}  
+          Python/2 Constraint Solver/Sudoku-Frame.ipynb}
+\item Implement a function \texttt{find\_alternative} that takes two arguments:
+  \begin{itemize}
+  \item The first argument is sudoku \texttt{Puzzle}.
+  \item The second argument is a \texttt{Solution} to this puzzle.
+  \end{itemize}
+  The function \texttt{find\_alternative} returns a \ac{csp} that has a solution if and only if there is a
+  solution of the sudoku \texttt{Puzzle} that is different from the \texttt{Solution} that is given as the second argument.
+\item Rewrite the \ac{csp} solver that has been discussed in this section so that instead of computing a single
+      solution of a given \ac{csp} it computes the set of all solutions. 
+      The solver can be found here:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/2 Constraint Solver/Constraint-Propagation-Solver.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/\\
+      \hspace*{2.6cm}  
+        Python/2 Constraint Solver/Constraint-Propagation-Solver.ipynb}    
+\end{enumerate}
 
-
-\section{Consistency Checking \label{sec:consistency}$^*$}
+\section{Consistency Checking$^*$ \label{sec:consistency}}
 So far, the constraints in the constraints satisfaction problems discussed are either \blue{unary constraints} 
 or \blue{binary constraints}:  A \blue{unary} constraint is a constraint $\texttt{f}$
 such that the formula $\texttt{f}$ contains only one variable, while a \blue{binary} constraint
