@@ -66,9 +66,9 @@ where the components are interpreted as follows:
       $\texttt{TerminalStates} := \{ s \in \texttt{States} \mid \texttt{finished}(s) \}$.
 \item $\texttt{utility}$ is a function that takes a state $s \in \texttt{TerminalStates}$ and a player $p \in \texttt{Players}$.  It returns
       the \blue{value} that the game has for player $p$.  In general, a value is a real number,  but in all of
-      our examples, this value will be an element from the set $\{-1, 0, +1\}$.  The value $-1$ indicates that
-      player $p$ has lost the game, if the value is $+1$ the player $p$ has won the game, and if this value is
-      $0$, then the game is a draw.  Hence the signature of $\texttt{utility}$ is
+      our examples, this value will be an element from the set $\{-1, 0, +1\}$.  If $\texttt{utility}(s, p) = -1$,
+      then player $p$ has lost the game, if $\texttt{utility}(s, p) = 1$, then player $p$ has won the game, and
+      if $\texttt{utility}(s, p) = 0$, then the game is a draw.  Hence the signature of $\texttt{utility}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{utility}: \texttt{TerminalStates} \times \texttt{Players} \rightarrow \{ -1, 0, +1\}$.
@@ -85,9 +85,10 @@ then the game is called a \blue{zero sum game} \index{zero sum game} iff we have
 $\forall s \in \texttt{TerminalStates}:\texttt{utility}(s, \texttt{A}) + \texttt{utility}(s, \texttt{B}) = 0$,
 \\[0.2cm]
 i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\texttt{B}$ and vice versa.
-Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{go} and 
-\href{https://en.wikipedia.org/wiki/Chess}{chess} are two person zero sum games.
-We proceed to discuss an example.
+Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{go}, 
+\href{https://en.wikipedia.org/wiki/Chess}{chess}, and
+\href{https://en.wikipedia.org/wiki/Draughts}{draughts} are two person zero sum games.
+We proceed to discuss a simple example.
 
 \section{Tic-Tac-Toe}
 The game \href{https://en.wikipedia.org/wiki/Tic-tac-toe}{tic-tac-toe} is played on a square board of size 
@@ -773,11 +774,11 @@ and we have that
 \hspace*{1.3cm}
 $\mathtt{Cache}[\mathtt{State}] = (\mathtt{value}, a, b)$,
 \\[0.2cm]
-then we have to check whether the interval $[\mathtt{alpha}, \mathtt{beta}]$ is \blue{more general} than the
-interval $[a,b]$, i.e.~we have to check that
+then we have to check whether the interval $[a,b]$ is \blue{more general} than the
+interval $[\mathtt{alpha}, \mathtt{beta}]$, i.e.~we have to check that
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \leq \mathtt{alpha}$ \quad and \quad $\mathtt{\beta} \leq b$ 
+$a \leq \mathtt{alpha}$ \quad and \quad $\mathtt{beta} \leq b$ 
 \\[0.2cm]
 holds.  In this case we know that indeed
 \\[0.2cm]
@@ -785,7 +786,7 @@ holds.  In this case we know that indeed
 $\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}$
 \\[0.2cm]
 and hence we can use the value stored in the $\mathtt{Cache}$.  If the inequations $a \leq \mathtt{alpha}$ and
-$\mathtt{\beta} \leq b$  are not satisfied, then we compute
+$\mathtt{beta} \leq b$  are not satisfied, then we compute
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \min(\mathtt{alpha}, a), \max(\mathtt{beta}, b))$
