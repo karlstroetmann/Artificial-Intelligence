@@ -7,8 +7,7 @@ services:
         init: true
         ports:
             - 8888:8888
+        environment:
+            - JUPYTER_ALLOW_INSECURE_WRITES=true
         volumes:
-            - jupyter_data:/home/jovyan/
-
-volumes:
-    jupyter_data:
+            - ./Python:/home/jovyan/
