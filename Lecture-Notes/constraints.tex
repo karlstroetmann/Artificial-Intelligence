@@ -1098,6 +1098,7 @@ w.r.t.~the shrinkage numbers.
                  xrightmargin  = 0.8cm,
                ]{python3}
     def shrinkage(x, value, Assignment, ValuesPerVar, Constraints):
+        NewValues = ValuesPerVar.copy()
         count     = 0   # number of values removed from ValuesPerVar
         BoundVars = set(Assignment.keys())
         for f, Vars in Constraints:
@@ -1106,8 +1107,8 @@ w.r.t.~the shrinkage numbers.
                 if len(UnboundVars) == 1:
                     y = arb(UnboundVars)
                     Legal = set()
-                    for w in ValuesPerVar[y]:
-                        NewAssign = Assignment.copy()
+                    for w in NewValues[y]:
+                        NewAssign    = Assignment.copy()
                         NewAssign[x] = value
                         NewAssign[y] = w
                         if eval(f, NewAssign):
@@ -1116,7 +1117,8 @@ w.r.t.~the shrinkage numbers.
                             count += 1
                     if len(Legal) == 0:
                         return math.inf
-        return count           
+                    NewValues[y] = Legal
+        return count 
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Computing the shrinkage number.}
@@ -1140,10 +1142,18 @@ The function $\texttt{shrinkage}$ has to compute the number of values that have 
 $\texttt{ValuesPerVar}[y]$ for all variables $\texttt{y}$ that are different from $\texttt{x}$ and that are
 still unbound.  The function is implemented as follows:
 \begin{enumerate}
+\item $\texttt{NewValues}$ is a copy of the dictionary $\texttt{ValuesPerVar}$.
+      We need to make a copy of this dictionary since we want to compute the number of values
+      that have to be removed from $\texttt{ValuesPerVar[y]}$ for variables $\texttt{y}$ that are different
+      from $\texttt{x}$ when $\texttt{x}$ is bound to $\texttt{value}$.  However, as we are not
+      yet sure whether we really want to bind  $\texttt{x}$ to $\texttt{value}$, we can not remove values
+      from the set $\texttt{ValuesPerVar}[y]$.  Instead, we remove these values from the copy
+      \texttt{NewValues} of the dictionary $\texttt{ValuesPerVar}$.  This way, we do not have to
+      undo any removals of values.
 \item $\texttt{count}$ is the number of values that have to be removed form $\texttt{ValuesPerVar[y]}$ 
       for some variable $\texttt{y}$ if we set the variable $\texttt{x}$ to the value $\texttt{v}$.  
       Initially, $\texttt{count}$ is set to $0$.
-\item $\texttt{BoundVars}$ is the set of those variable that already have a value assigned.
+\item $\texttt{BoundVars}$ is the set of those variable that already have a value assigned in $\texttt{Assignment}$.
 \item Next, $\texttt{shrinkage}$ iterates over all  constraints $\texttt{f}$ such that the variable
       $\texttt{x}$ occurs in $\texttt{f}$.
 \item $\texttt{UnboundVars}$ is the set of those variables occurring in $\texttt{f}$ that are different from
@@ -1152,21 +1162,26 @@ still unbound.  The function is implemented as follows:
 \item If the set $\texttt{UnboundVars}$ contains just a single variable,
       the function $\texttt{arb}$ returns this variable $\texttt{y}$.
 \item Now we have to find those values $\texttt{w}$ that can be assigned to $\texttt{y}$ without violating the
-      constraint $\texttt{f}$.  Each time we find a value $\texttt{w}$ from $\texttt{ValuesPerVar[y]}$ such that
+      constraint $\texttt{f}$.  Each time we find a value $\texttt{w}$ from $\texttt{NewValues[y]}$ such that
       the assignment
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{Assignment} \cup \{ \texttt{x} \mapsto \texttt{v}, \texttt{y} \mapsto \texttt{w} \}$
       \\[0.2cm]
       violates the constraint $\texttt{f}$, we increase the number $\texttt{count}$ since the value $\texttt{w}$
-      has to be removed from $\texttt{ValuesPerVar[y]}$.  If the constraint $\texttt{f}$ is not violated,
+      has to be removed from $\texttt{NewValues[y]}$.  If the constraint $\texttt{f}$ is not violated,
       the value $\texttt{w}$ is added to the set $\texttt{Legal}$ of values that may be assigned to $\texttt{y}$.
-\item If, after all values form $\texttt{ValuesPerVar[y]}$ have been tested, it turns out that
+\item If, after all values form $\texttt{NewValues[y]}$ have been tested, it turns out that
       $\texttt{Legal}$ is still empty, then this means that the constraint $\texttt{f}$ is inconsistent with
-      assigning the value $\texttt{v}$ to the variable $\texttt{x}$ because 
-      once we assign $\texttt{v}$ to $\texttt{x}$ we won't be able to find a value $\texttt{w}$ that can be
+      assigning $\texttt{value}$  to the variable $\texttt{x}$ because 
+      once we assign $\texttt{value}$ to $\texttt{x}$ we won't be able to find a value $\texttt{w}$ that can be
       assigned to $\texttt{y}$.  
       In this case the function $\texttt{shrinkage}$ returns $\texttt{math.inf}$ to signal this inconsistency.
+\item When we are done with the constraint \texttt{f}, we update \texttt{NewValues[y]}.
+      This is necessary since there might be other constraints involving the variable $\texttt{y}$ which require
+      that values have to be removed from \texttt{NewValues[y]}.  These might well be the same values that have
+      already been found to be inconsistent when the constraint \texttt{f} was checked.  As we do not want to
+      count these values twice, we have to update the set \texttt{NewValues[y]}.
 \end{enumerate}
 
 
