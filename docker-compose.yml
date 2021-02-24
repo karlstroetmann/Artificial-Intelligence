@@ -10,4 +10,4 @@ services:
         environment:
             - JUPYTER_ALLOW_INSECURE_WRITES=true
         volumes:
-            - ./Python:/home/jovyan/
+            - ./Python:/home/jovyan/work
