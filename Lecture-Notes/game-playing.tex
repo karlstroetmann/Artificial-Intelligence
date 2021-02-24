@@ -293,7 +293,7 @@ this implementation.
                  xrightmargin  = 0.8cm,
                ]{python3}
     Players = [0, 1]
-    Start   = 0
+    Start = 0
     
     def set_bits(Bits):
         result = 0
@@ -319,8 +319,7 @@ this implementation.
 
     All_Lines = [ set_bits([0,1,2]), set_bits([3,4,5]), set_bits([6,7,8]), 
                   set_bits([0,3,6]), set_bits([1,4,7]), set_bits([2,5,8]), 
-                  set_bits([0,4,8]), set_bits([2,4,6]), 
-                ]
+                  set_bits([0,4,8]), set_bits([2,4,6])                     ]
 
     def utility(state, player):
         for mask in All_Lines:
@@ -428,7 +427,6 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
                 xrightmargin  = 0.0cm,
               ]{python3}
     other = lambda p: [o for o in Players if o != p][0]
-  
     Cache = {}
 
     def memoize(f):
