@@ -4,7 +4,6 @@ LABEL maintainer="Christian Gommans <info@cgweb.net>"
 
 ARG conda_env=ai
 
-COPY --chown=${NB_UID}:${NB_GID} Python/. /home/$NB_USER/stroetmann-data/
 COPY --chown=${NB_UID}:${NB_GID} Docker/env.yml /home/$NB_USER/tmp/
 
 RUN cd /home/$NB_USER/tmp/ && \
