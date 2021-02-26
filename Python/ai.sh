@@ -5,5 +5,6 @@ conda install -y -c anaconda graphviz
 conda install -y -c conda-forge python-graphviz
 conda install -y -c anaconda ply
 conda install -y -c conda-forge ipycanvas
+conda install -y -c conda-forge matplotlib 
 pip install chess
 
