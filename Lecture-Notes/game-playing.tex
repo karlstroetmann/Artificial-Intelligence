@@ -443,8 +443,10 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
   
     @memoize    
     def value(State, player):
-        if finished(State): return utility(State, player)
-        return max([-value(ns, other(player)) for ns in next_states(State, player)])
+        if finished(State):
+            return utility(State, player)
+        o = other(player)
+        return max([-value(ns, o) for ns in next_states(State, player)])
     
     def best_move(State, player):
         NS        = next_states(State, player)
@@ -452,25 +454,11 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
         BestMoves = [s for s in NS if -value(s, other(player)) == bestVal]
         BestState = random.choice(BestMoves)
         return bestVal, BestState
-
-    def play_game(canvas):
-        State = Start
-        while (True):
-            firstPlayer = Players[0]
-            val, State  = best_move(State, firstPlayer);
-            draw(State, canvas)
-            if finished(State):
-                final_msg(State)
-                break
-            State = get_move(State)
-            draw(State, canvas)
-            if finished(State):
-                final_msg(State)
-                break    
 \end{minted}
 \caption{The Minimax algorithm.}
 \label{fig:Minimax.ipynb}
 \end{figure}
+
 \begin{enumerate}
 \item Given a player $\texttt{p}$, the function $\texttt{other}$ computes the other player,
       which is the first element of the list $\texttt{Players}$ that is different from $p$.
@@ -479,8 +467,9 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
 \item $\texttt{Cache}$ is a dictionary that is initially empty.  This dictionary is used as a memory cache by 
       the function $\texttt{memoize}$.
 \item The function $\mathtt{memoize}$ is a second order function that takes a function $f$ as its argument.
-      It creates a \blue{memoized} version of the function $f$:  This memoized version of $f$, which is called
-      $\mathtt{f\_memoized}$, first tries to retrieve the value of $f$ from the dictionary $\texttt{Cache}$.
+      It creates a \href{https://en.wikipedia.org/wiki/Memoization}{memoized} version of the function $f$:
+      This memoized version of $f$, which is called $\mathtt{f\_memoized}$, first tries to retrieve the value
+      of $f$ from the dictionary $\texttt{Cache}$. 
       If this is successful, the function returns the cached value.  Otherwise, the function $f$ is called
       to compute the result.  This result is then stored in the $\mathtt{Cache}$ before it is returned.
       The function $\mathtt{memoize}$ returns the memoized version of $f$.
@@ -494,15 +483,15 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
       looked up from the variable $\texttt{Cache}$ that stores all previous results computed by the function $\texttt{value}$.  To
       understand why this is important, 
       let us consider how many states would be explored in the case of tic-tac-toe if we would not use the idea
-      of memorizing previous results.  In this case, we have 9 moves for player
-      \texttt{X} from the start state, then 8 moves for player \texttt{O}, then again 7 moves for
-      player \texttt{O}.  If we disregard the fact that some games are decided after fewer than 9 moves,
-      the function $\texttt{value}$ needs to consider 
+      of memoizing previous results.  In this case, we have 9 moves for player
+      \texttt{X} from the start state, then 8 moves for player \texttt{O}, then 7 moves for
+      player \texttt{O} and so on until in the end player \texttt{X} has only $1$ move left.  If we disregard
+      the fact that some games are decided after fewer than 9 moves, the function $\texttt{value}$ needs to consider 
       \\[0.2cm]
       \hspace*{1.3cm}
       $9 \cdot 8 \cdot 7 \cdot {\dots} \cdot 2 \cdot 1 = 9! = 362\,880$
       \\[0.2cm]
-      moves.  However, if we count the number of possibilities of putting 5 ``\texttt{O}''s and 4
+      different moves.  However, if we count the number of possibilities of putting 5 ``\texttt{O}''s and 4
       ``\texttt{X}''s on a $3 \times 3$ board, we see that there are only
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -530,26 +519,58 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
             the first state that achieves the best value, then our program would always make the same move in
             a given state.  Hence, playing the program would get boring much sooner.
       \end{enumerate}
-\item The function $\texttt{play\_game}$ is used to play a game.
-      \begin{enumerate}
-      \item Initially, $\texttt{State}$ is the $\texttt{startState}$.
-      \item As long as the game is not finished, the procedure keeps running.
-      \item We assume that the computer goes first and therefore define  \texttt{firstPlayer} as the first
-            element of the list $\texttt{Players}$.  Next, the function $\texttt{best\_move}$ is used to
-            compute the state that results from the best move of $\texttt{firstPlayer}$.
-            This resulting state is then shown.
-      \item After that, it is checked whether the game is finished.
-      \item If the game is not  yet finished, the user is asked to make its move via the function
-            $\texttt{get\_move}$ that asks the user to enter a move.
-            The state resulting from this move is then returned and displayed.
-
-      \item Next, we have to check whether the game is finished after the  move of the user has been executed.
-      \item The \texttt{while}-loop keeps iterating until the game is finished.
-            We do not have to put a test into the condition of this \texttt{while}-loop as we call the function
-            $\texttt{finished}(\texttt{State})$ every time that a new $\texttt{State}$ has been reached.
-            If the game is finished, a message giving the result of the game is printed and the function returns.
-      \end{enumerate}
 \end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    def play_game(canvas):
+        State = Start
+        while True:
+            firstPlayer = Players[0]
+            val, State  = best_move(State, firstPlayer);
+            draw(State, canvas, f'For me, the game has the value {val}.')
+            if finished(State):
+                final_msg(State)
+                return
+            IPython.display.clear_output(wait=True)
+            State = get_move(State)
+            draw(State, canvas, '')
+            if finished(State):
+                IPython.display.clear_output(wait=True)
+                final_msg(State)
+                return
+\end{minted}
+\caption{The function \texttt{play\_game}.}
+\label{fig:Minimax.ipynb:play_game}
+\end{figure}
+
+\myFig{Minimax.ipynb:play_game} presents the implementation of the function $\texttt{play\_game}$ that is used to play a game.
+\begin{enumerate}
+\item Initially, $\texttt{State}$ is the $\texttt{startState}$.
+\item As long as the game is not finished, the procedure keeps running.
+\item We assume that the computer goes first and therefore define  \texttt{firstPlayer} as the first
+      element of the list $\texttt{Players}$.  Next, the function $\texttt{best\_move}$ is used to
+      compute the state that results from the best move of $\texttt{firstPlayer}$.
+      This resulting state is then displayed.
+\item After that, it is checked whether the game is finished.
+\item If the game is not  yet finished, the user is asked to make his move via the function
+      $\texttt{get\_move}$. The state resulting from this move is then returned and displayed.
+\item Next, we have to check whether the game is finished after the  move of the user has been executed.
+\item The \texttt{while}-loop keeps iterating until the game is finished.
+      We do not have to put a test into the condition of this \texttt{while}-loop as we call the function
+      $\texttt{finished}(\texttt{State})$ every time that a new $\texttt{State}$ has been reached.
+      If the game is finished, a message giving the result of the game is printed and the function returns.
+\end{enumerate}
+
 In order to better understand the reason for using memoization in the implementation of the function
 \texttt{value} we introduce the following notion.
 \begin{Definition}[\blue{Game Tree}]
@@ -559,13 +580,24 @@ In order to better understand the reason for using memoization in the implementa
   $\mathcal{G} = \langle \texttt{States}, s_0, \texttt{Players}, \texttt{nextStates}, \texttt{finished},\texttt{utility} \rangle$
   \\[0.2cm]
   is a game. Then a \blue{play of length $n$} is a list of states of the form 
+  $[s_0, s_1, \cdots, s_n]$ \quad such that
+  \\[0.2cm]
+  \hspace*{1.3cm} $s_o = \texttt{Start}$ \quad and \quad $\forall i\in\{0,\cdots,n-1\}: s_{i+1} \in \texttt{nextStates}(s_i, p_i)$,
+  \\[0.2cm]
+  where the players $p_i$ are defined as follows:
   \\[0.2cm]
   \hspace*{1.3cm}
-  $[s_0, s_1, \cdots, s_n]$ \quad such that \quad $\forall i\in\{0,\cdots,n-1\}: s_{i+1} \in \texttt{nextStates}(s_i, p_i)$,
+  $p_i := \left\{
+  \begin{array}[c]{ll}
+    \mathtt{Players[0]} & \mbox{if $i \;\%\; 2 = 0$;} \\
+    \mathtt{Players[1]} & \mbox{if $i \;\%\; 2 = 1$.}
+  \end{array}
+  \right.
+  $
   \\[0.2cm]
-  where the players $p_i$ are defined such that for all even $i\in\{0,\cdots,n-1\}$ we have that $p_i$ is the
-  first element in the list $\texttt{Players}$, while $p_i$ is the second element otherwise.
-  The \blue{game tree} of the game $\mathcal{G}$ is the set of all possible plays.  \eoxs
+  Therefore,  $p_i$ is the first element in the list $\texttt{Players}$ if $i$ is even and
+  $p_i$ is the second element if $i$ is odd.  The \blue{game tree} of the game $\mathcal{G}$ is the set of all
+  possible plays.  \eoxs 
 \end{Definition}
 
 \noindent
@@ -585,10 +617,13 @@ or diagonals of three \texttt{X}s.  Otherwise, the game is a draw.
       \textbf{Notice} that this question does not ask for the number of all terminal states but rather asks for
       all states. 
 \item Write a short program to evaluate the formula derived in part (c) of this exercise.
+      \eox
 \end{enumerate}
 
-\section{\href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-Pruning}}
-The efficiency of the minimax algorithm can be improved if we provide two additional arguments to the function
+\section{Alpha-Beta Pruning}
+In this section we discuss \href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-Pruning}.
+This is a search technique that can prune large numbers of the search space and thereby increase the efficiency
+of a game playing program.  The basic idea is to provide two additional arguments to the function
 $\texttt{value}$.  Traditionally, these arguments are called $\blue{\alpha}$ and $\blue{\beta}$.  In order to be able to
 distinguish between the old function $\texttt{value}$ and its improved version, we call the improved version 
 $\texttt{alphaBeta}$.  The idea is that the function $\texttt{alphaBeta}$ and the function $\texttt{value}$ are
