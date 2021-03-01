@@ -27,6 +27,7 @@ Python/*/__pycache__
 Python/*/.ipynb_checkpoints
 Python/2 Constraint Solver/Constraint-Propagation-Solver-All-Solutions.ipynb
 Python/2 Constraint Solver/Sudoku.ipynb
+Python/3 Games/Connect-Four.ipynb
 Lecture-Notes/_minted-_region_/*
 Lecture-Notes/_minted-artificial-intelligence/*
 Lecture-Notes/artificial-intelligence.idx
