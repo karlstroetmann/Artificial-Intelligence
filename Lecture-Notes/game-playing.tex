@@ -923,18 +923,50 @@ The resulting $\texttt{sum}$ can then be used as an approximation of the value o
 More details about the weights of the pieces can be found in the Wikipedia article 
 ``\href{https://en.wikipedia.org/wiki/Chess_piece_relative_value}{chess piece relative value}''.
 
-
+\exercise
+The game \blue{three men's morris} is discribed in the following YouTube video:
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://www.youtube.com/watch?v=R-aSW1MQwEo}{\texttt{https://www.youtube.com/watch?v=R-aSW1MQwEo}}
+\\[0.2cm]
+The game is played on a board of size $3 \times 3$, i.e. it is played on the same board as tic-tac-toe.
+There are two players, which we will call \texttt{X} and \texttt{O}.  The bottom row of the board is filled
+with three coins that are marked with an \texttt{'X'} on top, while the top row is filled with three coins that
+are marked with an \texttt{'O'} on top.  The coins marked with an \texttt{'X'} are assigned to the player \texttt{X},
+while the coins marked with an \texttt{'O'} are assigned to player \texttt{O}.
+Each turn, the player whose turn it is moves one of his coins into an adjacent empty field.  The coins can be
+moved vertically, horizontally, and diagonally. 
+Player \texttt{X} starts.  The goal of the game for player \texttt{X} is to get three \texttt{X}s into a row, column, or
+diagonal line, while player \texttt{O} needs to get three \texttt{O}s into a row, column, or diagonal line.  However, for
+player \texttt{X} filling the bottom row with \texttt{'X'}s does not count as a victory, while for player
+\texttt{O}  filling the top row with \texttt{'O'}s does not count as a victory.
+\begin{enumerate}[(a)]
+\item Implement this game by adapting the notebook
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Tic-Tac-Toe.ipynb}{
+            Artificial-Intelligence/blob/master/Python/3 Games/Tic-Tac-Toe.ipynb}
+      \\[0.2cm]
+      from my GitHub page \texttt{https://github.com/karlstroetmann}.
+\item Test the game using the notebook
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Game-Move-Ordering.ipynb}{
+           Artificial-Intelligence/blob/master/Python/3 Games/Game-Move-Ordering.ipynb}.
+      \eox
+\end{enumerate}
 
 \exercise
 Read up on the game \href{https://en.wikipedia.org/wiki/Connect_Four}{Connect Four}.  You can play it online at
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{http://www.connectfour.org/connect-4-online.php}{\texttt{http://www.connectfour.org/connect-4-online.php}}
+\href{https://connect4.gamesolver.org/en/}{\texttt{https://connect4.gamesolver.org/en/}}
 \\[0.2cm]
 Your task is to implement this game.  On my github page (\texttt{https://github.com/karlstroetmann}) at
-\\[0.2cm]
+\\
 \hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Connect-Four-Frame.ipynb}{Artificial-Intelligence/blob/master/Python/Connect-Four-Frame.ipynb} 
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3
+  Games/Connect-Four-Frame.ipynb}{Artificial-Intelligence/blob/master/Python/3 Games/Connect-Four-Frame.ipynb} 
 \\[0.2cm]
 is a frame  that can be used to solve this exercise.  
 Once you have a running implementation of \blue{Connect Four}, try to improve the strength of your program by
