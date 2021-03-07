@@ -98,7 +98,7 @@ the notion of a signature.
 \example
 The signature of \blue{group theory} $\Sigma_G$ can be defined as follows:
 \begin{enumerate}[(a)]
-\item $\mathcal{V} := \{ x, y, z \}$,
+\item $\mathcal{V} := \{ w, x, y, z \}$,
 \item $\mathcal{F} := \{ e, i, \cdot \}$,
 \item $\textsl{arity} := \{ e \mapsto 0, i \mapsto 1, \cdot \mapsto 2 \}$,
   
@@ -254,14 +254,15 @@ This set of equations defines the variety of \blue{groups}.  You can check that 
 $\textfrak{G}$ is a member of this variety and hence it is a group.  
 \eoxs
 
+Given a set of $\Sigma$-equations $E$ it is natural to ask which other equations are \blue{logical consequences} of
+the equations in $E$.  This notion is defined below. 
+
 \begin{Definition}[Logical Consequence]
-  Given a set of $\Sigma$-equations $E$ it is natural to ask which other equations are logical consequences of
-  the equations in $E$.  Here we define the notion of a \blue{logical consequence} as follows: The equation 
-  $s \approx t$ is a \blue{logical consequence} of the set of equations $E$ iff we have
+  Assume a signature $\Sigma$ and a set $E$ of $\Sigma$-equations to be given.
+  Then the equation $s \approx t$ is a \blue{logical consequence} of $E$ iff we have
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\textfrak{A} \models s \approx t$ \quad for every $\Sigma$-algebra $\textfrak{A}$ that is a member of the 
-  $E$-variety.
+  $\textfrak{A} \models s \approx t$ \quad for every $\Sigma$-algebra $\textfrak{A}$ that is a member of the $E$-variety.
   \\[0.2cm]
   If $s \approx t$ is a logical consequence of the set of equations $E$, then this is written as
   \\[0.2cm]
@@ -327,7 +328,7 @@ Now we are ready to formally define the notion $E \vdash s \approx t$.  This not
 \item $E \vdash s \approx t$ \quad for every $\Sigma$-equations $(s \approx t) \in E$. \hspace*{\fill} (\blue{Axioms})
 \item $E \vdash s \approx s$ \quad for every $\Sigma$-term $s$. \hspace*{\fill} (\blue{Reflexivity})
 \item If $E \vdash s \approx t$, then $E \vdash t \approx s$.  \hspace*{\fill} (\blue{Symmetry})
-\item If $E \vdash r \approx s$ and then $E \vdash s \approx t$, then $E \vdash r \approx t$.  
+\item If $E \vdash r \approx s$ and $E \vdash s \approx t$, then $E \vdash r \approx t$.  
       \hspace*{\fill} (\blue{Transitivity})
 \item If $\textsl{arity}(f) = n$ and $E \vdash s_i \approx t_i$ for all $i \in \{1,\cdots,n\}$, then
       $E \models f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
@@ -420,10 +421,10 @@ $\bigl(i(a) \cdot a\bigr) \cdot b \;\leftrightarrow_E\; e \cdot b$
 \\[0.2cm]
 because the right hand side $e \cdot b$ results from the left hand side $\bigl(i(a) \cdot a\bigr) \cdot b$ by
 replacing the subterm $i(a) \cdot a$ that occurs at position $[1]$ by the term $e$.
-This is possible because the equation $i(x) \cdot x \approx e$ tell us that $i(a) \cdot a$ is equal to $e$.
+This is possible because the equation $i(x) \cdot x \approx e$ tells us that $i(a) \cdot a$ is equal to $e$.
 \eod
 
-Next, we define the relation $\leftrightarrow_E^*$ as the reflexive and transitive closure of the relation
+Next, we define the relation $\leftrightarrow_E^*$ as the \blue{reflexive and transitive closure} of the relation
 $\leftrightarrow_E$.
 \begin{Definition}[$\leftrightarrow_E^*$]
   For $\Sigma$-terms $s$ and $t$ the notion $s \leftrightarrow_E^* t$ is defined inductively as follows:
@@ -446,19 +447,20 @@ induction.
 
 \subsection{Proofs via Rewriting}
 Implementing the relation $\leftrightarrow_E$ is rather inefficient because every equation from $E$ can
-be used in two different ways:  If $E$ contains the $l \approx r$ we can use this equation from left to right
+be used in two different ways:  If $E$ contains the equation $l \approx r$ we can use this equation from left to right
 to replace a subterm of the form $l\sigma$ by the $r\sigma$, or we can use this equation from right to left by
 replacing a subterm of the form $r\sigma$ by $l\sigma$.  Additionally, unless we have derived the equation we
-want to prove, we don't know when to stop our proof efforts. It was the brilliant idea of Donald E.~Knuth who
+want to prove, we don't know when to stop our proof efforts. It was the brilliant idea of Donald E.~Knuth and
+Peter B.~Bendix \cite{knuth:1970} who
 realized that, provided the equations can be ordered in a way such that the left hand side is always more
 complex than the right hand side, then it is possible to use these equations only in one direction, if certain
 additional equations are added to $E$ in this process.  To proceed, we need the following definition.
 
 \begin{Definition}[Rewrite Order] \hspace*{\fill} \\
   A binary relation $\prec \;\subseteq\; \mathcal{T}_\Sigma \times \mathcal{T}_\Sigma$ is a
-  \blue{rewrite order} w.r.t.~a set of equations $E$ if and only if we have the following:
+  \blue{rewrite order} if and only if we have the following:
   \begin{enumerate}
-  \item $\prec$ is a strict partial order on $\mathcal{T}_\Sigma$, i.e we have
+  \item $\prec$ is a \blue{strict partial order} on $\mathcal{T}_\Sigma$, i.e we have
         \begin{enumerate}
         \item $\neg (s \prec s)$ \hspace*{2.6cm} for all $s \in \mathcal{T}_\Sigma$, i.e $\prec$ is \blue{irreflexive}.
         \item $r \prec s \wedge s \prec t \;\Rightarrow\; r \prec t$ \quad for all $r,s,t \in \mathcal{T}_\Sigma$,
@@ -474,18 +476,22 @@ additional equations are added to $E$ in this process.  To proceed, we need the 
         \hspace*{1.3cm}
         $r \prec l \;\Rightarrow\; s[u \mapsto r] \prec s[u \mapsto l]$ for every $\Sigma$-term $s$ and every
         $u \in\Pos(s)  $.
-  \item $r \prec l$ \quad for every equation $(l \approx r) \in E$.
-  
-        This means that all equations in $E$ are ordered such that the right hand side is smaller than the left
-        hand side w.r.t. $\prec$.
   \item The relation $\prec$ is \blue{well-founded}, i.e.~there is no infinite sequence of the form
         $(s_n)_{n\in\mathbb{N}}$ such that we have
         \\[0.2cm]
         \hspace*{1.3cm}
-        $s_{n+1} \prec s_n$ \quad for all $n \in \mathbb{N}$. \eod
+        $s_{n+1} \prec s_n$ \quad for all $n \in \mathbb{N}$. 
   \end{enumerate}
+  If $E$ is a set of equations, then a binary relation $\prec \;\subseteq\; \mathcal{T}_\Sigma \times \mathcal{T}_\Sigma$
+  is a \blue{rewrite order w.r.t.~$E$} if, in addition to being a rewrite order, it satisfies
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $r \prec l$ \quad for every equation $(l \approx r) \in E$.
+  \\[0.2cm]    
+  This means that all equations in $E$ are ordered such that the right hand side is smaller than the left
+  hand side w.r.t. $\prec$.    \eod
 \end{Definition}
-At the end of this chapter we will see an example of a rewrite order.  For now, we just assume that 
+Later we will see an example of a rewrite order.  For now, we just assume that 
 the relation $\prec$ is a rewrite order w.r.t.~a given set of equations $R$.  The equations in $R$ will now be called
 \blue{rewrite rules}.  We proceed to define the relation $\rightarrow_R$ on $\mathcal{T}_\Sigma$.
 
@@ -493,12 +499,11 @@ the relation $\prec$ is a rewrite order w.r.t.~a given set of equations $R$.  Th
   Given a set of rewrite rules $R$ and two $\Sigma$-terms $s$ and $t$ we define that
   \\[0.2cm]
   \hspace*{1.3cm}
-  $s \rightarrow_R t$ \quad (read: $s$ rewrites to $t$)
+  $s \rightarrow_R t$ \quad (read: \blue{$s$ rewrites to $t$})
   \\[0.2cm]
-  if and only if the following conditions are satisfied:
+  if and only if there exists a rewrite rule $(l \approx r) \in R$ such that the following conditions are satisfied:
   \begin{enumerate}[(a)]
-  \item There exists a rewrite rule $(l \approx r) \in R$.
-  \item There is a position $u \in \Pos(s)$ and a substitution $\sigma$ such that $s/t = l\sigma$.
+  \item There is a position $u \in \Pos(s)$ and a substitution $\sigma$ such that $s/u = l\sigma$.
   \item $t = s[u \mapsto r\sigma]$. \eox
   \end{enumerate}
 \end{Definition}
@@ -534,11 +539,11 @@ The basic idea of a \blue{rewrite proof} of an equation $s \approx t$ is now the
       $s \leftrightarrow_E t \quad \Leftrightarrow \quad \widehat{s} = \widehat{t}$.
 \end{enumerate}
 This way, we can reduce the question whether $s \leftrightarrow_E^* t$ holds to the computation of normal
-forms.  The later can often be done quite efficiently.  The rest of this chapter proceeds as follows:
+forms.  The latter can often be done quite efficiently.  The rest of this chapter proceeds as follows:
 \begin{enumerate}[(a)]
 \item In the next section we discuss the notion of  \blue{confluence} and prove a theorem that can be used
-      to show that a relation is confluent
-\item After that we discuss rewrite orderings in more detail.  In particular, we present the Knuth-Bendix order,
+      to show that a relation is confluent.
+\item After that we discuss rewrite orderings in more detail.  In particular, we present the \blue{Knuth-Bendix order},
       which is the rewrite order that we use later to construct a number of confluent term rewriting systems.
 \item Then, we present the \blue{Knuth-Bendix completion algorithm} that can enrich a set of equation so that
       the rewrite relation $\rightarrow_R$ becomes confluent.
@@ -557,13 +562,13 @@ $s_n \rightarrow s_{n+1}$ \quad holds for all $n\in\mathbb{N}$.
 We denote the \blue{equivalence relation} generated by $\rightarrow$ as $\stackrel{_*}{\leftrightarrow}$ and the reflexive and
 transitive closure of $\rightarrow$ is written as $\stackrel{_*}{\rightarrow}$.
 
-\begin{Definition}[Confluence] \hspace*{\fill} \\
+\begin{Definition}[Confluence] 
   The relation $\rightarrow \;\subseteq\; M \times M$ is \blue{confluent} iff the following holds:
   \\[0.2cm]
   \hspace*{1.3cm}
   $\forall a, b, c \in M: \bigl(a \stackrel{_*}{\rightarrow} b \;\wedge\; a \stackrel{_*}{\rightarrow}c \quad\Rightarrow\quad
    \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
-  $
+  $ \eox
 \end{Definition}
 The next theorem shows that confluence is all we need to reduce the relation $\stackrel{_*}{\leftrightarrow}$
 to the relation $\stackrel{_*}{\rightarrow}$. 
@@ -630,7 +635,7 @@ to guarantee confluence.
   \hspace*{1.3cm}
   $\forall a, b, c \in M: \bigl(a \rightarrow b \;\wedge\; a \rightarrow c \quad\Rightarrow\quad
    \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
-  $  
+  $  \eox
 \end{Definition}
 
 \begin{Theorem}[Transfinite Induction] \hspace*{\fill} \\
@@ -764,7 +769,7 @@ $\Sigma$-terms.  In order to do so, three prerequisites need to be satisfied:
 \begin{enumerate}
 \item We need to assign a \blue{weight} $w(f)$ to every function symbol $f$.  These weights are 
       natural numbers.  In addition, there must be at most one function symbol $g$ such that $w(g) = 0$.
-      Furthermore, if $w(g) = 0$, then $g$ has to be a unary function symbol.
+      Furthermore, if $w(g) = 0$, then $g$ has to be unary.
 \item We need to have a \blue{strict total order} $<$ on the set of function symbols, i.e. the following
       conditions need to be satisfied:
       \begin{enumerate}[(a)]
@@ -776,15 +781,15 @@ $\Sigma$-terms.  In order to do so, three prerequisites need to be satisfied:
       \item The relation $<$ is \blue{total}, that is we have 
             \\[0.2cm]
             \hspace*{1.3cm}
-            $f < g \vee g < f$ \quad for all function symbols $f$ and $g$.
+            $f < g \,\vee\, g < f$ \quad for all function symbols $f$ and $g$.
       \end{enumerate}
 \item The order $<$ on the function symbols has to be \blue{admissible} with respect to the weight function
       $w$, i.e. the following condition needs to be satisfied:
    $$ w(f) = 0 \rightarrow \forall g:  \bigl(g \not=f \rightarrow g < f\bigr). $$
       To put this in words: If the function symbol $f$ has a weight of $0$, then 
-      all other function symbols $g$ have to be smaller than $f$ w.r.t. the strict order $<$ and
+      all other function symbols $g$ have to be smaller than $f$ w.r.t. the strict order $<$.
       Note that this implies that there can be at most one function symbol with $f$ such that $w(f) = 0$. 
-      This function function symbol $f$ is then the maximum w.r.t.~the order $<$.
+      This function symbol $f$ is then the maximum w.r.t.~the order $<$.
 \end{enumerate}
 Given the function $w$ that assigns a weight to all function symbols, we can define the \blue{weight} $w(t)$ of a
 $\Sigma$-term $t$ by induction on $t$.
@@ -801,8 +806,8 @@ that takes a term $t$ and a variable $x$ and returns the number of times that $x
 We define $\texttt{count}(t,x)$ by induction on $t$.
 \begin{enumerate}
 \item $\texttt{count}(x, x) := 1$ for every variable $x \in \mathcal{V}$.
-\item $\texttt{count}(x, y) := 0$ if $x \not= y$ for all variables $x,y \in \mathcal{V}$.
-\item $\texttt{count}\bigl(f(t_1,\cdots,t_n)\bigr) := \sum\limits_{i=1}^n \texttt{count}(t_i, x)$.
+\item $\texttt{count}(y, x) := 0$ if $x \not= y$ for all variables $x,y \in \mathcal{V}$.
+\item $\texttt{count}\bigl(f(t_1,\cdots,t_n), x\bigr) := \sum\limits_{i=1}^n \texttt{count}(t_i, x)$.
 \end{enumerate}
 Now we are ready the define the \blue{Knuth-Bendix order}.  Given two terms $s$ and $t$  
 we have $s \prec t$ iff one of the following two conditions hold:
@@ -829,20 +834,26 @@ we have $s \prec t$ iff one of the following two conditions hold:
   The Knuth-Bendix order is a rewrite order.
 \end{Theorem}
 
+Proving that the Knuth-Bendix order is a strict partial order on the set $\mathcal{T}_\Sigma$ that is stable
+and a congruence can be done via induction on the structure of the terms.  The hard part of the proof is to
+show that the Knuth-Bendix order is well-founded.  A proof is given in the book by Franz Baader and Tobias
+Nipkow \cite{baader:1998}.
+
 \section{The Knuth-Bendix Algorithm}
 Assume we have been given a set $R$ of rewrite rules such that
 \\[0.2cm]
 \hspace*{1.3cm}
-$r \prec l$ \quad holds for all $l \approx r$ in $R$.
+$r \prec l$ \quad holds for all $l \approx r$ in $R$
 \\[0.2cm]
-Given two terms $s$ and $t$, the Church-Rosser Theorem tells us, that we can decide the question, whether
+such that the relation $\prec$ is a rewrite order.
+Given two terms $s$ and $t$, the Church-Rosser Theorem tells us, that we can decide the question whether
 $s \leftrightarrow_R^* t$ holds by rewriting $s$ and $t$ into normal forms, provided the relation
 $\rightarrow_R$ is confluent.  By Newman's Lemma we know that local confluence is sufficient.  Donald E.~Knuth
 and Peter B.~Bendix \cite{knuth:1970} have discovered a way to decide, whether the term rewriting relation
 $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce the notion of a \blue{critical pair}.
 
 \begin{Definition}[Critical Pair] \hspace*{\fill} \\
-  A pair of $\Sigma$-terms $\langle s, t\rangle$ is a critical pair of the equation $l_1 \approx r_1$ and
+  A pair of $\Sigma$-terms $\langle s, t\rangle$ is a \blue{critical pair} of the equation $l_1 \approx r_1$ and
   the equation $l_2 \approx r_2$ if and only if all of the following conditions hold:
   \begin{enumerate}[(a)]
   \item There exists a position $u \in \Pos(l_1)$ such that $l_1/u$ is not a variable.
@@ -867,44 +878,44 @@ $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce th
       \hspace*{1.3cm}
       $\bigl\langle l_1\mu[u \leftarrow r_2\mu],\; r_1\mu \bigr\rangle$
       \\[0.2cm]
-      is a critical pair of $l_1 \approx r_1$ and $l_2 \approx r_2$. \eod
+      is a \blue{critical pair} of $l_1 \approx r_1$ and $l_2 \approx r_2$. \eod
 \end{Definition}
 
 \example
 The following example assumes the signature $\Sigma_G$ from group theory as given.
-We start with the two equations $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(a) \cdot a \approx e$.
+We start with the two equations $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(w) \cdot w \approx e$.
 Then $u = [1]$ is a position in the term $(x \cdot y) \cdot z$ and we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\bigl((x \cdot y) \cdot z\bigr)/[1] = x \cdot y$, which is not a variable.
 \\[0.2cm]
-The term $x \cdot y$ can be unified with the term $i(a) \cdot a$ and we have
+The term $x \cdot y$ can be unified with the term $i(w) \cdot w$ and we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mu := \texttt{mgu}\bigl(x \cdot y, i(a) \cdot a\bigr) = \{ x \mapsto i(a),\; y \mapsto a \}$.
+$\mu := \texttt{mgu}\bigl(x \cdot y, i(w) \cdot w\bigr) = \{ x \mapsto i(w),\; y \mapsto w \}$.
 \\[0.2cm]
 Therefore we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl((x \cdot y) \cdot z\bigr)\mu = \bigl(i(a) \cdot a\bigr) \cdot z$
+$\bigl((x \cdot y) \cdot z\bigr)\mu = \bigl(i(w) \cdot w\bigr) \cdot z$
 \\[0.2cm]
-and the latter term can be rewritten by the equation $i(a) \cdot a \approx e$ into the term $e \cdot t$,
+and the latter term can be rewritten by the equation $i(w) \cdot w \approx e$ into the term $e \cdot t$,
 i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl(i(a) \cdot a\bigr) \cdot z \rightarrow_{\{ i(a) \cdot a \approx e\}} e \cdot z$,
+$\bigl(i(w) \cdot w\bigr) \cdot z \rightarrow_{\{ i(w) \cdot w \approx e\}} e \cdot z$,
 \\[0.2cm]
-and by the equation $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ into the term $i(a) \cdot (a \cdot z)$:
+and by the equation $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ into the term $i(w) \cdot (w \cdot z)$:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl(i(a) \cdot a\bigr) \cdot z \rightarrow_{\{ (x \cdot y) \cdot z \approx x \cdot (y \cdot z)\}} i(a) \cdot (a \cdot z)$.
+$\bigl(i(w) \cdot w\bigr) \cdot z \rightarrow_{\{ (x \cdot y) \cdot z \approx x \cdot (y \cdot z)\}} i(w) \cdot (w \cdot z)$.
 \\[0.2cm]
 Therefore, the pair
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl\langle e \cdot z,\; i(a) \cdot (a \cdot z) \bigr\rangle$
+$\bigl\langle e \cdot z,\; i(w) \cdot (w \cdot z) \bigr\rangle$
 \\[0.2cm]
-is a critical pair of the two equations  $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(a) \cdot a \approx e$.
+is a critical pair of the two equations  $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(w) \cdot w \approx e$.
 \eox
 
 \remark
