@@ -214,8 +214,7 @@ Then $\textfrak{G} = \pair(G, \mathcal{J})$ is a $\Sigma_G$-algebra.  \eoxs
   \begin{enumerate}
   \item $\texttt{eval}(x, I) := I(x)$ \quad for all $x \in \mathcal{V}$.
   \item $\texttt{eval}(c, I) := c^\textfrak{A}$ \quad for all constant symbols $c \in \mathcal{F}$.
-  \item $\texttt{eval}\bigl(f(t_1,\cdots,t_n)\bigr) := f^\textfrak{A}\bigl(\texttt{eval}(t_1,I),\cdots,\texttt{eval}(t_n,I)\bigr)$ 
-        \quad for all constant symbols $c \in \mathcal{F}$.
+  \item $\texttt{eval}\bigl(f(t_1,\cdots,t_n)\bigr) := f^\textfrak{A}\bigl(\texttt{eval}(t_1,I),\cdots,\texttt{eval}(t_n,I)\bigr)$.
   \end{enumerate}
   A $\Sigma$-equation $s \approx t$ is \blue{valid} in the $\Sigma$-algebra $\textfrak{A}$ iff we have
   \\[0.2cm]
@@ -404,7 +403,7 @@ $\bigl((x \cdot y) \cdot z\bigr)\bigl[[1] \mapsto y \cdot x\bigr] = (y \cdot x) 
   holds if and only if the following conditions are satisfied:
   \begin{enumerate}[(a)]
   \item There exists an equation $l \approx r$  such that either $(l \approx r) \in E$ or $(r \approx l) \in  E$.
-  \item There is a position $u \in \Pos(s)$ and a substitution $\sigma$ such that $s/t = l\sigma$.
+  \item There is a position $u \in \Pos(s)$ and a substitution $\sigma$ such that $s/u = l\sigma$.
   \item $t = s[u \mapsto r\sigma]$. \eox
   \end{enumerate}
 \end{Definition}
