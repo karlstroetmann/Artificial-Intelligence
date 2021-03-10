@@ -780,7 +780,7 @@ $\Sigma$-terms.  In order to do so, three prerequisites need to be satisfied:
       \item The relation $<$ is \blue{total}, that is we have 
             \\[0.2cm]
             \hspace*{1.3cm}
-            $f < g \,\vee\, g < f$ \quad for all function symbols $f$ and $g$.
+            $f < g \,\vee\, f = g \,\vee\, g < f$ \quad for all function symbols $f$ and $g$.
       \end{enumerate}
 \item The order $<$ on the function symbols has to be \blue{admissible} with respect to the weight function
       $w$, i.e. the following condition needs to be satisfied:
@@ -865,7 +865,7 @@ $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce th
         to the new subterm $r_2\mu$ using the rule $l_2 \approx r_2$:      
         \\[0.2cm]
         \hspace*{1.3cm}
-        $s = l_1\mu[u \leftarrow r_2\mu]$.
+        $s = l_1\mu[u \mapsto r_2\mu]$.
   \item The term $t$ results from rewriting the term $l_1\mu$ into the term $r_1\mu$ using the rule
         $l_1 \approx r_1$, i.e.~we have
         \\[0.2cm]
