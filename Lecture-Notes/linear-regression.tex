@@ -28,9 +28,9 @@ $i$-th car.  We call $x$ the \blue{independent variable}, \index{independent var
 $\mathbf{x} := \langle x_1, \cdots, x_m \rangle^\top$ \quad and \quad
 $\mathbf{y} := \langle y_1, \cdots, y_m \rangle^\top$.
 \\[0.2cm]
-Here, the operator $^\top$ is interpreted as the \href{https://en.wikipedia.org/wiki/Transpose}{transposition operator},
-\index{transposition operator}
-i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.  By using the transposition operator I am
+Here, the postfix operator $^\top$ is interpreted as the
+\href{https://en.wikipedia.org/wiki/Transpose}{transposition operator}, \index{transposition operator}
+i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.  By using the transposition operator we are
 able to write these vectors in a single line.
 
 In linear regression, we use a \blue{linear hypothesis} \index{linear hypothesis}
@@ -52,7 +52,7 @@ We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the
 is minimized.  It can be shown that the solution to this minimization problem is given as follows:
 \begin{equation}
   \label{eq:theta0}
-  \ds \vartheta_1 = r_{x,y} \cdot \frac{s_y}{s_x} \quad \mbox{and} \quad
+  \ds \vartheta_1 = r_{x,y} \cdot \frac{\,s_y\,}{s_x} \quad \mbox{and} \quad
       \vartheta_0 = \bar{\mathbf{y}} - \vartheta_1 \cdot \bar{\mathbf{x}}.
 \end{equation}
 This solution makes use of the values $r_{x,y}$, $s_x$, and $s_y$.  In order to define these values, we first
@@ -202,10 +202,10 @@ determine the fuel consumption of cars.  \myFig{cars.csv} shows the head of the 
 which I have adapted from the file
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{http://faculty.marshall.usc.edu/gareth-james/ISL/Auto.csv}{\texttt{http://faculty.marshall.usc.edu/gareth-james/ISL/Auto.csv}}.
+\href{https://www.statlearning.com/s/Auto.csv}{\texttt{https://www.statlearning.com/s/Auto.csv}}.
 \\[0.2cm]
 \myFig{cars.csv} shows the column headers and the first ten data entries contained in this file.  
-Altogether, this file contains data 392 different car models.
+Altogether, this file contains data of 392 different car models.
 
 \begin{figure}[!ht]
 \centering
@@ -264,7 +264,7 @@ To this end, I have written the function \texttt{simple\_linear\_regression} sho
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.0cm,
@@ -345,7 +345,7 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -360,10 +360,8 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
         kpl          = []
         displacement = []
         for row in reader:
-            if line_count != 0:  # skip header of file
-                kpl .append(float(row[0]) * 0.00425144) 
-                displacement.append(float(row[2]) * 0.0163871)  
-            line_count += 1
+            kpl         .append(float(row[0]) * 0.00425144) 
+            displacement.append(float(row[2]) * 0.0163871)  
     m  = len(displacement)
     X  = np.array(displacement)
     Y  = np.array([1 / kpl[i] for i in range(m)])
@@ -395,7 +393,8 @@ In order to use the function we can use the code that is shown in
 \item The independent variable \texttt{X} is given by the engine displacement. 
       In order to be able to use \texttt{NumPy} features later we convert this list into a \texttt{NumPy} array.
 \item The dependent variable \texttt{Y} is given by the inverse of the variable \texttt{kph}.
-\item Finally, the coefficient of determination $R^2$ is computed using the function \texttt{simple\_linear\_regression}.
+\item Finally, the coefficient of determination $R^2$ is computed. Here we use the function \hspace*{\fill} \linebreak
+      \texttt{simple\_linear\_regression} that is shown in \myFig{simple_linear_regression.py}.
 \end{enumerate}
 In the same way as we have computed the coefficient of determination that measures how the fuel consumption is
 influenced by the engine displacement we can also compute the coefficient of determination for other variables
@@ -786,7 +785,7 @@ takes four arguments:
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,

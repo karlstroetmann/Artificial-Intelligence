@@ -12,7 +12,7 @@ mpg,cyl,displacement,hp,weight,acc,year,name
 15.0,8,383.0,170.0,3563.0,10.0,70,dodge challenger se
 14.0,8,340.0,160.0,3609.0,8.0,70,plymouth 'cuda 340
 15.0,8,400.0,150.0,3761.0,9.5,70,chevrolet monte carlo
-14.0,8,455.0,225.0,3086.0,10.0,70,buick estate wagon (sw)
+14.0,8,455.0,225.0,3086.0,10.0,70,buick estate wagon 
 24.0,4,113.0,95.00,2372.0,15.0,70,toyota corona mark ii
 22.0,6,198.0,95.00,2833.0,15.5,70,plymouth duster
 18.0,6,199.0,97.00,2774.0,15.5,70,amc hornet
@@ -40,11 +40,11 @@ mpg,cyl,displacement,hp,weight,acc,year,name
 14.0,8,400.0,175.0,4464.0,11.5,71,pontiac catalina brougham
 14.0,8,351.0,153.0,4154.0,13.5,71,ford galaxie 500
 14.0,8,318.0,150.0,4096.0,13.0,71,plymouth fury iii
-12.0,8,383.0,180.0,4955.0,11.5,71,dodge monaco (sw)
-13.0,8,400.0,170.0,4746.0,12.0,71,ford country squire (sw)
-13.0,8,400.0,175.0,5140.0,12.0,71,pontiac safari (sw)
-18.0,6,258.0,110.0,2962.0,13.5,71,amc hornet sportabout (sw)
-22.0,4,140.0,72.00,2408.0,19.0,71,chevrolet vega (sw)
+12.0,8,383.0,180.0,4955.0,11.5,71,dodge monaco 
+13.0,8,400.0,170.0,4746.0,12.0,71,ford country squire 
+13.0,8,400.0,175.0,5140.0,12.0,71,pontiac safari 
+18.0,6,258.0,110.0,2962.0,13.5,71,amc hornet sportabout 
+22.0,4,140.0,72.00,2408.0,19.0,71,chevrolet vega 
 19.0,6,250.0,100.0,3282.0,15.0,71,pontiac firebird
 18.0,6,250.0,88.00,3139.0,14.5,71,ford mustang
 23.0,4,122.0,86.00,2220.0,14.0,71,mercury capri 2000
@@ -70,19 +70,19 @@ mpg,cyl,displacement,hp,weight,acc,year,name
 12.0,8,350.0,160.0,4456.0,13.5,72,oldsmobile delta 88 royale
 13.0,8,400.0,190.0,4422.0,12.5,72,chrysler newport royal
 19.0,3,70.00,97.00,2330.0,13.5,72,mazda rx2 coupe
-15.0,8,304.0,150.0,3892.0,12.5,72,amc matador (sw)
-13.0,8,307.0,130.0,4098.0,14.0,72,chevrolet chevelle concours (sw)
-13.0,8,302.0,140.0,4294.0,16.0,72,ford gran torino (sw)
-14.0,8,318.0,150.0,4077.0,14.0,72,plymouth satellite custom (sw)
-18.0,4,121.0,112.0,2933.0,14.5,72,volvo 145e (sw)
-22.0,4,121.0,76.00,2511.0,18.0,72,volkswagen 411 (sw)
-21.0,4,120.0,87.00,2979.0,19.5,72,peugeot 504 (sw)
-26.0,4,96.00,69.00,2189.0,18.0,72,renault 12 (sw)
-22.0,4,122.0,86.00,2395.0,16.0,72,ford pinto (sw)
-28.0,4,97.00,92.00,2288.0,17.0,72,datsun 510 (sw)
-23.0,4,120.0,97.00,2506.0,14.5,72,toyouta corona mark ii (sw)
-28.0,4,98.00,80.00,2164.0,15.0,72,dodge colt (sw)
-27.0,4,97.00,88.00,2100.0,16.5,72,toyota corolla 1600 (sw)
+15.0,8,304.0,150.0,3892.0,12.5,72,amc matador 
+13.0,8,307.0,130.0,4098.0,14.0,72,chevrolet chevelle concours 
+13.0,8,302.0,140.0,4294.0,16.0,72,ford gran torino 
+14.0,8,318.0,150.0,4077.0,14.0,72,plymouth satellite custom 
+18.0,4,121.0,112.0,2933.0,14.5,72,volvo 145e 
+22.0,4,121.0,76.00,2511.0,18.0,72,volkswagen 411 
+21.0,4,120.0,87.00,2979.0,19.5,72,peugeot 504 
+26.0,4,96.00,69.00,2189.0,18.0,72,renault 12 
+22.0,4,122.0,86.00,2395.0,16.0,72,ford pinto 
+28.0,4,97.00,92.00,2288.0,17.0,72,datsun 510 
+23.0,4,120.0,97.00,2506.0,14.5,72,toyouta corona mark ii 
+28.0,4,98.00,80.00,2164.0,15.0,72,dodge colt 
+27.0,4,97.00,88.00,2100.0,16.5,72,toyota corolla 1600 
 13.0,8,350.0,175.0,4100.0,13.0,73,buick century 350
 14.0,8,304.0,150.0,3672.0,11.5,73,amc matador
 13.0,8,350.0,145.0,3988.0,13.0,73,chevrolet malibu
@@ -134,10 +134,10 @@ mpg,cyl,displacement,hp,weight,acc,year,name
 16.0,6,258.0,110.0,3632.0,18.0,74,amc matador
 18.0,6,225.0,105.0,3613.0,16.5,74,plymouth satellite sebring
 16.0,8,302.0,140.0,4141.0,14.0,74,ford gran torino
-13.0,8,350.0,150.0,4699.0,14.5,74,buick century luxus (sw)
-14.0,8,318.0,150.0,4457.0,13.5,74,dodge coronet custom (sw)
-14.0,8,302.0,140.0,4638.0,16.0,74,ford gran torino (sw)
-14.0,8,304.0,150.0,4257.0,15.5,74,amc matador (sw)
+13.0,8,350.0,150.0,4699.0,14.5,74,buick century luxus 
+14.0,8,318.0,150.0,4457.0,13.5,74,dodge coronet custom 
+14.0,8,302.0,140.0,4638.0,16.0,74,ford gran torino 
+14.0,8,304.0,150.0,4257.0,15.5,74,amc matador 
 29.0,4,98.00,83.00,2219.0,16.5,74,audi fox
 26.0,4,79.00,67.00,1963.0,15.5,74,volkswagen dasher
 26.0,4,97.00,78.00,2300.0,14.5,74,opel manta
@@ -286,10 +286,10 @@ mpg,cyl,displacement,hp,weight,acc,year,name
 17.6,8,302.0,129.0,3725.0,13.4,79,ford ltd landau
 16.5,8,351.0,138.0,3955.0,13.2,79,mercury grand marquis
 18.2,8,318.0,135.0,3830.0,15.2,79,dodge st. regis
-16.9,8,350.0,155.0,4360.0,14.9,79,buick estate wagon (sw)
-15.5,8,351.0,142.0,4054.0,14.3,79,ford country squire (sw)
-19.2,8,267.0,125.0,3605.0,15.0,79,chevrolet malibu classic (sw)
-18.5,8,360.0,150.0,3940.0,13.0,79,chrysler lebaron town @ country (sw)
+16.9,8,350.0,155.0,4360.0,14.9,79,buick estate wagon 
+15.5,8,351.0,142.0,4054.0,14.3,79,ford country squire 
+19.2,8,267.0,125.0,3605.0,15.0,79,chevrolet malibu classic 
+18.5,8,360.0,150.0,3940.0,13.0,79,chrysler lebaron town @ country 
 31.9,4,89.00,71.00,1925.0,14.0,79,vw rabbit custom
 34.1,4,86.00,65.00,1975.0,15.2,79,maxda glc deluxe
 35.7,4,98.00,80.00,1915.0,14.4,79,dodge colt hatchback custom
@@ -335,7 +335,7 @@ mpg,cyl,displacement,hp,weight,acc,year,name
 32.4,4,107.0,72.00,2290.0,17.0,80,honda accord
 27.2,4,135.0,84.00,2490.0,15.7,81,plymouth reliant
 26.6,4,151.0,84.00,2635.0,16.4,81,buick skylark
-25.8,4,156.0,92.00,2620.0,14.4,81,dodge aries wagon (sw)
+25.8,4,156.0,92.00,2620.0,14.4,81,dodge aries wagon 
 23.5,6,173.0,110.0,2725.0,12.6,81,chevrolet citation
 30.0,4,135.0,84.00,2385.0,12.9,81,plymouth reliant
 39.1,4,79.00,58.00,1755.0,16.9,81,toyota starlet
