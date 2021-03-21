@@ -8,6 +8,11 @@ computes various \blue{features} \index{feature} of the email and then uses thes
 the email is likely to be spam.  For example, a possible feature would be the number of occurrences of the word
 ``\texttt{pharmacy}'' in the text of the email.
 
+Another famous example of classification is \blue{character recognition}.  In character recognition, the
+input is an image depicting a character.  This image is usually coded as a vector of grey values.  The task is
+then to recognize the letter shown.  While spam detection is a \blue{binary} classification problem, character
+recognition is a \blue{multi-class} classification problem, since there are 26 different characters.
+
 \section{Introduction}
 Formally, the \blue{classification problem} \index{classification problem} 
 in machine learning can be stated as follows:  We are given a
@@ -107,13 +112,13 @@ for most objects of $o \in S$ but not for all of them.  The \blue{accuracy} \ind
 defined as the fraction of those objects that are classified correctly, i.e.~
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathtt{accuracy} := \frac{\;\mathtt{len}\bigl( \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\bigr)\;}{\mathtt{len}(S)}$.
+$\ds \mathtt{accuracy} := \frac{\;\mathtt{card}\bigl( \{ o \in S \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\bigr)\;}{\mathtt{card}(S)}$.
 \\[0.2cm]
 If the set $S$ is infinite, this equation has to be interpreted as a limit, i.e.~we can define
 $S_n$ as the set of strings that have a length of at most $n$.  Then, the accuracy can be defined as a limit:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathtt{accuracy} := \lim\limits_{n\rightarrow\infty}\frac{\mathtt{len}\bigl(\{ o \in S_n \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\bigr)\;}{\mathtt{len}(S_n)}$.
+$\ds \mathtt{accuracy} := \lim\limits_{n\rightarrow\infty}\frac{\mathtt{card}\bigl(\{ o \in S_n \mid \mathtt{guess}(o) = \mathtt{classify}(o)\}\bigr)\;}{\mathtt{card}(S_n)}$.
 \\[0.2cm]
 The function $\mathtt{model}$ is usually determined by a set of \blue{parameters} or \blue{weights} $\mathbf{w}$. In
 this case, we have
@@ -435,7 +440,7 @@ holds, then we want to choose the weight vector $\mathbf{w}$ in a way such that 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathtt{accuracy}(\mathbf{w}) := 
-\frac{\;\mathtt{len}\bigl(\bigl\{ \mathbf{o} \in S \bigm| \mathtt{model}(\mathtt{feature}\bigl(\mathbf{o}),\mathbf{w}\bigr) = \mathtt{classify}(\mathbf{o})\bigr\}\bigr)\;}{\mathtt{len}(S)}$
+\frac{\;\mathtt{card}\bigl(\bigl\{ \mathbf{o} \in S \bigm| \mathtt{model}(\mathtt{feature}\bigl(\mathbf{o}),\mathbf{w}\bigr) = \mathtt{classify}(\mathbf{o})\bigr\}\bigr)\;}{\mathtt{card}(S)}$
 \\[0.2cm]
 is maximized.  However, there is a snag:  The accuracy is not a smooth function of the weight vector
 $\mathbf{w}$.  It can't be a smooth function because the number of errors of our model is a natural number and not a real number
@@ -628,7 +633,7 @@ $\mathbf{x} \cdot \mathbf{w} = \sum\limits_{i=1}^D x_i \cdot w_i$.
 To simplify calculations, it is assumed that $\mathbf{x}$ contains a \blue{constant feature} \index{constant feature}
 that always takes the value of $1$.
 Seeing this model the first time you might think that this model is not very general and that it can only be
-applied in very special circumstances.  However, the fact is that the features $x_i$ can be functions of arbitrary complexity
+applied in very special circumstances.  However,  the features $x_i$ can be functions of arbitrary complexity
 and hence this model is much more general than it appears on first sight.
 
 We assume that $y$ can only take the values $+1$ or $-1$,  e.g.~in the example of spam detection $y = 1$ if the
