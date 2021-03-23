@@ -1512,7 +1512,7 @@ To put this equation differently, once we known that $C$ holds, when it comes to
 then it does not matter whether $B$ holds or not.  Now the important assumption that a \blue{naive Bayes classifier} 
 makes is that in order to estimate the class $C$ of an object $o$ that has features $f_1$, $\cdots$, $f_m$ it
 is assumed that the features $f_1, \cdots, f_m$ are conditionally independent once the class is known.  In
-most applications of naive Bayes classifiers this assumption is not true because there might be some weal
+most applications of naive Bayes classifiers this assumption is not true because there might be some weak
 correlation between the features.  That explains why naive Bayes classifiers are called \blue{naive}.  Still,
 in practise the conditional independence of the features given 
 the class is often approximately true and therefore these classifiers are useful.  If we make the
@@ -1524,7 +1524,7 @@ $
 \begin{array}[t]{lcll}
       P(C\;|\; f_1 \wedge \cdots \wedge f_m) 
 & = & \ds \frac{P(f_1 \wedge \cdots \wedge f_m \;|\; C) \cdot P(C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
-& = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; f_{i+1} \wedge \cdots \wedge f_m \wedge C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
+& = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; f_{i+1} \wedge \cdots \wedge f_m \wedge C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.4cm]
 & = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) 
 \end{array}
 $
