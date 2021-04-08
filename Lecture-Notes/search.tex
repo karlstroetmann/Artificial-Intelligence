@@ -57,10 +57,10 @@ After that we introduce various algorithms for solving search problems.  In part
   \index{path}
   The \blue{length} of this path is defined as the length of this list minus 1, i.e.~the path  
   $[s_1, \cdots, s_n]$ has length $n-1$.  The reason for defining the length of this path as $n-1$ and not $n$ 
-  is that the path consists on $n-1$ \blue{edges} \index{edge} of the form $\langle s_i, s_{i+1} \rangle$ where
+  is that the path consists of $n-1$ \blue{edges} \index{edge} of the form $\langle s_i, s_{i+1} \rangle$ where
   $i \in \{1, \cdots, n-1\}$.
   A path $[s_1, \cdots, s_n]$ is a \blue{solution} \index{solution, of a search problem}
-  to the search problem $P$ iff \index{search problem, solution}
+  to the search problem $\mathcal{P}$ iff \index{search problem, solution}
   the following conditions are satisfied:
   \begin{enumerate}
   \item $s_1 = \mathtt{start}$, i.e.~the first element of the path is the start state.
@@ -303,7 +303,7 @@ $4 \times 4$ sliding puzzle has
 \hspace*{1.3cm}
 $16!/2 = 10,461,394,944,000$
 \\[0.2cm]
-different states reachable from a given start state.  If a state is represented as matrix containing
+different states reachable from a given start state.  If a state is represented as a matrix containing
 16 numbers and we store every number using just 4 bits, we still need $16 \cdot 4 = 64$ bits or 8
 bytes for every state.  Hence we would need a total of
 \\[0.2cm]
@@ -694,7 +694,7 @@ previous implementation.  Furthermore, only 76 megabytes of memory are used for 
 
 
 \section{Depth First Search}
-To overcome the memory limitations of breadthbreadth first search, the
+To overcome the memory limitations of breadth first search, the
 \href{https://en.wikipedia.org/wiki/Depth-first_search}{depth first search} algorithm \index{depth first search}
 has been developed.  Depth first search is abbreviated as \ac{dfs}.  There are two ideas involved when going from
 breadth first search to depth first search:
@@ -757,7 +757,7 @@ The implementation of  \texttt{search} works as follows:
       path that leads from \texttt{start} to $s$.  
 \item Initially, \texttt{Stack} only contains the state \texttt{start}.
 \item As long as \texttt{Stack} is not empty, the \texttt{state} on top of \texttt{Stack} is replaced by all
-      states that be reached in one step from \texttt{state}.  However, in order to prevent depth first search
+      states that can be reached in one step from \texttt{state}.  However, in order to prevent depth first search
       to run in circles, only those states \texttt{ns} from the set \texttt{next\_states(state)} are appended to
       \texttt{Stack} that have not been encountered previously.  This is checked by testing 
       whether \texttt{ns} is in the domain of \texttt{Parent}.
@@ -916,14 +916,14 @@ implements this strategy.  We proceed to discuss the details of this program.
 \item The function $\texttt{search}$ initializes the variable $\texttt{limit}$ to 1 and tries to find a solution
       to the search problem that has a length that is less than or equal to $\texttt{limit}$.  If a solution is
       found, it is returned.  Otherwise, the variable $\texttt{limit}$ is incremented by one and a
-      new instance of depth first search is started.  This process continues until either a 
+      new instance of depth first search is started.  This process continues until either 
       a solution is found or the sun rises in the west.
 \item The function $\texttt{dls}$ implements a recursive version of depth first search but takes care to compute only
       those paths that have a length of at most $\texttt{limit}$.  The name $\texttt{dls}$ is short for 
       \blue{\underline{d}epth \underline{l}imited \underline{s}earch}.  If the $\texttt{Path}$ has reached a length
       of $\texttt{limit}$ but does not end in $\texttt{goal}$, the function returns \texttt{None} instead of
       trying to extend this $\texttt{Path}$.  Otherwise, the implementation is the same as the recursive
-      implementation of depth first search that was shown in Figure \myFig{Depth-First-Search.ipynb}
+      implementation of depth first search that was shown in \myFig{Depth-First-Search.ipynb}
       and that has been discussed in the previous section.
 
 \end{enumerate}
@@ -1097,7 +1097,7 @@ keeping two trillion states in memory is impossible on most devices.
 \end{figure}
 
 Figure \ref{fig:Bidirectional-BFS.ipynb} on page \pageref{fig:Bidirectional-BFS.ipynb} shows the implementation
-of bidirectional breadth first search.  Essentially, we have two copies of the breadth first program shown in
+of bidirectional breadth first search.  Essentially, we have two copies of the breadth first search program shown in
 Figure \ref{fig:Breadth-First-Search.ipynb}.  However, since the information that was stored in the set
 $\texttt{Visited}$ in the implementation of \ac{bfs} shown in Figure \ref{fig:Breadth-First-Search.ipynb} is
 also available in the dictionary $\texttt{Parent}$, we have removed the variable $\texttt{Visited}$ in our
@@ -1117,7 +1117,7 @@ Let us discuss the details of the implementation.
       $\texttt{FrontierA}$ and the state $\texttt{ns}$ has already been encountered during the search that started
       from $\texttt{goal}$, then a path leading from $\texttt{start}$ to $\texttt{goal}$ has been found and this path
       is returned.  The function \texttt{combinePaths} that computes this path by combining the path that leads
-      from $\texttt{start}$ to $\texttt{ns}$ and then from $\texttt{ns}$ to $\texttt{goal}$ to is shown in Figure
+      from $\texttt{start}$ to $\texttt{ns}$ and then from $\texttt{ns}$ to $\texttt{goal}$ is shown in Figure
       \ref{fig:combine-paths.stlx} on page \pageref{fig:combine-paths.stlx}.
 \item Next, the same computation is done with the role of the states $\texttt{start}$ and $\texttt{goal}$ exchanged.
 \end{enumerate}
@@ -1273,7 +1273,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       As every misplaced tile must be moved at least once and every step in the sliding puzzle moves at most
       one tile, it is obvious that this heuristic is admissible.  It is also consistent.  First, the
       $\texttt{goal}$ has no misplaced tiles, hence its heuristic is $0$.  Second, in every step of the sliding
-      puzzle  only one tile is moved.  Therefore the number of misplaced tiles in two neighbouring state can
+      puzzle  only one tile is moved.  Therefore the number of misplaced tiles in two neighbouring states can
       differ by at most one and hence the inequality
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1292,7 +1292,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       of the difference vector $\langle x_2 - x_1, y_2 - y_1 \rangle$.
       If we associate \href{https://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Cartesian coordinates} with
       the tiles of the sliding puzzle such that the tile in the upper left corner has coordinates
-      $\pair(1, 1)$ and the coordinates of the tile in the lower right corner is $\pair(3, 3)$, then
+      $\pair(1, 1)$ and the coordinates of the tile in the lower right corner are $\pair(3, 3)$, then
       the Manhattan distance of two positions measures how many steps it takes to move a tile from
       the first position to the second position if we are allowed to move the tile horizontally
       or vertically regardless of the fact that the intermediate positions might be blocked by
@@ -1313,8 +1313,8 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       \hspace*{1.3cm}
       $\ds h(s) := \sum\limits_{t=1}^8 d_1\bigl(\mathtt{pos}(t,s),\, \mathtt{pos}(t, \mathtt{goal})\bigr)$.
       \\[0.2cm]
-      The Manhattan heuristic measure the number of moves that would be needed if we wanted to put every tile
-      of $s$ into its final positions and if we were allowed to slide tiles over each other.  Figure
+      The Manhattan heuristic measures the number of moves that would be needed if we wanted to put every tile
+      of $s$ into its final position and if we were allowed to slide tiles over each other.  Figure
       \ref{fig:manhattan.py} on page \pageref{fig:manhattan.py} shows how the Manhattan distance can be
       computed.  The code given in that figure works for a general $n \times n$ sliding puzzle.  It takes two
       states $\texttt{stateA}$ and $\texttt{stateB}$ and computes the Manhattan distance between these states.
@@ -1631,7 +1631,7 @@ After the variables described above have been initialized, the $\mathrm{A}^*$ al
             \texttt{state} and then through \texttt{ns}, the estimated length of this solution would be
             \\[0.2cm]
             \hspace*{1.3cm}
-            $\mathtt{stateDist} + 1 + \mathtt{heuristic}(\mathtt{neighbour}, \mathtt{goal})$.
+            $\mathtt{stateDist} + 1 + \mathtt{heuristic}(\mathtt{ns}, \mathtt{goal})$.
             \\[0.2cm]
             Therefore this value is stored in \texttt{newEstimate}.
       \item Next, we need to check whether this new solution that first passes through \texttt{state} and
@@ -1660,7 +1660,7 @@ Furthermore, the good news about A$^*$ search is that:
 \item The path which is found is optimal.
 \item Only $10,061$ states are touched in the search for a solution.  This is more than a tenfold 
       reduction when compared with breadth first search.  As a result, the $A^*$ search algorithm uses only 6
-      megabyte of memory.
+      megabytes of memory.
 \end{enumerate}
 
 \subsection{Completeness and Optimality of $\textrm{A}^*$ Search}
@@ -2032,7 +2032,7 @@ When we run bidirectional $\mathrm{A}^*$ search for the $3 \times 3$ sliding puz
 \myFig{8-puzzle.pdf}, the program takes 150 milliseconds and uses only $2,963$ states.  Therefore, I have tried
 to solve the $4 \times 4$ sliding puzzle shown in \myFig{start-goal.stlx} using
 bidirectional $\mathrm{A}^*$ search.  A solution of $40$ steps was found in $1.3$ seconds.
-Only $17,626$ states had to be processed to compute this solution!  As the shortest path connection
+Only $17,626$ states had to be processed to compute this solution!  As the shortest path connecting
 \texttt{start} and \texttt{goal} has a length of 36 steps, this shows that bidirectional $\mathrm{A}^*$ search
 does not find the shortest path.
 
@@ -2179,7 +2179,7 @@ We proceed to discuss the function \texttt{dl\_search}.  This function takes 5 p
 \item \texttt{heuristic} is a function taking two states as arguments.  The invocation
       $\texttt{heuristic}(s_1, s_2)$ computes an \blue{estimate} of the distance between the states $s_1$ and $s_2$.  It is
       assumed that this estimate is optimistic, i.e.~the value returned by $\texttt{heuristic}(s_1, s_2)$
-      is less or equal than the true distance between $s_1$ and $s_2$.
+      is less than or equal to the true distance between $s_1$ and $s_2$.
 \end{enumerate}
 We proceed to describe the implementation of the function \texttt{dl\_search}
 \begin{enumerate}
@@ -2211,7 +2211,7 @@ We proceed to describe the implementation of the function \texttt{dl\_search}
       successful, the resulting path is returned.  Otherwise, the search returns the minimum distance that is
       needed to reach the state \texttt{goal} from the state \texttt{start} on a path via the state
       \texttt{ns}.  If this distance is smaller than the distance \texttt{smallest} that is returned from
-      visiting previous neighbouring nodes, the variable \texttt{smallest} variable is updated accordingly.
+      visiting previous neighbouring nodes, the variable \texttt{smallest} is updated accordingly.
       This way, if the \texttt{for} loop is not able to return a path leading to \texttt{goal}, the variable
       \texttt{smallest} contains a lower bound for the distance that is needed to reach \texttt{goal} by a path that
       extends the given \texttt{Path}. 
@@ -2408,7 +2408,7 @@ algorithm takes about $0.14$ seconds to solve the puzzle.  For the $4 \times 4$ 
 is allowed to visit at most $3\,000$ states, the algorithm takes less than $1.33$ seconds.
  $\mathrm{A}^*$-$\mathrm{IDA}^*$ is not optimal.  For example the solution computed for 
 the $4 \times 4$ sliding puzzle has a length of 40, while the shortest solution for the given problem only
-requires 36 step.
+requires 36 steps.
 
 
 \exercise
