@@ -165,7 +165,7 @@ the game is drawn.  In this section we present two different implementations of 
 \caption{A \textsl{Python} implementation of tic-tac-toe.}
 \label{fig:Tic-Tac-Toe.ipynb}
 \end{figure}
- 
+ \FloatBarrier
 
 \begin{enumerate}
 \item The variable $\texttt{Players}$ stores the list of players.  Traditionally, the players in
@@ -338,6 +338,7 @@ this implementation.
 \caption{Tic-Tac-Toe implemented by a bitboard.}
 \label{fig:Tic-Tac-Toe-Bitboard.ipynb}
 \end{figure}
+\FloatBarrier
 
 \begin{enumerate}
 \item When we use bitboards to implement tic-tac-toe it is more convenient to store the players as numbers. The
@@ -458,6 +459,7 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
 \caption{The Minimax algorithm.}
 \label{fig:Minimax.ipynb}
 \end{figure}
+\FloatBarrier
 
 \begin{enumerate}
 \item Given a player $\texttt{p}$, the function $\texttt{other}$ computes the other player,
@@ -552,6 +554,7 @@ $p$, we have to take the negative of  $\texttt{value}(n, o)$.
 \caption{The function \texttt{play\_game}.}
 \label{fig:Minimax.ipynb:play_game}
 \end{figure}
+\FloatBarrier
 
 \myFig{Minimax.ipynb:play_game} presents the implementation of the function $\texttt{play\_game}$ that is used to play a game.
 \begin{enumerate}
@@ -697,6 +700,7 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
 \caption{$\alpha$-$\beta$-Pruning.}
 \label{fig:Alpha-Beta-Pruning.ipynb:alphaBeta}
 \end{figure}
+\FloatBarrier
 
 \noindent
 We proceed to discuss the implementation of the function $\texttt{alphaBeta}$, which is shown in
@@ -768,6 +772,8 @@ We proceed to discuss the implementation of the function $\texttt{alphaBeta}$, w
 \caption{The function $\mathtt{value}$ that memoizes the function $\mathtt{alphaBeta}$.}
 \label{fig:Alpha-Beta-Pruning.ipynb:value}
 \end{figure}
+\FloatBarrier
+
 The function $\texttt{value}$ shown in Figure \ref{fig:Alpha-Beta-Pruning.ipynb:value} is merely a wrapper of
 the function $\mathtt{alphaBeta}$ that memoizes the results of $\mathtt{alphaBeta}$.  This is more complicated
 now because of the parameters $\alpha$ and $\beta$.  Of course, we could just use the decorator
@@ -882,6 +888,8 @@ the given $\texttt{State}$ using our \blue{evaluation function}.  This leads to 
 \caption{Depth-limited $\alpha$-$\beta$-pruning.}
 \label{fig:Game.ipynb}
 \end{figure}
+\FloatBarrier
+
 When we compare this Figure with \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta}, the only difference is in line 4
 where we test whether the $\mathtt{limit}$ is $0$.  In this case, instead of trying to recursively evaluate the
 states reachable from $\mathtt{State}$, we evaluate the $\mathtt{State}$ with our $\mathtt{heuristic}$ function.
