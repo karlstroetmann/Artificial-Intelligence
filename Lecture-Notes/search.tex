@@ -428,8 +428,8 @@ Informally, breadth first search, abbreviated as \ac{bfs}, works as follows: \in
       Then, the states that had been previously present in $\texttt{Frontier}$ are removed.
       These old states are then added to the set $\texttt{Visited}$.
 \end{enumerate}
-In order to avoid loops, an implementation of breadth first search keeps track of those states that have
-been visited in the set $\texttt{Visited}$.  Once a state has been added to
+In order to avoid going around in circles, an implementation of breadth first search keeps track of those
+states that have been visited in the set $\texttt{Visited}$.  Once a state has been added to
 the set $\texttt{Visited}$,  it will never be revisited again.
 Furthermore, in order to keep track of the path leading to the goal, we utilize a dictionary called
 $\texttt{Parent}$.  For every state $s$ that is in $\texttt{Frontier}$, $\mathtt{Parent}[s]$ is the state that
@@ -606,7 +606,9 @@ Both of these claims can be shown simultaneously.  Consider the implementation o
 search shown in Figure \ref{fig:Breadth-First-Search.ipynb}.  We prove by induction on the number of
 iterations of the \texttt{while} loop that after $n$ iterations of the \texttt{while} loop,
 the set $\texttt{Frontier}$ contains exactly those states that have a distance of $n$ to the state
-$\texttt{start}$.  
+$\texttt{start}$.
+\pagebreak
+
 \begin{description}
 \item[Base Case:] $n = 0$.
 
@@ -636,7 +638,7 @@ $\texttt{Visited}$.  In many cases, the state space is so big that this is not p
 impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzle using breadth first search.
 
 \subsection{A Queue Based Implementation of Breadth First Search}
-In the literature, for example in Figure 3.11 of Russell \& Norvig \cite{russell:2009}, breadth
+In the literature, for example in Figure 3.9 of Russell \& Norvig \cite{russell:2020}, breadth
 first search is often implemented using a
 \href{https://en.wikipedia.org/wiki/Queue_(abstract_data_type)}{queue} data structure.
 Figure \ref{fig:Breadth-First-Search-Queue.ipynb} on page
@@ -690,7 +692,7 @@ previous implementation.  Furthermore, only 76 megabytes of memory are used for 
 \caption{A queue based implementation of breadth first search.}
 \label{fig:Breadth-First-Search-Queue.ipynb}
 \end{figure}
-
+\FloatBarrier
 
 
 \section{Depth First Search}
@@ -704,13 +706,9 @@ breadth first search to depth first search:
       \ac{dfs} replaces this queue by a stack.  This way, \ac{dfs} tries to get as far away from the state
       \texttt{start} as early as possible.  In order to prevent loops, we still have the parent dictionary.
 
-      Since a stack can be implemented as an ordinary \textsl{Python3} list, we don't need the module
+      Since a stack can be implemented as an ordinary \textsl{Python} list, we don't need the module
       \texttt{deque} any more. 
 \end{enumerate}
-The resulting algorithm is shown in Figure
-\ref{fig:Depth-First-Search-Stack.ipynb} on page \pageref{fig:Depth-First-Search-Stack.ipynb}.  Basically, in this
-implementation, a path is searched to its end before trying an alternative.  This way, we might be able to find a
-$\texttt{goal}$ that is far away from $\texttt{start}$ without exploring the whole state space.
 
 \begin{figure}[!ht]
 \centering
@@ -746,6 +744,13 @@ $\texttt{goal}$ that is far away from $\texttt{start}$ without exploring the who
 \caption{The depth first search algorithm.}
 \label{fig:Depth-First-Search-Stack.ipynb}
 \end{figure}
+\FloatBarrier
+
+The resulting algorithm is shown in Figure
+\ref{fig:Depth-First-Search-Stack.ipynb} on page \pageref{fig:Depth-First-Search-Stack.ipynb}.  Basically, in this
+implementation, a path is searched to its end before trying an alternative.  This way, we might be able to find a
+$\texttt{goal}$ that is far away from $\texttt{start}$ without exploring the whole state space.
+
 
 
 The implementation of  \texttt{search} works as follows:
@@ -1152,7 +1157,7 @@ Up to now, all the search algorithms we have discussed have been essentially bli
 all of its neighbours, they had no idea which of the neighbours they should pick because they had no conception
 which of these neighbours might be more promising than the other neighbours.  Search algorithms that know nothing
 about the distance of a state to the goal are called \blue{blind}.  \index{blind search}
-Russell and Norvig \cite{russell:2009} use the name \blue{uninformed search} instead of blind search.
+Russell and Norvig \cite{russell:2020} use the name \blue{uninformed search} instead of blind search.
 \index{uninformed search} 
 
 If a human tries to solve a
