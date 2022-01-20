@@ -935,10 +935,10 @@ implements this strategy.  We proceed to discuss the details of this program.
 The nice thing about the program presented in this section is the fact that it uses only 136 kilobytes of
 memory.  The reason is that the $\texttt{Path}$ can never have a size that is longer than $\texttt{limit}$.
 However, when we run this program to solve the $3 \times 3$ sliding puzzle, the algorithm takes
-about 15 minutes.  However, it needs only 144 kilobytes.  There are two reasons for the long computation time:
+about 7 minutes.  There are two reasons for the long computation time:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
-      to 31.  Essentially, all the computations done with a limit less than $31$ are wasted. However,
+      to 31.  Essentially, all the computations done with a limit less than $32$ are wasted. However,
       this process is not as wasteful as we might first expect.  To see this, assume that the number of states
       reached is doubled\footnote{
         When we run breadth first search for the sliding puzzle we can observe that at least at the beginning
@@ -965,7 +965,8 @@ line 2 of \myFig{Iterative-Deepening.ipynb}.  If we set this value to $31$, whic
 value that is needed, the program needs about 5 minutes to compute the solution.  However, if this value is set to
 $32$, then the program is able to find the solution in less than two minutes.  The reason is that in the case that 
 $\texttt{limit}$ has the value $31$, the program has to check all possible lists $\texttt{Path}$ that have a
-length of at most $31$.  However, if $\texttt{limit}$ has the value $32$, it is sufficient to find any
+length of at most $31$.  Unfortunately, there is no such list, so all possible states that have a distance of
+at most $30$ from $\texttt{start}$ have to be explored. However, if $\texttt{limit}$ has the value $32$, it is sufficient to find any
 $\texttt{Path}$ of length $32$ that leads to the $\texttt{goal}$ and if that $\texttt{Path}$ has been found, the
 program can return immediately.  The following exercise digs deeper into this observation.
 
