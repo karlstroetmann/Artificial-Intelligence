@@ -1118,14 +1118,15 @@ Let us discuss the details of the implementation.
       $\mathtt{ParentB}[s]$ is the state that caused $s$ to be added to the set $\texttt{FrontierB}$.
 \item The bidirectional search keeps running for as long as both sets $\texttt{FrontierA}$ and
       $\texttt{FrontierB}$ are non-empty and a path has not yet been found.
-\item The \texttt{while} loop computes those states that can be reached from $\texttt{FrontierA}$ and have not been
+\item The \texttt{while} loop first computes those states that can be reached from $\texttt{FrontierA}$ and have not been
       visited from $\texttt{start}$.  If a state $\texttt{ns}$ is a neighbour of a state $\texttt{s}$ from the set
       $\texttt{FrontierA}$ and the state $\texttt{ns}$ has already been encountered during the search that started
       from $\texttt{goal}$, then a path leading from $\texttt{start}$ to $\texttt{goal}$ has been found and this path
       is returned.  The function \texttt{combinePaths} that computes this path by combining the path that leads
       from $\texttt{start}$ to $\texttt{ns}$ and then from $\texttt{ns}$ to $\texttt{goal}$ is shown in Figure
       \ref{fig:combine-paths.stlx} on page \pageref{fig:combine-paths.stlx}.
-\item Next, the same computation is done with the role of the states $\texttt{start}$ and $\texttt{goal}$ exchanged.
+\item Next, the \texttt{while} loop performs the same computation with the role of the states $\texttt{start}$
+      and $\texttt{goal}$ exchanged. 
 \end{enumerate}
 On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 128
 milliseconds and uses 4 megabytes.  However, bidirectional breadth first search is still not able to solve the
@@ -1161,8 +1162,8 @@ about the distance of a state to the goal are called \blue{blind}.  \index{blind
 Russell and Norvig \cite{russell:2020} use the name \blue{uninformed search} instead of blind search.
 \index{uninformed search} 
 
-If a human tries to solve a
-problem, she usually will develop an intuition that certain states are more favourable than other states because
+If a human tries to solve a search
+problem, she will usually develop an intuition that certain states are more favourable than other states because
 they seem to be closer to the solution.  In order to formalise this procedure, we next define the notion of a
 \blue{search heuristic}. \index{search heuristic}
 
@@ -1183,7 +1184,7 @@ The heuristic is \blue{admissible} \index{admissible heuristic} if it never
 \underline{\color{red}{overestimates}} the true distance, i.e.~if the function 
 \\[0.2cm]
 \hspace*{1.3cm}
-$d:Q \rightarrow \mathbb{R}$
+$d:Q \rightarrow \mathbb{R}\cup \{ \infty\}$
 \\[0.2cm]
 computes the \blue{true distance} from a state $s$ to the goal, then we must have
 \\[0.2cm]
@@ -1191,8 +1192,7 @@ computes the \blue{true distance} from a state $s$ to the goal, then we must hav
 $h(s) \leq d(s)$ \quad for all $s \in Q$.
 \\[0.2cm]
 Hence, the heuristic is admissible iff it is \blue{optimistic}: \index{optimistic heuristic}
-It must never overestimate the
-distance to the goal, but it is free to underestimate this distance.
+Although it never overestimates the distance to the goal, it is free to underestimate this distance.
 
 Finally, the  heuristic $h$ is called \blue{consistent} \index{consistent heuristic} iff we have 
 \\[0.2cm]
@@ -1255,8 +1255,8 @@ This claim is shown by induction on $k$.
 
 It is natural to ask whether the last theorem can be reversed, i.e.~whether every admissible heuristic is also
 consistent.  The answer to this question is negative since there are
-\href{http://web.cs.du.edu/~sturtevant/papers/incnew.pdf}{some} \emph{\color{red}contorted}
-heuristics that are admissible but that fail to be consistent.  However, in practice it turns out that most
+some \emph{\color{red}contorted} heuristics that are admissible but that fail to be consistent.  However, in
+practice it turns out that most 
 admissible heuristics are also consistent.  Therefore, when we construct consistent heuristics later, we will
 start with admissible heuristics, since these are easy to find.  We will then have to check that these
 heuristics are also consistent.
@@ -1324,17 +1324,6 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       \ref{fig:manhattan.py} on page \pageref{fig:manhattan.py} shows how the Manhattan distance can be
       computed.  The code given in that figure works for a general $n \times n$ sliding puzzle.  It takes two
       states $\texttt{stateA}$ and $\texttt{stateB}$ and computes the Manhattan distance between these states.
-      \begin{enumerate}
-      \item First, the size $\texttt{n}$ of the puzzle is computed by checking the number of rows of
-            $\texttt{stateA}$.
-      \item Next, the \texttt{for} loops iterates over all rows and columns of $\texttt{stateA}$ that do not
-            contain a blank tile.  Remember that the blank tile is coded using the number $0$.  The tile at
-            position $\pair(\mathtt{rowA}, \mathtt{colA})$ in $\texttt{stateA}$ is computed using the expression \texttt{stateA[rowA][colA]} and the
-            corresponding position $\pair(\mathtt{rowB}, \mathtt{colB})$ of this tile in state $\texttt{stateB}$ is computed using the function
-            \texttt{find\_tile}.
-      \item Finally, the Manhattan distance between the two positions $\pair(\mathtt{rowA}, \mathtt{colA})$ and
-            $\pair(\mathtt{rowB}, \mathtt{colB})$ is added to the $\texttt{result}$.
-      \end{enumerate}
 
       \begin{figure}[!ht]
         \centering
@@ -1362,6 +1351,19 @@ In the following, we will discuss several heuristics for the sliding puzzle.
     \caption{The Manhattan distance between two states.}
     \label{fig:manhattan.py}
     \end{figure}
+    \FloatBarrier
+    
+      \begin{enumerate}
+      \item First, the size $\texttt{n}$ of the puzzle is computed by checking the number of rows of
+            $\texttt{stateA}$.
+      \item Next, the \texttt{for} loops iterates over all rows and columns of $\texttt{stateA}$ that do not
+            contain a blank tile.  Remember that the blank tile is coded using the number $0$.  The tile at
+            position $\pair(\mathtt{rowA}, \mathtt{colA})$ in $\texttt{stateA}$ is computed using the expression \texttt{stateA[rowA][colA]} and the
+            corresponding position $\pair(\mathtt{rowB}, \mathtt{colB})$ of this tile in state $\texttt{stateB}$ is computed using the function
+            \texttt{find\_tile}.
+      \item Finally, the Manhattan distance between the two positions $\pair(\mathtt{rowA}, \mathtt{colA})$ and
+            $\pair(\mathtt{rowB}, \mathtt{colB})$ is added to the $\texttt{result}$.
+      \end{enumerate}
 
     The Manhattan distance is admissible.  The reason is that if $s_2 \in \mathtt{next\_states}(s_1)$,
     then there can be only one tile $t$ such that the position of $t$ in $s_1$ is different from the position
@@ -1603,7 +1605,7 @@ algorithm.
       be comparable, i.e. if $x$ and $y$ are inserted into a priority queue, then the  
       expression $x < y$ must return a Boolean value and the relation $<$ has to define 
       linear order.  This implies that the elements inserted into the priority queue must be
-      \emph{homogeneous}, i.e.~they must all be of the same type.
+      \blue{homogeneous}, i.e.~they must all be of the same type.
 \end{enumerate}
 After the variables described above have been initialized, the $\mathrm{A}^*$ algorithm runs in a
 \texttt{while} loop that does only terminate if either a solution is found or the priority queue
