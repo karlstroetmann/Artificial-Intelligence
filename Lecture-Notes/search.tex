@@ -189,7 +189,7 @@ as a search problem.  We discuss this formalization line by line.
             which is implemented by the line
             \\[0.2cm]
             \hspace*{1.3cm}
-            \texttt{for mb in range(m+1)}
+            \texttt{for mb in range(m+1)}.
             \\[0.2cm]
             There is a similar condition for the number of infidels crossing:
             \\[0.2cm]
@@ -391,7 +391,7 @@ We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb}
 \item \texttt{find\_tile} is an auxiliary function that is needed to implement the function \texttt{next\_states}.
       It is called with a $\texttt{number}$ and a $\texttt{State}$ and
       returns the row and column where the tile labelled with $\texttt{number}$ can be found.
-\item \texttt{moveDir} takes a $\texttt{State}$, the $\texttt{row}$ and the $\texttt{col}$umn
+\item \texttt{move\_dir} takes a $\texttt{State}$, the $\texttt{row}$ and the $\texttt{col}$umn
       where to find the empty square and a direction in which the empty square should be moved.
       This direction is specified via the two variables $\texttt{dx}$ and $\texttt{dy}$.  The tile
       at the position $\langle\mathtt{row} + \mathtt{dx}, \mathtt{col} + \mathtt{dy}\rangle$ is
@@ -400,8 +400,8 @@ We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb}
 \item Given a $\texttt{State}$, the function \texttt{next\_states} computes the set of all states
       that can be reached in one step from $\texttt{State}$.  The basic idea is to find the position of the
       empty tile and then try to move the empty tile in all possible directions.  If the empty tile is found at
-      position $(\mathtt{row}, \mathtt{col})$ and the direction of the movement is given as $(\mathtt{dx}, \mathtt{dy})$, then
-      in order to ensure that the empty tile can be moved to the position $[\mathtt{row}+\mathtt{dx}, \mathtt{col}+\mathtt{dy}]$,
+      position $\langle\mathtt{row}, \mathtt{col}\rangle$ and the direction of the movement is given as $\langle\mathtt{dx}, \mathtt{dy}\rangle$, then
+      in order to ensure that the empty tile can be moved to the position $\langle\mathtt{row}+\mathtt{dx}, \mathtt{col}+\mathtt{dy}\rangle$,
       we have to ensure that both
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -508,7 +508,7 @@ Next, we discuss the implementation of the function \texttt{search}:
       When doing this, we keep track of the path leading to a new state $\texttt{ns}$ by storing its
       parent in the dictionary $\texttt{Parent}$.
 \item If the new state happens to be the state $\texttt{goal}$, we return a path leading from
-      $\texttt{start}$ to $\texttt{goal}$.  The function $\texttt{pathTo}()$ is shown in Figure
+      $\texttt{start}$ to $\texttt{goal}$.  The function $\texttt{path\_to}()$ is shown in Figure
       \ref{fig:pathTo.stlx} on page \pageref{fig:pathTo.stlx}.
 \item After we have collected all successors of states in $\texttt{Frontier}$, the states
       in the set $\texttt{Frontier}$ have been visited and are therefore added to the set
@@ -533,10 +533,10 @@ Next, we discuss the implementation of the function \texttt{search}:
         return path_to(p, Parent) + [state]
 \end{minted}
 \vspace*{-0.3cm}
-\caption{The function $\texttt{pathTo}$.}
+\caption{The function $\texttt{path\_to}$.}
 \label{fig:pathTo.stlx}
 \end{figure}
-The function call $\mathtt{pathTo}(\mathtt{state}, \mathtt{Parent})$ constructs a path reaching
+The function call $\mathtt{path\_to}(\mathtt{state}, \mathtt{Parent})$ constructs a path reaching
 from $\texttt{start}$ to $\texttt{state}$ in reverse by looking up the parent states.  It uses the fact that
 only the start state is its own parent.
 
