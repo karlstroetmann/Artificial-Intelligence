@@ -1077,7 +1077,6 @@ keeping two trillion states in memory is impossible on most devices.
         FrontierB = { goal }
         ParentB   = { goal: goal} 
         while len(FrontierA) > 0 and len(FrontierB) > 0:
-            print(len(ParentA) +len(ParentB))
             NewFrontier = set()
             for s in FrontierA:
                 for ns in next_states(s):
