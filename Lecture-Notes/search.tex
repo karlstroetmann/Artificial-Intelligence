@@ -821,9 +821,9 @@ implementation is shown in \myFig{Depth-First-Search.ipynb}.
 \end{figure}
 The only purpose of the function \texttt{search} is to call the function $\texttt{dfs}$, which needs two
 additional arguments.  These arguments are called $\texttt{Path}$ and $\texttt{PathSet}$.  The idea is that $\texttt{Path}$ is
-a list leading from the state $\texttt{start}$ to the current $\texttt{state}$ that is the first
+a path leading from the state $\texttt{start}$ to the current $\texttt{state}$ that is the first
 argument of the function $\texttt{dfs}$, while $\texttt{PathSet}$ is a set containing all the elements of the
-list $\texttt{Path}$.  The argument $\texttt{PathSet}$ is only used for efficiency reasons:  In order to avoid
+path $\texttt{Path}$.  The argument $\texttt{PathSet}$ is only used for efficiency reasons:  In order to avoid
 infinite loops, when we discover a node we have to check that this node does not occur already in $\texttt{Path}$.
 However, checking whether an element occurs in the list $\texttt{Path}$ is much slower than checking whether
 the element occurs in the corresponding set $\texttt{PathSet}$.  On the first invocation of $\texttt{dfs}$, the
