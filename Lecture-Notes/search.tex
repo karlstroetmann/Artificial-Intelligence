@@ -658,7 +658,7 @@ implementation uses two methods from the class \texttt{deque}:
       \texttt{Frontier} using the method \texttt{append}.
 \end{enumerate}
 Additionally, we have used the fact that the information contained in the set $\texttt{Visited}$ is already
-available in the dictionary $\texttt{Parent}$, because we when we visit a state $s$, we add an entry for
+available in the dictionary $\texttt{Parent}$, because when we visit a state $s$, we add an entry for
 $\mathtt{Parent}[s]$.  As a result, this implementation of breadth first search is slightly faster than our
 previous implementation.  Furthermore, only 76 megabytes of memory are used for the computation.
 
@@ -821,7 +821,7 @@ implementation is shown in \myFig{Depth-First-Search.ipynb}.
 \end{figure}
 The only purpose of the function \texttt{search} is to call the function $\texttt{dfs}$, which needs two
 additional arguments.  These arguments are called $\texttt{Path}$ and $\texttt{PathSet}$.  The idea is that $\texttt{Path}$ is
-a path leading from the state $\texttt{start}$ to the current $\texttt{state}$ that is the first
+a list leading from the state $\texttt{start}$ to the current $\texttt{state}$ that is the first
 argument of the function $\texttt{dfs}$, while $\texttt{PathSet}$ is a set containing all the elements of the
 list $\texttt{Path}$.  The argument $\texttt{PathSet}$ is only used for efficiency reasons:  In order to avoid
 infinite loops, when we discover a node we have to check that this node does not occur already in $\texttt{Path}$.
@@ -846,7 +846,7 @@ The implementation of $\texttt{dfs}$ works as follows:
       when we call the function $\texttt{dfs}$ recursively.  This way, we retain the invariant of
       $\texttt{dfs}$ that the list $\texttt{Path}$ is a path connecting $\texttt{start}$ with $\texttt{state}$.
 \item We still have to avoid running in circles.  In the recursive version of depth first search,
-      this is achieved by checking that the state $\texttt{ns}$ is not already a member of the list $\texttt{Path}$.  In the
+      this is achieved by checking that the state $\texttt{ns}$ is not already a member of the set $\texttt{PathSet}$.  In the
       non-recursive version of depth first search, we had used the set $\texttt{Parent}$ instead.
       The current implementation no longer has a need for the dictionary $\texttt{Parent}$.  This is very
       fortunate since it reduces the memory requirements of depth first search considerably.
@@ -1292,7 +1292,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
       points is defined as
       \\[0.2cm]
       \hspace*{1.3cm}
-      $d_1\bigl(\langle x_1, y_1\rangle, \langle x_2, y_2\rangle\bigr) := |x_1 - x_2| + |y_1 - y_2|$.
+      $d_1\bigl(\langle x_1, y_1\rangle, \langle x_2, y_2\rangle\bigr) := |x_2 - x_1| + |y_2 - y_1|$.
       \\[0.2cm]
       The Manhattan distance is also called the \href{https://en.wikipedia.org/wiki/Taxicab_geometry}{$L_1$ norm}
       of the difference vector $\langle x_2 - x_1, y_2 - y_1 \rangle$.
