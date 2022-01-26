@@ -1077,7 +1077,6 @@ keeping two trillion states in memory is impossible on most devices.
         FrontierB = { goal }
         ParentB   = { goal: goal} 
         while len(FrontierA) > 0 and len(FrontierB) > 0:
-            print(len(ParentA) +len(ParentB))
             NewFrontier = set()
             for s in FrontierA:
                 for ns in next_states(s):
@@ -1215,6 +1214,7 @@ that visits $s_2$ first.  Hence, we have the inequality
 \\[0.2cm]
 \hspace*{1.3cm}
 $h(s_1) \leq 1 + h(s_2)$.
+\pagebreak
 
 \begin{Theorem}
   Every consistent heuristic is an admissible heuristic.
@@ -1675,9 +1675,7 @@ Furthermore, the good news about A$^*$ search is that:
 In order to prove the \blue{completeness} and the \blue{optimality} of the $\textrm{A}^*$ search algorithm it is convenient to
 reformulate the algorithm:  In particular, we replace the dictionary $\texttt{Parent}$ by a dictionary
 $\texttt{PathDict}$. For every state $s$ that is reached during $\textrm{A}^*$ search, $\texttt{PathDict}[s]$ returns a
-path that connects the node $\texttt{start}$ with the node $s$.  Furthermore, we have added a set
-$\texttt{Explored}$ to the implementation.  This set is only needed for the proof of the optimality of
-the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipynb} on page
+path that connects the node $\texttt{start}$ with the node $s$.  Figure \ref{fig:A-Star-Search-Path.ipynb} on page
 \pageref{fig:A-Star-Search-Path.ipynb} shows this version of the algorithm.
 
 
@@ -1699,7 +1697,6 @@ the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipy
         Estimate = { start: estGoal }
         Frontier = Set.Set()
         Frontier.insert( (estGoal, start) )
-        Explored = set()
         while not Frontier.isEmpty():
             _, state = Frontier.pop()
             if state == goal:
@@ -1715,14 +1712,11 @@ the path found by $\mathrm{A}^*$ search.  Figure \ref{fig:A-Star-Search-Path.ipy
                     Frontier.insert( (newEstimate, ns) )
                     if oldEstimate != None:
                         Frontier.delete( (oldEstimate, ns) )
-            Explored.add(state)
 \end{minted}
 \vspace*{-0.3cm}
 \caption{A path based implementation of $\textrm{A}^*$ search.}
 \label{fig:A-Star-Search-Path.ipynb}
 \end{figure}
-
-
 
 \begin{Theorem}[Completeness and Optimality of $\textrm{A}^*$ Search] 
 Assume 
@@ -1742,19 +1736,14 @@ $\texttt{start}$ to $\texttt{goal}$.
 \end{Theorem}
 
 \proof
-In order to prove this theorem, we first need to discuss a number of notions that are  needed in
-order to improve our understanding of the $\textrm{A}^*$ algorithm.
-\begin{enumerate}[(a)]
+In order to prove this theorem, we first need to define two notions for states.
+\begin{itemize}
 \item A state has been \blue{visited} iff it has been entered into the dictionary $\texttt{Distance}$, i.e.~a
       state $s$ is visited iff $\mathtt{Distance}[s]$ is defined.   Note that in this case also
-      $\mathtt{PathDict}[s]$ is defined.  
-\item A state is said to have been \blue{explored} iff all of its neighbouring states have been visited.
-\end{enumerate}
-To emphasize the notion of explored states I have added the set $\texttt{Explored}$ in the implementation of $\textrm{A}^*$ search that
-is shown in Figure \ref{fig:A-Star-Search-Path.ipynb} on page \pageref{fig:A-Star-Search-Path.ipynb}.  
-Note that the variable $\texttt{Explored}$ serves no purpose in the implementation of $\textrm{A}^*$ search:
-This variable is only written to, but the algorithm never reads this variable.  
-
+      $\mathtt{PathDict}[s]$ is defined.
+\item A state is defined to be \blue{explored}
+      when it is removed from the priority queue $\texttt{Frontier}$.
+\end{itemize}
 Before we prove the theorem, let us establish the following auxiliary claim:
 \vspace*{0.2cm}
 
@@ -1771,7 +1760,7 @@ We establish this claim by a straightforward computational induction.
            $[\texttt{start}]$.  This path connects the node $\texttt{start}$ with the node $\texttt{start}$.
            Obviously, this path has the length $0$ and that is exactly the value that is entered in the
            dictionary $\texttt{Distance}$ in line 3.
-\item[IS:] If we add in line 20 the path
+\item[IS:] If, in line 19, we add the path
            \\[0.2cm]
            \hspace*{1.3cm}
            $\texttt{PathDict}[\texttt{state}] + [\texttt{ns}]$
@@ -1784,7 +1773,7 @@ We establish this claim by a straightforward computational induction.
            is a path leading from $\texttt{start}$ to $\texttt{state}$ and
            that, furthermore, the length of the path $P$ is equal to $\texttt{Distance}[\texttt{state}]$.  When
            we append the state $\texttt{ns}$ to this path $P$, the length of the resulting path is
-           bigger by one than the length of $P$ and it is obvious that this new path 
+           the length of $P$ plus one and, because $\mathtt{ns} \in \mathtt{next\_states}(\mathtt{state})$, this new path 
            \\[0.2cm]
            \hspace*{1.3cm}
            $P + [\texttt{ns}]$
@@ -1792,7 +1781,7 @@ We establish this claim by a straightforward computational induction.
            connects $\texttt{start}$ with $\texttt{ns}$.  The induction hypotheses tell us that
            $\texttt{Distance}[\texttt{state}]$ is equal to the length of $P$.  Therefore, the length of the new
            path is $\texttt{Distance}[\texttt{state}] + 1$ and since $\texttt{stateDist}$ is defined as
-           $\texttt{Distance}[\texttt{state}]$, the correct length is stored in line 18.
+           $\texttt{Distance}[\texttt{state}]$, the correct length is stored in line 17.
 \end{enumerate}
 This concludes the proof of Claim One. 
 \vspace*{0.2cm}
@@ -1830,7 +1819,8 @@ In order to prove the theorem we need to establish the following claim.
 \vspace*{0.2cm}
 
 \noindent
-\textbf{Claim Two}: If a state $s \in Q$ has been explored, then we have
+\textbf{Claim Two}: If a state $s \in Q$ is \blue{explored}, i.e.~if it has been removed from the priority
+queue $\mathtt{Frontier}$, then we have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{Distance}[s] = g(s)$,
@@ -1854,7 +1844,7 @@ $P_1 = [\texttt{start},x_1,\cdots,x_k, x_{k+1},\cdots,x_{n-1},s]$,  \quad
 $P_2 = [\texttt{start},x_1,\cdots,x_k, y_{k+1},\cdots,y_{m-1},s]$ \quad 
 \\[0.2cm]
 where $x_{k+1} \not= y_{k+1}$.  Here, $x_k$ is the state at which the paths $P_1$ and $P_2$ \blue{diverge} for
-the first time. The
+the first time.  Note that the
 index $k$ could be $0$.  In that case the two paths would already diverge at the state \texttt{start}, but in
 general $k$ will be some non-negative integer.  Since we assume that $P_1$ is longer than $P_2$ we will have
 $m < n$.  Furthermore, according to Claim One we have
@@ -1904,31 +1894,34 @@ $f(s) = \texttt{Distance}[s] + \texttt{heuristic}(s) = n + \texttt{heuristic}(s)
 However, since we have $m < n$ this implies
 \\[0.2cm]
 \hspace*{1.3cm}
-$f(y_{k+1}) = m + \texttt{heuristic}(s) < n + \mathtt{heuristic}(s) = f(s)$.
+$f(y_{k+1}) \leq m + \texttt{heuristic}(s) < n + \mathtt{heuristic}(s) = f(s)$.
 \\[0.2cm]
 Now $f(s)$ is the priority of the state $s$ in the priority queue, while $f(y_{k+1})$ is the priority
 attached to the state $y_{k+1}$.  At the latest,  the state $y_{k+1}$ is put onto the priority queue $\texttt{Frontier}$
-when the state $x_k$ is explored.  But then the priority of $y_{k+1}$ is higher than the priority
-of the state $s$ and hence it is explored prior to $s$.  This means that the state $y_{k+2}$ is explored before
-the state $s$ is explored.  Similarly to the proof that 
-$f(y_{k+2}) \leq m + \texttt{heuristic}(s)$, 
+after the state $x_k$ is explored.  But then the priority of $y_{k+1}$ is higher than the priority
+of the state $s$ and hence it is explored prior to $s$.  This implies that the state
+$y_{k+2}$ is visited before the state $s$ is visited.  Similarly to the proof that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(y_{k+1}) \leq m + \texttt{heuristic}(s) < n + \texttt{heuristic}(s) = f(s)$, 
+\\[0.2cm]
 we can see that 
 \\[0.2cm]
 \hspace*{1.3cm}
-$f(y_{k+2}) \leq k+2 + (m-k-2) + \texttt{heuristic}(s) = m + \texttt{heuristic}(s)$.
+$f(y_{k+2}) \leq k+2 + (m-k-2) + \texttt{heuristic}(s) = m + \texttt{heuristic}(s) < f(s)$.
 \\[0.2cm]
-Hence, the state $y_{k+2}$ is explored before the state $s$ is visited.  In general, we have
+Hence, the state $y_{k+2}$ is explored before the state $s$ is explored.  In general, we have 
 \\[0.2cm]
 \hspace*{1.3cm}
-$f(y_{j}) \leq m + \texttt{heuristic}(s)$ \quad for all $j \in \{k+1,\cdots,m-1\}$.
+$f(y_{j}) \leq m + \texttt{heuristic}(s) < f(s)$ \quad for all $j \in \{k+1,\cdots,m-1\}$.
 \\[0.2cm]
 Since all states of the form
 \\[0.2cm]
 \hspace*{1.3cm}
 $y_j$ \quad for $j \in \{k+1, \cdots, m-1\}$
 \\[0.2cm]
-have a priority that is higher than the state $s$, these states are all explored prior to the state
-$s$.  In particular, after the state $y_{m-1}$ has been explored, we will have 
+have a priority that is higher than the state $s$, these states are all explored prior
+to the state $s$.  In particular, after the state $y_{m-1}$ has been explored, we will have 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{Distance}[s] = m$ \quad instead of \quad $\mathtt{Distance}[s] = n$.
