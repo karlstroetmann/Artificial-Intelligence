@@ -1,9 +1,9 @@
 \chapter{Solving Constraint Satisfaction Problems}
 In this chapter we discuss various algorithms for solving 
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problems}.
-In a \blue{constraint satisfaction problem} we are given a set of \blue{formul\ae} and search for \blue{values}
+In a \blue{constraint satisfaction problem} we are given a set of \blue{formulas} and search for \blue{values}
 that can be 
-assigned to the \blue{variables} occurring in these formul\ae\  so that all of the formul\ae\  evaluate as true.
+assigned to the \blue{variables} occurring in these formulas so that all of the formulas evaluate as true.
 Constraint satisfaction problems can be seen as a refinement of the search problems discussed in the previous
 chapter:  In a search problem, the states are abstract and therefore have no structure that can be exploited to
 guide the search, while in a \blue{constraint satisfaction problem}, the states have a structure, as these
@@ -42,10 +42,10 @@ where \index{constraint satisfaction problem}
 \begin{enumerate}[(a)]
 \item $\texttt{Vars}$ is a set of strings which serve as \blue{variables},
 \item $\texttt{Values}$ is a set of \blue{values} that can be assigned to the variables in $\texttt{Vars}$.
-\item $\texttt{Constraints}$ is a set of formul\ae\ from \blue{first order logic}.  Each of these formul\ae\ is
+\item $\texttt{Constraints}$ is a set of formulas from \blue{first order logic}.  Each of these formulas is
       called a \blue{constraint} of $\mathcal{P}$.
 
-      In order to be able to interpret these formul\ae, we need a \blue{first order structure} $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
+      In order to be able to interpret these formulas, we need a \blue{first order structure} $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
       Here, $\mathcal{U}$ is the \blue{universe} of $\mathcal{S}$ and we will assume that this
       universe is identical to the set $\texttt{Values}$, that is we have
       \\[0.2cm]
@@ -53,7 +53,7 @@ where \index{constraint satisfaction problem}
       $\mathcal{U} = \texttt{Values}$.
       \\[0.2cm]
       The second component $\mathcal{J}$ defines the
-      \blue{interpretations} of the function symbols and predicate symbols that are used in the formul\ae\
+      \blue{interpretations} of the function symbols and predicate symbols that are used in the formulas\
       defining the constraints.  In the following we assume that these interpretations are understood from the
       context of the constraint satisfaction problem $\mathcal{P}$ and hence need not be specified explicitly.
       Later, when we discuss examples of constraint 
@@ -191,7 +191,13 @@ Next, let us define the constraints.  There are two different types of constrain
       \hspace*{1.3cm}
       $\texttt{DifferentDiag} := \bigl\{ |i  - j| \not= |\texttt{V}_i - \texttt{V}_j| \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
-      Essentially, these are just the linear equations for the straight lines with slope $1$ and $-1$.
+      For a fixed pair of values $\langle j, V_j\rangle$ the equations
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $V_i = V_j - j + i $ \quad and \quad $V_i = V_j + j - i$
+      \\[0.2cm] 
+      are the linear equations for the straight lines with slope $1$ and $-1$ that pass through
+      $\langle j, V_i \rangle$.
 \end{enumerate}
 Then, the set of constraints is defined as 
 \\[0.2cm]
@@ -677,8 +683,8 @@ $\texttt{is\_consistent}$ is to check, whether the extended assignment
 $\texttt{NewAssign} \;\texttt{:=}\;\texttt{Assignment} \cup \{ \texttt{var} \mapsto \texttt{value} \}$
 \\[0.2cm]
 that assigns $\texttt{value}$ to the variable $\texttt{var}$ is still partially consistent with $\texttt{Constraints}$. 
-To this end, the \texttt{for}-loop iterates over all formul\ae\ \texttt{f} in $\texttt{Constraints}$. 
-However, we only have to check those formul\ae\ \texttt{f} that contain the variable $\texttt{var}$ and,
+To this end, the \texttt{for}-loop iterates over all formulas \texttt{f} in $\texttt{Constraints}$. 
+However, we only have to check those formulas \texttt{f} that contain the variable $\texttt{var}$ and,
 furthermore, have the property that
 \\[0.2cm]
 \hspace*{1.3cm}
