@@ -1,0 +1,64 @@
+name: CD
+# This workflow runs on the triggers below iff a *.tex file has been modified, but no pdf has changed.
+
+# Triggers:
+# 1. Pull request opened / reopened / changed (synchronize):
+#    ==> Compile 'artificial-intelligence.tex' and fail on error (pull request check)
+# 2. Pull request merged:
+#    ==> Compile 'artificial-intelligence.tex' and commit resulting pdf to the main branch
+# 3. Pull request closed without merging:
+#    ==> Do nothing and quit
+# 4. Workflow dispatch (manual run from the GitHub Actions tab):
+#    ==> Compile 'artificial-intelligence.tex' and commit resulting pdf to the chosen branch.
+
+on:
+  workflow_dispatch:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+    paths:
+      - Lecture-Notes/**.tex
+
+jobs:
+  run-latex:
+    runs-on: ubuntu-latest
+    # Skip the whole job if a pull request has been closed without the changes beeing merged
+    if: github.event.action != 'closed' || github.event.pull_request.merged
+    steps:
+      - name: Checkout pull request branch
+        if: github.event.pull_request.merged == false
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Checkout base branch
+        if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.base.ref || github.ref }}
+
+      - name: Run LaTeX
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: artificial-intelligence.tex
+          extra_system_packages: py-pygments
+          latexmk_shell_escape: true
+          working_directory: Lecture-Notes
+
+      - name: Commit pdf file
+        if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
+        run: |
+              git config --local user.email "action@github.com"
+              git config --local user.name "GitHub Action"
+              git add Lecture-Notes/artificial-intelligence.pdf
+              git commit -m "run latex"
+
+      - name: Push changes
+        if: github.event.pull_request.merged || github.event_name == 'workflow_dispatch'
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.event.pull_request.base.ref || github.ref }}
