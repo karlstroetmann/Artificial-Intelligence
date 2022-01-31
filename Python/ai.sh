@@ -8,5 +8,6 @@ conda install -y -c conda-forge ipycanvas
 conda install -y -c conda-forge matplotlib
 conda install -y -c anaconda seaborn
 conda install -y -c anaconda scikit-learn
+conda install -y -c conda-forge memory_profiler
 pip install chess
 
