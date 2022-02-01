@@ -806,7 +806,7 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       for the most difficult variables first.  A variable is more difficult to get right if it has only a few
       values left that can be used to instantiate it.
 \item Once we have picked a variable $\texttt{x}$, we next iterate over all values $\texttt{v}$ in
-      $\texttt{ValuesPerVar[x]}$.  If the problem is hard, then it pays of to sort the value using the
+      $\texttt{ValuesPerVar[x]}$.  If the problem is hard, then it pays off to sort the value using the
       \blue{least constraining value}\index{least constraining value heuristic} heuristic:  The idea is that
       we compute for all values in  $\texttt{ValuesPerVar[x]}$ how much they constrain the values 
       of other variables.  The details of how this is done will be given later.  Once we have picked a value
@@ -997,7 +997,7 @@ solution of the given \ac{csp}.
       The function $\texttt{least\_constraining}$ returns a list of all values $\texttt{v}$
       that can be substituted for $\texttt{x}$.  This list is sorted ascendingly w.r.t.~the shrinkage number of
       $\texttt{v}$.  However, the function is only used if the flag $\texttt{lcv}$ is set.  The reason is that
-      computing the shrinkage number is computationally quite expensive.  Therefore, this only pays of for hard
+      computing the shrinkage number is computationally quite expensive.  Therefore, this only pays off for hard
       problems.  If the flag is not set, the values are tried in an arbitrary order.
 
       Note that since
@@ -1105,7 +1105,6 @@ w.r.t.~the shrinkage numbers.
                  xrightmargin  = 0.8cm,
                ]{python3}
     def shrinkage(x, value, Assignment, ValuesPerVar, Constraints):
-        NewValues = ValuesPerVar.copy()
         count     = 0   # number of values removed from ValuesPerVar
         BoundVars = set(Assignment.keys())
         for f, Vars in Constraints:
@@ -1114,7 +1113,7 @@ w.r.t.~the shrinkage numbers.
                 if len(UnboundVars) == 1:
                     y = arb(UnboundVars)
                     Legal = set()
-                    for w in NewValues[y]:
+                    for w in ValuesPerVar[y]:
                         NewAssign    = Assignment.copy()
                         NewAssign[x] = value
                         NewAssign[y] = w
@@ -1124,7 +1123,6 @@ w.r.t.~the shrinkage numbers.
                             count += 1
                     if len(Legal) == 0:
                         return math.inf
-                    NewValues[y] = Legal
         return count 
 \end{minted}
 \vspace*{-0.3cm}
@@ -1134,7 +1132,7 @@ w.r.t.~the shrinkage numbers.
 
 \noindent
 The function $\texttt{shrinkage}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:shrinkage} computes
-the \blue{shrinkage numbers} of the given $\texttt{value}$ that is assigned to the variable $\texttt{x}$
+the \blue{shrinkage numbers} of the given $\texttt{value}$ that is assigned to the variable $\texttt{x}$.
 It takes the following inputs:
 \begin{enumerate}[(a)]
 \item $\texttt{x}$ is a variable and $\texttt{value}$ is the value that is assigned to the variable $\texttt{x}$.
@@ -1147,16 +1145,9 @@ It takes the following inputs:
 \end{enumerate}
 The function $\texttt{shrinkage}$ has to compute the number of values that have to be removed from the set
 $\texttt{ValuesPerVar}[y]$ for all variables $\texttt{y}$ that are different from $\texttt{x}$ and that are
-still unbound.  The function is implemented as follows:
+still unbound if the value $\mathtt{value}$ is assigned to the variable $\texttt{x}$.  The function is
+implemented as follows: 
 \begin{enumerate}
-\item $\texttt{NewValues}$ is a copy of the dictionary $\texttt{ValuesPerVar}$.
-      We need to make a copy of this dictionary since we want to compute the number of values
-      that have to be removed from $\texttt{ValuesPerVar[y]}$ for variables $\texttt{y}$ that are different
-      from $\texttt{x}$ when $\texttt{x}$ is bound to $\texttt{value}$.  However, as we are not
-      yet sure whether we really want to bind  $\texttt{x}$ to $\texttt{value}$, we can not remove values
-      from the set $\texttt{ValuesPerVar}[y]$.  Instead, we remove these values from the copy
-      \texttt{NewValues} of the dictionary $\texttt{ValuesPerVar}$.  This way, we do not have to
-      undo any removals of values.
 \item $\texttt{count}$ is the number of values that have to be removed form $\texttt{ValuesPerVar[y]}$ 
       for some variable $\texttt{y}$ if we set the variable $\texttt{x}$ to the value $\texttt{v}$.  
       Initially, $\texttt{count}$ is set to $0$.
@@ -1169,14 +1160,14 @@ still unbound.  The function is implemented as follows:
 \item If the set $\texttt{UnboundVars}$ contains just a single variable,
       the function $\texttt{arb}$ returns this variable $\texttt{y}$.
 \item Now we have to find those values $\texttt{w}$ that can be assigned to $\texttt{y}$ without violating the
-      constraint $\texttt{f}$.  Each time we find a value $\texttt{w}$ from $\texttt{NewValues[y]}$ such that
+      constraint $\texttt{f}$.  Each time we find a value $\texttt{w}$ from $\texttt{ValuesPerVar[y]}$ such that
       the assignment
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{Assignment} \cup \{ \texttt{x} \mapsto \texttt{v}, \texttt{y} \mapsto \texttt{w} \}$
       \\[0.2cm]
       violates the constraint $\texttt{f}$, we increase the number $\texttt{count}$ since the value $\texttt{w}$
-      has to be removed from $\texttt{NewValues[y]}$.  If the constraint $\texttt{f}$ is not violated,
+      has to be removed from $\texttt{ValuesPerVar[y]}$.  If the constraint $\texttt{f}$ is not violated,
       the value $\texttt{w}$ is added to the set $\texttt{Legal}$ of values that may be assigned to $\texttt{y}$.
 \item If, after all values form $\texttt{NewValues[y]}$ have been tested, it turns out that
       $\texttt{Legal}$ is still empty, then this means that the constraint $\texttt{f}$ is inconsistent with
@@ -1184,11 +1175,6 @@ still unbound.  The function is implemented as follows:
       once we assign $\texttt{value}$ to $\texttt{x}$ we won't be able to find a value $\texttt{w}$ that can be
       assigned to $\texttt{y}$.  
       In this case the function $\texttt{shrinkage}$ returns $\texttt{math.inf}$ to signal this inconsistency.
-\item When we are done with the constraint \texttt{f}, we update \texttt{NewValues[y]}.
-      This is necessary since there might be other constraints involving the variable $\texttt{y}$ which require
-      that values have to be removed from \texttt{NewValues[y]}.  These might well be the same values that have
-      already been found to be inconsistent when the constraint \texttt{f} was checked.  As we do not want to
-      count these values twice, we have to update the set \texttt{NewValues[y]}.
 \end{enumerate}
 
 
@@ -1249,30 +1235,36 @@ the function $\texttt{propagate}$ updates the dictionary $\texttt{ValuesPerVar}$
 consequences of assigning the value $\texttt{v}$ to the variable $\texttt{x}$.  The implementation of
 $\texttt{propagate}$ proceeds as follows.
 \begin{enumerate}
+\item Initially, we copy the Dictionary $\texttt{ValuesPerVar}$ to the dictionary
+      $\mathtt{ValuesDict}$
 \item As $\texttt{x}$ is assigned the value $\texttt{v}$, the corresponding entry in the dictionary
-      $\texttt{ValuesPerVar}$ is changed accordingly. 
+      $\texttt{ValuesDict}$ is changed accordingly. 
 \item $\texttt{BoundVars}$ is the set of those variable that already have a value assigned.
 \item Next, $\texttt{propagate}$ iterates over all  constraints $\texttt{f}$ such that the variable
       $\texttt{x}$ occurs in $\texttt{f}$.
 \item $\texttt{UnboundVars}$ is the set of those variables occurring in $\texttt{f}$ that are different from
       $\texttt{x}$ and that do not yet have a value assigned.  
 \item If there is exactly one unbound variable $\texttt{y}$ in the constraint $\texttt{f}$, then we can test
-      those values that satisfy \texttt{f} and recompute the set $\texttt{ValuesPerVar[x]}$.
+      those values that satisfy \texttt{f} and recompute the set $\texttt{ValuesDict[x]}$.
 \item As the set $\texttt{UnboundVars}$ contains just a single variable in line 9,
       the function $\texttt{arb}$ returns this variable.
-\item In order to recompute the set $\texttt{ValuesPerVar[x]}$,  all values $\texttt{w}$ in
-      $\texttt{ValuesPerVar[y]}$ are tested.  The set $\texttt{Legal}$ contains all values $\texttt{w}$ that can
+\item In order to recompute the set $\texttt{ValuesDict[y]}$,  all values $\texttt{w}$ in
+      $\texttt{ValuesDict[y]}$ are tested.  The set $\texttt{Legal}$ contains all values $\texttt{w}$ that can
       be assigned to the variable $\texttt{y}$ without violating the constraint $\texttt{f}$.
 \item If it turns out that $\texttt{Legal}$ is the empty set, then this means that the constraint
       $\texttt{f}$ is inconsistent with assigning the value $\texttt{v}$ to the variable
       $\texttt{x}$.  Hence, in this case the  search has to  \blue{backtrack}.
 \item Otherwise, the set of admissible values for $\texttt{y}$ is updated to be the set $\texttt{Legal}$.
-\item Finally, the updated dictionary $\texttt{ValuesPerVar}$ is returned.
+\item Finally, the dictionary $\texttt{ValuesDict}$ is returned.
 \end{enumerate}
 I have tested the program described in this section using the eight queens puzzle.  It takes about
 18 milliseconds to find a solution if the least constraining value heuristic is not used.  I have also tested
 it with the Zebra Puzzle described in a previous exercise.  It solves this puzzle in 21 milliseconds.  To
-compare, the backtracking algorithm shown in the previous section takes roughly 10 seconds to solve this puzzle.
+compare, the backtracking algorithm shown in the previous section takes roughly 10 seconds to solve this
+puzzle.  Hence, for problems like the eight queens puzzle, the least constraining value heuristic does not pay
+off.  However, for more complicated puzzles like Sudoku puzzles, the least constraining value heuristic speeds
+the computation up.
+
 
 
 \begin{table}[h]
