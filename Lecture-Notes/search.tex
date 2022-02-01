@@ -1510,7 +1510,7 @@ The details of the $\mathrm{A}^*$ algorithm are given in \myFig{A-Star-Search.ip
         Estimate = { start: estGoal }
         Frontier = Set.Set()
         Frontier.insert( (estGoal, start) )
-        while not Frontier.isEmpty() > 0:
+        while not Frontier.isEmpty():
             estimate, state = Frontier.pop()
             if state == goal:
                 return path_to(state, Parent)
