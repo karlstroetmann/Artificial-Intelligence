@@ -42,9 +42,19 @@ class Set:
 
 
 def isEmpty(self):
-    return self.mKey == None
+    return self.mKey is None
 
 Set.isEmpty = isEmpty
+Set.__bool__ = isEmpty
+
+
+# In[ ]:
+
+
+def __bool__(self):
+    return self.mKey is not None
+
+Set.__bool__ = __bool__
 
 
 # Given an ordered binary tree $t$ and a key $k$, the expression $t.\texttt{member}(k)$ returns `True` if the key $k$ is stored in the tree $t$.
@@ -76,6 +86,7 @@ def member(self, key):
         return self.mRight.member(key)
     
 Set.member = member
+Set.__contains__ = member
 
 
 # The method  $\texttt{insert}()$ is specified via recursive equations.
@@ -321,6 +332,18 @@ def pop(self):
     return self.mLeft.pop()
 
 Set.pop = pop
+
+
+# This method counts all nodes in the tree.
+
+
+def __len__(self):
+    if self.isEmpty():
+        return 0
+    return 1 + len(self.mLeft) + len(self.mRight)
+    
+Set.__len__ = __len__
+
 
 # The method $t.\texttt{first}()$ take an AVL tree $t$ and removes and returns the smallest key that is present in $t$.  It is specified as follows:
 #   - $\texttt{Nil}.\texttt{first}() = \Omega$

@@ -455,7 +455,7 @@ $s \in \mathtt{next\_states}(\mathtt{Parent}[s])$.
         Frontier = { start }
         Visited  = set()
         Parent   = { start: start }
-        while len(Frontier) > 0:
+        while Frontier:
             NewFrontier = set()
             for s in Frontier:
                 for ns in next_states(s):
@@ -678,7 +678,7 @@ previous implementation.  Furthermore, only 76 megabytes of memory are used for 
     def search(start, goal, next_states):
         Frontier = deque([start])
         Parent   = { start: start }
-        while len(Frontier) > 0:
+        while Frontier:
             state = Frontier.popleft()
             if state == goal:
                 return path_to(state, Parent)
@@ -724,7 +724,7 @@ breadth first search to depth first search:
     def search(start, goal, next_states):
         Stack  = [start]
         Parent = { start: start }
-        while len(Stack) > 0:
+        while Stack:
             state = Stack.pop()
             for ns in next_states(state):
                 if ns not in Parent:
@@ -810,7 +810,7 @@ implementation is shown in \myFig{Depth-First-Search.ipynb}.
             if ns not in PathSet:
                 PathSet.add(ns)
                 Result = dfs(ns, goal, next_states, Path + [ns], PathSet)
-                if Result != None:
+                if Result is not None:
                     return Result
                 PathSet.remove(ns)
         return None
@@ -891,7 +891,7 @@ implements this strategy.  We proceed to discuss the details of this program.
         limit = 1
         while True:
             Path = dls(start, goal, next_states, [start], { start }, limit)
-            if Path != None:
+            if Path is not None:
                 return Path
             limit += 1
     
@@ -905,7 +905,7 @@ implements this strategy.  We proceed to discuss the details of this program.
                 Path   .append(ns)
                 PathSet.add(ns)
                 Result = dls(ns, goal, next_states, Path, PathSet, limit)
-                if Result != None:
+                if Result is not None:
                     return Result
                 else:
                     Path   .pop()
@@ -1076,7 +1076,7 @@ keeping two trillion states in memory is impossible on most devices.
         ParentA   = { start: start}
         FrontierB = { goal }
         ParentB   = { goal: goal} 
-        while len(FrontierA) > 0 and len(FrontierB) > 0:
+        while FrontierA and FrontierB:
             NewFrontier = set()
             for s in FrontierA:
                 for ns in next_states(s):
@@ -1365,7 +1365,7 @@ In the following, we will discuss several heuristics for the sliding puzzle.
             $\pair(\mathtt{rowB}, \mathtt{colB})$ is added to the $\texttt{result}$.
       \end{enumerate}
 
-    The Manhattan distance is admissible.  The reason is that if $s_2 \in \mathtt{next\_states}(s_1)$,
+    The Manhattan heuristic is admissible.  The reason is that if $s_2 \in \mathtt{next\_states}(s_1)$,
     then there can be only one tile $t$ such that the position of $t$ in $s_1$ is different from the position
     of $t$ in $s_2$.  Furthermore, this position differs by either one row or one column.  Therefore,
     \\[0.2cm]
@@ -1410,7 +1410,7 @@ We need only two functions from the module \texttt{heapq}:
                 ]{python3}
     def search(start, goal, next_states, heuristic):
         PrioQueue = [ (heuristic(start, goal), [start]) ]
-        while len(PrioQueue) > 0:
+        while PrioQueue:
             _, Path = heapq.heappop(PrioQueue)
             state   = Path[-1]
             if state == goal:
@@ -1501,16 +1501,16 @@ The details of the $\mathrm{A}^*$ algorithm are given in \myFig{A-Star-Search.ip
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]{python3}
-    import Set
+    from Set import Set
 
     def search(start, goal, next_states, heuristic):
         Parent   = { start:start }
         Distance = { start: 0 }           
         estGoal  = heuristic(start, goal)
         Estimate = { start: estGoal }
-        Frontier = Set.Set()
+        Frontier = Set()
         Frontier.insert( (estGoal, start) )
-        while not Frontier.isEmpty():
+        while Frontier:
             estimate, state = Frontier.pop()
             if state == goal:
                 return path_to(state, Parent)
@@ -1518,12 +1518,12 @@ The details of the $\mathrm{A}^*$ algorithm are given in \myFig{A-Star-Search.ip
             for ns in next_states(state):
                 oldEstimate = Estimate.get(ns, None)
                 newEstimate = stateDist + 1 + heuristic(ns, goal)
-                if oldEstimate == None or newEstimate < oldEstimate:
+                if oldEstimate is None or newEstimate < oldEstimate:
                     Distance[ns] = stateDist + 1
                     Estimate[ns] = newEstimate
                     Parent[ns]   = state
                     Frontier.insert( (newEstimate, ns) )
-                    if oldEstimate != None:
+                    if oldEstimate is not None:
                         Frontier.delete( (oldEstimate, ns) )
 \end{minted}
 \vspace*{-0.3cm}
@@ -1695,9 +1695,9 @@ path that connects the node $\texttt{start}$ with the node $s$.  Figure \ref{fig
         Distance = { start: 0 }           
         estGoal  = heuristic(start, goal)
         Estimate = { start: estGoal }
-        Frontier = Set.Set()
+        Frontier = Set()
         Frontier.insert( (estGoal, start) )
-        while not Frontier.isEmpty():
+        while Frontier:
             _, state = Frontier.pop()
             if state == goal:
                 return PathDict[state]
@@ -1705,12 +1705,12 @@ path that connects the node $\texttt{start}$ with the node $s$.  Figure \ref{fig
             for ns in next_states(state):
                 oldEstimate = Estimate.get(ns, None)
                 newEstimate = stateDist + 1 + heuristic(ns, goal)
-                if oldEstimate == None or newEstimate < oldEstimate:
+                if oldEstimate is None or newEstimate < oldEstimate:
                     Distance[ns] = stateDist + 1
                     Estimate[ns] = newEstimate
                     PathDict[ns] = PathDict[state] + [ns]
                     Frontier.insert( (newEstimate, ns) )
-                    if oldEstimate != None:
+                    if oldEstimate is not None:
                         Frontier.delete( (oldEstimate, ns) )
 \end{minted}
 \vspace*{-0.3cm}
@@ -1974,10 +1974,10 @@ the $\texttt{goal}$ is eventually found.
         ParentA   = { start: start };      ParentB   = { goal : goal  }
         DistanceA = { start: 0 };          DistanceB = { goal : 0 }
         EstimateA = { start: estimate };   EstimateB = { goal : estimate }
-        FrontierA = Set.Set();             FrontierB = Set.Set()
+        FrontierA = Set();                 FrontierB = Set()
         FrontierA.insert( (estimate, start) )
         FrontierB.insert( (estimate, goal ) )
-        while not FrontierA.isEmpty() and not FrontierB.isEmpty():
+        while FrontierA and FrontierB:
             guessA, stateA = FrontierA.pop()
             guessB, stateB = FrontierB.pop()
             stateADist = DistanceA[stateA]
@@ -1987,28 +1987,28 @@ the $\texttt{goal}$ is eventually found.
                 for ns in next_states(stateA):
                     oldEstimate = EstimateA.get(ns, None)
                     newEstimate = stateADist + 1 + heuristic(ns, goal)
-                    if oldEstimate == None or newEstimate < oldEstimate:
+                    if oldEstimate is None or newEstimate < oldEstimate:
                         ParentA  [ns] = stateA
                         DistanceA[ns] = stateADist + 1
                         EstimateA[ns] = newEstimate
                         FrontierA.insert( (newEstimate, ns) )
-                        if oldEstimate != None:
+                        if oldEstimate is not None:
                             FrontierA.delete( (oldEstimate, ns) )
-                    if DistanceB.get(ns, None) != None:
+                    if DistanceB.get(ns, None) is not None:
                         return combinePaths(ns, ParentA, ParentB)
             else:
                 FrontierA.insert( (guessA, stateA) )
                 for ns in next_states(stateB):
                     oldEstimate = EstimateB.get(ns, None)
                     newEstimate = stateBDist + 1 + heuristic(start, ns)
-                    if oldEstimate == None or newEstimate < oldEstimate:
+                    if oldEstimate is None or newEstimate < oldEstimate:
                         ParentB  [ns] = stateB
                         DistanceB[ns] = stateBDist + 1
                         EstimateB[ns] = newEstimate
                         FrontierB.insert( (newEstimate, ns) )
-                        if oldEstimate != None:
+                        if oldEstimate is not None:
                             FrontierB.delete( (oldEstimate, ns) )
-                    if DistanceA.get(ns, None) != None:
+                    if DistanceA.get(ns, None) is not None:
                         return combinePaths(ns, ParentA, ParentB)                    
 \end{minted}
 \vspace*{-0.3cm}
@@ -2261,9 +2261,9 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
         Distance = { start: 0 }           
         estGoal  = heuristic(start, goal)
         Estimate = { start: estGoal }
-        Frontier = Set.Set()
+        Frontier = Set()
         Frontier.insert( (estGoal, start) )
-        while len(Distance) < size and not Frontier.isEmpty():
+        while len(Distance) < size and Frontier:
             estimate, state = Frontier.pop()
             if state == goal:
                 return path_to(state, Parent)
@@ -2271,12 +2271,12 @@ nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\t
             for ns in next_states(state):
                 oldEstimate = Estimate.get(ns, None)
                 newEstimate = stateDist + 1 + heuristic(ns, goal)
-                if oldEstimate == None or newEstimate < oldEstimate:
+                if oldEstimate is None or newEstimate < oldEstimate:
                     Distance[ns] = stateDist + 1
                     Estimate[ns] = newEstimate
                     Parent[ns]   = state
                     Frontier.insert( (newEstimate, ns) )
-                    if oldEstimate != None:
+                    if oldEstimate is not None:
                         Frontier.delete( (oldEstimate, ns) )
         Path = id_search(goal, start, next_states, heuristic, Distance)
         return path_to(Path[-1], Parent) + Path[::-1][1:]
