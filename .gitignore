@@ -21,17 +21,21 @@ SetlX/Neural-Networks/mnist_train.csv
 SetlX/Neural-Networks/mnist_test.csv
 Literature/*
 Exercises/*
-Python/.ipynb_checkpoints/
-Python/__pycache__/
-Python/*/__pycache__
-Python/*/.ipynb_checkpoints
+**/__pycache__
+**/.ipynb_checkpoints
 Python/2 Constraint Solver/Constraint-Propagation-Solver-All-Solutions.ipynb
 Python/2 Constraint Solver/Sudoku.ipynb
 Python/3 Games/Connect-Four.ipynb
-Lecture-Notes/_minted-_region_/*
-Lecture-Notes/_minted-artificial-intelligence/*
-Lecture-Notes/artificial-intelligence.idx
-Lecture-Notes/artificial-intelligence.ilg
-Lecture-Notes/artificial-intelligence.ind
-Lecture-Notes/artificial-intelligence.lof
+**/_minted-_region_/*
+**/_minted-artificial-intelligence/*
+**/artificial-intelligence.idx
+**/artificial-intelligence.ilg
+**/artificial-intelligence.ind
+**/artificial-intelligence.lof
 .mypy_cache/*
+.vscode/
+*.fdb_latexmk
+*.fls
+*.pyg
+
+*.synctex(busy)
