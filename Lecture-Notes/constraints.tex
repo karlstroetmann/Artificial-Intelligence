@@ -509,7 +509,7 @@ is to try to evaluate constraints as soon as possible:  If $C$ is a constraint a
 such that all the variables occurring in $C$ have already been assigned a value in $B$ and the evaluation of $C$
 fails, then there is no point in trying to complete the variable assignment $B$.  Hence, in backtracking we
 evaluate a constraint $C$ as soon as all of its variables have been assigned a value.  If $C$ is not valid, we
-backtrack and discard the current partial variable assignment.  This approach can result in huge time savings
+discard the current partial variable assignment.  This approach can result in huge time savings
 when compared to the baseline of brute force search.
 
 \myFig{Backtrack-Solver.ipynb} shows a simple \ac{csp} solver 
@@ -555,7 +555,7 @@ satisfaction problem $\texttt{P}$ as input and tries to find a solution.
       is satisfied for a partial variable assignment $\texttt{Assignment}$ where $\texttt{Assignment}$ is
       stored as a dictionary, we only need to check the constraint $\texttt{f}$ iff all of the variables occurring
       in $\texttt{f}$ are elements of the domain of $\texttt{Assignment}$.   It would be wasteful to compute
-      these variables every time.
+      these variables every time that a partial variable assignment is extended.
 \item Next, we call the function $\texttt{backtrack\_search}$ to compute a solution of $\texttt{CSP}$.
       This function is enclosed in a \texttt{try}-\texttt{except}-block that catches exceptions of class
       \texttt{Backtrack}.  This class is defined as follows:
@@ -608,9 +608,9 @@ $\texttt{Assignment}$ as input together with an augmented \ac{csp} \texttt{P}.  
 \blue{consistent} with $\texttt{P}$:  If $\texttt{f}$ is a constraint of $\texttt{CSP}$ such that
 all the variables occurring in $\texttt{f}$ are members of $\texttt{dom}(\texttt{Assignment})$, then evaluating
 $\texttt{f}$ using $\texttt{Assignment}$ yields $\texttt{true}$.  Initially, this partial assignment is empty
-and hence trivially consistent.  The idea is to extend this partial assignment until it is a complete
-assignment.  We take care to ensure that the partial variable assignment remains consistent when it is
-extended.  This way, once the assignment is complete it has to satisfy all constraints of the given $\texttt{CSP}$.
+and hence trivially consistent.  The idea is to extend this partial assignment until it is a complete variable 
+assignment.  We take care to ensure that this partial variable assignment remains consistent when it is
+extended.  This way, once this assignment is complete it has to satisfy all the constraints of the given $\texttt{CSP}$.
 \begin{enumerate}
 \item First, the augmented \ac{csp} \texttt{P} is split into its components.
 \item Next, if $\texttt{Assignment}$ is already a complete variable assignment, i.e.~if the dictionary
@@ -624,7 +624,7 @@ extended.  This way, once the assignment is complete it has to satisfy all const
 \item Next, we try to assign a $\texttt{value}$ to the selected variable $\texttt{var}$.  After assigning
       a $\texttt{value}$ to $\texttt{var}$, we immediately check whether this assignment would be consistent
       with the constraints using the function $\texttt{is\_consistent}$.
-      If the partial $\texttt{Assignment}$ turns out to be consistent, the partial $\texttt{Assignment}$
+      If the partial $\texttt{Assignment}$ turns out to be consistent, the partial variable $\texttt{Assignment}$
       is extended to the new partial assignment \texttt{NewAss} that satisfies
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -721,6 +721,7 @@ $\texttt{NewAssign}$.  The reasoning is as follows:
     def collect_variables(expr):
         return { var for var in ev.extractVars(expr)
                      if  var not in dir(__builtins__)
+                     if  var not in ['and', 'or', 'not']
                }
 \end{minted}
 \vspace*{-0.3cm}
@@ -732,8 +733,10 @@ This function uses the module \texttt{extractVariables} that provides the functi
 This function takes a string $e$ that can be interpreted as a \textsl{Python} expression as its argument and
 returns the set of all variables and function symbols occurring in the expression $e$.  As we only want to keep
 the variable names, the function \texttt{collect\_variables} takes care to eliminate the function symbols.
-This is done by making use of the fact that all function symbols that have been defined are a member of the
-list \texttt{dir(\_\_builtin\_\_)}. 
+This is done by making use of the fact that all function symbols that have been defined are members of the
+list \texttt{dir(\_\_builtin\_\_)}.   It turns out that the keyword ``\texttt{and}'', ``\texttt{or}'', and
+``\texttt{not}'' also need to be removed since they might also be members of the set returned by
+$\texttt{extractVars}(\texttt{expr})$.
 
 If we use the program discussed in this section, we can solve the 8 queens problem in about 22 milliseconds.
 Hence, for the eight queens problem backtracking is more than a thousand times faster than brute force search.
@@ -776,7 +779,8 @@ discussed in this section.
 
 \section{Constraint Propagation}
 \index{constraint propagation}
-Once we choose a value for a variable, this choice influences the values that are still available for other variables.
+Once we have chosen a value for a variable, this choice influences the values that are still available for
+other variables. 
 For example, suppose that in order to solve the $n$ queens problem we place the queen in row one in the second
 column, then no other queen can be placed in 
 that column.   Furthermore, due to the constraints on diagonals, the queen in row two can not be placed
@@ -810,8 +814,8 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       \blue{least constraining value}\index{least constraining value heuristic} heuristic:  The idea is that
       we compute for all values in  $\texttt{ValuesPerVar[x]}$ how much they constrain the values 
       of other variables.  The details of how this is done will be given later.  Once we have picked a value
-      $\texttt{v}$ for the variable $\texttt{x}$, we assign the value $\texttt{v}$ to the variable $\texttt{x}$ and then we
-      \blue{propagate} the consequences of this assignment: 
+      $\texttt{v}$ for the variable $\texttt{x}$ that puts the least constraints on the other variables, we
+      assign this value $\texttt{v}$ to the variable $\texttt{x}$ and then we \blue{propagate} the consequences of this assignment: 
       \begin{enumerate}
       \item For every constraint $\texttt{f}$ that mentions only the variable $\texttt{x}$ and one other variable
             $\texttt{y}$ that has not yet been instantiated, we compute the set $\texttt{Legal}$ of those values from 
@@ -948,7 +952,7 @@ raised since in that case the given \ac{csp} is unsolvable.
         if len(Assignment) == len(ValuesPerVar):
             return Assignment
         x = most_constrained_variable(Assignment, ValuesPerVar)
-        if lcv:
+        if lcv and len(ValuesPerVar[x]) > 1:
             ValueList = least_constraining(x, ValuesPerVar, Assignment, Constraints)
         else:
             ValueList = ValuesPerVar[x]
@@ -986,7 +990,7 @@ solution of the given \ac{csp}.
       The logic behind choosing a maximally constrained variables is that these variables are the most
       difficult to get right.  If we have a partial assignment that is inconsistent, then we will discover this
       fact earlier if we try the most difficult variables first.  This might save us a lot of unnecessary
-      backtracking. 
+      backtracking later. 
 \item Next, we try to find a value that can be assigned to the variable $\texttt{x}$.
       If the \blue{least constraining value heuristic} is used, we try those values first that have the
       smallest \blue{shrinkage number}.  Given a variable $\texttt{x}$, the shrinkage number for assigning the
@@ -1004,11 +1008,10 @@ solution of the given \ac{csp}.
       $\texttt{ValuesPerVar[x]}$ is, in general, smaller than the set of all values of the \ac{csp},
       the \texttt{for}-loop in this version of backtracking search is more efficient than the corresponding
       \texttt{for}-loop in backtracking search discussed in the previous section. 
-\item If it is consistent to assign $\texttt{v}$ to the variable $\texttt{x}$, we propagate the consequences
+\item If assigning the value $\texttt{v}$ to the variable $\texttt{x}$ is consistent, we propagate the consequences
       of this assignment using the function $\texttt{propagate}$ shown in
       \myFig{Constraint-Propagation-Solver.ipynb:propagate}.
-      This function updates the values that are still allowed for the variables of the \ac{csp} once the
-      value $\texttt{v}$ has been assigned to the variable $\texttt{x}$.
+      This function updates the dictionary $\mathtt{ValuesPerVar}$ for all variables that are still unassigned.
 \item Finally, the partial variable $\texttt{Assignment}$ is updated to include the assignment of 
       $\texttt{v}$ to $\texttt{x}$ and the recursive call to $\texttt{backtrack\_search}$ tries to complete this new
       assignment and thereby compute a solution to the given \ac{csp}. 
@@ -1130,7 +1133,7 @@ w.r.t.~the shrinkage numbers.
 \label{fig:Constraint-Propagation-Solver.ipynb:shrinkage}
 \end{figure}
 
-\noindent
+
 The function $\texttt{shrinkage}$ shown in \myFig{Constraint-Propagation-Solver.ipynb:shrinkage} computes
 the \blue{shrinkage numbers} of the given $\texttt{value}$ that is assigned to the variable $\texttt{x}$.
 It takes the following inputs:
@@ -1263,7 +1266,7 @@ it with the Zebra Puzzle described in a previous exercise.  It solves this puzzl
 compare, the backtracking algorithm shown in the previous section takes roughly 10 seconds to solve this
 puzzle.  Hence, for problems like the eight queens puzzle, the least constraining value heuristic does not pay
 off.  However, for more complicated puzzles like Sudoku puzzles, the least constraining value heuristic speeds
-the computation up.
+up the computation.
 
 
 
