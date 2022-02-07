@@ -1,5 +1,5 @@
 name: CD
-# This workflow runs on the triggers below iff a *.tex file has been modified, but no pdf has changed.
+# This workflow runs on the triggers below if a *.tex file has been modified.
 
 # Triggers:
 # 1. Pull request opened / reopened / changed (synchronize):
