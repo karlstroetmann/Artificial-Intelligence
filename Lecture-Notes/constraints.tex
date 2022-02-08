@@ -1464,9 +1464,9 @@ $(\texttt{D} + \texttt{E}) \;\texttt{//}\; 10 = \texttt{C1}$.
 Here, the symbol ``$\texttt{//}$'' denotes 
 \href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, 
 e.g.~we have $7 \;\texttt{//}\; 3 = 2$ because $7 = 2 \cdot 3 + 1$.
-If we try to solve the cryptarithmetic puzzle as coded in \myFig{Crypto-Arithmetic.ipynb} using the
-constraint solver developed in the previous section, we will be disappointed: Solving the puzzle takes about
-four seconds on my computer.  The reason is that most constraints involve either three or four variables and
+If we solve the cryptarithmetic puzzle as coded in \myFig{Crypto-Arithmetic.ipynb} using the
+constraint solver developed, then solving the puzzle takes about
+a second on my computer.  The reason is that most constraints involve either three or four variables and
 therefore the effects of constraint propagation kick only in when many variables have already been initialized.
 However, we can solve the problem in less than 50 milliseconds if we add the following constraints for the 
 variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
@@ -1620,7 +1620,8 @@ $\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The imp
       $\texttt{var}$ have to be added to the set $\texttt{UncheckedVars}$.  The reason is that once a
       value is removed for the variable $\texttt{var}$, the value assigned to another variable $y$ occurring in a
       constraint that mentions both $\texttt{var}$ and $y$ might now become inconsistent.
-\item If there are no consistent values for $\texttt{var}$ left, we have to backtrack.
+\item If there are no consistent values for $\texttt{var}$ left, the problem is unsolvable and an exception is
+      raised.
 \item Otherwise, the set of values that are known to be consistent for \texttt{var} is stored
       as \\ $\texttt{ValuesPerVar}[\texttt{var}]$.
 \end{enumerate}
@@ -1667,7 +1668,7 @@ is used in the implementation of $\texttt{enforce\_consistency}$.  This function
 \begin{enumerate}[(a)]
 \item $\texttt{var}$ is variable.
 \item $\texttt{val}$ is a value that is to be assigned to $\texttt{var}$.
-\item $\texttt{f}$ is a constraint such that $\texttt{var}$ occurs in $\texttt{f}$
+\item $\texttt{f}$ is a constraint such that the variable $\texttt{var}$ occurs in $\texttt{f}$
 \item $\texttt{Vars}$ is the set of all those other variables occurring in $\texttt{f}$, i.e.~the set of those
       variables that occur in $\texttt{f}$ but that are different from $\texttt{var}$. 
 \item $\texttt{ValuesPerVar}$  is a dictionary associating the set of possible values with each variable.
@@ -1858,7 +1859,7 @@ local search works as follows: \index{local search}
 
 \myFig{Local-Search.ipynb:solve} shows the preprocessing step.  The function \texttt{solve} takes a constraint
 satisfaction problem \texttt{P} as its argument and performs consistency checking similar to the algorithm
-discussed in the previous section.  Following the preprocessing it call the function \texttt{local\_search}
+discussed in the previous section.  Following the preprocessing it calls the function \texttt{local\_search}
 that solves the given \ac{csp}.
 
 \begin{figure}[!ht]
@@ -1926,15 +1927,16 @@ proceed to discuss this program line by line.
       \hspace*{1.3cm}
       $\texttt{random.choice}(L)$
       \\[0.2cm]
-      that is used to select a random element from $L$ expects that its argument $L$ to be indexable, i.e.~for
+      that is used to select a random element from $L$ expects its argument $L$ to be indexable, i.e.~for
       a number $k \in \{0, \cdots, \texttt{len}(L)-1\}$ the expression $L[k]$ needs to be defined.
 \item \texttt{Assign} is a dictionary mapping all variables from the set \texttt{Variables} to values from the
       set \texttt{Values}.  Initially the values are assigned randomly.
 \item The variable \texttt{iteration} counts the number of times that we have changed the assignment
       \texttt{Assign} by reassigning a variable.
 \item If we have reassigned a variable $x$ in the last iteration of the loop, then we do not want to reassign
-      it again in the next step.  Therefore, the variable \texttt{lastVar} stores the variable that has been
-      reassigned in the previous iteration.
+      it again in the next step since otherwise the program could get stuck in an infinite loop.  Therefore,
+      the variable \texttt{lastVar} stores the variable that has been reassigned in the previous iteration.
+      We will ensure that in the next iteration step, another variable is chosen for reassignment.
 \item At the beginning of the \texttt{while} loop, we count the number of conflicts for all variables, i.e.~if
       $x$ is a variable that is different from the variable that has been reassigned in the last iteration,
       then we count the number of \blue{conflicts} \index{conflict} that $x$ causes.  This number is defined 
@@ -1958,19 +1960,18 @@ proceed to discuss this program line by line.
       number of conflicts.  
 \item In line \texttt{18} we choose a random variable \texttt{x} from this list as the variable to be
       reassigned.  However, this is only done ten out of eleven times.  In order to avoid running into an
-      infinite loop where we keep changing the same variables, every eleven$^\textrm{th}$ iteration instead of choosing \texttt{x}
-      as the variable violating the most constraints we choose \texttt{x} randomly.  This is controlled by the
-      test \texttt{iteration \% 11 == 0} in line 16.
+      infinite loop where we keep changing the same variables, every $11^\textrm{th}$ iteration chooses
+      \texttt{x} randomly.  This is controlled by the  test \texttt{iteration \% 11 == 0} in line 16.
 \item Line \texttt{22} computes a list \texttt{Conflicts} that this time contains pairs of the form $(n, v)$ where $n$ 
       is the number of conflicts that the variable \texttt{x} would cause if we would assign the value $v$ to
       \texttt{x}.
-\item Line \texttt{25} casts the list \texttt{Conflicts} into a set that is represented as an ordered binary set.
-      This set is effectively a priority queue that is ordered by the number of conflicts.  We pick the
+\item Line \texttt{25} casts the list \texttt{Conflicts} into a set that is represented as an ordered binary tree.
+      This ordered binary tree is used as a priority queue that is ordered by the number of conflicts.  We pick the
       smallest number of conflicts that any value $v$ causes when \texttt{x} is assigned to $v$.
 \item \texttt{ValuesForX} is the list of those values that cause only \texttt{minNum} conflicts when assigned
       to \texttt{x}. 
 \item \texttt{newVal} is a random element from this list that is then assigned to \texttt{x}.
-      Again, this is only done twelve out of thirteen times.  The thirteen$^\mathrm{th}$ time a random value is
+      Again, this is only done twelve out of thirteen times.  The $13^\mathrm{th}$ time a random value is
       assigned to \texttt{x} instead. 
 \item In line \texttt{29} we remember that we have reassigned \texttt{x} in this iteration so that we don't reassign
       \texttt{x} in the next iteration again.
@@ -2008,7 +2009,7 @@ is the number of conflicts caused by the variable $x$.
 Using the program discussed in this section, the n queens problem can be solved for a $\texttt{n} = 1000$ in
 30 minutes.  As the memory requirements for local search are small, even much higher problem sizes can be
 tackled if sufficient time is available.  It is a fact that often large problems, which are not inherently
-difficult, can be solved much faster with local search that with any other algorithm.  
+difficult, can be solved much faster with local search than with any other algorithm.  
 However, we have to note that local search is \blue{incomplete}:  If a
 constraint satisfaction problem $\mathcal{P}$ has no solution, then local search loops forever.  Therefore, in
 practise a \blue{dual approach} is used to solve a constraint satisfaction problem.  The constraint solver
@@ -2021,7 +2022,7 @@ it is unlikely that there is an efficient algorithm that works \blue{always}.  H
 relevant constraint satisfaction problems can be solved in a reasonably short time. 
 
 In this chapter we could only give a glimpse of the theory of constraint satisfaction problems.
-For further details on the theory of \ac{csp}s, consult the book \blue{constraint processing} by Rina Dechter
+For further details on the theory of \ac{csp}s, consult the book \blue{Constraint Processing} by Rina Dechter
 \cite{dechter:2003}.
 
 %%% Local Variables:
