@@ -3,13 +3,13 @@ One major breakthrough for the field of artificial intelligence happened in 1997
 \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue} was able to beat the World Chess
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
 While \blue{Deep Blue} \index{deep blue} was based on special hardware, according to the
-\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 18th
-of December 2021, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
-on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3544.  
+\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 5th
+of February 2022, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
+on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3542.  
 To compare, according to the
-\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of December 2021, the current 
+\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of February 2022, the current 
 World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
-2856.  Hence, he wouldn't stand a chance to win a game against Stockfish.  In 2017, at the 
+2865.  Hence, he wouldn't stand a chance to win a game against Stockfish.  In 2017, at the 
 \href{https://en.wikipedia.org/wiki/Future_of_Go_Summit}{Future of Go Summit},  the computer program
 \href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} \index{AlphaGo} was able to beat
 \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie}, \index{Ke Jie} 
@@ -120,15 +120,15 @@ the game is drawn.  In this section we present two different implementations of 
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
               ]{python3}
-    Players  = [ "X", "O" ]
-    Start    = tuple( tuple(" " for col in range(3)) for row in range(3))
+    gPlayers = [ "X", "O" ]
+    gStart   = tuple( tuple(" " for col in range(3)) for row in range(3))
     def to_list (State): return [list(row) for row in State]
     def to_tuple(State): return tuple(tuple(row) for row in State)
     
-    def empty(S):
+    def empty(State):
         return [ (row, col) for row in range(3)
                             for col in range(3)
-                            if  S[row][col] == ' ' 
+                            if  State[row][col] == ' ' 
                ]
     
     def next_states(State, player):
@@ -140,26 +140,26 @@ the game is drawn.  In this section we present two different implementations of 
             Result.append( to_tuple(NextState) )
         return Result
     
-    All_Lines = [ [ (row, col) for col in range(3) ] for row in range(3) ] \
+    gAllLines = [ [ (row, col) for col in range(3) ] for row in range(3) ] \
               + [ [ (row, col) for row in range(3) ] for col in range(3) ] \
               + [ [ (idx,   idx) for idx in range(3) ] ]                   \
               + [ [ (idx, 2-idx) for idx in range(3) ] ]
     
-    def utility(State, player):
-        for Pairs in All_Lines:
+    def utility(State):
+        for Pairs in gAllLines:
             Marks = { State[row][col] for row, col in Pairs }
             if len(Marks) == 1 and  Marks != { ' ' }: 
-                if Marks == { player }:
+                if Marks == { 'X' }:
                     return  1
                 else:
                     return -1
         for row in range(3):
             for col in range(3):
-                if State[row][col] == ' ':
+                if State[row][col] == ' ': # the board is not filled
                     return None   
         return 0            
     
-    def finished(State): return utility(State, "X") != None
+    def finished(State): return utility(State) != None
 \end{minted}
 \caption{A \textsl{Python} implementation of tic-tac-toe.}
 \label{fig:Tic-Tac-Toe.ipynb}
@@ -169,15 +169,15 @@ the game is drawn.  In this section we present two different implementations of 
 \FloatBarrier
 
 \begin{enumerate}
-\item The variable $\textts{Players}$ stores the list of players.  Traditionally, we use the characters
+\item The variable $\textts{gPlayers}$ stores the list of players.  Traditionally, we use the characters
       ``\textts{X}'' and ``\textts{O}'' to name the players.   
-\item The variable $\textts{Start}$ stores the start state, which is an empty board.
+\item The variable $\textts{gStart}$ stores the start state, which is an empty board.
       States are represented as tuples of tuples.  If $S$ is a state and $r,c \in \{0,1,2\}$,
       then $S[r][c]$ is the mark in row $r$ and column $c$.
       To represent states we have to use immutable data types, i.e.~tuples instead of lists, as we need to
       store states in sets later.  The entries in the inner tuples are the characters 
       ``\textts{X}'', ``\textts{O}'', and the blank character ``\textts{ }''.
-      As the state  $\textts{Start}$ is the empty board, it is represented as a tuple of three tuples
+      As the state  $\textts{gStart}$ is the empty board, it is represented as a tuple of three tuples
       containing three blanks each:
       \begin{Verbatim}
       ( (' ', ' ', ' '), 
@@ -212,14 +212,14 @@ the game is drawn.  In this section we present two different implementations of 
 
       Note that we had to turn the \textts{State} into a list of list in order to manipulate it.
       The manipulated State is then cast into a tuple of tuples.
-\item The function $\textts{utility}$ takes a $\textts{State}$ and a $\textts{player}$ as arguments.  If the game is 
+\item The function $\textts{utility}$ takes a $\textts{State}$ as its argument.  If the game is 
       finished in the given $\textts{State}$, it returns the value that this $\textts{State}$ has for the
-      current $\textts{player}$.  If the outcome of the game is not yet decided, the value $\mathtt{None}$
+      player \textts{"X"}.  If the outcome of the game is not yet decided, the value $\mathtt{None}$
       is returned instead. 
  
       In order to achieve its goal, the procedure first computes the set of all sets of coordinate pairs that 
       either specify a horizontal, vertical, or diagonal line on a $3 \times 3$ tic-tac-toe board.  Concretely,
-      the variable \textts{All\_Lines} has the following value:
+      the variable \textts{gAllLines} has the following value:
       \\[0.2cm]
       \hspace*{1.3cm}
       $
@@ -236,29 +236,29 @@ the game is drawn.  In this section we present two different implementations of 
       \end{array}
       $
       \\[0.2cm]
-      The first line in this expression gives the set of pairs defining the rows, the second line defines 
+      The first line in this expression gives the sets of pairs defining the rows, the second line defines 
       the columns, and the last line yields the two diagonals.  Given a state $\textts{State}$ and a set
       $\textts{Pairs}$, the set 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \textts{Marks = \{ State[row][col] : [row, col] in Pairs \}}
+      \textts{Marks = \{ State[row][col] : (row, col) in Pairs \}}
       \\[0.2cm]
       is the set of all marks in the line specified by $\textts{Pairs}$.  For example, if 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \textts{Pairs = \{ [1, 1], [2, 2], [3, 3] \}},
+      \textts{Pairs = \{ (1, 1), (2, 2), (3, 3) \}},
       \\[0.2cm]
       then $\textts{Marks}$ is the set of marks on the falling diagonal.
       The game is decided if all entries in a set of the form 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \textts{Marks := \{ State[row][col] : [row, col] in Pairs \}}
+      \textts{Marks := \{ State[row][col] : (row, col) in Pairs \}}
       \\[0.2cm]
-      where \textts{Pairs} is a list from \textts{all\_lines} either have the value
+      where \textts{Pairs} is a list from \textts{gAllLines} either have the value
       ``$\textts{X}$'' or the value ``$\textts{O}$''.  In this case, the set \textts{Marks} has exactly one
-      element which is different from the blank.  If this element is the same as $\textts{player}$, then the
-      game is \blue{won} by $\textts{player}$, otherwise it must be the mark of his opponent and hence the game
-      is \blue{lost} for him. 
+      element which is different from the blank.  If this element is $\textts{"X"}$, then the
+      game is \blue{won} by $\textts{"X"}$, otherwise the element must be $\textts{"O"}$ and hence
+      the game has a value of $-1$ for $\textts{"X"}$.
 
       If there are any empty squares on the board but the game has not yet been decided,
       then the function returns \textts{None}.  Finally, if there are no more empty squares left, the game is a
@@ -293,8 +293,8 @@ this implementation.
                  xleftmargin   = 0.8cm,
                  xrightmargin  = 0.8cm,
                ]{python3}
-    Players = [0, 1]
-    Start = 0
+    gPlayers = [0, 1]
+    gStart = 0
     
     def set_bits(Bits):
         result = 0
@@ -318,22 +318,22 @@ this implementation.
             Result.append(next_state)
         return Result
 
-    All_Lines = [ set_bits([0,1,2]), set_bits([3,4,5]), set_bits([6,7,8]), 
+    gAllLines = [ set_bits([0,1,2]), set_bits([3,4,5]), set_bits([6,7,8]), 
                   set_bits([0,3,6]), set_bits([1,4,7]), set_bits([2,5,8]), 
                   set_bits([0,4,8]), set_bits([2,4,6])                     ]
 
-    def utility(state, player):
-        for mask in All_Lines:
+    def utility(state):
+        for mask in gAllLines:
             if state & mask == mask:
-                return 1 - 2 * player  # player 'X' has won
+                return 1              # player 'X' has won
             if (state >> 9) & mask == mask:
-                return -1 + 2 * player # player 'O' has won
+                return -1             # player 'O' has won
         # 511 == 2**9 - 1 = 0b1_1111_1111  
         if (state & 511) | (state >> 9) != 511: # the board is not yet filled
             return None
         return 0 # it's a draw
     
-    finished = lambda state: utility(state, 0) != None
+    finished = lambda state: utility(state) != None
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Tic-Tac-Toe implemented by a bitboard.}
@@ -345,7 +345,7 @@ this implementation.
 \item When we use bitboards to implement tic-tac-toe it is more convenient to store the players as numbers. The
       first player \textts{X} is encoded as the number $0$, while the second player \textts{O} is encoded as
       the number $1$. 
-\item In the state \textts{Start}, no mark has been placed on the board.  Hence all bits are unset and therefore this
+\item In the state \textts{gStart}, no mark has been placed on the board.  Hence all bits are unset and therefore this
       state is represented by the number $0$. 
 \item The function \textts{set\_bits} takes a list of natural numbers as its argument \textts{Bits}.  These numbers specify
       the bits that should be set.  It returns an integer where all bits specified in the argument
@@ -387,34 +387,61 @@ Conceptually, the notion of the \blue{value} of a state is an extension of the n
 states, the value is defined for all states.  Formally, we define a function
 \\[0.2cm]
 \hspace*{1.3cm}
-$\textts{value}: \textts{States} \times \textts{Players} \rightarrow \{-1, 0, +1\}$
+$\textts{maxValue}: \textts{States} \rightarrow \{-1, 0, +1\}$
 \\[0.2cm]
-that takes a state $s \in \textts{States}$ and a player $p \in \textts{Players}$ and returns the value of the
-state $s$ provided that both the player $p$ and his opponent play \blue{optimally}.  The easiest way to define
-this function is via recursion.  As the 
-\textts{value} function is an extension of the \textts{utility} function, the base case is as follows:
+that takes a state $s \in \textts{States}$ returns the value that the state $s$ has for the first player, who
+tries to maximize the value of the state, provided that both the player $p$ and his opponent play
+\blue{optimally}.  The easiest way to define this function is via recursion.  As the 
+\textts{maxValue} function is an extension of the \textts{utility} function, the base case is as follows:
 \\[0.2cm]
-\hspace*{1.3cm}
-$\textts{finished}(s) \rightarrow \textts{value}(s, p) = \textts{utility}(s, p)$. \hspace*{\fill} (1)
+\hspace*{0.3cm}
+$\textts{finished}(s) \rightarrow \textts{maxValue}(s) = \textts{utility}(s)$. \hspace*{\fill} (1)
 \\[0.2cm]
-If the game is not yet finished, assume that player $o$ is the opponent of player $p$.  Then we define
+If the game is not yet finished, we define
 \\[0.2cm]
-\hspace*{1.3cm}
+\hspace*{0.3cm}
 $\neg \textts{finished}(s) \rightarrow 
- \textts{value}(s, p) = \max\bigl(\bigl\{
-                     -\textts{value}(n, o) \bigm| n \in \textts{nextStates}(s, p)
+ \textts{maxValue}(s) = \max\bigl(\bigl\{
+                     \textts{valueMin}(n) \bigm| n \in \textts{nextStates}(s, \mathtt{gPlayers}[0])
                      \bigr\}\bigr)
 $.  \hspace*{\fill} (2)
 \\[0.2cm]
-The reason is that, if the game is not finished yet, the player $p$ has to evaluate all possible moves.  
-From these, the player $p$ will choose the move that maximizes the value of the game for herself.  In order to
-do so, the player $p$ computes the set 
-$\textts{nextStates}(s, p)$ of all states that can be reached from the state $s$ in any one move of the player $p$.
-Now if $n$ is a state that results from player $p$ making some move, then in state $n$ it is the turn of the other player
-$o$ to make a move.  Hence, in order to evaluate the state $n$, we have to call the function $\textts{value}$
-recursively as $\textts{value}(n,o)$.   Since the gains of the other player $o$ are the losses of the player
-$p$, we have to take the negative of  $\textts{value}(n, o)$.
-\myFig{Minimax.ipynb} shows an implementation of this strategy.
+The reason is that, if the game is not finished yet, the maximizing player $\textts{gPlayers}[0]$ has to
+evaluate all possible moves.   
+From these, the player will choose the move that maximizes the value of the game for herself.  In order to
+do so, the player computes the set 
+$\textts{nextStates}(s, \mathtt{gPlayers}[0])$ of all states that can be reached from the state $s$ in any one move of the player $\mathtt{gPlayers}[0]$.
+Now if $n$ is a state that results from player $\texttt{gPlayers}[0]$ making some move, then in state $n$ it is the turn of the other player
+$\mathtt{gPlayers}[1]$ to make a move.  However, this player is the minimizing player who tries to achieve the
+state with the minimal value.
+Hence, in order to evaluate the state $n$, we have to call the function $\textts{minValue}$
+recursively as $\textts{minValue}(n)$.
+The definition of the function \textts{minValue} is defined by the following recursive equations
+\begin{enumerate}
+\item $\textts{finished}(s) \rightarrow \textts{minValue}(s) = \textts{utility}(s)$. 
+\item $\neg \textts{finished}(s) \rightarrow 
+       \textts{minValue}(s) = \min\bigl(\bigl\{
+                     \textts{maxValue}(n) \bigm| n \in \textts{nextStates}(s, \mathtt{gPlayers}[1])
+                     \bigr\}\bigr)
+      $.  
+\end{enumerate}
+
+\myFig{Minimax.ipynb} shows an implementation of this strategy. It also shows the function \textts{best\_move}.
+This function  takes a $\textts{State}$ such that \textts{X} is to move in this state.  It returns a pair
+$(v,s)$ where $s$ is a state that is optimal for the player \textts{X} and such
+that $s$ can be reached in one step from $\textts{State}$.  Furthermore, $v$ is the value of this state.
+\begin{enumerate}[(a)]
+\item To this end, it first computes the set $\textts{NS}$ of all states that can be reached 
+      from the given $\textts{State}$ in one step if \textts{X} is to move next.
+\item $\textts{bestValue}$ is the best value that $\textts{X}$ can achieve in the given $\textts{State}$.
+\item $\textts{BestMoves}$ is the set of states that  $\textts{X}$ can move to and that are optimal
+      for her.
+\item The function returns randomly one of those states $\textts{ns} \in \textts{NS}$ such that 
+      the value of $\textts{ns}$ is optimal, i.e.~is equal to $\textts{bestValue}$.
+      We use randomization here since we want to have more interesting games.  If we would always choose
+      the first state that achieves the best value, then our program would always make the same move in
+      a given state.  Hence, playing the program would get boring much sooner.
+\end{enumerate}
 
 
 \begin{figure}[!ht]
@@ -428,100 +455,108 @@ $p$, we have to take the negative of  $\textts{value}(n, o)$.
                 xleftmargin   = 0.0cm,
                 xrightmargin  = 0.0cm,
               ]{python3}
-    other = lambda p: [o for o in Players if o != p][0]
-    Cache = {}
+def maxValue(State):
+    if finished(State):
+        return utility(State)
+    return max([ minValue(ns) for ns in next_states(State, gPlayers[0]) ])
 
-    def memoize(f):
-        global Cache
+def minValue(State):  
+    if finished(State):
+        return utility(State)
+    return min([ maxValue(ns) for ns in next_states(State, gPlayers[1]) ])
 
-        def f_memoized(*args):
-            if args in Cache:
-                return Cache[args]
-            result = f(*args)
-            Cache[args] = result
-            return result
-
-        return f_memoized
-  
-    @memoize    
-    def value(State, player):
-        if finished(State):
-            return utility(State, player)
-        o = other(player)
-        return max([-value(ns, o) for ns in next_states(State, player)])
-    
-    def best_move(State, player):
-        NS        = next_states(State, player)
-        bestVal   = value(State, player)
-        BestMoves = [s for s in NS if -value(s, other(player)) == bestVal]
-        BestState = random.choice(BestMoves)
-        return bestVal, BestState
+def best_move(State):
+    NS        = next_states(State, gPlayers[0])
+    bestVal   = maxValue(State)
+    BestMoves = [s for s in NS if minValue(s) == bestVal]
+    BestState = random.choice(BestMoves)
+    return bestVal, BestState
 \end{minted}
 \caption{The Minimax algorithm.}
 \label{fig:Minimax.ipynb}
 \end{figure}
 \FloatBarrier
 
+\subsection{Memoization}
+Let us consider how many states have to be explored in the case of tic-tac-toe by the minimax algorithm
+described previously.  We have 9 possible moves for player \textts{X} in the start state, then the player
+\textts{O} can respect with 8 moves, then there are 7 moves for player \textts{O} and so on until in the end
+player \textts{X} has only $1$ move left.  If we disregard 
+the fact that some games are decided after fewer than 9 moves, the functions $\textts{maxValue}$ and
+$\textts{minValue}$ need to consider  a total of
+\\[0.2cm]
+\hspace*{1.3cm}
+$9 \cdot 8 \cdot 7 \cdot {\dots} \cdot 2 \cdot 1 = 9! = 362\,880$
+\\[0.2cm]
+different moves.  However, if we count the number of possibilities of putting 5 \textts{O}s and 4
+\textts{X}s on a $3 \times 3$ board, we see that there are only
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = 126$
+\\[0.2cm]
+possibilities, because we only have to count the number of ways to put 5 \textts{O}s on
+9 positions and that number is the same as the number of subsets of five elements from a set of nine elements.
+Therefore, if we disregard the fact that some games are decided after fewer than nine moves,  there are a
+factor of $5! \cdot 4! = 2880$ less terminal states than there are possible sequences of moves!
+
+As we have to evaluate not just terminal states but all states, the saving is actually a bit smaller than
+$2880$.  The next exercise explores this in more detail.
+
+We can use \blue{memoization} \index{memoization} to exploit the fact that the number of states is much smaller
+than the number of possible game sequences. 
+\myFig{Minimax.ipynb-mem} shows how this can be implemented.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    gCache = {}
+
+    def memoize(f):
+        global gCache
+
+        def f_memoized(*args):
+            if args in gCache:
+                return gCache[args]
+            result = f(*args)
+            gCache[args] = result
+            return result
+
+        return f_memoized
+  
+    maxValue = memoize(maxValue)
+    minValue = memoize(minValue)
+\end{minted}
+\caption{Memoization.}
+\label{fig:Minimax.ipynb-mem}
+\end{figure}
+\FloatBarrier
+
 \begin{enumerate}
-\item Given a player $\textts{p}$, the function $\textts{other}$ computes the other player,
-      which is the first element of the list $\textts{Players}$ that is different from $p$.
-      This works because we assume that there are just two players and these players are the two elements of
-      the list $\textts{Players}$ that has been defined in the notebook defining the game.
-\item $\textts{Cache}$ is a dictionary that is initially empty.  This dictionary is used as a memory cache by 
+\item $\textts{gCache}$ is a dictionary that is initially empty.  This dictionary is used as a memory cache by 
       the function $\textts{memoize}$.
 \item The function $\mathtt{memoize}$ is a second order function that takes a function $f$ as its argument.
       It creates a \href{https://en.wikipedia.org/wiki/Memoization}{memoized} version of the function $f$:
       This memoized version of $f$, which is called $\mathtt{f\_memoized}$, first tries to retrieve the value
-      of $f$ from the dictionary $\textts{Cache}$. 
+      of $f$ from the dictionary $\textts{gCache}$. 
       If this is successful, the function returns the cached value.  Otherwise, the function $f$ is called
-      to compute the result.  This result is then stored in the $\mathtt{Cache}$ before it is returned.
+      to compute the result.  This result is then stored in the dictionary $\mathtt{gCache}$ before it is returned.
       The function $\mathtt{memoize}$ returns the memoized version of $f$.
       \index{memoization}
-\item The implementation of the function $\textts{value}$ implements the formulas $(1)$ and $(2)$ that were
-      used to define the function $\mathtt{value}$ abstractly.
-      However, note that we have preceded the definition of the function $\textts{value}$ with the
-      \blue{decorator} \textts{@memoize}, which turns the function \textts{value} into a memoized function.
-      Hence, when the function $\textts{value}$ is called a
-      second time with the same pair of arguments, it does not recompute the value but rather the value is
-      looked up from the variable $\textts{Cache}$ that stores all previous results computed by the function $\textts{value}$.  To
-      understand why this is important, 
-      let us consider how many states would be explored in the case of tic-tac-toe if we would not use the idea
-      of memoizing previous results.  In this case, we have 9 moves for player
-      \textts{X} from the start state, then 8 moves for player \textts{O}, then 7 moves for
-      player \textts{O} and so on until in the end player \textts{X} has only $1$ move left.  If we disregard
-      the fact that some games are decided after fewer than 9 moves, the function $\textts{value}$ needs to consider 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $9 \cdot 8 \cdot 7 \cdot {\dots} \cdot 2 \cdot 1 = 9! = 362\,880$
-      \\[0.2cm]
-      different moves.  However, if we count the number of possibilities of putting 5 ``\textts{O}''s and 4
-      ``\textts{X}''s on a $3 \times 3$ board, we see that there are only
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = 126$
-      \\[0.2cm]
-      possibilities, because we only have to count the number of ways to put 5 ``\textts{O}''s on
-      9 positions and that number is the same as the number of subsets of five elements from a set of nine elements.
-      Therefore, if we disregard the fact that some games are decided after fewer than nine moves,  there are a
-      factor of $5! \cdot 4! = 2880$ less terminal states to evaluate if we use memoization!
+\item All that needs to be done is then to memoize both the function $\textts{maxValue}$ and the function
+      $\mathtt{minValue}$.  In this case it is not a problem that these functions share the same dictionary
+      \textts{gCache} because  $\textts{maxValue}$ is only called for states where \textts{X} has to make the
+      next move, while  $\textts{minValue}$ is only called for states where \textts{O} has to make the
+      next move.  If this wouldn't be the case, the name of the function would have to be stored in
+      \texttt{gCache} also.
 
-      As we have to evaluate not just terminal states but all states, the saving is actually a bit smaller than
-      $2880$.  The next exercise explores this in more detail.
-\item The function $\textts{best\_move}$ takes a $\textts{State}$ and a $\textts{player}$ and returns a pair $(v,s)$
-      where $s$ is a state that is optimal for the $\textts{player}$ and such that $s$ can be reached in one step from
-      $\textts{State}$.  Furthermore, $v$ is the value of this state.
-      \begin{enumerate}[(a)]
-      \item To this end, it first computes the set $\textts{NS}$ of all states that can be reached 
-            from the given $\textts{State}$ in one step if $\textts{player}$ is to move next.
-      \item $\textts{bestValue}$ is the best value that $\textts{player}$ can achieve in the given $\textts{State}$.
-      \item $\textts{BestMoves}$ is the set of states that  $\textts{player}$ can move to and that are optimal
-            for her.
-      \item The function returns randomly one of those states $\textts{ns} \in \textts{NS}$ such that 
-            the value of $\textts{ns}$ is optimal, i.e.~is equal to $\textts{bestValue}$.
-            We use randomization here since we want to have more interesting games.  If we would always choose
-            the first state that achieves the best value, then our program would always make the same move in
-            a given state.  Hence, playing the program would get boring much sooner.
-      \end{enumerate}
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -536,10 +571,9 @@ $p$, we have to take the negative of  $\textts{value}(n, o)$.
                 xrightmargin  = 0.0cm,
               ]{python3}
     def play_game(canvas):
-        State = Start
-        while True:
-            firstPlayer = Players[0]
-            val, State  = best_move(State, firstPlayer);
+        State = gStart
+        while True: 
+            val, State = best_move(State);
             draw(State, canvas, f'For me, the game has the value {val}.')
             if finished(State):
                 final_msg(State)
@@ -561,18 +595,13 @@ $p$, we have to take the negative of  $\textts{value}(n, o)$.
 \begin{enumerate}
 \item Initially, $\textts{State}$ is the $\textts{startState}$.
 \item As long as the game is not finished, the procedure keeps running.
-\item We assume that the computer goes first and therefore define  \textts{firstPlayer} as the first
-      element of the list $\textts{Players}$.  Next, the function $\textts{best\_move}$ is used to
-      compute the state that results from the best move of $\textts{firstPlayer}$.
+\item We assume that the computer goes first.
+\item The function $\textts{best\_move}$ is used compute the move of the computer.
       This resulting state is then displayed.
 \item After that, it is checked whether the game is finished.
 \item If the game is not  yet finished, the user is asked to make his move via the function
       $\textts{get\_move}$. The state resulting from this move is then returned and displayed.
 \item Next, we have to check whether the game is finished after the  move of the user has been executed.
-\item The \textts{while}-loop keeps iterating until the game is finished.
-      We do not have to put a test into the condition of this \textts{while}-loop as we call the function
-      $\textts{finished}(\textts{State})$ every time that a new $\textts{State}$ has been reached.
-      If the game is finished, a message giving the result of the game is printed and the function returns.
 \end{enumerate}
 
 In order to better understand the reason for using memoization in the implementation of the function
@@ -605,7 +634,7 @@ In order to better understand the reason for using memoization in the implementa
 \end{Definition}
 
 \noindent
-The following exercise shows why memoization is important.
+The following exercise shows why memoization is so important.
 
 \exercise
 In \blue{simplified tic-tac-toe} the game only ends when there are no more empty squares left.
@@ -620,7 +649,9 @@ or diagonals of three \textts{X}s.  Otherwise, the game is a draw.
 
       \textbf{Notice} that this question does not ask for the number of all terminal states but rather asks for
       all states. 
-\item Write a short program to evaluate the formula derived in part (c) of this exercise.
+\item Evaluate the formula derived in part (c) of this exercise.
+      
+      \textbf{Hint}: You don't have to do the calculation in your head.
       \eox
 \end{enumerate}
 
