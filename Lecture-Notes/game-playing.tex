@@ -66,28 +66,24 @@ where the components are interpreted as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\textts{TerminalStates} := \{ s \in \textts{States} \mid \textts{finished}(s) \}$.
-\item $\textts{utility}$ is a function that takes a state $s$ such that $s \in \textts{TerminalStates}$ and a
-      player $p$.  It returns 
-      the \blue{value} that the game has for the player $p$.  In general, a value is a real number,  but in all of
-      our examples, this value will be an element from the set $\{-1, 0, +1\}$.  If $\textts{utility}(s, p) = -1$,
-      then the player $p$ has lost the game, if $\textts{utility}(s, p) = 1$, then the player $p$ has won the game, and
-      if $\textts{utility}(s, p) = 0$, then the game drawn.  Hence the signature of $\textts{utility}$ is
+\item $\textts{utility}$ is a function that takes a state $s$ such that $s \in \textts{TerminalStates}$ as its argument.  It returns 
+      the \blue{value} that the game has for the first player, i.e. for $\textts{Players}[1]$.  In general, a
+      value is a real number,  but in all of our examples, this value will be an element from the set
+      $\{-1, 0, +1\}$.  If $\textts{utility}(s) = -1$,  
+      then the first player has lost the game, if $\textts{utility}(s) = 1$, then the first player has won the
+      game, and if $\textts{utility}(s) = 0$, then the game drawn.  Hence the signature of $\textts{utility}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\textts{utility}: \textts{TerminalStates} \times \textts{Players} \rightarrow \{ -1, 0, +1\}$.
+      $\textts{utility}: \textts{TerminalStates} \rightarrow \{ -1, 0, +1\}$.
 \end{enumerate}
 We will only consider so called \blue{two person zero sum games}.  
-This means that the list $\textts{Players}$ has exactly two elements.  If we call these players $\mathrm{A}$ and $\mathrm{B}$, i.e.~if we have
+This means that the list $\textts{Players}$ has exactly two elements.  If we call these players $\textts{A}$ and $\textts{B}$, i.e.~if we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\textts{Players} = \bigl[ \mathrm{A}, \mathrm{B} \bigr]$,
+$\textts{Players} = \bigl[ \textts{A}, \textts{B} \bigr]$,
 \\[0.2cm]
-then the game is called a \blue{zero sum game} \index{zero sum game} iff we have
-\\[0.2cm]
-\hspace*{1.3cm}
-$\forall s \in \textts{TerminalStates}:\textts{utility}(s, \textts{A}) + \textts{utility}(s, \textts{B}) = 0$,
-\\[0.2cm]
-i.e.~the losses of player $\mathrm{A}$ are compensated by the wins of player $\textts{B}$ and vice versa.
+then the game is called a \blue{zero sum game} \index{zero sum game} if $\textts{A}$ has won the game if
+and only if $\textts{B}$ has lost the game and vice versa.
 Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}, 
 \href{https://en.wikipedia.org/wiki/Chess}{chess}, and
 \href{https://en.wikipedia.org/wiki/Draughts}{draughts} are two person zero sum games.
