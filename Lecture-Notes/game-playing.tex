@@ -421,8 +421,12 @@ The definition of the function \textts{minValue} is defined by the following rec
                      \bigr\}\bigr)
       $.  
 \end{enumerate}
+In the future we will sometimes speak of the \textts{value} function.  This name is used as a synonym for the
+function \textts{maxValue}. 
 
-\myFig{Minimax.ipynb} shows an implementation of this strategy. It also shows the function \textts{best\_move}.
+
+\myFig{Minimax.ipynb} shows an implementation of the functions \textts{maxValue} and
+\textts{minValue}. It also shows the function \textts{best\_move}. 
 This function  takes a $\textts{State}$ such that \textts{X} is to move in this state.  It returns a pair
 $(v,s)$ where $s$ is a state that is optimal for the player \textts{X} and such
 that $s$ can be reached in one step from $\textts{State}$.  Furthermore, $v$ is the value of this state.
@@ -451,22 +455,22 @@ that $s$ can be reached in one step from $\textts{State}$.  Furthermore, $v$ is 
                 xleftmargin   = 0.0cm,
                 xrightmargin  = 0.0cm,
               ]{python3}
-def maxValue(State):
-    if finished(State):
-        return utility(State)
-    return max([ minValue(ns) for ns in next_states(State, gPlayers[0]) ])
-
-def minValue(State):  
-    if finished(State):
-        return utility(State)
-    return min([ maxValue(ns) for ns in next_states(State, gPlayers[1]) ])
-
-def best_move(State):
-    NS        = next_states(State, gPlayers[0])
-    bestVal   = maxValue(State)
-    BestMoves = [s for s in NS if minValue(s) == bestVal]
-    BestState = random.choice(BestMoves)
-    return bestVal, BestState
+    def maxValue(State):
+        if finished(State):
+            return utility(State)
+        return max([ minValue(ns) for ns in next_states(State, gPlayers[0]) ])
+    
+    def minValue(State):  
+        if finished(State):
+            return utility(State)
+        return min([ maxValue(ns) for ns in next_states(State, gPlayers[1]) ])
+    
+    def best_move(State):
+        NS        = next_states(State, gPlayers[0])
+        bestVal   = maxValue(State)
+        BestMoves = [s for s in NS if minValue(s) == bestVal]
+        BestState = random.choice(BestMoves)
+        return bestVal, BestState
 \end{minted}
 \caption{The Minimax algorithm.}
 \label{fig:Minimax.ipynb}
@@ -490,8 +494,9 @@ different moves.  However, if we count the number of possibilities of putting 5 
 \hspace*{1.3cm}
 $\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = 126$
 \\[0.2cm]
-possibilities, because we only have to count the number of ways to put 5 \textts{O}s on
-9 positions and that number is the same as the number of subsets of five elements from a set of nine elements.
+possibilities, because we only have to count the number of ways that there are to put 5 \textts{O}s on
+9 different positions and that number is the same as the number of subsets of five
+elements from a set of 9 elements. 
 Therefore, if we disregard the fact that some games are decided after fewer than nine moves,  there are a
 factor of $5! \cdot 4! = 2880$ less terminal states than there are possible sequences of moves!
 
@@ -538,20 +543,20 @@ than the number of possible game sequences.
 \begin{enumerate}
 \item $\textts{gCache}$ is a dictionary that is initially empty.  This dictionary is used as a memory cache by 
       the function $\textts{memoize}$.
-\item The function $\mathtt{memoize}$ is a second order function that takes a function $f$ as its argument.
+\item The function $\textts{memoize}$ is a second order function that takes a function $f$ as its argument.
       It creates a \href{https://en.wikipedia.org/wiki/Memoization}{memoized} version of the function $f$:
       This memoized version of $f$, which is called $\mathtt{f\_memoized}$, first tries to retrieve the value
       of $f$ from the dictionary $\textts{gCache}$. 
-      If this is successful, the function returns the cached value.  Otherwise, the function $f$ is called
-      to compute the result.  This result is then stored in the dictionary $\mathtt{gCache}$ before it is returned.
-      The function $\mathtt{memoize}$ returns the memoized version of $f$.
+      If this is successful, the cached value is returned.  Otherwise, the function $f$ is called
+      to compute the result.  This result is then stored in the dictionary $\textts{gCache}$ before it is returned.
+      The function $\textts{memoize}$ returns the memoized version of $f$.
       \index{memoization}
 \item All that needs to be done is then to memoize both the function $\textts{maxValue}$ and the function
-      $\mathtt{minValue}$.  In this case it is not a problem that these functions share the same dictionary
+      $\textts{minValue}$.  In this case it is not a problem that these functions share the same dictionary
       \textts{gCache} because  $\textts{maxValue}$ is only called for states where \textts{X} has to make the
       next move, while  $\textts{minValue}$ is only called for states where \textts{O} has to make the
       next move.  If this wouldn't be the case, the name of the function would have to be stored in
-      \texttt{gCache} also.
+      $\textts{gCache}$ also.
 
 \end{enumerate}
 
@@ -600,8 +605,8 @@ than the number of possible game sequences.
 \item Next, we have to check whether the game is finished after the  move of the user has been executed.
 \end{enumerate}
 
-In order to better understand the reason for using memoization in the implementation of the function
-\textts{value} we introduce the following notion.
+In order to better understand the reason for using memoization in the implementation of the functions
+\textts{maxValue} and \textts{minValue} we introduce the following notion.
 \begin{Definition}[\blue{Game Tree}]
   Assume that
   \\[0.2cm]
@@ -618,14 +623,14 @@ In order to better understand the reason for using memoization in the implementa
   \hspace*{1.3cm}
   $p_i := \left\{
   \begin{array}[c]{ll}
-    \mathtt{Players[0]} & \mbox{if $i \;\%\; 2 = 0$;} \\
-    \mathtt{Players[1]} & \mbox{if $i \;\%\; 2 = 1$.}
+    \textts{Players[0]} & \mbox{if $i \;\texttt{\%}\; 2 = 0$;} \\
+    \textts{Players[1]} & \mbox{if $i \;\texttt{\%}\; 2 = 1$.}
   \end{array}
   \right.
   $
   \\[0.2cm]
-  Therefore,  $p_i$ is the first element in the list $\textts{Players}$ if $i$ is even and
-  $p_i$ is the second element if $i$ is odd.  The \blue{game tree} of the game $\mathcal{G}$ is the set of all
+  Therefore,  $p_i$ is the first element of the list $\textts{Players}$ if $i$ is even and
+  $p_i$ is the second element of this list if $i$ is odd.  The \blue{game tree} of the game $\mathcal{G}$ is the set of all
   possible plays.  \eoxs 
 \end{Definition}
 
@@ -654,53 +659,68 @@ or diagonals of three \textts{X}s.  Otherwise, the game is a draw.
 \section{Alpha-Beta Pruning}
 In this section we discuss \href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-Pruning}.
 This is a search technique that can prune large numbers of the search space and thereby increase the efficiency
-of a game playing program.  The basic idea is to provide two additional arguments to the function
-$\textts{value}$.  Traditionally, these arguments are called $\blue{\alpha}$ and $\blue{\beta}$.  In order to be able to
-distinguish between the old function $\textts{value}$ and its improved version, we call the improved version 
-$\textts{alphaBeta}$.  The idea is that the function $\textts{alphaBeta}$ and the function $\textts{value}$ are
+of a game playing program.  The basic idea is to provide two additional arguments to the functions
+$\textts{maxValue}$ and $\textts{minValue}$.  Traditionally, these arguments are called $\blue{\alpha}$ and $\blue{\beta}$.  In order to be able to
+distinguish between the old functions $\textts{maxValue}$ and  $\textts{minValue}$ and its
+improved version, we call the improved versions  
+$\textts{alphaBetaMax}$ and $\textts{alphaBetaMin}$.  The idea is that these functions are
 related by the following requirements: 
 \begin{enumerate}
-\item As long as $\textts{value}(s, p)$ is between $\alpha$ and $\beta$, the function
-      $\textts{alphaBeta}$ computes the same result as the function $\textts{value}$,
+\item As long as $\textts{maxValue}(s)$ is between $\alpha$ and $\beta$, the function
+      $\textts{alphaBetaMax}$ computes the same result as the function $\textts{maxValue}$,
       i.e.~we have
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\alpha \leq \textts{value}(s, p) \leq \beta \;\rightarrow\;
-         \textts{alphaBeta}(s, p, \alpha, \beta) = \textts{value}(s,p)
+      $\alpha \leq \textts{maxValue}(s) \leq \beta \;\rightarrow\;
+         \textts{alphaBetaMax}(s, \alpha, \beta) = \textts{maxValue}(s)
       $.
-\item If $\textts{value}(s, p) < \alpha$, we require that the value returned by
-      $\textts{alphaBeta}$ is less than or equal to $\alpha$, i.e.~we have 
+\item If $\textts{maxValue}(s) < \alpha$, we require that the value returned by
+      $\textts{alphaBetaMax}$ is less than or equal to $\alpha$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\textts{value}(s, p) < \alpha \;\rightarrow\; \textts{alphaBeta}(s, p, \alpha, \beta) \leq \alpha$.
-\item Similarly, if $\textts{value}(s, p) > \beta$, we require that the value
-      returned by $\textts{valueAlphaBeta}$ is bigger than or equal to $\beta$, i.e.~we have 
+      $\textts{maxValue}(s) < \alpha \;\rightarrow\; \textts{alphaBetaMax}(s, \alpha, \beta) \leq \alpha$.
+\item Similarly, if $\textts{maxValue}(s) > \beta$, we require that the value
+      returned by $\textts{AlphabetaMax}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
-      $\beta < \textts{value}(s, p) \;\rightarrow\; \beta \leq \textts{alphaBeta}(s, p, \alpha, \beta)$.
+      $\beta < \textts{maxValue}(s) \;\rightarrow\; \beta \leq \textts{alphaBetaMax}(s, \alpha, \beta)$.
 \end{enumerate}
-Therefore, $\textts{alphaBeta}(\textts{State}, \textts{player})$  is only an \blue{approximation} of
-$\textts{value}(\textts{State}, \textts{player})$.  However, it turns out that this approximation is all that
-is needed.  \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta} shows an implementation of the function $\textts{alphaBeta}$ that
-satisfies the specification given above.  Once the function $\textts{alphaBeta}$ is implemented, the function
-$\textts{value}$ can then be computed as 
+Similar to the way that the function \textts{maxValue} is approximated by the function \textts{alphaBetaMax},
+the function \textts{minValue} is approximated by the function \textts{alphaBetaMin}.  We have: 
+\begin{enumerate}
+\item $\alpha \leq \textts{minValue}(s) \leq \beta \;\rightarrow\;
+         \textts{alphaBetaMin}(s, \alpha, \beta) = \textts{minValue}(s)
+      $.
+\item $\textts{minValue}(s) < \alpha \;\rightarrow\; \textts{alphaBetaMin}(s, \alpha, \beta) \leq \alpha$.
+\item $\beta < \textts{minValue}(s) \;\rightarrow\; \beta \leq \textts{alphaBetaMin}(s, \alpha, \beta)$.
+\end{enumerate}
+Although $\textts{alphaBetaMax}(s)$and $\textts{alphaBetaMin}(s)$  are only \blue{approximations} of
+$\textts{maxValue}(s)$ and $\textts{minValue}(s)$, it turns out that these approximations are all that
+is needed.  Once the function $\textts{alphaBetaMax}$ is implemented, the function
+$\textts{maxValue}$ can then be computed as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\textts{value}(s, p ) := \textts{alphaBeta}(s, p, -1, +1)$.
+$\textts{maxValue}(s) := \textts{alphaBetaMax}(s, -1, +1)$.
 \\[0.2cm]
-The reason is that we already know that $-1 \leq \textts{value}(s,p) \leq +1$ and hence the first case of the
-specification of $\textts{alphaBeta}$ guarantees that the equation
+The reason is that we already know that $-1 \leq \textts{maxValue}(s) \leq +1$ and hence the first case of the
+specification of $\textts{alphaBetaMax}$ guarantees that the equation
 \\[0.2cm]
 \hspace*{1.3cm}
-$\textts{value}(s,p) = \textts{alphaBeta}(s,p,-1,+1)$
+$\textts{maxValue}(s) = \textts{alphaBetaMax}(s,-1,+1)$
 \\[0.2cm]
-holds.  Since $\textts{alphaBeta}$ is implemented as a recursive procedure, 
-the fact that the implementation of $\textts{alphaBeta}$ shown in \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta} satisfies the
-specification given above can be established by computational induction.  A proof by computational induction
-can be found in an
-\href{https://pdfs.semanticscholar.org/dce2/6118156e5bc287bca2465a62e75af39c7e85.pdf}{article} by Donald
+holds.  Similarly, the function $\textts{minValue}$ can be computed as 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textts{minValue}(s) := \textts{alphaBetaMin}(s, -1, +1)$.
+\\[0.2cm]
+\myFig{Alpha-Beta-Pruning.ipynb:alphaBeta} shows an implementation of the functions $\textts{alphaBetaMax}$ and
+$\textts{alphaBetaMin}$ that satisfies the specification given above.
+Since $\textts{alphaBetaMax}$ and $\textts{alphaBetaMin}$ are implemented as mutually recursive functions, 
+the fact that the implementations of $\textts{alphaBetaMax}$ and \textts{alphaBetaMin}
+satisfy the specifications given above can be established by computational induction.  A proof 
+can be found in the
+\href{https://pdfs.semanticscholar.org/dce2/6118156e5bc287bca2465a62e75af39c7e85.pdf}{article} by Donald 
 E.~Knuth and Ronald W.~Moore \cite{knuth:1975}. 
-
 
 
 \begin{figure}[!ht]
@@ -714,16 +734,31 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
                 xleftmargin   = 0.0cm,
                 xrightmargin  = 0.0cm,
               ]{python3}
-    def alphaBeta(State, player, alpha, beta):
+    def alphaBetaMax(State, alpha, beta):
         if finished(State):
-            return utility(State, player)
-        val = alpha
-        for ns in next_states(State, player):
-            val = max(val, -value(ns, other(player), -beta, -alpha))
-            if val >= beta:
-                return val
-            alpha = max(val, alpha)
-        return val
+            return utility(State)
+        if alpha >= beta:
+            return alpha
+        value = alpha
+        for ns in next_states(State, gPlayers[0]):
+            value = max(value, alphaBetaMin(ns, alpha, beta))
+            if value >= beta:
+                return value
+            alpha = max(value, alpha)
+        return value
+    
+    def alphaBetaMin(State, alpha, beta):
+        if finished(State):
+            return utility(State)
+        if beta <= alpha:
+            return beta
+        value = beta
+        for ns in next_states(State, gPlayers[1]):
+            value = min(value, alphaBetaMax(ns, alpha, beta))
+            if value <= alpha:
+                return value
+            beta = min(value, beta)
+        return value    
 \end{minted}
 \caption{$\alpha$-$\beta$-Pruning.}
 \label{fig:Alpha-Beta-Pruning.ipynb:alphaBeta}
@@ -731,137 +766,64 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
 \FloatBarrier
 
 \noindent
-We proceed to discuss the implementation of the function $\textts{alphaBeta}$, which is shown in
+We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$, which is shown in
 \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta}.
 \begin{enumerate}
 \item If $\textts{State}$ is a terminal state, the function returns the $\textts{utility}$ of the given
-      $\textts{State}$ with respect to $\textts{player}$.
-\item The variable $\textts{val}$ is supposed to store the maximum of the values of all states
-      that can be reached from the given $\textts{State}$ if $\textts{player}$ makes one move.
+      $\textts{State}$.
+\item If $\textts{alpha} > \textts{beta}$, the function returns the lower bound $\textts{alpha}$.
+      In this case, we know that we can not have $\alpha \leq \textts{maxValue}(s) \leq \beta$.
+      Instead, we have either $\alpha \leq \textts{maxValue}(s)$ or $\textts{maxValue}(s) < \alpha$.
+      We analyse these cases separately.
+      \begin{enumerate}[(a)]
+      \item $\alpha \leq \textts{maxValue}(s)$
+
+            Then, because $\beta < \alpha$ we also have $\beta < \textts{maxValue}(s)$ and
+            we have
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $\beta \leq \alpha = \textts{alphaBetaMax}(s)$,
+            \\[0.2cm]
+            as required.
+      \item $\textts{maxValue}(s) < \alpha$.  As we have
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $\textts{alphaBetaMax}(s) = \alpha \leq \alpha$
+            \\[0.2cm]
+            the specification is again satisfied.
+      \end{enumerate}
+\item The case $\alpha = \beta$ is similar to the case above.
+      However, in that case we also have to deal with the case that $\alpha = \textts{maxValue}(s) = \beta$.
+      However, since then $\textts{alphaBetaMax}(s) = \alpha = \textts{maxValue}(s)$, this subcase is trivial.
+\item The variable $\textts{value}$ is supposed to store the maximum of the values of all states
+      that can be reached from the given $\textts{State}$.
       
-      According to the specification of $\textts{alphaBeta}$,  we are not interested in values that are less than
-      $\textts{alpha}$.  Hence, it suffices to initialize $\textts{val}$ with $\textts{alpha}$.   This way, in the case that we have
+      According to the specification of $\textts{alphaBetaMax}$,  we are not interested in values that are less than
+      $\textts{alpha}$.  Hence, it suffices to initialize $\textts{value}$ with $\textts{alpha}$.   This way, in the case that we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\textts{value}(\textts{State},\textts{player}) < \alpha$,
+      $\textts{maxValue}(\textts{State}) < \alpha$,
       \\[0.2cm]
       instead of returning the true value of the given $\textts{State}$, the function
-      $\textts{alphaBeta}(\textts{State},\textts{player},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
-\item Next, we iterate over all successor states $\textts{ns} \in \textts{next\_states}(\textts{State}, \textts{player})$.
-\item We have to recursively evaluate the states $\textts{ns}$ with respect to the opponent  $\textts{other}(\textts{player})$.
-      Since the value of a state for the opponent is the negative of the value for
-      $\textts{player}$, we have to exchange the roles of $\alpha$ and $\beta$ and prefix them with a negative
-      sign.  Note that in the recursive call we do not call the function $\mathtt{alphaBeta}$ directly, but
-      rather we call the function $\mathtt{value}$.  This function is a wrapper for the function
-      $\mathtt{alphaBeta}$.  The purpose of this wrapper is to \blue{memoize} the function
-      $\mathtt{alphaBeta}$.  This is more complicated now due to the presence of the parameters $\alpha$ and $\beta$.
-      The details will be explained below when we discuss the function $\textts{value}$ that is shown in Figure
-      \ref{fig:Alpha-Beta-Pruning.ipynb:value}.
-\item As the specification of $\textts{alphaBeta}$ ask us to compute the value of $\textts{State}$ only in
+      $\textts{alphaBeta}(\textts{State},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
+\item Next, we iterate over all successor states $\textts{ns} \in \textts{next\_states}(\textts{State}, \textts{gPlayers}[0])$.
+\item We have to recursively evaluate the states $\textts{ns}$ with respect to the minimizing player \textts{gPlayers[1]}.
+\item As the specification of $\textts{alphaBetaMax}$ ask us to compute the value of $\textts{State}$ only in
       those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
-      value $\textts{val}$ that is at least as big as $\beta$ we can \blue{stop any further evaluation} of the successor
-      states and return the value $\textts{val}$.
+      value $\textts{value}$ that is at least as big as $\beta$ we can \blue{stop any further evaluation} of the successor
+      states and return the value $\textts{value}$.
 
-      \underline{In }p\underline{ractice},\underline{ this shortcut results in si}g\underline{nificant savin}g\underline{s of com}p\underline{utation time!}
-\item Once we have found a successor state that has a value $\textts{val}$ greater than $\textts{alpha}$,
-      we can increase $\textts{alpha}$ to the value $\textts{val}$.  The reason is, that once we know we can
-      achieve a value of $\textts{val}$ we are no longer interested in any values that are less than $\textts{val}$.
-      This is the reason for assigning to $\textts{alpha}$ the maximum of $\textts{val}$ and $\textts{alpha}$.
+      This shortcut results in significant savings of computation time!
+\item Once we have found a successor state that has a value $\textts{value}$ greater than $\textts{alpha}$,
+      we can increase $\textts{alpha}$ to the value $\textts{value}$.  The reason is, that once we know we can
+      achieve a value of $\textts{value}$ we are no longer interested in any values that are less than $\textts{value}$.
+      This is the reason for assigning the maximum of $\textts{value}$ and $\textts{alpha}$ to $\textts{alpha}$.
 \end{enumerate}
 
-\begin{figure}[!ht]
-\centering
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
-                firstnumber   = 1,
-                bgcolor       = sepia,
-                numbers       = left,
-                numbersep     = -0.2cm,
-                xleftmargin   = 0.8cm,
-                xrightmargin  = 0.8cm,
-              ]{python3}
-    def value(State, player, alpha=-1, beta=1):
-        global Cache
-        if State in Cache:
-            val, a, b = Cache[State]
-            if a <= alpha and beta <= b:
-                return val
-            else:
-                alpha = min(alpha, a)
-                beta  = max(beta , b)
-                val   = alphaBeta(State, player, alpha, beta)
-                Cache[State] = val, alpha, beta
-                return val
-        else:
-            val = alphaBeta(State, player, alpha, beta)
-            Cache[State] = val, alpha, beta
-            return val                
-\end{minted}
-\caption{The function $\mathtt{value}$ that memoizes the function $\mathtt{alphaBeta}$.}
-\label{fig:Alpha-Beta-Pruning.ipynb:value}
-\end{figure}
-\FloatBarrier
 
-The function $\textts{value}$ shown in Figure \ref{fig:Alpha-Beta-Pruning.ipynb:value} is merely a wrapper of
-the function $\mathtt{alphaBeta}$ that memoizes the results of $\mathtt{alphaBeta}$.  This is more complicated
-now because of the parameters $\alpha$ and $\beta$.  Of course, we could just use the decorator
-\textts{\@memoize}.  The problem with this approach is that the function $\mathtt{alphaBeta}$ might be called
-with the same value for its parameters $\mathtt{State}$ and $\mathtt{player}$, but different values for the
-parameters $\mathtt{alpha}$ and $\mathtt{beta}$.  This would have two consequences:
-\begin{enumerate}
-\item The directory $\mathtt{Cache}$ would require much more memory as there are many more combinations of the parameters
-      of the function $\textts{alphaBeta}$ then there had been combinations for the function $\mathtt{value}$ when
-      we had implemented the minimax algorithm.  
-\item The directory $\textts{Cache}$ would become much less useful than in our implementation of the minimax
-      algorithm because we would have many cache misses.  
-\end{enumerate}
-The solution is to ensure that any $\mathtt{State}$ is stored at most once in $\mathtt{Cache}$.  But instead of storing just the
-value, we also have to store the values of the parameters $\mathtt{alpha}$ and $\mathtt{beta}$ that have been
-used to compute the value of the given $\mathtt{State}$, i.e.~we now have
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{Cache}[\mathtt{State}] = (\mathtt{value}, \mathtt{alpha}, \mathtt{beta})$
-\\[0.2cm]
-if we have computed that
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}$.
-\\[0.2cm]
-It turns out that there is no need to store the argument $\mathtt{player}$ since in the games that we consider
-this information can always be computed from the $\mathtt{State}$.
-
-Now the crucial idea of our implementation the function $\mathtt{value}$ is the following:  If we ever want to
-compute 
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta})$
-\\[0.2cm]
-and we have that 
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{Cache}[\mathtt{State}] = (\mathtt{value}, a, b)$,
-\\[0.2cm]
-then we have to check whether the interval $[a,b]$ is \blue{more general} than the
-interval $[\mathtt{alpha}, \mathtt{beta}]$, i.e.~we have to check that
-\\[0.2cm]
-\hspace*{1.3cm}
-$a \leq \mathtt{alpha}$ \quad and \quad $\mathtt{beta} \leq b$ 
-\\[0.2cm]
-holds.  In this case we know that indeed
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \mathtt{alpha}, \mathtt{beta}) = \mathtt{value}$
-\\[0.2cm]
-and hence we can use the value stored in the $\mathtt{Cache}$.  If the inequations $a \leq \mathtt{alpha}$ and
-$\mathtt{beta} \leq b$  are not satisfied, then we compute
-\\[0.2cm]
-\hspace*{1.3cm}
-$\mathtt{alphaBeta}(\mathtt{State}, \mathtt{player}, \min(\mathtt{alpha}, a), \max(\mathtt{beta}, b))$
-\\[0.2cm]
-and store the resulting value together with the new interval $[\min(\mathtt{alpha}, a), \max(\mathtt{beta},
-b)]$ in the $\mathtt{Cache}$. 
-This way, the value stored in the $\mathtt{Cache}$ is more general than the previous value stored and we can
-expect more cache hits later.
+\remark
+There is a nice simulator for alpha-beta-pruning available at the following web address:
+\href{https://www.usama.dev/minimax-simulator}{https://www.usama.dev/minimax-simulator}.
 
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
@@ -919,10 +881,10 @@ the given $\textts{State}$ using our \blue{evaluation function}.  This leads to 
 \FloatBarrier
 
 When we compare this Figure with \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta}, the only difference is in line 4
-where we test whether the $\mathtt{limit}$ is $0$.  In this case, instead of trying to recursively evaluate the
-states reachable from $\mathtt{State}$, we evaluate the $\mathtt{State}$ with our $\mathtt{heuristic}$ function.
+where we test whether the $\textts{limit}$ is $0$.  In this case, instead of trying to recursively evaluate the
+states reachable from $\textts{State}$, we evaluate the $\textts{State}$ with our $\textts{heuristic}$ function.
 Later in the recursive calls of the function \textts{value} we have to take care to decrease the parameter
-$\mathtt{limit}$.
+$\textts{limit}$.
 
 For a game like tic-tac-toe it is difficult to come up with a decent heuristic.  A very crude approach would be
 to define:
