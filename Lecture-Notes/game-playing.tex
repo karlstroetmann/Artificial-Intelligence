@@ -820,10 +820,218 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
       This is the reason for assigning the maximum of $\textts{value}$ and $\textts{alpha}$ to $\textts{alpha}$.
 \end{enumerate}
 
-
 \remark
 There is a nice simulator for alpha-beta-pruning available at the following web address:
 \href{https://www.usama.dev/minimax-simulator}{https://www.usama.dev/minimax-simulator}.
+
+\subsection{Alpha-Beta-Pruning with Memoization}
+Adding memoization to the functions \textts{maxValue} and \textts{minValue} is non-trivial.
+If memoization is added in a naive way, then the cache might have many entries for the same state that differ
+only in their values for the parameters $\alpha$ and $\beta$.  Although this is not a problem for trivial games
+like Tic-Tac-Toe, it becomes a problem once we try to implement more complex games like
+\href{https://en.wikipedia.org/wiki/Connect_Four}{Connect Four}. The reason is that for those games we are no
+longer able to compute the complete game tree.  Instead, we need to approximate the value of a state with the
+help of a heuristic.  Then, $\alpha$ and $\beta$ will no longer be confined to the values from the set
+$\{-1,0,1\}$ and hence there will be many function calls of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textts{maxValue}(s, \alpha, \beta)$ 
+\\[0.2cm]
+where the state $s$ is the same but $\alpha$ and $\beta$ are different.  If we would try to store every
+combination of $s$, $\alpha$, and $\beta$ we would waste a lot of memory and, furthermore, we would have only a
+small number of cache hits.  Therefore, we will now present a more effective way to cache the functions
+\textts{maxValue} and \textts{minValue}.  To this end we will define a function \textts{evaluate} that is
+called as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textts{evaluate}(s, f, \alpha, \beta)$
+\\[0.2cm]
+where the parameters are interpreted as follows:
+\begin{enumerate}[(a)]
+\item $s$ is a state that is to be evaluated.
+\item $f$ is either the function \textts{maxValue} or the function \textts{minValue}.
+      If in state $s$ the first player has to move, then $f = \textts{alphaBetaMax}$, otherwise we have
+      $f = \textts{alphaBetaMin}$.
+\item We interpret the parameters $\alpha$ and $\beta$ in the same way as we did when we used them with
+      the functions $\textts{alphaBetaMax}$ and $\textts{alphaBetaMin}$.
+\end{enumerate}
+The function \textts{evaluate} makes use of a global variable \textts{gCache}.  This variable is used as a
+cache to store the results of the function \textts{evaluate}.  This cache is implemented as a dictionary.  The
+keys of this dictionary are the states, not triples of the form $\langle s, \alpha, \beta \rangle$.  The values
+that are stored a pairs of the form $\langle \textts{flag}, v \rangle$, where $v$ is a value computed by the
+function $\textts{evaluate}(s, f, \alpha, \beta)$, while $\textts{flag} \in \{ \quoted{\leq}, \quoted{=}, \quoted{\geq}\}$.
+The cache satisfies the following specification:
+\begin{enumerate}
+\item $\texttt{gCache[State]} = (\quoted{=}, v) \rightarrow \texttt{evaluate(State)} = v$,
+
+      i.e.~if the flag is equal to \quoted{=}, then the value stored in \textts{gCache[State]}
+      is the exact value of the given \textts{State}.
+\item $\texttt{gCache[State]} = (\quoted{\leq}, v) \rightarrow \texttt{evaluate(State)} \leq v$,
+
+      i.e.~if the flag is equal to \quoted{\leq}, then the value stored in \textts{gCache[State]}
+      is an upper bound for \textts{evaluate(State)}.
+
+\item $\texttt{gCache[State]} = (\quoted{\geq}, v) \rightarrow \texttt{evaluate(State)} \geq v$,
+
+      i.e.~if the flag is equal to \quoted{\geq}, then the value stored in \textts{gCache[State]}
+      is a lower bound for \textts{evaluate(State)}.
+\end{enumerate}
+If \textts{gCache[State]} is defined, then the computation of `evaluate(State, alpha, beta)`
+proceeds according to the following case distinction:
+\begin{enumerate}
+\item If the stored value $v$ is exact, we can return this value:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{gCache[State]} = (\quoted{=}, v) \rightarrow \texttt{evaluate}(\texttt{State}, \alpha, \beta) = v$.
+\item If the stored value $v$ is an upper bound and this upper bound is less or equal than $\alpha$, then we know that
+      the true value of \textts{State} is less or equal than $\alpha$ and hence we can also return the value $v$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{gCache[State]} = (\quoted{\leq}, v) \wedge v \leq \alpha \rightarrow 
+     \texttt{evaluate}(\texttt{State}, \alpha, \beta) = v$.
+\item If the stored value $v$ is an upper bound and this upper bound is bigger than $\alpha$ but less than
+      $\beta$, then we know that the true value is less or equal than $v$ and hence we shrink the interval
+      $[\alpha, \beta]$ into the interval $[\alpha, v]$.
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{gCache[State]} = (\quoted{\leq}, v) \wedge \alpha < v < \beta \rightarrow 
+     \texttt{evaluate}(\texttt{State}, \alpha, \beta) = f(\texttt{State}, \alpha, v)$.
+     
+      In this case, \textts{gCache} is updated.  
+
+\item If the stored value $v$ is an upper bound and this upper bound is bigger or equal than $\beta$, then the
+      stored value isn't of any help. 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{gCache[State]} = (\quoted{\leq}, v) \wedge \beta \leq v \rightarrow 
+     \texttt{evaluate}(\texttt{State}, \alpha, \beta) = f(\texttt{State}, \alpha, \beta)$.
+
+      In this case,  \textts{gCache} needs to be updated.
+
+\item If the stored value $v$ is a lower bound and this lower bound is greater or equal than $\beta$, then we 
+      know that the true value is bigger or equal than $\beta$ and hence we can return the value $v$: 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{gCache[State]} = (\quoted{\geq}, v) \wedge \beta \leq v \rightarrow 
+     \texttt{evaluate}(\texttt{State}, \alpha, \beta) = v$.
+\item If the stored value $v$ is a lower bound and this lower bound is less than $\beta$ but bigger than $\alpha$,
+      then we know that the true value is bigger or equal than $v$ and hence we shrink the interval $[\alpha,\beta]$
+      into the interval $[v, \beta]$: 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{gCache[State]} = (\quoted{\geq}, v) \wedge \alpha < v < \beta \rightarrow 
+     \texttt{evaluate}(\texttt{State}, \alpha, \beta) = f(\texttt{State}, v, \beta)$.
+     
+      In this case, \textts{gCache} is updated.    
+\item If the stored value $v$ is a lower bound and this lower bound is less or equal than $\alpha$, then the
+      stored value isn't of any help. 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{gCache[State]} = (\quoted{\geq}, v) \wedge v \leq \alpha \rightarrow 
+      \texttt{evaluate}(\texttt{State}, \alpha, \beta) = f(\texttt{State}, \alpha, \beta)$.
+
+      In this case, the \textts{gCache} needs to be updated.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    def evaluate(State, f, alpha=-1, beta=1):
+        global gCache
+        if State in gCache:
+            flag, v = gCache[State]
+            if flag == '=':
+                return v
+            if flag == '<=':
+                if v <= alpha:
+                    return v
+                elif alpha < v < beta:
+                    w = f(State, alpha, v)
+                    store_cache(State, alpha, v, w)
+                    return w
+                else: 
+                    w = f(State, alpha, beta)
+                    store_cache(State, alpha, beta, w)
+                    return w
+            if flag == '>=':
+                if beta <= v:
+                    return v
+                elif alpha < v < beta:
+                    w = f(State, v, beta)
+                    store_cache(State, v, beta, w)
+                    return w
+                else:
+                    w = f(State, alpha, beta)
+                    store_cache(State, alpha, beta, w)
+                    return w
+        else: # no value stored in gCache for State
+            v = f(State, alpha, beta)
+            store_cache(State, alpha, beta, v)
+            return v
+
+    def store_cache(State, alpha, beta, v):
+        global gCache
+        if   v <= alpha:
+            gCache[State] = ('<=', v)
+        elif v <  beta: # alpha < v
+            gCache[State] = ('=', v)
+        else: # beta <= v
+            gCache[State] = ('>=', v)            
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Implementation of the function \texttt{evaluate}.}
+\label{fig:evaluate}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    def alphaBetaMax(State, alpha, beta):
+        if finished(State):
+            return utility(State)
+        if alpha >= beta:
+            return alpha
+        v = alpha
+        for ns in next_states(State, gPlayers[0]):
+            v = max(v, evaluate(ns, alphaBetaMin, v, beta))
+            if v >= beta:
+                return v
+        return v
+    
+    def alphaBetaMin(State, alpha, beta):
+        if finished(State):
+            return utility(State)
+        if beta <= alpha:
+            return beta
+        v = beta
+        for ns in next_states(State, gPlayers[1]):
+            v = min(v, evaluate(ns, alphaBetaMax, alpha, v))
+            if v <= alpha:
+                return v
+        return v
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Cached implementation of the functions \texttt{alphaBetaMax} and \texttt{alphaBetaMin}.}
+\label{fig:alphaBetaCached}
+\end{figure}
+\FloatBarrier
 
 \section{Depth Limited Search}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
