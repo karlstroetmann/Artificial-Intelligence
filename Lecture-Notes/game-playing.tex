@@ -1069,19 +1069,44 @@ the given $\textts{State}$ using our \blue{evaluation function}.  This leads to 
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]{python3}
-    def alphaBeta(State, player, limit, heuristic, alpha=-1, beta=1):
+    def alphaBetaMax(State, limit, alpha=-1, beta=1):
         if finished(State):
-            return utility(State, player)
+            return utility(State)
         if limit == 0:
-            return heuristic(State, player)
-        val = alpha
-        for ns in next_states(State, player):
-            val_ns = value(ns, other(player), limit-1, heuristic, -beta, -alpha)
-            val    = max(val, -val_ns)
-            if val >= beta:
-                return val
-            alpha = max(val, alpha)
-        return val
+            return heuristic(State)
+        if alpha >= beta:
+            return alpha
+        value      = alpha
+        NextStates = next_states(State, gPlayers[0])
+        Moves      = []  # empty priority queue
+        for ns in NextStates:
+            # heaps are sorted ascendingly, hence the minus
+            heapq.heappush(Moves, (-value_cache(ns, limit-1), ns))
+        while Moves != []:
+            _, ns = heapq.heappop(Moves)
+            value = max(value, evaluate(ns, limit-1, minValue, value, beta))
+            if value >= beta:
+                return value
+        return value    
+
+    def alphaBetaMin(State, limit, alpha=-1, beta=1):
+        if finished(State):
+            return utility(State)
+        if limit == 0:
+            return heuristic(State)
+        if beta <= alpha:
+            return beta
+        value      = beta
+        NextStates = next_states(State, gPlayers[1])
+        Moves      = []  # empty priority queue
+        for ns in NextStates:
+            heapq.heappush(Moves, (value_cache(ns, limit-1), ns))
+        while Moves != []:
+            _, ns = heapq.heappop(Moves)
+            value = min(value, evaluate(ns, limit-1, maxValue, alpha, value))
+            if value <= alpha:
+                return value
+                return value
 \end{minted}
 \caption{Depth-limited $\alpha$-$\beta$-pruning.}
 \label{fig:Game.ipynb}
