@@ -810,7 +810,7 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       for the most difficult variables first.  A variable is more difficult to get right if it has only a few
       values left that can be used to instantiate it.
 \item Once we have picked a variable $\texttt{x}$, we next iterate over all values $\texttt{v}$ in
-      $\texttt{ValuesPerVar[x]}$.  If the problem is hard, then it pays off to sort the value using the
+      $\texttt{ValuesPerVar[x]}$.  If the problem is hard, then it pays off to sort the values using the
       \blue{least constraining value}\index{least constraining value heuristic} heuristic:  The idea is that
       we compute for all values in  $\texttt{ValuesPerVar[x]}$ how much they constrain the values 
       of other variables.  The details of how this is done will be given later.  Once we have picked a value
@@ -828,7 +828,7 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       Finally, we can explain how the \blue{least constraining value} heuristic orders the values:  For every value
       $\texttt{v}$ from the set $\texttt{ValuesPerVar[x]}$ the heuristic computes the \blue{shrinkage number},
       which is the number of values that have to be removed from the sets $\texttt{ValuesPerVar[y]}$ where
-      $\texttt{y}$ is any variable that is different form $\texttt{x}$ and that have not yet been assigned.
+      $\texttt{y}$ is any variable that is different from $\texttt{x}$ and that have not yet been assigned.
       Then the different values are ordered ascendingly with respect to their shrinkage number.  Hence values
       with a low shrinkage number are tried before values with a higher shrinkage number.
 \end{enumerate}
@@ -921,7 +921,7 @@ below when we discuss the function \texttt{propagate}.
               ]{python3}
     def solve_unary(f, x, Values):
         Legal = { value for value in Values if eval(f, { x: value }) }
-        if len(Legal) == 0:
+        if not Legal:
             raise Backtrack()
         return Legal
 \end{minted}
@@ -1032,7 +1032,7 @@ solution of the given \ac{csp}.
         Unassigned = { (x, len(U)) for x, U in ValuesPerVar.items()
                                    if  x not in Assignment
                      }
-        minSize = min(lenU for x, lenU in Unassigned)
+        minSize = min(lenU for _, lenU in Unassigned)
         return arb({ x for x, lenU in Unassigned if lenU == minSize })
 \end{minted}
 \vspace*{-0.3cm}
@@ -1147,7 +1147,7 @@ It takes the following inputs:
       variables occurring in $\texttt{f}$.
 \end{enumerate}
 The function $\texttt{shrinkage}$ has to compute the number of values that have to be removed from the set
-$\texttt{ValuesPerVar}[y]$ for all variables $\texttt{y}$ that are different from $\texttt{x}$ and that are
+$\texttt{ValuesPerVar[y]}$ for all variables $\texttt{y}$ that are different from $\texttt{x}$ and that are
 still unbound if the value $\mathtt{value}$ is assigned to the variable $\texttt{x}$.  The function is
 implemented as follows: 
 \begin{enumerate}
@@ -1558,7 +1558,7 @@ variable from this set and hence the algorithm terminates eventually.
               ]{python3}
     def enforce_consistency(ValuesPerVar, Var2Formulas, Annotated, Connected):
         UncheckedVars = set(Var2Formulas.keys())
-        while len(UncheckedVars) > 0:
+        while UncheckedVars:
             var         = UncheckedVars.pop()
             Constraints = Var2Formulas[var]
             Values      = ValuesPerVar[var]
@@ -1570,7 +1570,7 @@ variable from this set and hence the algorithm terminates eventually.
                         RemovedVals   |= { value }
                         UncheckedVars |= Connected[var]
             Remaining = Values - RemovedVals
-            if len(Remaining) == 0:
+            if not Remaining:
                 raise Backtrack()
             ValuesPerVar[var] = Remaining
 \end{minted}
@@ -1648,7 +1648,7 @@ $\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The imp
     
     def all_assignments(Variables, ValuesPerVar):
         Variables = set(Variables) # turn frozenset into a set
-        if len(Variables) == 0:
+        if not Variables:
             return [ {} ]  # list containing empty assignment
         var         = Variables.pop()
         Values      = ValuesPerVar[var]
@@ -1721,7 +1721,7 @@ without consistency checking.
         Variables, Values, Constraints = P
         VarsInConstrs  = union([ collect_variables(f) for f in Constraints ])
         MisspelledVars = (VarsInConstrs - Variables) | (Variables - VarsInConstrs)
-        if len(MisspelledVars) > 0:
+        if MisspelledVars:
             print("Did you misspell any of the following Variables?")
             for v in MisspelledVars:
                 print(v)
@@ -1836,7 +1836,7 @@ local search works as follows: \index{local search}
         Variables, Values, Constraints = P
         VarsInConstrs  = union([ collect_variables(f) for f in Constraints ])
         MisspelledVars = (VarsInConstrs - Variables) | (Variables - VarsInConstrs)
-        if len(MisspelledVars) > 0:
+        if MisspelledVars:
             print("Did you misspell any of the following Variables?")
             for v in MisspelledVars:
                 print(v)
@@ -1991,7 +1991,7 @@ proceed to discuss this program line by line.
     def numConflicts(x, Assign, Annotated):
         NewAssign = Assign.copy()
         return len([ (f, V) for (f, V) in Annotated 
-                            if  x in V and not eval(f, NewAssign) 
+                            if x in V and not eval(f, NewAssign) 
                    ])
 \end{minted}
 \vspace*{-0.3cm}

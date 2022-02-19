@@ -385,7 +385,7 @@ states, the value is defined for all states.  Formally, we define a function
 \hspace*{1.3cm}
 $\textts{maxValue}: \textts{States} \rightarrow \{-1, 0, +1\}$
 \\[0.2cm]
-that takes a state $s \in \textts{States}$ returns the value that the state $s$ has for the first player, who
+that takes a state $s \in \textts{States}$ and returns the value that the state $s$ has for the first player, who
 tries to maximize the value of the state, provided that both the player $p$ and his opponent play
 \blue{optimally}.  The easiest way to define this function is via recursion.  As the 
 \textts{maxValue} function is an extension of the \textts{utility} function, the base case is as follows:
@@ -398,7 +398,7 @@ If the game is not yet finished, we define
 \hspace*{0.3cm}
 $\neg \textts{finished}(s) \rightarrow 
  \textts{maxValue}(s) = \max\bigl(\bigl\{
-                     \textts{valueMin}(n) \bigm| n \in \textts{nextStates}(s, \mathtt{gPlayers}[0])
+                     \textts{minValue}(n) \bigm| n \in \textts{nextStates}(s, \mathtt{gPlayers}[0])
                      \bigr\}\bigr)
 $.  \hspace*{\fill} (2)
 \\[0.2cm]
@@ -412,7 +412,7 @@ $\mathtt{gPlayers}[1]$ to make a move.  However, this player is the minimizing p
 state with the minimal value.
 Hence, in order to evaluate the state $n$, we have to call the function $\textts{minValue}$
 recursively as $\textts{minValue}(n)$.
-The definition of the function \textts{minValue} is defined by the following recursive equations
+The function \textts{minValue} has the same signature as \textts{maxValue} and is defined by the following recursive equations
 \begin{enumerate}
 \item $\textts{finished}(s) \rightarrow \textts{minValue}(s) = \textts{utility}(s)$. 
 \item $\neg \textts{finished}(s) \rightarrow 
