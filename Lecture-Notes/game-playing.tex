@@ -737,8 +737,6 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
     def alphaBetaMax(State, alpha, beta):
         if finished(State):
             return utility(State)
-        if alpha >= beta:
-            return alpha
         value = alpha
         for ns in next_states(State, gPlayers[0]):
             value = max(value, alphaBetaMin(ns, alpha, beta))
@@ -750,8 +748,6 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
     def alphaBetaMin(State, alpha, beta):
         if finished(State):
             return utility(State)
-        if beta <= alpha:
-            return beta
         value = beta
         for ns in next_states(State, gPlayers[1]):
             value = min(value, alphaBetaMax(ns, alpha, beta))
@@ -771,30 +767,6 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
 \begin{enumerate}
 \item If $\textts{State}$ is a terminal state, the function returns the $\textts{utility}$ of the given
       $\textts{State}$.
-\item If $\textts{alpha} > \textts{beta}$, the function returns the lower bound $\textts{alpha}$.
-      In this case, we know that we can not have $\alpha \leq \textts{maxValue}(s) \leq \beta$.
-      Instead, we have either $\alpha \leq \textts{maxValue}(s)$ or $\textts{maxValue}(s) < \alpha$.
-      We analyse these cases separately.
-      \begin{enumerate}[(a)]
-      \item $\alpha \leq \textts{maxValue}(s)$
-
-            Then, because $\beta < \alpha$ we also have $\beta < \textts{maxValue}(s)$ and
-            we have
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            $\beta \leq \alpha = \textts{alphaBetaMax}(s)$,
-            \\[0.2cm]
-            as required.
-      \item $\textts{maxValue}(s) < \alpha$.  As we have
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            $\textts{alphaBetaMax}(s) = \alpha \leq \alpha$
-            \\[0.2cm]
-            the specification is again satisfied.
-      \end{enumerate}
-\item The case $\alpha = \beta$ is similar to the case above.
-      However, in that case we also have to deal with the case that $\alpha = \textts{maxValue}(s) = \beta$.
-      However, since then $\textts{alphaBetaMax}(s) = \alpha = \textts{maxValue}(s)$, this subcase is trivial.
 \item The variable $\textts{value}$ is supposed to store the maximum of the values of all states
       that can be reached from the given $\textts{State}$.
       
@@ -1011,8 +983,6 @@ proceeds according to the following case distinction:
     def alphaBetaMax(State, alpha, beta):
         if finished(State):
             return utility(State)
-        if alpha >= beta:
-            return alpha
         v = alpha
         for ns in next_states(State, gPlayers[0]):
             v = max(v, evaluate(ns, alphaBetaMin, v, beta))
@@ -1023,8 +993,6 @@ proceeds according to the following case distinction:
     def alphaBetaMin(State, alpha, beta):
         if finished(State):
             return utility(State)
-        if beta <= alpha:
-            return beta
         v = beta
         for ns in next_states(State, gPlayers[1]):
             v = min(v, evaluate(ns, alphaBetaMax, alpha, v))
@@ -1079,8 +1047,6 @@ the given $\textts{State}$ using our \blue{evaluation function}.  This leads to 
             return utility(State)
         if limit == 0:
             return heuristic(State)
-        if alpha >= beta:
-            return alpha
         value      = alpha
         NextStates = next_states(State, gPlayers[0])
         Moves      = []  # empty priority queue
@@ -1099,8 +1065,6 @@ the given $\textts{State}$ using our \blue{evaluation function}.  This leads to 
             return utility(State)
         if limit == 0:
             return heuristic(State)
-        if beta <= alpha:
-            return beta
         value      = beta
         NextStates = next_states(State, gPlayers[1])
         Moves      = []  # empty priority queue
