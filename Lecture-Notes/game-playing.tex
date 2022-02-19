@@ -680,7 +680,7 @@ related by the following requirements:
       \hspace*{0.3cm}
       $\textts{maxValue}(s) < \alpha \;\rightarrow\; \textts{alphaBetaMax}(s, \alpha, \beta) \leq \alpha$.
 \item Similarly, if $\textts{maxValue}(s) > \beta$, we require that the value
-      returned by $\textts{AlphabetaMax}$ is bigger than or equal to $\beta$, i.e.~we have 
+      returned by $\textts{alphaBetaMax}$ is bigger than or equal to $\beta$, i.e.~we have 
       \\[0.2cm]
       \hspace*{0.3cm}
       $\beta < \textts{maxValue}(s) \;\rightarrow\; \beta \leq \textts{alphaBetaMax}(s, \alpha, \beta)$.
@@ -821,7 +821,7 @@ $\textts{evaluate}(s, f, \alpha, \beta)$
 where the parameters are interpreted as follows:
 \begin{enumerate}[(a)]
 \item $s$ is a state that is to be evaluated.
-\item $f$ is either the function \textts{maxValue} or the function \textts{minValue}.
+\item $f$ is either the function \textts{alphaBetaMax} or the function \textts{alphaBetaMin}.
       If in state $s$ the first player has to move, then $f = \textts{alphaBetaMax}$, otherwise we have
       $f = \textts{alphaBetaMin}$.
 \item We interpret the parameters $\alpha$ and $\beta$ in the same way as we did when we used them with
@@ -1076,6 +1076,10 @@ the given $\textts{State}$ using our \blue{evaluation function}.  This leads to 
             if value <= alpha:
                 return value
                 return value
+
+    def value_cache(State, limit):
+        flag, value = gCache.get((State, limit), ('=', 0))
+        return value
 \end{minted}
 \caption{Depth-limited $\alpha$-$\beta$-pruning.}
 \label{fig:Game.ipynb}
