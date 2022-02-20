@@ -1066,7 +1066,8 @@ of values \texttt{ValuesPerVar[x]} that can be assigned to \texttt{x}.
     def least_constraining(x, ValuesPerVar, Assignment, Constraints):
         NumbersValues = []
         for value in ValuesPerVar[x]:
-            num_removed = shrinkage(x, value, Assignment, ValuesPerVar, Constraints)
+            ReducedValues = ValuesPerVar.copy()
+            num_removed = shrinkage(x, value, Assignment, ReducedValues, Constraints)
             if num_removed != math.inf:
                 NumbersValues.append( (num_removed, value) )
         NumbersValues.sort(key=lambda p: p[0])
@@ -1126,6 +1127,7 @@ w.r.t.~the shrinkage numbers.
                             count += 1
                     if len(Legal) == 0:
                         return math.inf
+                    ValuesPerVar[x] = Legal
         return count 
 \end{minted}
 \vspace*{-0.3cm}
