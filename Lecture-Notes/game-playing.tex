@@ -1006,30 +1006,48 @@ proceeds according to the following case distinction:
 \end{figure}
 \FloatBarrier
 
-\section{Depth Limited Search}
+\section{Progressive Deepening}
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
 $\textts{States}$ is so big that even the fastest computer does not stand a chance to explore this set
 completely.  For example, it is believed\footnote{
   For reference, compare the wikipedia article on the so-called
   \href{https://en.wikipedia.org/wiki/Shannon_number}{Shannon number}.
   The Shannon number estimates that there are at least $10^{120}$ different plays in chess.  However, the
-  number of states is estimated to be about $10^{50}$. 
+  number of states is estimated to be about $(4.48\pm 0.37) \cdot 10^{44}$. 
 }
-that in chess there are about $10^{50}$ different states that could occur in a game.
+that in chess there are about $4.48 \cdot 10^{44}$ different states that could occur in a game.
 Hence, it is impossible to explore all possible states in chess.  Instead, we have to limit
-the exploration in a way that is similar to the way professional players evaluate their game:  Usually, a
-player considers all variations of the game for, say, the next three moves.  After a given number of moves, the
-value of a position is estimated using an \blue{evaluation function}.  This function \blue{approximates} the true
+the exploration in a way that is similar to the way professional players evaluate their games:  Usually, a
+player considers all variations of a game for, say, the next three moves.  After a given number of moves, the
+value of a position is estimated using an \blue{evaluation heuristic}.  This function \blue{approximates} the true
 value of a given state via a heuristic.
 
-In order to implement this idea, we add a parameter $\textts{limit}$ to the procedure $\textts{alphaBeta}$ that
-was shown in the previous section.  On
-every recursive invocation of the function $\textts{alphaBeta}$, the parameter $\textts{limit}$ is decreased.
-Once the limit reaches $0$, instead of invoking the function $\textts{alphaBeta}$ again recursively, we try to
-estimate the value of 
-the given $\textts{State}$ using our \blue{evaluation function}.  This leads to the code shown in
-\myFig{Game.ipynb}. 
 
+
+In order to implement this idea, we add a parameter $\textts{limit}$ to the procedures $\textts{alphaBetaMax}$
+and $\textts{alphaBetaMin}$ that were shown in the previous section.  On
+every recursive invocation of the functions $\textts{alphaBetaMax}$ and$\textts{alphaBetaMin}$, the parameter
+$\textts{limit}$ is decreased. 
+Once the limit reaches $0$, instead of invoking the function $\textts{alphaBetaMax}$ or $\textts{alphaBetaMin}$
+again, we try to estimate the value of the given $\textts{State}$ using an \blue{evaluation heuristic}.  This
+leads to the code shown in \myFig{Game.ipynb}. 
+
+When we compare this Figure with \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta}, the only difference is in line 4
+where we test whether the $\textts{limit}$ is $0$.  In this case, instead of trying to recursively evaluate the
+states reachable from $\textts{State}$, we evaluate the $\textts{State}$ with a $\textts{heuristic}$ function
+that tries to guess the approximate value of a given state.
+Notice that in the calls of the function \textts{evaluate} we have to take care to decrease the parameter
+$\textts{limit}$.  The function $\textts{evaluate}$ is responsible for administering the cache as previously.
+
+There is one further difference between the functions $\textts{maxValue}$ and $\textts{minValue}$ shown in
+Figure \ref{fig:Game.ipynb} and those versions of these functions that were shown previoulsly:
+In Figure \ref{fig:Game.ipynb} the $\textts{NextStates}$ are stored in a priority queue such that the move that
+is considered to be the best has the highest priority.  This way, the best moves are tried first and as a
+result alpha-beta-pruning is able to prune larger parts of the search space.
+In order to guess which move is best we use the cached values of the corresponding states.  This is the real
+reason for using progressive deepening:  When we evaluate the states with a depth limit of $l$, we can use the
+values of the states that has been stored previously when those states were evaluated with a depth limit of
+$l-1$. 
 
 \begin{figure}[!ht]
 \centering
@@ -1086,11 +1104,6 @@ the given $\textts{State}$ using our \blue{evaluation function}.  This leads to 
 \end{figure}
 \FloatBarrier
 
-When we compare this Figure with \myFig{Alpha-Beta-Pruning.ipynb:alphaBeta}, the only difference is in line 4
-where we test whether the $\textts{limit}$ is $0$.  In this case, instead of trying to recursively evaluate the
-states reachable from $\textts{State}$, we evaluate the $\textts{State}$ with our $\textts{heuristic}$ function.
-Later in the recursive calls of the function \textts{value} we have to take care to decrease the parameter
-$\textts{limit}$.
 
 For a game like tic-tac-toe it is difficult to come up with a decent heuristic.  A very crude approach would be
 to define:
