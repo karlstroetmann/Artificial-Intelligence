@@ -1022,6 +1022,28 @@ player considers all variations of a game for, say, the next three moves.  After
 value of a position is estimated using an \blue{evaluation heuristic}.  This function \blue{approximates} the true
 value of a given state via a heuristic.
 
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  bgcolor       = sepia,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]{python3}
+    def pd_evaluate(State, limit, f=maxValue):
+        for l in range(limit+1):
+            value = evaluate(State, l, f)
+            if value in [-1, 1]:
+                return value
+        return value
+\end{minted}
+\caption{Progressive Deepening}
+\label{fig:Game.ipynb:pd_evaluate}
+\end{figure}
+\FloatBarrier
 
 
 In order to implement this idea, we add a parameter $\textts{limit}$ to the procedures $\textts{alphaBetaMax}$
