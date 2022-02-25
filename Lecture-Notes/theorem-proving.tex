@@ -3,26 +3,29 @@ Mathematics, and in particular mathematical theorem proving is clearly related t
 \blue{Automatic theorem proving} is the branch of artificial intelligence that investigates the use of
 artificial intelligence in mathematics.  The topic of \emph{automatic theorem proving} can easily fill more
 than one book.  For reasons of time we will restrict this chapter to deal with \blue{equational theorem proving}.  In
-\emph{equational theorem proving} we are given a set of axioms that are equations and we ask, which other
-equations can be followed from these axioms.  For example, a \blue{group} $\mathcal{G}$ is defined as a tuple
-of the form
+\emph{equational theorem proving} \index{equational theorem proving} we are given a set of axioms that are
+equations and we ask, which other equations can be derived from these axioms.  For example, a \blue{group}
+$\mathcal{G}$ \index{group} is defined as a triple of the form
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{G} = \langle G, e, \cdot, i \rangle$
 \\[0.2cm]
 such that
 \begin{itemize}
-\item $G$ is a set.
+\item $G$ is a set.  The elements of this set are called \blue{group elements}. \index{group element}
 \item $e \in G$,
 
-      where $e$ is called the \blue{left-neutral element}.
+      i.e.~$e$ is an element of $G$.  For reasons that will soon become obvious, $e$ is called the
+      \blue{left-neutral element}.\index{left-neutral element} 
 \item $\cdot: G \times G \rightarrow G$,
 
-      where $\cdot$ is called the \blue{multiplication} of the group $\mathcal{G}$.
+      i.e.~$\cdot$ is a function mapping pairs of group elements to group elements.  The function $\cdot$ is
+      called the \blue{multiplication} of the group $\mathcal{G}$. 
 \item $i: G \rightarrow G$,
 
-      where for any $x \in G$ the element $i(x)$ is called the \blue{left-inverse} of $x$.
-\item Furthermore, the following \blue{axioms} have to be satisfied:
+      i.e.~$i$ is a function mapping group elements to group elements.  For any group element $x \in G$ the
+      element $i(x)$ is called the \blue{left-inverse} \index{left-inverse} of $x$. 
+\item Furthermore, the following \blue{group axioms} \index{group axioms} have to be satisfied:
       \begin{enumerate}
       \item $e \cdot x = x$, 
       \item $i(x) \cdot x = e$, 
@@ -33,7 +36,7 @@ In \href{https://en.wikipedia.org/wiki/Abstract_algebra}{abstract algebra}, it i
 the equation 
 \\[0.2cm]
 \hspace*{1.3cm}
-$x \cdot i(x) = e$, \quad i.e. the left inverse of $x$ is also a right inverse of $x$.
+$x \cdot i(x) = e$, \quad i.e.~the left inverse of any group element $x$ is also a right inverse of $x$.
 \\[0.2cm]
 A possible proof runs as follows:
 $$
@@ -57,7 +60,7 @@ $$
 $$
 Obviously, it is not trivial to come up with proofs of this kind.  Fortunately, there is a systematic approach to
 solve this and similar equational problems: In this chapter, we present an algorithm
-that can find equational proofs of the kind shown above.  This algorithm is known as the
+that can automatically find equational proofs of the kind shown above.  This algorithm is known as the
 \href{https://en.wikipedia.org/wiki/Knuth–Bendix_completion_algorithm}{Knuth-Bendix completion algorithm}.  It
 was discovered by Donald E. Knuth and Peter B. Bendix \cite{knuth:1970}.
 
@@ -77,7 +80,7 @@ like \blue{functions symbols}, \blue{variables}, \blue{terms}, \blue{substitutio
 the notion of a signature.
 
 \begin{Definition}[Signature]
-  A \blue{signature} is a triple of the form
+  A \blue{signature} \index{signature} is a triple of the form
   \\[0.2cm]
   \hspace*{1.3cm} $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$,
   \\[0.2cm]
@@ -85,7 +88,7 @@ the notion of a signature.
   \begin{enumerate}
   \item $\mathcal{V}$ is the set of \blue{variables}. \index{variable}
   \item $\mathcal{F}$ is the set of \blue{function symbols}. \index{function symbol}
-  \item $\textsl{arity}$ is a function with signature
+  \item $\textsl{arity}$ is a function such that
         \\[0.2cm]
         \hspace*{1.3cm}
         $\textsl{arity}: \mathcal{F} \rightarrow \mathbb{N}$.
@@ -94,6 +97,7 @@ the notion of a signature.
   \item We have $\mathcal{V} \cap \mathcal{F} = \{\}$, i.e.~variables are different from function symbols. \eoxs
   \end{enumerate}
 \end{Definition}
+\pagebreak
 
 \example
 The signature of \blue{group theory} $\Sigma_G$ can be defined as follows:
@@ -148,7 +152,7 @@ is ambiguous, since it can be interpreted as either $(x \cdot y) \cdot z$ or $x 
 \eoxs
 
 \begin{Definition}[$\Sigma$-Equation]
-  Assume a signature $\Sigma$ is given.  A \blue{$\Sigma$-equation}\index{equation} is a pair $\pair(s,t)$ such
+  Assume a signature $\Sigma$ is given.  A \blue{$\Sigma$-equation}\index{$\Sigma$-equation} is a pair $\pair(s,t)$ such
   that both $s$ and $t$ are $\Sigma$-terms.  The $\Sigma$-equation $\pair(s,t)$ is written as
   \\[0.2cm]
   \hspace*{1.3cm}
@@ -208,12 +212,13 @@ Then $\textfrak{G} = \pair(G, \mathcal{J})$ is a $\Sigma_G$-algebra.  \eoxs
 
 \begin{Definition}[Valid Equation]
   If $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is a signature,
-  $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, and $I$ is a \blue{variable assignment}, i.e.~$I$
+  $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, and $I$ is a \blue{variable
+    assignment}\index{variable assignment}, i.e.~$I$
   is a mapping of the form $I:\mathcal{V} \rightarrow A$,
   then we can \blue{evaluate} $\Sigma$-terms in $\textfrak{A}$ as follows:
   \begin{enumerate}
   \item $\texttt{eval}(x, I) := I(x)$ \quad for all $x \in \mathcal{V}$.
-  \item $\texttt{eval}(c, I) := c^\textfrak{A}$ \quad for all constant symbols $c \in \mathcal{F}$.
+  \item $\texttt{eval}(c, I) := c^\textfrak{A}$ \quad for every constant symbol $c \in \mathcal{F}$.
   \item $\texttt{eval}\bigl(f(t_1,\cdots,t_n)\bigr) := f^\textfrak{A}\bigl(\texttt{eval}(t_1,I),\cdots,\texttt{eval}(t_n,I)\bigr)$.
   \end{enumerate}
   A $\Sigma$-equation $s \approx t$ is \blue{valid} in the $\Sigma$-algebra $\textfrak{A}$ iff we have
@@ -240,8 +245,8 @@ Continuing the previous example we have the following:
 
 \begin{Definition}[$E$-Variety]
   Assume that $\Sigma$ is a signature and $E$ is a set of $\Sigma$-equations.  The collection of all
-  $\Sigma$-structures that satisfy every equation from $E$ is called the \blue{$E$-variety}.  To put it differently,
-  the $\Sigma$-structure $\textfrak{A}$ is a member of the \blue{$E$-variety} iff
+  $\Sigma$-structures that satisfy every equation from $E$ is called the \blue{$E$-variety}\index{$E$-variety}.
+  To put it differently, the $\Sigma$-structure $\textfrak{A}$ is a member of the \blue{$E$-variety} iff
   \\[0.2cm]
   \hspace*{1.3cm}
   $\textfrak{A} \models s \approx t$ \quad for every equation $s \approx t$ in $E$. \eoxs
@@ -283,7 +288,7 @@ The notion $E \models s \approx t$ is a \blue{semantic notion}.  We cannot hope 
 because if a set of equations $E$ and a possible logical consequence $s \approx t$ is given, there are, in
 general, infinitely many $\Sigma$-algebras that have to be checked.  Fortunately, the notion 
 $E \models s \approx t$ has a \blue{syntactical analog} $E \vdash s \approx t$ (read: $E$ proves $s \approx t$)
-that can be implemented and that is at least \blue{semi-decidable}, i.e.~we can write a program that given 
+that can be implemented and that is at least \blue{semi-decidable}, i.e.~we can create a program that given 
 a set of equations $E$ and an equation $s \approx t$ will return \texttt{True} if $E \vdash s \approx t$ holds, and will
 either return \texttt{False} or run forever if $E \vdash s \approx t$ does not hold.  Even more fortunately,
 \href{https://en.wikipedia.org/wiki/Gödel%27s_completeness_theorem}{G\"{o}dels completeness theorem} 
@@ -329,8 +334,8 @@ Now we are ready to formally define the notion $E \vdash s \approx t$.  This not
 \item If $E \vdash s \approx t$, then $E \vdash t \approx s$.  \hspace*{\fill} (\blue{Symmetry})
 \item If $E \vdash r \approx s$ and $E \vdash s \approx t$, then $E \vdash r \approx t$.  
       \hspace*{\fill} (\blue{Transitivity})
-\item If $\textsl{arity}(f) = n$ and $E \vdash s_i \approx t_i$ for all $i \in \{1,\cdots,n\}$, then
-      $E \models f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
+\item If $\textsl{arity}(f) = n$ and $E \vdash s_i \approx t_i$ for all $i \in \{1,\cdots,n\}$, \\
+      then $E \models f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
       \hspace*{\fill} (\blue{Congruence})
 \item If $E \vdash s \approx t$ and $\sigma$ is a $\Sigma$-substitution, then $E \vdash s\sigma \approx t\sigma$.
       \hspace*{\fill} (\blue{Stability})
@@ -364,6 +369,7 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
   \item $f(t_1,\cdots,t_n)/\bigl([i]+u\bigr) := t_i/u$.  \eoxs
   \end{enumerate}
 \end{Definition}
+\pagebreak
 
 \begin{Definition}[Subterm Replacement, \mbox{$t[u \mapsto s]$}] \hspace*{\fill} \\
   Given a term $t$, a position $t \in \Pos(t)$, and a term $s$, the expression
@@ -469,7 +475,7 @@ additional equations are added to $E$ in this process.  To proceed, we need the 
   \item $\prec$ is \blue{stable under substitutions}, i.e we have
         \\[0.2cm]
         \hspace*{1.3cm}
-        $r \prec l \;\Rightarrow\; r\sigma \prec l\sigma$ \quad for every substitution $\Sigma$.
+        $r \prec l \;\Rightarrow\; r\sigma \prec l\sigma$ \quad for every substitution $\sigma$.
   \item $\prec$ is a \blue{congruence}, i.e we have
         \\[0.2cm]
         \hspace*{1.3cm}
