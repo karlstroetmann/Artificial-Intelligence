@@ -376,7 +376,7 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
   $t[u \mapsto s]$ denotes the term that results from $t$ when the subterm $t/u$ is replaced by the term 
   $s$.  This expression is defined by induction on $u$.
   \begin{enumerate}
-  \item $t/\bigl[ [] \mapsto s \bigr] := s$,
+  \item $t\bigl[ [] \mapsto s \bigr] := s$,
   \item $f(t_1,\cdots,t_n)\bigl[ [i]+u \mapsto s \bigr] := f(t_1, \cdots, t_{i-1},t_i[u \mapsto s], t_{i+1},\cdots, t_n)$.  
         \eoxs
   \end{enumerate}
