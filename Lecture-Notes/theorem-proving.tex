@@ -494,7 +494,7 @@ additional equations are added to $E$ in this process.  To proceed, we need the 
   $r \prec l$ \quad for every equation $(l \approx r) \in E$.
   \\[0.2cm]    
   This means that all equations in $E$ are ordered such that the right hand side is smaller than the left
-  hand side w.r.t. $\prec$.    \eod
+  hand side w.r.t.~$\prec$.    \eod
 \end{Definition}
 Later we will see an example of a rewrite order.  For now, we just assume that 
 the relation $\prec$ is a rewrite order w.r.t.~a given set of equations $R$.  The equations in $R$ will now be called
@@ -578,7 +578,7 @@ transitive closure of $\rightarrow$ is written as $\stackrel{_*}{\rightarrow}$.
 The next theorem shows that confluence is all we need to reduce the relation $\stackrel{_*}{\leftrightarrow}$
 to the relation $\stackrel{_*}{\rightarrow}$. 
 
-\begin{Theorem}[Church-Rosser]
+\begin{Theorem}[\href{https://en.wikipedia.org/wiki/Church–Rosser_theorem}{Church-Rosser}]
   If the relation $\rightarrow \;\subseteq\; M \times M$ is confluent, then we have
   \\[0.2cm]
   \hspace*{1.3cm}
@@ -642,8 +642,9 @@ to guarantee confluence.
    \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
   $  \eox
 \end{Definition}
+\pagebreak
 
-\begin{Theorem}[Transfinite Induction] \hspace*{\fill} \\
+\begin{Theorem}[\href{https://en.wikipedia.org/wiki/Transfinite_induction}{Transfinite Induction}] \hspace*{\fill} \\
   Assume the relation $\rightarrow \;\subseteq\; M \times M$ is well-founded and $F(x)$ is some formula.
   If we have that
   \\[0.2cm]
@@ -674,7 +675,7 @@ $
 such that $F(a_n)$ is false.  But this would contradict the well-foundedness of the relation $\rightarrow$.  Hence there can be no $a \in M$
 such that $F(a)$ is false. \qed
 
-\begin{Theorem}[Newman's Lemma] \hspace*{\fill} \\
+\begin{Theorem}[\href{https://en.wikipedia.org/wiki/Newman\%27s_lemma}{Newman's Lemma}] \hspace*{\fill} \\
   If the relation $\rightarrow \;\subseteq\; M \times M$ is well-founded and locally confluent, then it is
   already confluent.
 \end{Theorem}
@@ -792,7 +793,7 @@ $\Sigma$-terms.  In order to do so, three prerequisites need to be satisfied:
       $w$, i.e. the following condition needs to be satisfied:
    $$ w(f) = 0 \rightarrow \forall g:  \bigl(g \not=f \rightarrow g < f\bigr). $$
       To put this in words: If the function symbol $f$ has a weight of $0$, then 
-      all other function symbols $g$ have to be smaller than $f$ w.r.t. the strict order $<$.
+      all other function symbols $g$ have to be smaller than $f$ w.r.t.~the strict order $<$.
       Note that this implies that there can be at most one function symbol with $f$ such that $w(f) = 0$. 
       This function symbol $f$ is then the maximum w.r.t.~the order $<$.
 \end{enumerate}
