@@ -33,7 +33,7 @@ Here, the postfix operator $^\top$ is interpreted as the
 i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.  By using the transposition operator we are
 able to write these vectors in a single line.
 
-In linear regression, we use a \blue{linear hypothesis} \index{linear hypothesis}
+In linear regression, we use a \blue{linear model} \index{linear model}
 and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via a linear
 equation of the form
 \\[0.2cm]
@@ -63,14 +63,16 @@ $\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ of $\mathbf{x}$ and $\mathbf{y}$ respe
 $\ds \bar{\mathbf{x}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
 $\ds \bar{\mathbf{y}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m y_i$.
 \\[0.2cm]
-Furthermore, $s_x$ and $s_y$ are the \blue{sample standard deviations} \index{sample standard deviation}
+Furthermore, $s_x$ and $s_y$ are the \href{https://en.wikipedia.org/wiki/Standard_deviation#Sample_standard_deviation}{corrected sample standard deviations} \index{corrected sample standard deviation}
 of $\mathbf{x}$ and $\mathbf{y}$, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds s_x = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2\;}$ \quad and \quad
 $\ds s_y = \sqrt{\frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{\mathbf{y}}\bigr)^2\;}$.
 \\[0.2cm]
-Next, $\mathrm{Cov}[\mathbf{x}, \mathbf{y}]$ is the \blue{sample covariance} \index{sample covariance} and is defined as 
+In the rest of these lecture notes, $s_x$ and $s_y$ will be referred to as \blue{sample standard deviation},
+\index{sample standard deviation} i.e.~we drop the attribute \emph{corrected}.
+Next, $\mathrm{Cov}[\mathbf{x}, \mathbf{y}]$ is the \href{https://en.wikipedia.org/wiki/Sample_mean_and_covariance}{sample covariance} \index{sample covariance} and is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \mathrm{Cov}[\mathbf{x}, \mathbf{y}] = \frac{1}{(m-1)} \cdot \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr) \cdot \bigl(y_i - \bar{\mathbf{y}}\bigr)$.
@@ -95,16 +97,17 @@ Note that the formula for the parameter $\vartheta_1$ can be simplified to
                         \sum\limits_{i=1}^m \bigl(x_i - \bar{\mathbf{x}}\bigr)^2}  
 \end{equation}
 This latter formula should be used to calculate $\vartheta_1$.  However, the previous formula is also useful
-because it shows the the correlation coefficient is identical to the coefficient $\vartheta_1$, provided the variables $\mathbf{x}$ and
-$\mathbf{y}$ have been \blue{normalized} so that their standard deviation is $1$.
+because it shows that the correlation coefficient is identical to the coefficient $\vartheta_1$, provided the
+variables $\mathbf{x}$ and $\mathbf{y}$ have been \blue{normalized} so that their standard deviation is $1$.
 
 \exercise
 Prove Equation \ref{eq:theta0} and Equation \ref{eq:theta1}.
 
 \hint
-Take the partial derivatives of $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ with respect to $\vartheta_0$ and
-$\vartheta_1$.  If the expression  $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ is minimal, then these partial
-derivatives have to be equal to $0$.
+The expression $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ is a quadratic function with respect to the parameters
+$\vartheta_0$ and $\vartheta_1$.  Therefore, it has exactly one global minimum.  Take the partial derivatives
+of $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ with respect to $\vartheta_0$ and $\vartheta_1$.  If the expression
+$\mathtt{MSE}(\vartheta_0, \vartheta_1)$ is minimal, then these partial derivatives have to be equal to $0$.
 \eox
 
 \subsection{Assessing the Quality of Linear Regression}
@@ -215,8 +218,8 @@ Altogether, this file contains data of 392 different car models.
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.3cm,
+                  xrightmargin  = 0.3cm,
                 ]
      mpg, cyl, displacement,    hp, weight,  acc, year, name
     18.0,   8,        307.0, 130.0, 3504.0, 12.0,   70, chevrolet chevelle malibu
@@ -236,9 +239,10 @@ Altogether, this file contains data of 392 different car models.
 \end{figure}
 
 The file ``\texttt{cars.csv}'' is part of the data set accompanying the excellent book 
-\href{http://faculty.marshall.usc.edu/gareth-james/ISL/}{Introduction to Statistical Learning} by Gareth James,
-Daniela Witten, Trevor Hastie, and Robert Tibshirani \cite{james:2014}.  The file 
-``\texttt{cars.csv}''  contains the fuel consumption of a number of different cars that were in widespread use during
+\href{https://www.statlearning.com}{Introduction to Statistical Learning} by Gareth James,
+Daniela Witten, Trevor Hastie, and Robert Tibshirani \cite{james:2014}.  The file
+\href{https://www.statlearning.com/s/Auto.csv}{\texttt{cars.csv}} contains the fuel consumption of a number of
+different cars that were in widespread use during 
 the seventies and early eighties of the last century.  The first column of this data set gives the 
 \blue{miles per gallon} of a car, i.e.~the number of miles a car can drive with one gallon of gas.  Note that
 this number is in \blue{reciprocal} relation to the fuel consumption:  If a car $\mathrm{A}$ can drive \textbf{twice} as many miles per gallon
@@ -246,10 +250,12 @@ than another car $\mathrm{B}$, then the fuel consumption of $\mathrm{A}$ is \tex
 $\mathrm{B}$. Furthermore, besides the miles per gallon, for every car the following other parameters are listed:
 \begin{enumerate}
 \item $\mathtt{cyl}$ is the number of cylinders,
-\item $\mathtt{displacement}$ is the engine displacement in cubic inches, 
-      (100 cubic inch is 1.63871 litres)
+\item $\mathtt{displacement}$ is the engine displacement in
+      \href{https://en.wikipedia.org/wiki/Cubic_inch}{cubic inches},  
+      (100 cubic inch is $1.638\,706\,4$ litres)
 \item $\mathtt{hp}$ is the engine power given in units of \href{https://en.wikipedia.org/wiki/Horsepower}{horsepower},
-\item $\mathtt{weight}$ is the weight in pounds (1 pound is the same as $0.453592$ kg),
+\item $\mathtt{weight}$ is the weight in \href{https://en.wikipedia.org/wiki/Pound_(mass)}{pounds} (1 pound is
+      the same as $0.453\,592\,37$ kg), 
 \item $\mathtt{acc}$ is the acceleration given as the time in seconds needed to accelerate from 0 miles per
       hour to 60 miles per hour,
 \item $\mathtt{year}$ is the year in which the model was introduced, and
@@ -318,7 +324,7 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
       by subtracting \texttt{xMean} from every entries of \texttt{X}.
       Next, the expression \texttt{(X - xMean) * (Y - yMean)} computes the elementwise product
       of the arrays \texttt{X - xMean} and \texttt{Y - yMean}.
-      The expression \texttt{(X - xMean) ** 2} computes the elementwise squares of the array \texttt{X - xMean}.
+      The expression \texttt{(X-xMean)**2} computes the elementwise squares of the array \texttt{X - xMean}.
       Finally, the function \texttt{sum} computes the sum of all the elements of an array.
 \item The coefficient $\mathtt{theta0}$ is computed according to Equation \ref{eq:theta0}, which reads
       \\[0.2cm]
@@ -382,7 +388,7 @@ In order to use the function we can use the code that is shown in
 \item This file is processed as a \textsc{Csv} file where different columns are separated by the character 
       ``\texttt{,}''.
 \item \texttt{kpl} is a list of the numbers that appear in the first column of the \textsc{Csv} file.
-      The numbers in the \textsc{Csv} file are interpreted as the \emph{miles per gallon} of a car.
+      The numbers in the \textsc{Csv} file are interpreted as the \blue{miles per gallon} of a car.
       These numbers are converted into metric units, i.e. how many kilometer a car can run on a litre.
 \item \texttt{displacement} is a list the numbers appearing in the third column of the \textsc{CSV} file.
       These numbers are interpreted as the \emph{engine displacement} in cubic inches.
@@ -403,7 +409,7 @@ The resulting values are shown in Table \ref{tab:explained-variance}.  It
 seems that, given the data in the file ``\texttt{cars.csv}'', the best indicator for the fuel consumption is
 the $\mathtt{weight}$ of a car.  The $\mathtt{displacement}$, the power $\mathtt{hp}$ of an engine, and the
 number of cylinders $\mathtt{cyl}$ are also good predictors.  But notice that the $\mathtt{weight}$ is the real
-cause of fuel consumption:  If a car has a big weight, it will also need a more powerful engine.  Hence the
+cause of fuel consumption:  If a car is heavy, it will also need a more powerful engine.  Hence the
 variable $\mathtt{hp}$ is correlated with the variable $\mathtt{weight}$ and will therefore also provide a
 reasonable explanation of the fuel consumption, although the high engine power is not the most important cause
 of the fuel consumption. 
