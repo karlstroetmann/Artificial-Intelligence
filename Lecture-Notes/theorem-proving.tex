@@ -644,7 +644,8 @@ to guarantee confluence.
 \end{Definition}
 \pagebreak
 
-\begin{Theorem}[\href{https://en.wikipedia.org/wiki/Transfinite_induction}{Transfinite Induction}] \hspace*{\fill} \\
+\begin{Theorem}[\href{https://en.wikipedia.org/wiki/Transfinite_induction}{Transfinite Induction}]
+  \hspace*{\fill} \index{transfinite induction}\\
   Assume the relation $\rightarrow \;\subseteq\; M \times M$ is well-founded and $F(x)$ is some formula.
   If we have that
   \\[0.2cm]
@@ -845,6 +846,224 @@ and a congruence can be done via induction on the structure of the terms.  The h
 show that the Knuth-Bendix order is well-founded.  A proof is given in the book by Franz Baader and Tobias
 Nipkow \cite{baader:1998}.
 
+\section{Unification}
+This section introduces the notion of a \blue{most general unifier} of two terms.
+To begin, we define the composition of two $\Sigma$-substitutions.
+
+\begin{Definition}[Composition of Substitutions] \index{Composition von Substitutions}
+    Assume that \\[0.2cm]
+    \hspace*{1.3cm}
+    $\sigma = \{ x_1 \mapsto s_1, \cdots, x_m \mapsto s_m \}$
+    \quad and \quad
+    $\tau = \{ y_1 \mapsto t_1, \cdots, y_n \mapsto t_n \}$
+    \\[0.2cm]
+    are two substitutions such that $\textsl{dom}(\sigma) \cap \textsl{dom}(\tau) = \{\}$.
+    We define the  \blue{composition $\sigma\tau$} \index{composition $\sigma\tau$} of $\sigma$ and $\tau$  as
+    \\[0.2cm]
+    \hspace*{1.3cm}
+    $\sigma\tau := \{ x_1 \mapsto s_1\tau, \cdots, x_m \mapsto s_m\tau,\; y_1 \mapsto t_1, \cdots, y_n \mapsto t_n \}$
+    \eox
+\end{Definition}
+
+\example
+If we define
+\\[0.2cm]
+\hspace*{1.3cm}
+$\sigma := \{ x_1 \mapsto c,\; x_2 \mapsto f(x_3) \}$ \quad and \quad
+$\tau := \{ x_3 \mapsto h(c,c),\; x_4 \mapsto d \}$,
+\\[0.2cm]
+then we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\sigma\tau = \{ x_1 \mapsto c,\; x_2 \mapsto f(h(c,c)),\; x_3 \mapsto h(c,c),\;x_4 \mapsto d \}$.
+\eoxs
+\vspace{0.3cm}
+
+\begin{Proposition} \label{satz:composition}
+    If $t$ is a term and $\sigma$ and $\tau$ are substitutions such that  
+    $\textsl{dom}(\sigma) \cap \textsl{dom}(\tau) = \{\}$ holds, then we have
+    \\[0.2cm]
+    \hspace*{1.3cm} $(t \sigma)\tau = t (\sigma\tau)$.
+    \eoxs
+\end{Proposition}
+This proposition may be proven by induction on $t$.
+
+\begin{Definition}[Syntactical Equation] \index{syntactical equation}
+  A  \blue{syntactical equation} is a pair $\langle s, t \rangle$ of terms.
+  It is written as $s \doteq t$. \index{$s \doteq t$}
+  A \blue{system of syntactical equations} \index{system of syntactical equations} is a set of syntactical
+  equations.
+  \eoxs
+\end{Definition}
+
+
+\begin{Definition}[Unifier]
+  A substitution $\sigma$ \blue{solves} a syntactical equation $s \doteq t$ iff we have $s\sigma = t\sigma$.
+  If $E$ is a system of syntactical equations and $\sigma$ is a substitution that solves
+  every syntactical equations in $E$, then $\sigma$ is a  \blue{unifier} \index{unifier} of $E$.
+  \eoxs
+\end{Definition}
+
+\noindent
+If $E = \{ s_1 \doteq t_1, \cdots, s_n \doteq t_n \}$ is a system of syntactical equations and $\sigma$ is a
+substitution, then we define
+\\[0.2cm]
+\hspace*{1.3cm}  $E\sigma := \{ s_1\sigma \doteq t_1\sigma, \cdots, s_n\sigma \doteq t_n\sigma \}$.
+\vspace{0.3cm}
+
+\example
+Let us consider the syntactical equation
+\\[0.2cm]
+\hspace*{1.3cm}
+$p(x_1, f(x_4)) \doteq p( x_2, x_3)$
+\\[0.2cm]
+and define the substitution
+\\[0.2cm]
+\hspace*{1.3cm}
+$\sigma := \{ x_1 \mapsto x_2,\; x_3 \mapsto f(x_4) \}$.
+\\[0.2cm]
+Then $\sigma$ solves the given syntactical equation because we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$p(x_1, f(x_4))\sigma = p(x_2, f(x_4))$ \quad und \quad \\[0.2cm]
+\hspace*{1.3cm}
+$p(x_2, x_3)\sigma \;\quad = p(x_2, f(x_4))$.  \eox
+
+Next we develop an algorithm for solving a system of syntactical equations.
+The algorithm we present was published by Martelli and Montanari
+\cite{martelli:1982}.\index{algorithm of Martelli and Montanari}  
+To begin, we first consider the cases where a syntactical equation $s \doteq t$ is unsolvable.
+There are two cases: A syntactical equation of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(s_1,\cdots,s_m) \doteq g(t_1,\cdots, t_n)$ \\[0.2cm]
+is certainly unsolvable if  $f$ and $g$ are different function symbols. The reason is that for any substitution
+$\sigma$ we have that \\[0.2cm]
+\hspace*{1.0cm} $f(s_1,\cdots,s_m)\sigma = f(s_1\sigma,\cdots,s_m\sigma)$ \quad und \quad
+                $g(t_1,\cdots, t_n)\sigma = g(t_1\sigma,\cdots,t_n\sigma)$. \\[0.2cm]
+If $f \not = g$, then the terms  $f(s_1,\cdots,s_m)\sigma$ and $g(t_1,\cdots, t_n)\sigma$ start with different
+function symbols and hence they can't be identical.
+
+The other case where a syntactical equation is unsolvable, is a syntactical equation of the following form:
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \doteq f(t_1,\cdots,t_n)$  \quad where $x \in \texttt{var}\big(f(t_1,\cdots,t_n)\big)$.
+\\[0.2cm]
+This syntactical equation is unsolvable because $f(t_1,\cdots,t_n)\sigma$ will always contain at least one more
+function symbol than $x\sigma$.
+
+Now we are able to present an algorithm for solving a system of syntactical equations, provided the system is
+solvable.  The algorithm will also discover if a system of syntactical equations is unsolvable.
+The algorithm works on pairs of the form
+$\langle F, \tau \rangle$ where $F$ is a system of syntactical equations and $\tau$ is a substitution.
+The algorithm starts with the pair 
+$\langle E, \{\} \rangle$.  Here $E$ is the system of syntactical equations that is to be solved and $\{\}$
+represents the empty substitution.  The system works by simplifying the pairs $\langle F, \tau \rangle$ using
+certain reduction rules that are presented below.  These reduction rules are applied until we either discover
+that the system of syntactical equations is unsolvable or else we reduce the pairs until we finally arrive at a
+pair of the form $\langle \{\}, \sigma \rangle$.  In this case  $\sigma$ is a unifier of the system of
+syntactical equations $E$.  The reduction rules are as follows:
+\begin{enumerate}
+\item If  $y\in\mathcal{V}$ is a variable that does  \underline{\color{red}not} occur in the term $t$, then
+      we can perform the following reduction: 
+      \[ \Big\langle E \cup \big\{ y \doteq t \big\}, \sigma \Big\rangle \quad\leadsto\quad 
+         \Big\langle E\{y \mapsto t\}, \sigma\{ y \mapsto t \} \Big\rangle 
+      \]
+      This reduction rule can be understood as follows: If the system of syntactical equations that is to be
+      solved contains a syntactical equation of the form $y \doteq t$, where the variable $y$ does not occur in
+      the term $t$, then the syntactical equation $y \doteq t$ can be removed if we apply the substitution
+      $\{ y \mapsto t \}$ to both components of the pair
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\Big\langle E \cup \big\{ y \doteq t \big\}, \sigma \Big\rangle$.
+\item If the variable $y$ occurs in the term $t$, i.e.~if  $y \in \textsl{Var}(t)$
+      and, furthermore, $t \not= y$, then the system of syntactical equations
+      $E \cup \big\{ y \doteq t \big\}$ has no solution.  We write this as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\Big\langle E \cup \big\{ y \doteq t \big\}, \sigma \Big\rangle\;\leadsto\; \Omega$ \quad
+      if $y \in \texttt{var}(t)$ and $y \not=t$.
+\item If $y\in\mathcal{V}$ and  $t \not\in \mathcal{V}$, then we have:
+      \[ \Big\langle E \cup \big\{ t \doteq y \big\}, \sigma \Big\rangle \quad\leadsto\quad 
+         \Big\langle E \cup \big\{ y \doteq t \big\}, \sigma \Big\rangle.
+      \]   
+      After we apply this rule, we can apply either the first or the second reduction rule thereafter.
+\item Trivial syntactical equations can be deleted:
+      \[ \Big\langle E \cup \big\{ x \doteq x \big\}, \sigma \Big\rangle \quad\leadsto\quad
+         \Big\langle E, \sigma \Big\rangle.
+      \]   
+\item If $f$ is an  $n$-ary function symbol we have 
+      \[ \Big\langle E \cup \big\{ f(s_1,\cdots,s_n) \doteq f(t_1,\cdots,t_n) \big\}, \sigma \Big\rangle 
+         \;\leadsto\; 
+         \Big\langle E \cup \big\{ s_1 \doteq t_1, \cdots, s_n \doteq t_n\}, \sigma \Big\rangle.
+      \]   
+
+      This rules is the reason that we have to work with a system of syntactical equations, because even if we
+      start with a single syntactical equation the rule given above can increase the number of syntactical
+      equations. 
+
+      A special case of this rule is the following:  
+      \[ \Big\langle E \cup \big\{ c \doteq c \big\}, \sigma \Big\rangle \;\leadsto\; 
+         \Big\langle E, \sigma \Big\rangle.
+      \]
+      Here $c$ is a nullary function symbol.
+\item The system of syntactical equations $E \cup \big\{ f(s_1,\cdots,s_m) \doteq g(t_1,\cdots,t_n) \big\}$ has
+      no solution if the function symbols $f$ and $g$ are different.  Hence we have
+      \[ \Big\langle E \cup \big\{ f(s_1,\cdots,s_m) \doteq g(t_1,\cdots,t_n) \big\},
+      \sigma \Big\rangle \;\leadsto\; \Omega \qquad \mbox{provided $f \not= g$}. \]
+\end{enumerate}
+If a system of syntactical equations $E$ is given and we start with the pair 
+$\langle E, []\rangle$, then we can apply the rules given above until one of the following two cases happens: 
+\begin{enumerate}
+\item We use the second or the sixth of the reduction rules given above.
+      In this case the system of syntactical equations $E$ is unsolvable.
+\item The pair $\langle E, \{\} \rangle$ is reduced into a pair of the form $\langle \{\}, \sigma\rangle$.
+      Then $\sigma$ is a  \blue{unifier} of $E$.  In this case we write $\sigma = \mathtt{mgu}(E)$.
+      If $E = \{ s \doteq t \}$, we write $\sigma = \mathtt{mgu}(s, t)$.  The abbeviation
+      $\mathtt{mgu}$ is short for {``\blue{most general unifier}''}.
+\end{enumerate}
+
+\example
+We show how to solve the syntactical equation \\[0.2cm]
+\hspace*{1.3cm}  $p(x_1, f(x_4)) \doteq p( x_2, x_3)$.  \\[0.2cm]
+We have the following reductions:
+$$
+\begin{array}{ll}
+          &  \big\langle \big\{ p(x_1, f(x_4)) \doteq p( x_2, x_3) \big\}, \{ \} \big\rangle \\[0.2cm]
+ \leadsto &  \big\langle \big\{ x_1 \doteq x_2, f(x_4) \doteq x_3 \big\}, \{ \} \big\rangle \\[0.2cm]
+ \leadsto &  \big\langle \big\{ f(x_4) \doteq x_3 \big\}, \{ x_1 \mapsto x_2 \} \big\rangle \\[0.2cm]
+ \leadsto &  \big\langle \big\{ x_3 \doteq f(x_4) \big\}, \{ x_1 \mapsto x_2 \} \big\rangle \\[0.2cm]
+ \leadsto &  \big\langle \big\{\big\}, \{ x_1 \mapsto x_2,\; x_3 \mapsto f(x_4) \} \big\rangle \\[0.2cm]
+\end{array}
+$$
+Hence the methos is successful and we have that the substitution
+\\[0.2cm]
+\hspace*{1.3cm}
+$\{ x_1 \mapsto x_2,\; x_3 \mapsto f(x_4) \}$ \\[0.2cm]
+is a solution of the syntactical equation given above.  \eox
+
+\example
+Next we try to solve the following system of syntactical equations: 
+\[ E = \big\{ p(h(x_1,c)) \doteq p(x_2),\; q(x_2, d) \doteq q(h(d,c),x_4) \big\} \]
+We have the following reductions:
+$$
+\begin{array}{ll}
+          & \big\langle \big\{ p(h(x_1,c)) \doteq p(x_2),\; q(x_2, d) \doteq q(h(d,c),x_4) \big\}, \{ \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{ p(h(x_1,c)) \doteq p(x_2),\; x_2 \doteq h(d,c), \; d \doteq x_4 \big\}, \{ \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{ p(h(x_1,c)) \doteq p(x_2),\; x_2 \doteq h(d,c), \; x_4 \doteq d \big\}, \{ \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{ p(h(x_1,c)) \doteq p(x_2),\; x_2 \doteq h(d,c) \big\}, \{ x_4 \mapsto d \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{ p(h(x_1,c)) \doteq p(h(d,c)) \big\}, \{ x_4 \mapsto d,\; x_2 \mapsto h(d,c) \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{ h(x_1,c) \doteq h(d,c) \big\}, \{ x_4 \mapsto d,\; x_2 \mapsto h(d,c) \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{ x_1 \doteq d,\; c \doteq c \big\}, \{ x_4 \mapsto d,\; x_2 \mapsto h(d,c) \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{ x_1 \doteq d,\big\}, \{ x_4 \mapsto d,\; x_2 \mapsto h(d,c) \} \big\rangle \\[0.2cm]
+ \leadsto & \big\langle \big\{\big\}, \{ x_4 \mapsto d,\; x_2 \mapsto h(d,c),\; x_1 \mapsto d \} \big\rangle \\[0.2cm]
+\end{array}
+$$
+Hence the  substitution  $\{ x_4 \mapsto d,\; x_2 \mapsto h(d,c),\; x_1 \mapsto d \}$ is a solution
+of the system of syntactical equations given above.
+\eox
+
+
 \section{The Knuth-Bendix Algorithm}
 Assume we have been given a set $R$ of rewrite rules such that
 \\[0.2cm]
@@ -859,6 +1078,7 @@ and Peter B.~Bendix \cite{knuth:1970} have discovered a way to decide, whether t
 $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce the notion of a \blue{critical pair}.
 
 \begin{Definition}[Critical Pair] \hspace*{\fill} \\
+  \index{critical pair}
   A pair of $\Sigma$-terms $\langle s, t\rangle$ is a \blue{critical pair} of the equation $l_1 \approx r_1$ and
   the equation $l_2 \approx r_2$ if and only if all of the following conditions hold:
   \begin{enumerate}[(a)]

@@ -470,7 +470,7 @@ define the \blue{mean squared error} \index{mean squared error} \index{MSE}
   \mathtt{MSE} := \frac{1}{m-1} \cdot \sum\limits_{i=1}^{m} \Bigl(F\bigl(\mathbf{x}^{(i)}\bigr) - y^{(i)}\Bigr)^2. 
 \end{equation}
 Then, given the list of training examples $[\langle \mathbf{x}^{(1)}, y^{(1)} \rangle, \cdots, \langle
-\mathbf{x}^{n}, y^{(n)} \rangle]$, our goal is to minimize $\mathtt{MSE}$.  
+\mathbf{x}^{n}, y^{(n)} \rangle]$, our goal is to minimize the $\mathtt{MSE}$.  
 In order to proceed, we need to have a \blue{model} for the function $F$.  The simplest model is a 
 \blue{linear model}, \index{linear model} i.e.~we assume that $F$ is given as 
 \\[0.2cm]
@@ -492,7 +492,7 @@ considerable speed-up.
 The definition of $F$ given above is the model used in
 \href{https://en.wikipedia.org/wiki/Linear_regression}{linear regression}. 
 Here, $\mathbf{w}$ is called the \blue{\color{blue}weight vector} and $b$ is called the \blue{\color{blue}bias}.  It turns
-out that the notation can be simplified if we extend the $p$-dimensional feature vector $\mathbf{x}$ to an
+out that the notation can be simplified if we extend the $p$-dimensional feature vector $\mathbf{x}$ to a
 $(p+1)$-dimensional vector $\mathbf{x}'$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -515,8 +515,8 @@ $F(\mathbf{x}) = \mathbf{x}^\top \cdot \mathbf{w} + b = \mathbf{x}'^\top \cdot \
 \\[0.2cm]
 Hence, the bias has been incorporated into the weight vector at the cost of appending the number $1$ at the end of
 input vector $\mathbf{x}$.  As we want to use this simplification, from now on we assume that the input vectors
-$\mathbf{x}^{(i)}$ have all been extended so that their last component is $1$.  Using this
-assumption,  we define the
+$\mathbf{x}^{(i)}$ have all been extended so that their last component is always $1$.  Then we can just write
+$\mathbf{x}$ and $\mathbf{w}$ instead of $\mathbf{x}'$ and $\mathbf{w}'$.  Using this simplification,  we define the
 function $F$ as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -649,7 +649,7 @@ Next, if the function $g: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as
 \hspace*{1.3cm}
 $g(\mathbf{x}) := \mathbf{b}^\top \cdot A \cdot \mathbf{x}$, \quad where $\mathbf{b} \in \mathbb{R}^n$ and $A \in \mathbb{R}^{n \times n}$,
 \\[0.2cm]
-then a similar calculation shows that
+then a similar, but slightly easier, calculation shows that
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \nabla g(\mathbf{x}) = A^\top \cdot \mathbf{b}$.
@@ -658,7 +658,7 @@ $\ds \nabla g(\mathbf{x}) = A^\top \cdot \mathbf{b}$.
 Prove this equation.
 
 \subsection{Deriving the Normal Equation}
-Next, we derive the so called \blue{normal equation} \index{normal equation}
+Next, we will derive the so called \blue{normal equation} \index{normal equation}
 for linear regression.  To this end, we first
 expand the product in equation (\ref{eq:squared-error-3}):
 \\[0.2cm]
@@ -741,9 +741,9 @@ This equation can be rewritten as
 \begin{equation}
   \label{eq:normal-equation}
  \colorbox{red}{\framebox{\colorbox{yellow}{\framebox{
- $\ds\bigl(X^\top \cdot X\bigr) \cdot \mathbf{w} = X^\top \cdot \mathbf{y}$.}}}} 
+ $\ds\bigl(X^\top \cdot X\bigr) \cdot \mathbf{w} = X^\top \cdot \mathbf{y}$}}}} 
 \end{equation}
-This equation is called the \blue{normal equation}.  \index{normal equation}
+and is known as the \blue{normal equation}.  \index{normal equation}
 
 \remark
 Although the matrix $X^\top \cdot X$ will often be invertible, for numerical reasons it is not
