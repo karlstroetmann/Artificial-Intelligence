@@ -932,7 +932,7 @@ $p(x_2, x_3)\sigma \;\quad = p(x_2, f(x_4))$.  \eox
 Next we develop an algorithm for solving a system of syntactical equations.
 The algorithm we present was published by Martelli and Montanari
 \cite{martelli:1982}.\index{algorithm of Martelli and Montanari}  
-To begin, we first consider the cases where a syntactical equation $s \doteq t$ is unsolvable.
+To begin, we first consider the cases where a syntactical equation $s \doteq t$ is \blue{unsolvable}.
 There are two cases: A syntactical equation of the form
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -949,8 +949,8 @@ The other case where a syntactical equation is unsolvable, is a syntactical equa
 \hspace*{1.3cm}
 $x \doteq f(t_1,\cdots,t_n)$  \quad where $x \in \texttt{var}\big(f(t_1,\cdots,t_n)\big)$.
 \\[0.2cm]
-This syntactical equation is unsolvable because $f(t_1,\cdots,t_n)\sigma$ will always contain at least one more
-function symbol than $x\sigma$.
+This syntactical equation is unsolvable because the term $f(t_1,\cdots,t_n)\sigma$ will always contain at least one more
+occurrence of the function symbol $f$ than the term $x\sigma$.
 
 Now we are able to present an algorithm for solving a system of syntactical equations, provided the system is
 solvable.  The algorithm will also discover if a system of syntactical equations is unsolvable.
@@ -961,13 +961,14 @@ $\langle E, \{\} \rangle$.  Here $E$ is the system of syntactical equations that
 represents the empty substitution.  The system works by simplifying the pairs $\langle F, \tau \rangle$ using
 certain reduction rules that are presented below.  These reduction rules are applied until we either discover
 that the system of syntactical equations is unsolvable or else we reduce the pairs until we finally arrive at a
-pair of the form $\langle \{\}, \sigma \rangle$.  In this case  $\sigma$ is a unifier of the system of
+pair of the form $\langle \{\}, \mu \rangle$.  In this case  $\mu$ is a unifier of the system of
 syntactical equations $E$.  The reduction rules are as follows:
 \begin{enumerate}
 \item If  $y\in\mathcal{V}$ is a variable that does  \underline{\color{red}not} occur in the term $t$, then
       we can perform the following reduction: 
       \[ \Big\langle E \cup \big\{ y \doteq t \big\}, \sigma \Big\rangle \quad\leadsto\quad 
-         \Big\langle E\{y \mapsto t\}, \sigma\{ y \mapsto t \} \Big\rangle 
+         \Big\langle E\{y \mapsto t\}, \sigma\{ y \mapsto t \} \Big\rangle \qquad\mbox{if $y \in \mathcal{V}$
+           and $y \not\in \mathtt{var}(t)$} 
       \]
       This reduction rule can be understood as follows: If the system of syntactical equations that is to be
       solved contains a syntactical equation of the form $y \doteq t$, where the variable $y$ does not occur in
@@ -985,12 +986,13 @@ syntactical equations $E$.  The reduction rules are as follows:
       if $y \in \texttt{var}(t)$ and $y \not=t$.
 \item If $y\in\mathcal{V}$ and  $t \not\in \mathcal{V}$, then we have:
       \[ \Big\langle E \cup \big\{ t \doteq y \big\}, \sigma \Big\rangle \quad\leadsto\quad 
-         \Big\langle E \cup \big\{ y \doteq t \big\}, \sigma \Big\rangle.
+         \Big\langle E \cup \big\{ y \doteq t \big\}, \sigma \Big\rangle \qquad\mbox{if $y \in \mathcal{V}$ and
+           $t \not\in \mathcal{V}$.}
       \]   
       After we apply this rule, we can apply either the first or the second reduction rule thereafter.
 \item Trivial syntactical equations can be deleted:
       \[ \Big\langle E \cup \big\{ x \doteq x \big\}, \sigma \Big\rangle \quad\leadsto\quad
-         \Big\langle E, \sigma \Big\rangle.
+         \Big\langle E, \sigma \Big\rangle \qquad\mbox{if $x \in \mathcal{V}$.}
       \]   
 \item If $f$ is an  $n$-ary function symbol we have 
       \[ \Big\langle E \cup \big\{ f(s_1,\cdots,s_n) \doteq f(t_1,\cdots,t_n) \big\}, \sigma \Big\rangle 
@@ -1013,13 +1015,13 @@ syntactical equations $E$.  The reduction rules are as follows:
       \sigma \Big\rangle \;\leadsto\; \Omega \qquad \mbox{provided $f \not= g$}. \]
 \end{enumerate}
 If a system of syntactical equations $E$ is given and we start with the pair 
-$\langle E, []\rangle$, then we can apply the rules given above until one of the following two cases happens: 
+$\langle E, \{\}\rangle$, then we can apply the rules given above until one of the following two cases happens: 
 \begin{enumerate}
 \item We use the second or the sixth of the reduction rules given above.
       In this case the system of syntactical equations $E$ is unsolvable.
-\item The pair $\langle E, \{\} \rangle$ is reduced into a pair of the form $\langle \{\}, \sigma\rangle$.
-      Then $\sigma$ is a  \blue{unifier} of $E$.  In this case we write $\sigma = \mathtt{mgu}(E)$.
-      If $E = \{ s \doteq t \}$, we write $\sigma = \mathtt{mgu}(s, t)$.  The abbeviation
+\item The pair $\langle E, \{\} \rangle$ is reduced into a pair of the form $\langle \{\}, \mu\rangle$.
+      Then $\mu$ is a  \blue{unifier} of $E$.  In this case we write $\mu = \mathtt{mgu}(E)$.
+      If $E = \{ s \doteq t \}$, we write $\mu = \mathtt{mgu}(s, t)$.  The abbreviation
       $\mathtt{mgu}$ is short for {``\blue{most general unifier}''}.
 \end{enumerate}
 
@@ -1074,22 +1076,22 @@ such that the relation $\prec$ is a rewrite order.
 Given two terms $s$ and $t$, the Church-Rosser Theorem tells us, that we can decide the question whether
 $s \leftrightarrow_R^* t$ holds by rewriting $s$ and $t$ into normal forms, provided the relation
 $\rightarrow_R$ is confluent.  By Newman's Lemma we know that local confluence is sufficient.  Donald E.~Knuth
-and Peter B.~Bendix \cite{knuth:1970} have discovered a way to decide, whether the term rewriting relation
+and Peter B.~Bendix \cite{knuth:1970} have discovered a way to decide whether the term rewriting relation
 $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce the notion of a \blue{critical pair}.
 
 \begin{Definition}[Critical Pair] \hspace*{\fill} \\
   \index{critical pair}
-  A pair of $\Sigma$-terms $\langle s, t\rangle$ is a \blue{critical pair} of the equation $l_1 \approx r_1$ and
-  the equation $l_2 \approx r_2$ if and only if all of the following conditions hold:
+  Assume we have been given the equations $l_1 \approx r_1$ and $l_2 \approx r_2$.  These equations
+  \blue{generate} a critical pair if and only if all of the following conditions hold:
   \begin{enumerate}[(a)]
   \item There exists a position $u \in \Pos(l_1)$ such that $l_1/u$ is not a variable.
-  \item The subterm $l_1/u$ of $l_1$ is unifiable with $l_2$.  Assume that $\mu$ is a most general unifier
+  \item The subterm $l_1/u$ of $l_1$ is unifiable with $l_2$.  For the following, assume that $\mu$ is a most general unifier
         of $l_1/u$ and $l_2$, i.e.~we have
         \\[0.2cm]
         \hspace*{1.3cm}
         $\mu = \texttt{mgu}(l_1/u, l_2)$.
-  \item The term $s$ results from rewriting the term $l_1\mu$ by rewriting the subterm $l_1/u$
-        to the new subterm $r_2\mu$ using the rule $l_2 \approx r_2$:      
+  \item The term $s$ results from rewriting the term $l_1\mu$ by rewriting the subterm $l_1\mu/u$
+        to the new subterm $r_2\mu$ using the rewrite rule $l_2 \approx r_2$:      
         \\[0.2cm]
         \hspace*{1.3cm}
         $s = l_1\mu[u \mapsto r_2\mu]$.
@@ -1099,7 +1101,7 @@ $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce th
         \hspace*{1.3cm}
         $t = r_1\mu$.  
       \end{enumerate}
-      Hence, if the conditions given above are satisfied, then
+      Then the pair
       \\[0.2cm]
       \hspace*{1.3cm}
       $\bigl\langle l_1\mu[u \leftarrow r_2\mu],\; r_1\mu \bigr\rangle$
@@ -1129,9 +1131,10 @@ and the latter term can be rewritten by the equation $i(w) \cdot w \approx e$ in
 i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl(i(w) \cdot w\bigr) \cdot z \rightarrow_{\{ i(w) \cdot w \approx e\}} e \cdot z$,
+$\bigl(i(w) \cdot w\bigr) \cdot z \rightarrow_{\{ i(w) \cdot w \approx e\}} e \cdot z$.
 \\[0.2cm]
-and by the equation $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ into the term $i(w) \cdot (w \cdot z)$:
+Furthermore, the same term $\bigl(i(w) \cdot w\bigr) \cdot z$ can be rewritten by the equation
+$(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ into the term $i(w) \cdot (w \cdot z)$:  
 \\[0.2cm]
 \hspace*{1.3cm}
 $\bigl(i(w) \cdot w\bigr) \cdot z \rightarrow_{\{ (x \cdot y) \cdot z \approx x \cdot (y \cdot z)\}} i(w) \cdot (w \cdot z)$.
@@ -1157,16 +1160,16 @@ $R \models s \approx t$. \eox
   $t$ such that $t$ is in $R$-normal form and we have both
   \\[0.2cm]
   \hspace*{1.3cm}
-  $s_1 \rightarrow_R^* t$ \quad and \quad   $s_2 \rightarrow_R^* t$.  
+  $s_1 \stackrel{_*}{\rightarrow}_R t$ \quad and \quad   $s_2 \stackrel{_*}{\rightarrow}_R t$.  
 \end{Definition}
 
 \begin{Theorem}[Knuth-Bendix]
-  If $R$ is a set of rewrite equations so that all critical pairs between equations from $R$ are confluent,
-  then the rewrite relation $\rightarrow_R^*$ is confluent and hence the question, whether $R \models s \approx t$
+  If $R$ is a set of rewrite equations such that all critical pairs between equations from $R$ are confluent,
+  then the rewrite relation $\stackrel{_*}{\rightarrow}_R$ is confluent and hence the question, whether $R \models s \approx t$
   can be decided by rewriting both $s$ and $t$ into normal forms $\widehat{s}$ and $\widehat{t}$:
   \\[0.2cm]
   \hspace*{1.3cm}
-  $s \rightarrow_R^* \widehat{s}$ \quad and \quad  $t \rightarrow_R^* \widehat{t}$ 
+  $s \stackrel{_*}{\rightarrow}_R \widehat{s}$ \quad and \quad  $t \stackrel{_*}{\rightarrow}_R \widehat{t}$ 
   \\[0.2cm]
   Then we have
   \\[0.2cm]
@@ -1177,7 +1180,7 @@ $R \models s \approx t$. \eox
 \noindent
 To make the above theorem work, if we start with a set $E$ of equations, we first have to order them into a set
 of rewrite rules $R$.  In general, this will not be sufficient because there will be critical pairs that are
-not confluent. However, if we can orient these newly derived critical pairs into rewrite rules, we might be
+not confluent. However, if we can orient these newly derived critical pairs into new rewrite rules, we might be
 able to extend the set $R$ to a new set of rewrite $\widehat{R}$ such that all critical pairs from equations
 from $\widehat{R}$ are confluent.
 \vspace*{0.2cm}
@@ -1192,7 +1195,7 @@ from $\widehat{R}$ are confluent.
       into rewrite rules.
 \item Compute all critical pairs that can be build from equations in $R$.
       \begin{enumerate}
-      \item If all critical pairs are confluent, then the rewrite relation $\rightarrow_R^*$ is confluent
+      \item If all critical pairs are confluent, then the rewrite relation $\stackrel{_*}{\rightarrow}_R$ is confluent
             and the algorithm is successful.
       \item If we have found a critical pair $\langle s, t \rangle$ that is not confluent,
             we orient the equation $s \approx t$ into a rewrite rule.  If this is impossible, the algorithm fails.
