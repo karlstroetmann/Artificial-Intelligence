@@ -1219,7 +1219,35 @@ My GitHub repository contains the Jupyter notebook
 \\[0.2cm]
 which contains an implementation of the Knuth-Bendix algorithm.  It also contains a number of equational
 theories $E$ where the Knuth-Bendix algorithm is successful.
+\pagebreak
 
+\exercise
+A \blue{quasi-group} is a structure
+\\[0.2cm]
+\hspace*{1.3cm}
+$ \mathcal{G} = \langle G, \cdot, /, \backslash \rangle$
+\\[0.2cm]
+such that
+\begin{enumerate}
+\item $G$ is a non-empty set,
+\item $\cdot: G \times G \rightarrow G$,
+\item $/: G \times G \rightarrow G$,
+\item $\backslash: G \times G \rightarrow G$.
+\item Furthermore, the following axioms have to be satisfied:
+      \begin{enumerate}
+      \item $x \cdot (x \backslash y) = y$,
+      \item $(x / y) \cdot y = x$,
+      \item $x \backslash (x \cdot y) = y$,
+      \item $(x \cdot y) /y = x$.
+      \end{enumerate}  
+\end{enumerate}
+Compute the set of all non-trivial critical pairs from these equations.
+
+\hint 
+The two non-trivial critical pairs arise from trying to simplify the left hand side of equation (d) with equation (a)
+and from simplifying the left hand side of equation (c) with (b).
+\eoxs
+    
 \section{Literature}
 The book \blue{Term Rewriting and All That} by Franz Baader and Tobias Nipkow \cite{baader:1998} gives a much
 more detailed account of equational theorem proving via term rewriting.
