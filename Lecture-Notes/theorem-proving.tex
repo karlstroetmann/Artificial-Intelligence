@@ -1221,6 +1221,175 @@ which contains an implementation of the Knuth-Bendix algorithm.  It also contain
 theories $E$ where the Knuth-Bendix algorithm is successful.
 \pagebreak
 
+\example
+We test the Knuth-Bendix algorithm with the axioms of group theory.  These axioms are the following:
+\begin{enumerate}[(a)]
+\item $1 \cdot x \approx x$,
+\item $i(x) \cdot x \approx 1$, and
+\item $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$.
+\end{enumerate}
+It is obvious how these equations can be oriented into rewrite rules.  The resulting rules are:
+\begin{itemize}
+\item $1 \cdot x \rightarrow x$,
+\item $i(x) \cdot x \rightarrow 1$, and
+\item $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$.
+\end{itemize}
+From $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$ and  $i(a) \cdot a \rightarrow 1$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$(i(a) \cdot a) \cdot z \rightarrow i(a) \cdot (a \cdot z)$ \quad and \quad
+$(i(a) \cdot a) \cdot z \rightarrow 1 \cdot z$
+\\[0.2cm]
+Hence we have found the new rewrite rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$i(a) \cdot (a \cdot z) \rightarrow z$.
+\\[0.2cm]
+From $i(a) \cdot (a \cdot z) \rightarrow z$ and $i(x) \cdot x$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$i(i(x)) \cdot (i(x) \cdot x) \rightarrow x$ \quad and \quad
+$i(i(x)) \cdot (i(x) \cdot x) \rightarrow i(i(x)) \cdot 1$. 
+\\[0.2cm]
+Hence we have found the new rewrite rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$i(i(x)) \cdot 1 \rightarrow x$.
+\\[0.2cm]
+From $i(x) \cdot (x \cdot y) \rightarrow y$ and $i(a) \cdot (a \cdot b) \rightarrow b$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$i\bigl(i(a)\bigr) \cdot \bigl(i(a) \cdot (a \cdot b)\bigr) \rightarrow a \cdot b $ \quad and \quad
+$i\bigl(i(a)\bigr) \cdot \bigl(i(a) \cdot (a \cdot b)\bigr) \rightarrow i\bigl(i(a)\bigr) \cdot b$.
+\\[0.2cm]
+Hence we have found the new rewrite rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$i\bigl(i(a)\bigr) \cdot b \rightarrow a \cdot b$
+\\[0.2cm]
+From $i\bigl(i(a)\bigr) \cdot b \rightarrow a \cdot b$ and $i(i(x)) \cdot 1 \rightarrow x$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$i\bigl(i(a)\bigr) \cdot 1 \rightarrow a \cdot 1$ \quad and \quad
+$i\bigl(i(a)\bigr) \cdot 1 \rightarrow a$
+\\[0.2cm]
+Hence we have found the new rewrite rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \cdot 1 \rightarrow a$.
+\\[0.2cm]
+At this point, the rewrite rule $i\bigl(i(x)\bigr) \cdot 1 \rightarrow x$ is simplified into the rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$i\bigl(i(x)\bigr) \rightarrow x$.
+\\[0.2cm]
+From $i(x) \cdot (x \cdot y) \rightarrow y$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$i\bigl(i(a)\bigr) \cdot \bigl(i(a)\cdot y\bigr) \rightarrow y$ \quad and \quad
+$i\bigl(i(a)\bigr) \cdot \bigl(i(a)\cdot y\bigr) \rightarrow a \cdot \bigl(i(a) \cdot y\bigr)$.
+\\[0.2cm]
+Hence we have found the new rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \cdot \bigl(i(a) \cdot y\bigr) \rightarrow y$.
+\\[0.2cm]
+From $i(x) \cdot x \rightarrow 1$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$i\bigl(i(a)\bigr) \cdot i(a) \rightarrow 1$ \quad and \quad
+$i\bigl(i(a)\bigr) \cdot i(a) \rightarrow a \cdot i(a)$.
+\\[0.2cm]
+Hence we have found the new rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \cdot i(a) \rightarrow 1$.
+\\[0.2cm]
+From $a \cdot i(a) \rightarrow 1$ and $1 \cdot x \rightarrow x$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$1 \cdot i(1) \rightarrow 1$ \quad and \quad $1 \cdot i(1) \rightarrow i(1)$.
+\\[0.2cm]
+Hence we have shown
+\\[0.2cm]
+\hspace*{1.3cm}
+$i(1) \rightarrow 1$.
+\\[0.2cm]
+From $a \cdot i(a) \rightarrow 1$ and $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$ and we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$(x \cdot y) \cdot i\bigl(x \cdot y) \rightarrow 1$ \quad and \quad
+$(x \cdot y) \cdot i\bigl(x \cdot y) \rightarrow x \cdot \bigl(y \cdot i(x \cdot y)\bigr)$.
+\\[0.2cm]
+Hence we have found the new rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \cdot \bigl(y \cdot i(x \cdot y)\bigr) \rightarrow 1$.
+\\[0.2cm]
+From $a \cdot \bigl(i(a) \cdot b\bigr) \rightarrow b$ and
+$x \cdot \bigl(y \cdot i(x \cdot y)\bigr) \rightarrow 1$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \cdot \Bigl(i(a) \cdot \Bigl(y \cdot i\bigl(i(a)\cdot y\bigr)\Bigr)\Bigr) \rightarrow y \cdot i\bigl(i(a)\cdot y\bigr)$
+\quad und \quad
+$a \cdot \Bigl(i(a) \cdot \Bigl(y \cdot i\bigl(i(a)\cdot y\bigr)\Bigr)\Bigr) \rightarrow a \cdot 1$
+\quad and \quad
+\\[0.2cm]
+As we already know that $a \cdot 1 \rightarrow a$ we have found the new rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$y \cdot i\bigl(i(a)\cdot y\bigr) \rightarrow a$.
+\\[0.2cm]
+From $y \cdot i\bigl(i(a)\cdot y\bigr) \rightarrow a$ and $i\bigl(i(x)\bigr) \rightarrow x$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$y \cdot i\Bigl(i\bigl(i(x)\bigr)\cdot y\Bigr) \rightarrow i(x)$ \quad and \quad
+$y \cdot i\Bigl(i\bigl(i(x)\bigr)\cdot y\Bigr) \rightarrow y \cdot i(x \cdot y)$.
+\\[0.2cm]
+Hence we have found the new rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$y \cdot i(x \cdot y) \rightarrow i(x)$.
+\\[0.2cm]
+From $i(a) \cdot (a \cdot b) \rightarrow b$ and $y \cdot i(x \cdot y) \rightarrow i(x)$ we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$i(a) \cdot \Bigl(a \cdot i\bigl(x \cdot a\bigr)\Bigr) \rightarrow i(x \cdot a)$ \quad and \quad
+$i(a) \cdot \Bigl(a \cdot i\bigl(x \cdot a\bigr)\Bigr) \rightarrow i(a) \cdot i(x)$.
+\\[0.2cm]
+Hence we have found the new rule
+\\[0.2cm]
+\hspace*{1.3cm}
+$i(x \cdot a) \rightarrow i(a) \cdot i(x)$.
+\\[0.2cm]
+This last rule makes the rules
+\\[0.2cm]
+\hspace*{1.3cm}
+$y \cdot i(x \cdot y) \rightarrow i(x)$, \quad
+$y \cdot i\bigl(i(a)\cdot y\bigr) \rightarrow a$, \quad and \quad
+$x \cdot \bigl(y \cdot i(x \cdot y)\bigr) \rightarrow 1$
+\\[0.2cm]
+redundant as all of these rules can be simplified to an identity using the rule $i(x \cdot a) \rightarrow i(a) \cdot i(x)$.
+Therefore, we have found the following set of rewrite rules.
+\begin{enumerate}
+\item $1 \cdot x \rightarrow x$,
+\item $i(x) \cdot x \rightarrow 1$, 
+\item $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$,
+\item $i(a) \cdot (a \cdot z) \rightarrow z$.
+\item $a \cdot 1 \rightarrow a$,
+\item $i(1) \rightarrow 1$,
+\item $i\bigl(i(x)\bigr) \rightarrow x$,
+\item $a \cdot i(a) \rightarrow 1$,
+\item $a \cdot \bigl(i(a) \cdot y\bigr) \rightarrow y$,
+\item $i(x \cdot a) \rightarrow i(a) \cdot i(x)$.
+\end{enumerate}
+It can be shown that all critical pairs resulting from these rules can be simplified to identities.  Hence this
+set is a confluent set of rewrite rules for group theory.  Therefore, the validity of any equation $s \approx
+t$ in group theory can be checked by rewriting $s$ and $t$ into normal forms with using the rewrite rules given
+above.  Then the equation $s \approx t$ is valid in group theory if and only if the normal forms of $s$ and $t$
+are identical. 
+\eoxs
+
 \exercise
 A \blue{quasi-group} is a structure
 \\[0.2cm]
