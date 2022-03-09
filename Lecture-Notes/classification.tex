@@ -177,15 +177,19 @@ We conclude this introductory section by fixing some notation.  Let us assume th
 are numbered 
 from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we define
 \begin{enumerate}
-\item $\textbf{x}_i := \langle\mathtt{feature}(o_i, 1), \cdots, \mathtt{feature}(o_i, D)\rangle$ \quad for all $i \in \{1, \cdots, N\}$.
+\item $\textbf{x}_i := \langle\mathtt{feature}(o_i, 1), \cdots, \mathtt{feature}(o_i, D)\rangle^\top$ \quad for all $i \in \{1, \cdots, N\}$.
   
-      i.e.~$\mathbf{x}_i$ is a $D$-dimensional row vector that collects the features of the $i$-th training object.
+      i.e.~$\mathbf{x}_i$ is a $D$-dimensional column vector that collects the features of the $i$-th training object.
 \item $x_{i,j} := \mathtt{feature}(o_i, j)$ \quad for all $i \in \{1, \cdots, N\}$ and $j \in \{1, \cdots, D\}$.
 
-      i.e.~$x_{i,j}$ is the $j$-th feature of the $i$-th object.
+      i.e.~$x_{i,j}$ is the $j$-th feature of the $i$-th object.  The numbers $x_i{i,j}$ are combined into the
+      feature matrix $X$, \index{feature matrix} i.e.~we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $X=(x_{i,j})_{i\in\{1,\cdots,N\} \atop j \in \{1,\cdots,D\}.}$ 
 \item $y_i := \mathtt{classify}(o_i)$ \quad for all $i \in \{1, \cdots, N\}$
 
-      i.e.~$y_i$ is the class of the $i$-th object.
+      i.e.~$y_i$ is the class of the $i$-th object.  These number are collected into the $N$-dimensional column vector $\mathbf{y}$.
 \end{enumerate}
 
 \subsection{Applications of Classification}
@@ -664,8 +668,8 @@ of a given training set:
 \hspace*{1.3cm}
 $\ds \ell(\mathbf{X},\mathbf{y},\mathbf{w}) = \prod\limits_{i=1}^N P(y_i \;|\;\mathbf{x}_i,\mathbf{w})$.
 \\[0.2cm]
-Here, we have combined the different attribute vectors $\mathbf{x}_i$ into the matrix $\mathbf{X}$ such that
-$\mathbf{x}_i$ is the $i$-th row of the matrix $\mathbf{X}$.  Since it is
+Here, we have combined the different feature vectors $\mathbf{x}_i$ into the matrix $\mathbf{X}$ such that
+$\mathbf{x}_i^\top$ is the $i$-th row of the matrix $\mathbf{X}$.  Since it is
 easier to work with sums than with products, instead of maximizing the function
 $\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ we instead maximize the logarithm of
 $\ell(\mathbf{X},\mathbf{y},\mathbf{w})$.  This logarithm is called the \blue{log-likelihood}
