@@ -353,19 +353,19 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
   Given a term $t$ the set of all \blue{positions} of $t$ is written as $\Pos(t)$ and is defined by
   induction on $t$:
   \begin{enumerate}
-  \item $\Pos(x) := \bigl\{ [] \bigr\}$ \quad for every variable $x$.
-  \item $\Pos(c) := \bigl\{ [] \bigr\}$ \quad for every constant $c$.
+  \item $\Pos(x) := \bigl\{ [\;] \bigr\}$ \quad for every variable $x$.
+  \item $\Pos(c) := \bigl\{ [\;] \bigr\}$ \quad for every constant $c$.
   \item $\Pos\bigl(f(t_1,\cdots,t_n)\bigr) := 
-         \bigl\{ [] \bigr\} \cup \bigcup\limits_{i=1}^n \bigl\{ [i] + u \mid u \in \Pos(t_i) \bigr\}$ 
+         \bigl\{ [\;] \bigr\} \cup \bigcup\limits_{i=1}^n \bigl\{ [i] + u \mid u \in \Pos(t_i) \bigr\}$ 
         \quad for every term $f(t_1,\cdots,t_n)$. \eoxs
   \end{enumerate}
 \end{Definition}
 
 \begin{Definition}[Subterm at a given Position, $t/u$] \hspace*{\fill} \\
-  Given a term $t$ and a position $t \in \Pos(t)$, the \blue{subterm of $t$ at position $u$} is
+  Given a term $t$ and a position $u \in \Pos(t)$, the \blue{subterm of $t$ at position $u$} is
   written as $t/u$.  This expression is defined by induction on $u$.
   \begin{enumerate}
-  \item $t/[] := t$,
+  \item $t/[\;] := t$,
   \item $f(t_1,\cdots,t_n)/\bigl([i]+u\bigr) := t_i/u$.  \eoxs
   \end{enumerate}
 \end{Definition}
@@ -376,7 +376,7 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
   $t[u \mapsto s]$ denotes the term that results from $t$ when the subterm $t/u$ is replaced by the term 
   $s$.  This expression is defined by induction on $u$.
   \begin{enumerate}
-  \item $t\bigl[ [] \mapsto s \bigr] := s$,
+  \item $t\bigl[ [\;] \mapsto s \bigr] := s$,
   \item $f(t_1,\cdots,t_n)\bigl[ [i]+u \mapsto s \bigr] := f(t_1, \cdots, t_{i-1},t_i[u \mapsto s], t_{i+1},\cdots, t_n)$.  
         \eoxs
   \end{enumerate}
@@ -386,12 +386,12 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
 Define $t := (x \cdot y) \cdot z$.  Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\Pos\bigl((x \cdot y) \cdot z\bigr) = \bigl\{ [], [1], [1,1], [1,2], [2]\bigr\}$.
+$\Pos\bigl((x \cdot y) \cdot z\bigr) = \bigl\{ [\;], [1], [1,1], [1,2], [2]\bigr\}$.
 \\[0.2cm]
 Furthermore, we have the following:
 \begin{enumerate}
 
-\item $\bigl((x \cdot y) \cdot z\bigr)/[] = (x \cdot y) \cdot z$,
+\item $\bigl((x \cdot y) \cdot z\bigr)/[\;] = (x \cdot y) \cdot z$,
 \item $\bigl((x \cdot y) \cdot z\bigr)/[1] = x \cdot y$, and
 \item $\bigl((x \cdot y) \cdot z\bigr)/[1,2] = y$.
 \end{enumerate}
