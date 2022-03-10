@@ -682,8 +682,7 @@ previous implementation.  Furthermore, only 76 megabytes of memory are used for 
             state = Frontier.popleft()
             if state == goal:
                 return path_to(state, Parent)
-            newStates = next_states(state)
-            for ns in newStates:
+            for ns in next_states(state):
                 if ns not in Parent:
                     Parent[ns] = state
                     Frontier.append(ns)
