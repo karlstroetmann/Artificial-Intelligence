@@ -252,7 +252,18 @@ $\mathbf{\widehat{x}} \in \mathbb{R}^n$ to satisfy
 $\mathbf{\widehat{x}} = \arg\max\limits_{\mathbf{x}\in \mathbb{R}^n} f$ \quad is that we must have \quad $\nabla f(\mathbf{\widehat{x}}) = \mathbf{0}$,
 \\[0.2cm]
 i.e.~the \href{https://en.wikipedia.org/wiki/Gradient}{gradient} of $f$, which we will write as $\nabla f$,
-vanishes at the maximum.  Remember that the gradient of $f$ is defined as the vector
+vanishes at the maximum.
+
+\begin{figure}[!th]
+\centering
+\hspace*{-1.3cm}
+\epsfig{file=Figures/sin-minus-square.pdf, scale=0.5}
+\vspace*{-0.3cm}
+\caption{The function $x \mapsto \sin(x) - \frac{1}{2} \cdot x^2$.}
+\label{fig:sin-minus-square.pdf}
+\end{figure}
+
+Remember that the gradient of $f$ is defined as the vector
 \\[0.2cm]
 \hspace*{1.3cm}
 $\nabla f := \left(
@@ -264,15 +275,6 @@ $\nabla f := \left(
  \right).
 $
 \vspace*{0.2cm}
-
-\begin{figure}[!th]
-\centering
-\hspace*{-1.3cm}
-\epsfig{file=Figures/sin-minus-square.pdf, scale=0.5}
-\vspace*{-0.3cm}
-\caption{The function $x \mapsto \sin(x) - \frac{1}{2} \cdot x^2$.}
-\label{fig:sin-minus-square.pdf}
-\end{figure}
 
 \noindent
 Unfortunately, in many cases the equation 
@@ -287,6 +289,7 @@ the function $f:\mathbb{R} \rightarrow \mathbb{R}$ that is defined as
 \hspace*{1.3cm}
 $\ds f(x) := \sin(x) - \frac{1}{2} \cdot x^2$.
 \\[0.2cm]
+
 This function is shown in Figure \ref{fig:sin-minus-square.pdf} on page \pageref{fig:sin-minus-square.pdf}.
 From the graph of the function it is obvious that this function has a maximum somewhere between $0.6$ and
 $0.8$.  In order to compute this maximum, we can compute the derivative of $f$.   This derivative is given as 
@@ -417,6 +420,7 @@ Next, let us discuss the implementation of gradient ascent.
 \caption{The gradient ascent algorithm.}
 \label{fig:gradient-ascent.py}
 \end{figure}
+\FloatBarrier
 
 The implementation of gradient ascent given above is not the most sophisticated variant of this algorithm.
 Furthermore, there are algorithms that are more powerful than gradient ascent.  The first of these methods is the
@@ -457,6 +461,16 @@ combined with the \blue{sigmoid function}.  Before we can discuss the details of
 define this function and state some of its properties.  
 
 \subsection{The Sigmoid Function}
+
+\begin{figure}[!ht]
+\centering
+\epsfig{file=Figures/sigmoid.eps, scale=0.7}
+\vspace*{-0.3cm}
+\caption{The sigmoid function.}
+\label{fig:sigmoid.eps}
+\end{figure}
+\FloatBarrier
+
 \begin{Definition}[Sigmoid Function\label{def:sigmoid}]
   The \href{https://en.wikipedia.org/wiki/Sigmoid_function}{sigmoid function} $S: \mathbb{R} \rightarrow [0, 1]$
   \index{sigmoid function} is defined as 
@@ -468,14 +482,6 @@ Figure \ref{fig:sigmoid.eps} on page \pageref{fig:sigmoid.eps} shows the sigmoid
 The sigmoid function is also known as the \blue{logistic function}. \index{logistic function}
 \eox
 \end{Definition}
-
-\begin{figure}[!ht]
-\centering
-\epsfig{file=Figures/sigmoid.eps, scale=0.7}
-\vspace*{-0.3cm}
-\caption{The sigmoid function.}
-\label{fig:sigmoid.eps}
-\end{figure}
 
 
 \noindent
@@ -851,7 +857,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \caption{An implementation of logistic regression.}
 \label{fig:logistic_regression.py}
 \end{figure}
-
+\FloatBarrier
 
 
 \begin{enumerate}
@@ -873,7 +879,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       \\[0.2cm]
       The implementation is more complicated than you might expect.  The reason has to do with
       overflow.  Consider values of $x$ that are smaller than, say, $-1000$.  The problem is that
-      the expression $\mathtt{exp}(1000))$ evaluates to \texttt{Infinity}, which represents the
+      the expression $\mathtt{exp}(1000)$ evaluates to \texttt{Infinity}, which represents the
       mathematical value $\infty$.  But then $1 + \mathtt{exp}(1000))$ is also \texttt{Infinity} and
       finally \texttt{log(1 + exp(1000))} is \texttt{Infinity}.  However, in reality we have
       \\[0.2cm]
@@ -962,7 +968,8 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \centering
 
 \begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
+                framesep      = 0.3cm,
+                bgcolor       = sepia,
                 firstnumber   = 1,
                 numbers       = left,
                 numbersep     = -0.2cm,
@@ -1000,6 +1007,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \caption{The function \texttt{logisticRegression}.}
 \label{fig:logistic_regression.py:2}
 \end{figure}
+\FloatBarrier
 
 If we run the function \texttt{logisticRegressionFile} using the data shown in Figure
 \ref{fig:exam.csv} the resulting values of the weight vector \texttt{w} are
@@ -1020,8 +1028,7 @@ Figure \ref{fig:exam-probability.pdf} shows a plot of this probability $P(x)$.
 \caption{Probability of passing an exam versus hours of studying.}
 \label{fig:exam-probability.pdf}
 \end{figure}
-
-
+\FloatBarrier
 
 \subsection{Logistic Regression with SciKit-Learn}
 In this section we discuss how linear regression is done in the SciKit-Learn environment.
@@ -1119,7 +1126,7 @@ correctly.
 \caption{Logistic Regression using SciKit-Learn}
 \label{fig:Logistic-Regression-with-SciKit-Learn.ipynb}
 \end{figure}
-%\$
+\FloatBarrier
 
 Figure \ref{fig:Logistic-Regression-with-SciKit-Learn.ipynb} on page
 \pageref{fig:Logistic-Regression-with-SciKit-Learn.ipynb} shows a \textsl{Python} script that creates a
@@ -1174,7 +1181,7 @@ logistic regression classifier with the help of the SciKit-Learn package.
 \caption{Probability of passing an exam versus hours of studying.}
 \label{fig:exam-iq-boundary.pdf}
 \end{figure}
-
+\FloatBarrier
 \item Line 12 computes the number of data for which the predictions of the model are wrong.
       The method $\texttt{predict}(X)$ takes a design matrix $X$.  Each row of $X$ is assumed to be a feature
       vector. It creates a prediction vector.  The $i$-th entry of this vector is $1$ if the model predicts a
