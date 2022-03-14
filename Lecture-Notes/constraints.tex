@@ -330,7 +330,7 @@ computing a solution automatically.  In effect, this enables us to use
 an algorithm that solves a given problem we confine ourselves to  specifying the problem precisely and then let a
 general purpose problem solver do the job of computing the solution.  This approach of declarative programming 
 was one of the main ideas incorporated in the programming language
-\href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to its promisses
+\href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to its promises
 as a viable general purpose programming language, constraint programming has proved to be very useful in a
 number of domains.  
 
@@ -338,13 +338,13 @@ number of domains.
 Besides the toy problems discussed so far, there are a number of industrial applications of constraint
 satisfaction problems.  The most important application seem to be variants of
 \href{https://en.wikipedia.org/wiki/Scheduling_(production_processes)}{scheduling problems}. 
-A simple example of a scheduling problem is the problem of generating a time table for a school.  A school has
+A simple example of a scheduling problem is the problem of generating a timetable for a school.  A school has
 various teachers, each of which can teach some subjects but not others.  Furthermore, there are a number of
 classes that must be taught in different subjects.  The problem is then to assign teachers to classes and to
-create a time table.  A special case of sheduling problems is
+create a timetable.  A special case of scheduling problems is
 \href{https://en.wikipedia.org/wiki/Crew_scheduling}{crew scheduling}.  For example, airlines have to solve a
 crew scheduling problem in order to efficiently assign crews of pilots and crews of stewards to their
-aircrafts.  Stewards and pilots work in different crews as they have different required resting times.
+aircraft.  Stewards and pilots work in different crews as they have different required resting times.
 
 \section{Brute Force Search}
 The most straightforward algorithm to solve a \ac{csp} is to test all possible combinations of assigning
@@ -1914,7 +1914,7 @@ that solves the given \ac{csp}.
 \myFig{Local-Search.ipynb:local_search} shows an implementation of \blue{local search} in \textsl{Python}.  We
 proceed to discuss this program line by line.
 \begin{enumerate}
-\item The function $\texttt{local\_search}$ takes three parameter.  
+\item The function $\texttt{local\_search}$ takes three parameters.  
       \begin{enumerate}[(a)]
       \item \texttt{Variables} is the set of all variables occurring in the given \ac{csp}.
       \item \texttt{ValuesPerVar} is a dictionary.  For every variable \texttt{x}, \texttt{ValuesPerVar[x]} is
