@@ -192,7 +192,7 @@ the game is drawn.  In this section we present two different implementations of 
 \item The function $\textts{next\_states}$ takes a $\textts{State}$ and a $\textts{player}$ and computes the list
       of states that can be reached from $\textts{State}$ if $\textts{player}$ is to move next.
       To this end, it first computes the set of \blue{empty} positions, i.e.~those positions that have not yet
-      been marked by either player. Every position is represented as pair of the
+      been marked by either player. Every position is represented as a pair of the
       form $(\textts{row}, \textts{col})$ where $\textts{row}$ specifies the row and $\textts{col}$ specifies
       the column of the position.  The position $(\textts{row}, \textts{col})$ is \blue{empty} in
       $\textts{State}$ iff
@@ -256,7 +256,7 @@ the game is drawn.  In this section we present two different implementations of 
       game is \blue{won} by $\textts{"X"}$, otherwise the element must be $\textts{"O"}$ and hence
       the game has a value of $-1$ for $\textts{"X"}$.
 
-      If there are any empty squares on the board but the game has not yet been decided,
+      If there are any empty squares on the board, but the game has not yet been decided,
       then the function returns \textts{None}.  Finally, if there are no more empty squares left, the game is a
       \blue{draw}. 
 \item The function $\textts{finished}$ takes a $\textts{State}$ and checks whether the game is finished.

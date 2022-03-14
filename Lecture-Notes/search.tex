@@ -418,7 +418,7 @@ We discuss this algorithm next.
 \section{Breadth First Search}
 Informally, breadth first search, abbreviated as \ac{bfs}, works as follows: \index{breadth first search}
 \begin{enumerate}
-\item Given a search problems $\langle Q,\;\mathtt{next\_states},\; \mathtt{start},\; \mathtt{goal}\rangle$,
+\item Given a search problem $\langle Q,\;\mathtt{next\_states},\; \mathtt{start},\; \mathtt{goal}\rangle$,
       we initialize a set $\texttt{Frontier}$ to contain the state $\texttt{start}$.
 
       In general, $\texttt{Frontier}$ contains those states that have just been discovered and whose successors have not
@@ -706,7 +706,7 @@ breadth first search to depth first search:
       \texttt{start} as early as possible.  In order to prevent loops, we still have the parent dictionary.
 
       Since a stack can be implemented as an ordinary \textsl{Python} list, we don't need the module
-      \texttt{deque} any more. 
+      \texttt{deque} anymore. 
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -2150,7 +2150,7 @@ shows an implementation of \ac{ida} search.  We proceed to discuss this program.
             \texttt{Path} and the value of this variable is a list.  This list is returned as the solution to
             the search problem.
       \item \texttt{dl\_search} is not able to find a path within the given \texttt{limit}.  In this case,
-            \texttt{dl\_search} will not return a list representing a path but instead it will return a number.
+            \texttt{dl\_search} will not return a list representing a path, but instead it will return a number.
             This number will specify the minimal length that any path leading from \texttt{start} to \texttt{goal} needs to
             have.  This number is then used to update the \texttt{limit} which is used for the next
             invocation of \texttt{dl\_search}.
@@ -2233,7 +2233,7 @@ discovered so far is stored in memory.  Hence, $\mathrm{IDA}^*$ is a viable alte
 is not sufficient to support the bidirectional $\mathrm{A}^*$ algorithm.
 
 \section{$\mathrm{A}^*$-$\mathrm{IDA}^*$ Search}
-So far, from all of the search algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
+So far, of all the search algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
 bidirectional $\mathrm{A}^*$ search is only feasible if sufficient memory is available.   While
 $\mathrm{IDA}^*$ requires more time, its memory consumption is much lower than the memory consumption of
 bidirectional $\mathrm{A}^*$.  Hence, it is natural to try to combine the $\mathrm{A}^*$ algorithm and the
