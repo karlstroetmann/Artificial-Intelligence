@@ -195,7 +195,7 @@ inconsistent since Pearson's $r$ is written in lower case, while $\mathrm{R}^2$ 
 case.  However, since this is the notation used in most books on statistics, we will use it too.
 The number $\mathrm{R}^2$ is also known as the
 \href{https://en.wikipedia.org/wiki/Coefficient_of_determination}{coefficient of determination}.  It tells us 
-to what extend the value of the variable $y$ is \blue{determined} by the value of $x$.
+to what extent the value of the variable $y$ is \blue{determined} by the value of $x$.
 
 
 \subsection{Putting the Theory to the Test}
@@ -389,7 +389,7 @@ In order to use the function we can use the code that is shown in
       ``\texttt{,}''.
 \item \texttt{kpl} is a list of the numbers that appear in the first column of the \textsc{Csv} file.
       The numbers in the \textsc{Csv} file are interpreted as the \blue{miles per gallon} of a car.
-      These numbers are converted into metric units, i.e. how many kilometer a car can run on a litre.
+      These numbers are converted into metric units, i.e. how many kilometers a car can run on a litre.
 \item \texttt{displacement} is a list the numbers appearing in the third column of the \textsc{CSV} file.
       These numbers are interpreted as the \emph{engine displacement} in cubic inches.
       These numbers are converted to litres.
@@ -409,7 +409,7 @@ The resulting values are shown in Table \ref{tab:explained-variance}.  It
 seems that, given the data in the file ``\texttt{cars.csv}'', the best indicator for the fuel consumption is
 the $\mathtt{weight}$ of a car.  The $\mathtt{displacement}$, the power $\mathtt{hp}$ of an engine, and the
 number of cylinders $\mathtt{cyl}$ are also good predictors.  But notice that the $\mathtt{weight}$ is the real
-cause of fuel consumption:  If a car is heavy, it will also need a more powerful engine.  Hence the
+cause of fuel consumption:  If a car is heavy, it will also need a more powerful engine. Hence the
 variable $\mathtt{hp}$ is correlated with the variable $\mathtt{weight}$ and will therefore also provide a
 reasonable explanation of the fuel consumption, although the high engine power is not the most important cause
 of the fuel consumption. 
@@ -426,7 +426,7 @@ of the fuel consumption.
   \hline
   number of cylinders & 0.70                 \\
   \hline
-  horse power         & 0.73                 \\
+  horsepower          & 0.73                 \\
   \hline
   weight              & 0.78                 \\
   \hline
