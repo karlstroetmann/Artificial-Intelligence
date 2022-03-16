@@ -28,9 +28,7 @@ introduction.  The rest of this chapter is strongly influenced by the online boo
 \\[0.2cm]
 that has been written by Michael Nielsen \cite{nielsen:2015}.  This book is easy to read, carefully written, and
 free to access.  I recommend this book to anybody who wants to dive deeper into the fascinating topic of neural
-networks.  Furthermore, the online learning platform \href{https://www.coursera.org/}{Coursera} offers a
-\blue{specialization} called \href{https://www.coursera.org/specializations/deep-learning}{Deep Learning} that
-is exclusively devoted to neural networks.
+networks.
 
 We proceed to give an overview of the content of this chapter.
 \begin{enumerate}
@@ -56,7 +54,7 @@ understand how networks of biological neurons, i.e.~brains, work\footnote{
   Actually, when it comes to brains, although there are many speculations, surprisingly little is known for a fact.  
 }.  
 Instead, we will use a mathematical abstraction of neurons that will serve as the foundation of the theory
-developed in this chapter.  At the abstraction level that we are looking at neural networks, a single neuron
+developed in this chapter.  At the abstraction level that we are using to look at neural networks, a single neuron
 with $m$ inputs is specified by a pair $\langle \mathbf{w}, b\rangle$ where the vector $\mathbf{w} \in \mathbb{R}^m$ is called the \blue{weight vector} and 
 the number $b \in \mathbb{R}$ is called the \blue{bias}.   
 Conceptually, a neuron is a function that maps an input vector $\mathbf{x} \in \mathbb{R}^m$ into the set
@@ -178,7 +176,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 The \blue{activation vector} \index{activation vector} of layer $l$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{a}^{(l)}(\mathbf{x}) := \langle a_1^{(l)}(\mathbf{x}), \cdots, a_{m(l)}^{(l)}(\mathbf{x}) \rangle^\top$.
+$\mathbf{a}^{(l)}(\mathbf{x}) := \bigl\langle a_1^{(l)}(\mathbf{x}), \cdots, a_{m(l)}^{(l)}(\mathbf{x}) \bigr\rangle^\top$.
 \\[0.2cm]
 Using vector notation, the \blue{feed forward equations} \index{feed forward equations}
 (\ref{eq:FF1}) and (\ref{eq:FF2}) can be rewritten as follows:
@@ -198,7 +196,8 @@ layer,  i.e.~the output vector
 $\mathbf{o}(\mathbf{x}) \in \mathbb{R}^{m(L)}$ is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{o}(\mathbf{x}) := \langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \rangle^\top = \mathbf{a}^{(L)}(\mathbf{x})$.
+$\mathbf{o}(\mathbf{x}) :=
+ \bigl\langle a^{(L)}_1(\mathbf{x}), \cdots, a^{(L)}_{m(L)}(\mathbf{x}) \bigr\rangle^\top = \mathbf{a}^{(L)}(\mathbf{x})$.
 \\[0.2cm]
 Note that the equations (\ref{eq:FF1}) and (\ref{eq:FF2}) describe how information propagates
 through the neural network: 
@@ -232,7 +231,7 @@ through the neural network:
 Next, we assume that we have $n$ \blue{training examples} 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$ \quad for $i=1,\cdots,n$ 
+$\bigl\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \bigr\rangle$ \quad for $i=1,\cdots,n$ 
 \\[0.2cm]
 such that 
 \\[0.2cm]
