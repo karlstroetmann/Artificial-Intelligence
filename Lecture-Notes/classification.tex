@@ -905,7 +905,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       This is the reason that \texttt{logSigmoid} returns \texttt{x} if the value of \texttt{x} is less than
       $-100$.
 \item The function $\mathtt{ll}(\mathbf{X}, \mathbf{y}, \mathbf{w})$ defined in line 14 computes the
-      log-lokelihood of the parameter $\mathbf{w}$ given the available data $\mathbf{X}$ and $\mathbf{y}$.
+      log-likelihood of the parameter $\mathbf{w}$ given the available data $\mathbf{X}$ and $\mathbf{y}$.
       We have
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -919,7 +919,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       $i$-th observation.  $\mathbf{y}$ is a vector describing the outcomes, i.e.~the elements
       of this vector are either $+1$ or $-1$.  Finally, $\mathbf{w}$ is the vector of coefficients.
 \item The function $\mathtt{gradLL}(\mathbf{x}, \mathbf{y}, \mathbf{w})$ in line 21 computes the gradient of
-      the log-lokelihood according to the formula
+      the log-likelihood according to the formula
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) =
@@ -927,7 +927,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       $.
       \\[0.2cm]
       The different components of this gradient are combined into a vector.
-      The arguments are the same as the arguments to the log-lokelihood.
+      The arguments are the same as the arguments to the log-likelihood.
 \item Finally, the function \texttt{logisticRegressionFile} that is shown in Figure
       \ref{fig:logistic_regression.py:2} takes one argument.  This argument
       is the name of the \textsc{Csv} file containing the data that are to be analysed.  
@@ -939,7 +939,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
             is specified by the parameter \texttt{name}.
       \item After the data has been read, the list \texttt{Pass} contains a list of floating point numbers that
             are either $0$ or $1$ specifying whether the student has passed the exam, while the list
-            \texttt{Hours} contains the numbers of hours that the students have spend studying.
+            \texttt{Hours} contains the numbers of hours that the students have spent studying.
       \item These data are converted into the NumPy arrays \texttt{x} and \texttt{y} in line 44 and 45.
       \item \texttt{n} is the number of data points we have, i.e.~it is the number of students.
       \item We reshape the vector \texttt{x} into a matrix \texttt{X} in line 47.
@@ -958,11 +958,11 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
             49.
       \item Now we are ready to run gradient ascent.  As the start vector we use a vector containing only
             zeros.  This vector is defined in line 50.  The precision we use is $10^{-8}$.
-            We want to maximize the log-lokelihood of a given weight vector $\mathtt{w}$.  Hence we define the
+            We want to maximize the log-likelihood of a given weight vector $\mathtt{w}$.  Hence we define the
             function $\texttt{f}(\texttt{w})$ as $\mathtt{ll}(\mathtt{X}, \mathtt{y}, \mathtt{w})$ in line 52,
             while the gradient of this function is defined in line 53.
             Line 54 call the function \texttt{gradient\_ascent} that computes the value of \texttt{w} that
-            maximizes the log-lokelihood.            
+            maximizes the log-likelihood.            
       \end{enumerate}
 \end{enumerate}
 
