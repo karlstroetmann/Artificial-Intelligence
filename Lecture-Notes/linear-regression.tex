@@ -366,8 +366,10 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
         kpl          = []
         displacement = []
         for row in reader:
-            kpl         .append(float(row[0]) * 0.00425144) 
-            displacement.append(float(row[2]) * 0.0163871)  
+            if line_count != 0:
+                kpl         .append(float(row[0]) * 0.00425144) 
+                displacement.append(float(row[2]) * 0.0163871)
+                line_count += 1
     m  = len(displacement)
     X  = np.array(displacement)
     Y  = np.array([1 / kpl[i] for i in range(m)])
