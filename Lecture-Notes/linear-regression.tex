@@ -723,8 +723,26 @@ holds.  The matrix $X^\top \cdot X$ used in the first term is symmetric because
 \hspace*{1.3cm}
 $\bigl(X^\top \cdot X\bigr)^\top = X^\top \cdot \bigl(X^\top\bigr)^\top = X^\top \cdot X$.
 \\[0.2cm]
-Using the results from the previous section we can now compute the gradient of $\mathtt{MSE}(\mathbf{w})$ with respect to
-$\mathbf{w}$.  The result is
+Using the results from the previous section, i.e.~
+\\[0.2cm]
+\hspace*{1.3cm}
+$\nabla \bigl(\mathbf{x} \mapsto \mathbf{x}^\top \cdot C \cdot \mathbf{x}\bigr) = 2 \cdot C \cdot \mathbf{x}$ \quad and \quad
+$\nabla \bigl(\mathbf{x} \mapsto \mathbf{b}^\top \cdot A \cdot \mathbf{x}\bigr) = A^\top \cdot \mathbf{b}$.
+\\[0.2cm]
+we can now compute the gradient of $\mathtt{MSE}(\mathbf{w})$ with respect to
+$\mathbf{w}$.  The gradient of the term
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w}^\top \cdot \bigl(X^\top \cdot X\bigr) \cdot \mathbf{w}$
+\\[0.2cm]
+with respect to $\mathbf{w}$ is $2 \cdot \bigl(X^\top \cdot X\bigr) \cdot \mathbf{w}$, while the gradient of
+the term 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textbf{y}^\top \cdot X \cdot \mathbf{w}$
+\\[0.2cm]
+is $X^\top \cdot \mathbf{y}$.  Since the gradient of $\mathbf{y}^\top \cdot \mathbf{y}$ with respect to
+$\mathbf{w}$ vanishes, the gradient of $\mathtt{MSE}(\mathbf{w})$ is given as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \nabla \mathtt{MSE}(\mathbf{w}) = \frac{2}{m-1} \cdot \Bigl(X^\top \cdot X \cdot \mathbf{w} - X^\top \cdot \mathbf{y}\Bigr)$.
