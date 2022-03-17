@@ -726,8 +726,9 @@ $\bigl(X^\top \cdot X\bigr)^\top = X^\top \cdot \bigl(X^\top\bigr)^\top = X^\top
 Using the results from the previous section, i.e.~
 \\[0.2cm]
 \hspace*{1.3cm}
-$\nabla \bigl(\mathbf{x} \mapsto \mathbf{x}^\top \cdot C \cdot \mathbf{x}\bigr) = 2 \cdot C \cdot \mathbf{x}$ \quad and \quad
-$\nabla \bigl(\mathbf{x} \mapsto \mathbf{b}^\top \cdot A \cdot \mathbf{x}\bigr) = A^\top \cdot \mathbf{b}$.
+$\nabla \bigl(\mathbf{x} \mapsto \mathbf{x}^\top \cdot C \cdot \mathbf{x}\bigr) = 2 \cdot C \cdot \mathbf{x}$
+\quad provided that $C^\top = C$ \quad and \quad
+$\nabla \bigl(\mathbf{x} \mapsto \mathbf{b}^\top \cdot A \cdot \mathbf{x}\bigr) = A^\top \cdot \mathbf{b}$,
 \\[0.2cm]
 we can now compute the gradient of $\mathtt{MSE}(\mathbf{w})$ with respect to
 $\mathbf{w}$.  The gradient of the term
