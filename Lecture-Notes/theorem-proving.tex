@@ -465,9 +465,9 @@ additional equations are added to $E$ in this process.  To proceed, we need the 
   A binary relation $\prec \;\subseteq\; \mathcal{T}_\Sigma \times \mathcal{T}_\Sigma$ is a
   \blue{rewrite order} if and only if we have the following:
   \begin{enumerate}
-  \item $\prec$ is a \blue{strict partial order} on $\mathcal{T}_\Sigma$, i.e we have
+  \item $\prec$ is a \blue{strict partial order} on $\mathcal{T}_\Sigma$, i.e. we have
         \begin{enumerate}
-        \item $\neg (s \prec s)$ \hspace*{2.6cm} for all $s \in \mathcal{T}_\Sigma$, i.e $\prec$ is \blue{irreflexive}.
+        \item $\neg (s \prec s)$ \hspace*{2.6cm} for all $s \in \mathcal{T}_\Sigma$, i.e. $\prec$ is \blue{irreflexive}.
         \item $r \prec s \wedge s \prec t \;\Rightarrow\; r \prec t$ \quad for all $r,s,t \in \mathcal{T}_\Sigma$,
               i.e. $\prec$ is \blue{transitive}. 
         \end{enumerate}
@@ -476,7 +476,7 @@ additional equations are added to $E$ in this process.  To proceed, we need the 
         \\[0.2cm]
         \hspace*{1.3cm}
         $r \prec l \;\Rightarrow\; r\sigma \prec l\sigma$ \quad for every substitution $\sigma$.
-  \item $\prec$ is a \blue{congruence}, i.e we have
+  \item $\prec$ is a \blue{congruence}, i.e. we have
         \\[0.2cm]
         \hspace*{1.3cm}
         $r \prec l \;\Rightarrow\; s[u \mapsto r] \prec s[u \mapsto l]$ for every $\Sigma$-term $s$ and every
@@ -611,7 +611,7 @@ $b \stackrel{_*}{\rightarrow} c$ holds.
       \hspace*{1.3cm}
       $s_{n} \rightarrow b$ \quad or \quad $b \rightarrow s_{n}$.
       \\[0.2cm]
-      We discuss theses cases one by one.
+      We discuss these cases one by one.
       \begin{enumerate}
       \item Case: $s_n \rightarrow b$.
 
@@ -816,7 +816,7 @@ We define $\texttt{count}(t,x)$ by induction on $t$.
 \item $\texttt{count}(y, x) := 0$ if $x \not= y$ for all variables $x,y \in \mathcal{V}$.
 \item $\texttt{count}\bigl(f(t_1,\cdots,t_n), x\bigr) := \sum\limits_{i=1}^n \texttt{count}(t_i, x)$.
 \end{enumerate}
-Now we are ready the define the \blue{Knuth-Bendix order}.  Given two terms $s$ and $t$  
+Now we are ready to define the \blue{Knuth-Bendix order}.  Given two terms $s$ and $t$  
 we have $s \prec t$ iff one of the following two conditions hold:
 \begin{enumerate}
 \item $w(s) < w(t)$ and $\texttt{count}(s, x) \leq \texttt{count}(t, x)$
@@ -1000,7 +1000,7 @@ syntactical equations $E$.  The reduction rules are as follows:
          \Big\langle E \cup \big\{ s_1 \doteq t_1, \cdots, s_n \doteq t_n\}, \sigma \Big\rangle.
       \]   
 
-      This rules is the reason that we have to work with a system of syntactical equations, because even if we
+      This rule is the reason that we have to work with a system of syntactical equations, because even if we
       start with a single syntactical equation the rule given above can increase the number of syntactical
       equations. 
 
