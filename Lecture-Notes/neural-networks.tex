@@ -152,7 +152,7 @@ The $j$-th neuron in layer $l$ has the \blue{bias} $b_j^{(l)}$.  These biases of
 the \blue{bias vector} \index{bias vector}
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{b}^{(l)} := \langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \rangle^\top$.
+$\mathbf{b}^{(l)} := \bigl\langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \bigr\rangle^\top$.
 \\[0.2cm]
 The \blue{activation} of the $j$-th neuron
 in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
@@ -253,7 +253,7 @@ $\ds C\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}
  \frac{1}{2 \cdot n} \cdot \sum\limits_{i=1}^n \Bigl(\mathbf{o}\bigl(\mathbf{x}^{(i)}\bigr) - \mathbf{y}^{(i)}\Bigr)^2
 $.
 \\[0.2cm]
-Note that this cost function is additive in the training examples $\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \rangle$.
+Note that this cost function is additive in the training examples $\bigl\langle \mathbf{x}^{(i)}, \mathbf{y}^{(i)} \bigr\rangle$.
 In order to simplify the notation we define
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -304,7 +304,7 @@ There are three reasons for the recent success of neural networks.
       was the most powerful supercomputer in 2000: According to the article
       ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
       it  offered a performance of 7.2 teraflops and needed 6 megawatt to operate.  The cost to build ASCI
-      White was about $110,000,000\,\symbol{36}$.   To compare, the Nvidia Titan RTX costs $2,499\,\symbol{36}$.
+      White was about $110,000,000\,\symbol{36}$.   To compare, the Nvidia Titan RTX costs $2,\!499\,\symbol{36}$.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} \index{backpropagation} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
@@ -399,14 +399,14 @@ component of $\mathbf{x}$ with the $i$-th component of $\mathbf{y}$.  Do not con
 the \href{https://en.wikipedia.org/wiki/Dot_product}{dot product}!  Although both multiply the vectors
 componentwise, the Hadamard product returns a vector, while the dot product returns a number.  Later, we will
 use the \href{http://www.numpy.org}{NumPy} package to represent vectors.  In NumPy, the Hadamard product of two
-vectors $\mathtt{x}$ and $\mathtt{y}$ is computed by the expression $\mathtt{x} * \mathtt{y}$.
+vectors $\mathtt{x}$ and $\mathtt{y}$ is conveniently computed by the expression $\mathtt{x} * \mathtt{y}$.
 
 \subsection{Backpropagation: The Equations}
 Now we are ready to state the \blue{backpropagation equations}.  \index{backpropagation equations}
 The first of these four equations reads as follows:
 \begin{equation}
   \label{eq:BP1}
-  \varepsilon^{(L)}_j = (a_j^{(L)} - y_j) \cdot S'\bigl(z_j^{(L)}\bigr)
+  \varepsilon^{(L)}_j = \bigl(a_j^{(L)} - y_j\bigr) \cdot S'\bigl(z_j^{(L)}\bigr)
  \quad \mbox{for all $j \in \{1, \cdots, m(L)\}$,}
   \tag{BP1}
 \end{equation}
@@ -473,9 +473,7 @@ $j$-th neuron in layer $l$, which is denoted as $b_j^{(l)}$.  We have
 This equation shows the reason for defining the error terms $\varepsilon_j^{(l)}$:  What we really need to
 compute is the partial derivative of $C_{\mathbf{x},\mathbf{y}}$ with respect to the biases and the weights.
 The equation (BP3) and the equation (BP4) below show how this can be done once we have computed the error terms
-$\varepsilon_j^{(l)}$.
-
-In vectorized notation, the equation (BP3) takes the following form:
+$\varepsilon_j^{(l)}$.  In vectorized notation, the equation (BP3) takes the following form:
 \begin{equation}
   \label{eq:BP3v}
   \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
@@ -546,11 +544,7 @@ versions of these equations since this is more efficient for two reasons:
 \end{enumerate}
 
 \subsection{A Proof of the Backpropagation Equations}
-Since we are living in a time of fake news and alternative facts where
-\href{https://www.theguardian.com/us-news/2018/aug/19/truth-isnt-truth-rudy-giuliani-trump-alternative-facts-orwellian}{truth isn't truth} 
-and not even a president can be trusted,  you should not gullibly trust in the validity of the backpropagation
-equations.  Instead,  
-we have to \textbf{prove} the backpropagation equations.  Although the proof is a bit tedious, it should be
+Next, we are going to prove the backpropagation equations.  Although the proof is a bit tedious, it should be
 accessible: We only need the \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} from calculus and the 
 \href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{chain rule} from
 \href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariable calculus}. \index{chain rule}
@@ -617,7 +611,7 @@ $f: \mathbb{R}^k \rightarrow \mathbb{R}$ \quad and \quad
 $g: \mathbb{R}^n \rightarrow \mathbb{R}^k$. 
 \\[0.2cm]
 are differentiable\footnote{
-  If this text had been written in German, I would have said that $f$ and $g$ are ``\blue{total differenzierbar}''.
+  If I had written this text in German, I would have said that $f$ and $g$ are ``\blue{total differenzierbar}''.
 }.  
 If the function $h: \mathbb{R}^n \rightarrow \mathbb{R}$ is defined as
 \\[0.2cm]
@@ -709,12 +703,19 @@ In order to proceed, we need to evaluate the partial derivative
 $\ds\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_j^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{j,k}^{(l)} \cdot S\bigl(z_k^{(l-1)}\bigr)\right) + b_j^{(l)}$.
+$\ds z_j^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{j,i}^{(l)} \cdot S\bigl(z_i^{(l-1)}\bigr)\right) + b_j^{(l)}$.
 \\[0.2cm]
 Hence we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}} = S\bigl(z_k^{(l-1)}\bigr) = a_k^{(l-1)}$. 
+$
+\begin{array}[t]{lcl}
+        \ds\frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}}
+  & = & \ds\sum\limits_{i=1}^{m(l)} \frac{\partial w_{j,i}^{(l)}}{\partial w_{j,k}^{(l)}} \cdot S\bigl(z_i^{(l-1)}\bigr) \\[0.5cm]
+  & = & \ds\sum\limits_{i=1}^{m(l)} \delta_{i,k}\cdot S\bigl(z_i^{(l-1)}\bigr) \\[0.4cm]
+  & = & S\bigl(z_k^{(l-1)}\bigr) = a_k^{(l-1)}.
+\end{array}
+$
 \\[0.2cm]
 Combining these equations we arrive at
 \\[0.2cm]
