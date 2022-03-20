@@ -335,7 +335,7 @@ Now we are ready to formally define the notion $E \vdash s \approx t$.  This not
 \item If $E \vdash r \approx s$ and $E \vdash s \approx t$, then $E \vdash r \approx t$.  
       \hspace*{\fill} (\blue{Transitivity})
 \item If $\textsl{arity}(f) = n$ and $E \vdash s_i \approx t_i$ for all $i \in \{1,\cdots,n\}$, \\
-      then $E \models f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
+      then $E \vdash f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
       \hspace*{\fill} (\blue{Congruence})
 \item If $E \vdash s \approx t$ and $\sigma$ is a $\Sigma$-substitution, then $E \vdash s\sigma \approx t\sigma$.
       \hspace*{\fill} (\blue{Stability})
