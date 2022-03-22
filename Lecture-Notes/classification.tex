@@ -1426,7 +1426,7 @@ parameters.  If we lower the regularization parameter down to $100$, then the ac
 drops down to $89.6\%$, but the accuracy on the test set increases to $88\%$.  The resulting decision boundary
 is shown in Figure \ref{fig:fake-data-14-reg.pdf} on page \pageref{fig:fake-data-14-reg.pdf}.  Clearly, this
 decision boundary looks less complicated than the boundary shown in Figure \ref{fig:fake-data-14.pdf}.
-Contrary to the the previous figures, this figure shows all the data.  The previous figures had only shown the
+Contrary to the previous figures, this figure shows all the data.  The previous figures had only shown the
 training data.
 
 \begin{figure}[!th]
@@ -1463,7 +1463,7 @@ In this section we discuss \href{https://en.wikipedia.org/wiki/Naive_Bayes_class
 Naive Bayes classifiers are an alternative method for classification which is appropriate in cases where the
 features are not numerical but rather are categorical.  It starts with \href{https://en.wikipedia.org/wiki/Bayes%27_theorem}{Bayes' theorem}:
 Assume we have some evidence $E$ about an object $o$ and want to know whether $o$ belongs to some class $C$.
-Bayes' theorem tell us that the \blue{conditional probability} $P(C|E)$, i.e the probability that $o$ has class $C$
+Bayes' theorem tell us that the \blue{conditional probability} $P(C|E)$, i.e. the probability that $o$ has class $C$
 given that we have observed the evidence $E$, is related to the conditional probability $P(E|C)$, which is the probability that we
 observe the evidence $E$ given that $o$ has class $C$, in the following way:
 \\[0.2cm]
@@ -1521,7 +1521,7 @@ given an event $C$ if and only if we have
 \hspace*{1.3cm}
 $P(A \;|\; C) = P(A \;|\; B \wedge C)$.
 \\[0.2cm]
-To put this equation differently, once we known that $C$ holds, when it comes to the estimating the probability of $A$,
+To put this equation differently, once we know that $C$ holds, when it comes to the estimating the probability of $A$,
 then it does not matter whether $B$ holds or not.  Now the important assumption that a \blue{naive Bayes classifier} 
 makes is that in order to estimate the class $C$ of an object $o$ that has features $f_1$, $\cdots$, $f_m$ it
 is assumed that the features $f_1, \cdots, f_m$ are conditionally independent once the class is known.  In
@@ -1578,7 +1578,7 @@ $
 \\[0.2cm]
 This equation can be implemented once we have a training set $T$ of objects with known classes:  
 The probability $P(C)$ is the probability that an object $o$ has class $C$
-if nothing else is know about this object.  $P(C)$ is estimated as the proportion of objects in $T$ that are
+if nothing else is known about this object.  $P(C)$ is estimated as the proportion of objects in $T$ that are
 of class $C$:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1702,8 +1702,8 @@ implementation.
 \item We import the module
       \href{https://docs.python.org/2/library/collections.html#counter-objects}{\texttt{Counter}} from the package
       \texttt{collections}.  
-      A \texttt{Counter} is a special type of a dictionary that is well suited for counting objects.
-\item We set some variables that would need to be adapted if this notebook were to used with a different set of
+      A \texttt{Counter} is a special type of dictionary that is well suited for counting objects.
+\item We set some variables that would need to be adapted if this notebook would be used with a different set of
       Emails.
 \item Using the function \texttt{listdir} from the module \texttt{os} we count the number of spam emails and
       the number of ham emails in the corresponding directories.  These numbers are than used to compute the
@@ -1881,7 +1881,7 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
       $ \alpha + \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; C)\bigr) $
       \\[0.2cm]
       does not lead to an underflow error.
-\item In order to evalate the performance of this algorithm, we need to define two new concepts: \blue{precision} and 
+\item In order to evaluate the performance of this algorithm, we need to define two new concepts: \blue{precision} and 
       \blue{recall}.  Let us call the ham emails the \blue{positives}, while the spam emails are called the
       \blue{negatives}.  Then we define
       \begin{enumerate}
@@ -1903,10 +1903,10 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
       \\[0.2cm]
       Therefore, the \blue{recall} measures the percentage of those ham emails that are indeed classified as ham.  
 
-      Usually, it is very important that the recall is high as we don't want to loose a ham email because our classifier has incorrectly classified it as a spam email.  
+      Usually, it is very important that the recall is high as we don't want to miss a ham email because our classifier has incorrectly classified it as a spam email.  
       On the other hand, having a high precision is not that important.  After all, if $10\%$ of the emails
       offered to us as ham are, in fact, spam, we might tolerate this.  However, we
-      would certainly not tolerate loosing $10\%$ of our ham emails because they are
+      would certainly not tolerate missing $10\%$ of our ham emails because they are
       incorrectly specified as spam.       
 \end{enumerate}
 
@@ -2121,7 +2121,7 @@ holds.  Similarly, if $\mathbf{x}^{(i)}$ is a negative example, we want to have 
   \label{eq:svm-2}
     \mathbf{w} \cdot \mathbf{x}^{(i)} + b \leq -1
 \end{equation}
-holds.  Let us define the the class of a positive example to be $+1$ and the
+holds.  Let us define the class of a positive example to be $+1$ and the
 class of a negative example to be $-1$.  Let $y_i$ denotes the class of example $\mathbf{x}^{(i)}$.
 Let us multiply equation \ref{eq:svm-1} by $y_i = 1$.  Unsurprisingly, we get
 \begin{equation}
