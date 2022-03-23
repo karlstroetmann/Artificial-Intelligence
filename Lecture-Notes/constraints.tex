@@ -172,7 +172,7 @@ Next, let us define the constraints.  There are two different types of constrain
       column.  To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{DifferentCol} := \bigl\{ \texttt{V}_i \not= \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
+      $\texttt{DifferentCols} := \bigl\{ \texttt{V}_i \not= \texttt{V}_j \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
       Here the condition $j < i$ ensures that, for example,  while we have the constraint
       $\texttt{V}_2 \not=
@@ -189,7 +189,7 @@ Next, let us define the constraints.  There are two different types of constrain
       columns of these queens.  To capture these constraints, we define
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{DifferentDiag} := \bigl\{ |i  - j| \not= |\texttt{V}_i - \texttt{V}_j| \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
+      $\texttt{DifferentDiags} := \bigl\{ |i  - j| \not= |\texttt{V}_i - \texttt{V}_j| \bigm| i \in \{1,\cdots,8\} \wedge j \in \{1,\cdots,8\} \wedge j < i \bigr\}$.
       \\[0.2cm]
       For a fixed pair of values $\langle j, V_j\rangle$ the equations
       \\[0.2cm]
@@ -202,7 +202,7 @@ Next, let us define the constraints.  There are two different types of constrain
 Then, the set of constraints is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{Constraints} := \texttt{DifferentCol} \cup \texttt{DifferentDiag}$
+$\texttt{Constraints} := \texttt{DifferentCols} \cup \texttt{DifferentDiags}$
 \\[0.2cm]
 and the eight queens problem can be stated as the constraint satisfaction problem
 \\[0.2cm]
@@ -280,17 +280,6 @@ partial variable assignment is shown in \myFig{eight-queens-partial.txt}.
   \label{fig:eight-queens-partial.txt}
 \end{figure}
 
-
-
-\myFig{N-Queens-Problem-CSP.ipynb} shows a \textsl{Python} program that can be used to create a \ac{csp} that
-encodes the eight queens puzzle.  The code shown in this figure is more general than necessary.  Given a natural
-number $n$, the function call $\texttt{create\_csp}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
-the eight queens problem to the problem of placing $n$ queens on a board of size $n$ times $n$ such that no
-queen can capture another queen.  The fact that the n-queen problem is parameterized by the number of queens n
-gives us the ability to check how the running time of the algorithms for solving \ac{csp}s scales with the size
-of the problem. 
-
-
 \begin{figure}[!ht]
 \centering
 \begin{minted}[ frame         = lines, 
@@ -303,23 +292,32 @@ of the problem.
                 xrightmargin  = 0.cm,
               ]{python3}    
     def create_csp(n):
-        S            = range(1, n+1)           
-        Variables    = { f'V{i}' for i in S }
-        Values       = set(S)
-        SameRow      = { f'V{i} != V{j}' for i in S
-                                         for j in S
-                                         if  i < j 
-                       }
-        SameDiagonal = { f'abs(V{j} - V{i}) != {j - i}' for i in S
-                                                        for j in S 
-                                                        if  i < j 
-                       }
-        return (Variables, Values, SameRow | SameDiagonal)
+        S              = range(1, n+1)           
+        Variables      = { f'V{i}' for i in S }
+        Values         = set(S)
+        DifferentCols  = { f'V{i} != V{j}' for i in S
+                                           for j in S
+                                           if  i < j 
+                         }
+        DifferentDiags = { f'abs(V{j} - V{i}) != {j - i}' for i in S
+                                                          for j in S 
+                                                          if  i < j 
+                         }
+        return Variables, Values, DifferentCols | DifferentDiags
 \end{minted}
 \vspace*{-0.3cm}
 \caption{The $n$ queens problem formulated as a \ac{csp}.}
 \label{fig:N-Queens-Problem-CSP.ipynb}
 \end{figure}
+\FloatBarrier
+
+\myFig{N-Queens-Problem-CSP.ipynb} shows a \textsl{Python} program that can be used to create a \ac{csp} that
+encodes the eight queens puzzle.  The code shown in this figure is more general than necessary.  Given a natural
+number $n$, the function call $\texttt{create\_csp}(n)$ creates a constraint satisfaction problem $\mathcal{P}$ that generalizes
+the eight queens problem to the problem of placing $n$ queens on a board of size $n$ times $n$ such that no
+queen can capture another queen.  The fact that the n-queen problem is parameterized by the number of queens n
+gives us the ability to check how the running time of the algorithms for solving \ac{csp}s scales with the size
+of the problem. 
 
 
 The beauty of \href{https://en.wikipedia.org/wiki/Constraint_programming}{constraint programming} is the fact
