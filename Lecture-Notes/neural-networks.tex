@@ -298,13 +298,13 @@ There are three reasons for the recent success of neural networks.
 \begin{enumerate}
 \item The computing power that is available today has vastly increased in the last 20 years.
       For example, today the
-      \href{https://www.nvidia.com/en-us/deep-learning-ai/products/titan-rtx/}{Nvidia Titan RTX}
-      graphic card offers  130 teraflops in single precision performance.  It needs a power supply that
-      outputs 650 watt.  Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which
+      \href{https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090/}{NVIDIA RTX 3090}
+      graphic card offers 284 teraflops in single precision performance. It needs a power supply that
+      outputs 750 watt. Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which
       was the most powerful supercomputer in 2000: According to the article
       ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
       it  offered a performance of 7.2 teraflops and needed 6 megawatt to operate.  The cost to build ASCI
-      White was about $110,000,000\,\symbol{36}$.   To compare, the Nvidia Titan RTX costs $2,\!499\,\symbol{36}$.
+      White was about $110,000,000\,\symbol{36}$.   To compare, the NVIDIA RTX 3090 costs $1,\!499\,\symbol{36}$.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} \index{backpropagation} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
@@ -549,7 +549,7 @@ accessible: We only need the \href{https://en.wikipedia.org/wiki/Chain_rule}{cha
 \href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{chain rule} from
 \href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariable calculus}. \index{chain rule}
 
-Lets us start with the proof of equations \ref{eq:BP1}.
+Let us start with the proof of equations \ref{eq:BP1}.
 Remember that we have defined the numbers $\varepsilon_j^{(l)}$ as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -862,8 +862,8 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
 The code on Figure \ref{fig:Digit-Regocnition.ipynb-1} on page \pageref{fig:Digit-Regocnition.ipynb-1} shows the
 code to load the image files.  We discuss it line by line.
 \begin{enumerate}
-\item Since the images are have been compressed as a \texttt{.gz} file, we need the module \texttt{gzip} to
-      uncompress the file.
+\item Since the images  have been compressed as a \texttt{.gz} file, we need the module \texttt{gzip} to
+      decompress the file.
 \item The format that has been used to store the images is called
       \href{https://docs.python.org/3.6/library/pickle.html}{pickle}.
       This a binary format that can be used to \blue{serialize} \textsl{Python} objects into binary strings.  These
