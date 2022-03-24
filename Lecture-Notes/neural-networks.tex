@@ -101,7 +101,9 @@ weight vector $\mathbf{w}$.
 
 \begin{figure}[!h]
   \centering
-   \epsfig{file=Figures/nn1.pdf,scale=1.5}
+  \vspace*{-2cm}
+  \epsfig{file=Figures/nn1.pdf,scale=1.5}
+    \vspace*{-2cm}
    \caption{A neural network with topology $[3, 6, 4, 2]$.}
   \label{fig:nn1.pdf}
 \end{figure}
@@ -125,7 +127,9 @@ in the \texttt{Python} subdirectory of my GitHub repository for this lecture.
 
 \begin{figure}[!h]
   \centering
-   \epsfig{file=Figures/nn2.pdf,scale=1.5}
+  \vspace*{-2cm}
+  \epsfig{file=Figures/nn2.pdf,scale=1.5}
+  \vspace*{-2cm}
    \caption{A neural network with topology $[8, 12, 8, 6, 3]$.}
   \label{fig:nn2.pdf}
 \end{figure}
@@ -153,7 +157,9 @@ the \blue{bias vector} \index{bias vector}
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{b}^{(l)} := \bigl\langle b_1^{(l)}, \cdots, b_{m(l)}^{(l)} \bigr\rangle^\top$.
-\\[0.2cm]
+\FloatBarrier
+
+\noindent
 The \blue{activation} of the $j$-th neuron
 in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
 \begin{enumerate}
@@ -299,7 +305,7 @@ There are three reasons for the recent success of neural networks.
 \item The computing power that is available today has vastly increased in the last 20 years.
       For example, today the
       \href{https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090/}{NVIDIA RTX 3090}
-      graphic card offers 284 teraflops in single precision performance. It needs a power supply that
+      graphic card offers 35 teraflops in single precision performance. It needs a power supply that
       outputs 750 watt. Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which
       was the most powerful supercomputer in 2000: According to the article
       ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
@@ -862,8 +868,8 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
 The code on Figure \ref{fig:Digit-Regocnition.ipynb-1} on page \pageref{fig:Digit-Regocnition.ipynb-1} shows the
 code to load the image files.  We discuss it line by line.
 \begin{enumerate}
-\item Since the images  have been compressed as a \texttt{.gz} file, we need the module \texttt{gzip} to
-      decompress the file.
+\item Since the images are have been compressed as a \texttt{.gz} file, we need the module \texttt{gzip} to
+      uncompress the file.
 \item The format that has been used to store the images is called
       \href{https://docs.python.org/3.6/library/pickle.html}{pickle}.
       This a binary format that can be used to \blue{serialize} \textsl{Python} objects into binary strings.  These

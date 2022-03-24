@@ -1651,7 +1651,6 @@ $\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The imp
         if not Variables:
             return [ {} ]  # list containing empty assignment
         var         = Variables.pop()
-        Values      = ValuesPerVar[var]
         Assignments = all_assignments(Variables, ValuesPerVar)
         return [ extend(A, var, val) for A in Assignments 
                                      for val in ValuesPerVar[var]
