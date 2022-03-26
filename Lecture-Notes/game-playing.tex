@@ -1048,7 +1048,7 @@ value of a given state via a heuristic.
 
 In order to implement this idea, we add a parameter $\textts{limit}$ to the procedures $\textts{alphaBetaMax}$
 and $\textts{alphaBetaMin}$ that were shown in the previous section.  On
-every recursive invocation of the functions $\textts{alphaBetaMax}$ and$\textts{alphaBetaMin}$, the parameter
+every recursive invocation of the functions $\textts{alphaBetaMax}$ and $\textts{alphaBetaMin}$, the parameter
 $\textts{limit}$ is decreased. 
 Once the limit reaches $0$, instead of invoking the function $\textts{alphaBetaMax}$ or $\textts{alphaBetaMin}$
 again, we try to estimate the value of the given $\textts{State}$ using an \blue{evaluation heuristic}.  This
@@ -1093,7 +1093,7 @@ $l-1$.
         for ns in NextStates:
             # heaps are sorted ascendingly, hence the minus
             heapq.heappush(Moves, (-value_cache(ns, limit-1), ns))
-        while Moves != []:
+        while Moves:
             _, ns = heapq.heappop(Moves)
             value = max(value, evaluate(ns, limit-1, minValue, value, beta))
             if value >= beta:
@@ -1110,12 +1110,12 @@ $l-1$.
         Moves      = []  # empty priority queue
         for ns in NextStates:
             heapq.heappush(Moves, (value_cache(ns, limit-1), ns))
-        while Moves != []:
+        while Moves:
             _, ns = heapq.heappop(Moves)
             value = min(value, evaluate(ns, limit-1, maxValue, alpha, value))
             if value <= alpha:
                 return value
-                return value
+        return value
 
     def value_cache(State, limit):
         flag, value = gCache.get((State, limit), ('=', 0))
