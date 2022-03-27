@@ -1230,6 +1230,96 @@ The program discussed in this section is available as a jupyter notebook at the 
 The file is located in the directory \texttt{Python/Neural Networks} in my
 \href{https://github.com/karlstroetmann/Artificial-Intelligence}{github repository} for this lecture. 
 
+\section{Automatic Differentiation}
+All modern libraries for Neural networks, i.e.~\href{https://www.tensorflow.org}{TensorFlow} and
+\href{https://pytorch.org}{PyTorch} make heavy use of
+\href{https://en.wikipedia.org/wiki/Automatic_differentiation}{automatic differentiation}.
+\blue{Automatic differentiation} is a technique for computing the gradient of a function that does neither rely
+on numeric approximation nor does it force us to compute symbolic derivatives manually.  In fact, the technique
+is one of the major methodological breakthroughs in machine learning in particular and science and engineering
+in general in recent years.  Although the idea was first published in 1964 by R.E.~Wengert \cite{wengert:1964},
+it has only been widely understood an accepted in recent years Baydin et.~al.~\cite{baydin:2018}.
+
+There are two modes of automatic differentiation:  \blue{Forward mode} and \blue{reverse mode}.  Forward
+mode is quite inefficient when the number $n$ of input variables is big as it needs to traverse the
+\blue{computational graph} $n+1$ times (once to compute the values and $n$ times to compute the partial
+derivatives), while reverse mode needs to traverse the computational graph just twice.  We proceed the crucial
+notion of a computational graph.
+
+\begin{Definition}[Computational Graph]
+  A \blue{computational graph} \index{computational graph} is a list of \blue{computational nodes}
+  \index{computational node}.  There are five types of computational nodes:
+  \begin{enumerate}
+  \item A \blue{variable node} is tuple of length 1 of the form   
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\langle x, \rangle$
+        \\[0.2cm]
+        where $x$ is a variable from the set $\{x_1,\cdots,x_n\}$.
+        This node is interpreted representing one of the input variables.
+  \item A \blue{constant node} is a pair of the form
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\langle n, r\rangle$
+        \\[0.2cm]
+        where $n$ is the \blue{name} of the node and $r$ is a floating point number.  This node is interpreted
+        as the assignment
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $n \;\mathtt{:=}\; r$.
+        \\[0.2cm]
+        The name $n$ is a string that can be understood as the name of an auxiliary variable.
+  \item A \blue{unary node} is a pair of the form
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\langle n, f, a\rangle$
+        \\[0.2cm]
+        where $n$ is the \blue{name} of the node, $f$ is an unary function symbol from the set
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\{ \mathrm{sqrt}, \exp, \ln, \sin, \cos, \arctan \}$
+        \\[0.2cm]
+        and $a$ is either the name of a variable or the name of another node occurring in the list.
+        This node is interpreted as the assignment
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $n \;\mathtt{:=}\; f(a)$.        
+  \item A \blue{binary node} is a pair of the form
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\langle n, o, a_1, a_2\rangle$
+        \\[0.2cm]
+        where $n$ is the \blue{name} of the node, $o$ is a binary operator from the set
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\{ +, -, *, / \}$
+        \\[0.2cm]
+        and $a$ are either the names of a variable or the name of another node occurring in the list.
+        
+        This node is interpreted         as the assignment
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $n \;\mathtt{:=}\; a_1\; o\,\; a_2$.
+        \\[0.2cm]
+        The name $n$ is a string that can be understood as the name of an auxiliary variable.
+        The string $a$ is either the name of a variable or the name of another node occurring in the list.
+ \end{enumerate}
+ A computational graph $G$ is \blue{admissible} if for every node of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\langle n, o, a_1, a_2\rangle$
+\\[0.2cm]
+that occurs in the list $G$ there are nodes labelled with $a_1$ and $a_2$ that occurs in the list $G$ before this node and for
+every  node of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\langle n, f, a\rangle$
+\\[0.2cm]
+that occurs in the list $G$ there is a node labelled with $a$ that occurs in the list G before this node.
+If a computational graph is admissible, the nodes can be evaluated in the same order as they are listed in $G$.
+\eox
+\end{Definition}
+
 
 
 
