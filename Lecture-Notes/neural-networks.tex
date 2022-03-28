@@ -831,7 +831,7 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = 1,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -921,7 +921,7 @@ code to load the image files.  We discuss it line by line.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = last,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -977,7 +977,7 @@ shows the implementation of three utility functions.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = last,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
@@ -1127,7 +1127,7 @@ represents a neural network with one hidden layer.
 \begin{minted}[ frame         = lines, 
                 framesep      = 0.3cm, 
                 firstnumber   = last,
-                bgcolor       = bg,
+                bgcolor       = sepia,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.5cm,
@@ -1304,7 +1304,7 @@ notion of a computational graph.
         The name $n$ is a string that can be understood as the name of an auxiliary variable.
         The string $a$ is either the name of a variable or the name of another node occurring in the list.
  \end{enumerate}
- A computational graph $G$ is \blue{admissible} if for every node of the form
+A computational graph $G$ is \blue{admissible} if for every node of the form
 \\[0.2cm]
 \hspace*{1.3cm}
 $\langle n, o, a_1, a_2\rangle$
@@ -1320,7 +1320,180 @@ If a computational graph is admissible, the nodes can be evaluated in the same o
 \eox
 \end{Definition}
 
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    CG = [ ('x1', ),
+           ('x2', ),
+           ('v1', '+',   'x1', 'x2'),
+           ('v2', '-',   'x1', 'x2'),
+           ('v3', 'sin', 'v1'),
+           ('v4', 'cos', 'v2'),
+           ('v5', '*',   'v3', 'v4'),
+           ('v6', '*',   'v1', 'v2'),
+           ('y',  '+',   'v5', 'v6')
+         ]
+\end{minted}
+\vspace*{-0.3cm}
+\caption{A Computational Graph for $\sin(x_1 + x_2) \cdot \cos(x_1 - x_2) + (x_1 + x_2) \cdot (x_1 - x_2)$.}
+\label{fig:computational-graph}
+\end{figure}
+\example
+Figure \ref{fig:computational-graph} shows a computational graph for the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+$\sin(x_1 + x_2) \cdot \cos(x_1 - x_2) + (x_1 + x_2) \cdot (x_1 - x_2)$.
+\\[0.2cm]
+This computational graph uses the variables \texttt{x1} and \texttt{x2}.
+Figure \ref{fig:cg.eps} shows a rendering of this computational graph.
 
+\begin{figure}[!ht]
+\centering
+\epsfig{file=Figures/cg.eps,scale=0.8} \
+\vspace*{-0.3cm}
+\caption{Rendering of the computation graph shown in Figure \ref{fig:computational-graph}.}
+\label{fig:cg.eps}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    def eval_graph(CG, Values):
+        for node in CG:
+            match node:
+                case (v, ):
+                    pass
+                case (v, r):
+                    Values[v] = r
+                case (v, '+', a1, a2):
+                    Values[v] = Values[a1] + Values[a2]
+                case (v, '-', a1, a2):
+                    Values[v] = Values[a1] - Values[a2]
+                case (v, '*', a1, a2):
+                    Values[v] = Values[a1] * Values[a2]
+                case (v, '/', a1, a2):
+                    Values[v] = Values[a1] / Values[a2]
+                case (v, 'sqrt', a):
+                    Values[v] = math.sqrt(Values[a])            
+                case (v, 'exp', a):
+                    Values[v] = math.exp(Values[a])
+                case (v, 'log', a):
+                    Values[v] = math.log(Values[a])
+                case (v, 'sin', a):
+                    Values[v] = math.sin(Values[a])
+                case (v, 'cos', a):
+                    Values[v] = math.cos(Values[a])
+                case (v, 'atan', a):
+                    Values[v] = math.atan(Values[a])
+                case (v, r):
+                    Values[v] = r
+        return Values['y']
+\end{minted}
+\vspace*{-0.3cm}
+\caption{A function that evaluates a computational graph.}
+\label{fig:Reverse-Mode-AD.ipynb:eval_graph}
+\end{figure}
+
+In order to \blue{evaluate} an admissible computational graph that contains $n$ variables, we will assume that the first
+$n$ nodes are labelled with the variables $x_1$, $\cdots$, $x_n$ and that the last node in a computational node
+is labelled with the name $y$.  Furthermore, we need a dictionary \texttt{Values} that assigns a value to each
+of the variables $x_1$, $\cdots$, $x_n$.  Then the function \texttt{eval\_graph} that is shown in Figure
+\ref{fig:Reverse-Mode-AD.ipynb:eval_graph} can be used to evaluate the nodes of the computational graph
+\texttt{CG} one by one.  The idea is that initially the dictionary \texttt{Values} maps all variables to
+floating point values.  Then the nodes of the computational graph are evaluated one by one.  For example, if a
+node of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\langle v, \texttt{'+'}, a_1, a_2 \rangle$
+\\[0.2cm]
+has to be evaluated, then we can assume that the nodes that are labelled with $a_1$ and $a_2$ have already been
+evaluated and that their values are stored in the dictionary \texttt{Values}.  These values are added and the
+resulting value is stored under the key $v$ in the dictionary \texttt{Values}.
+
+Assume $v$ is a node of a computational graph $G$ and that $p_1, \cdots, p_k$ are all the parents of this node
+in $G$. Then, according to the chain rule of multi-dimensional calculus,  the adjoint $\bar{v}$ of the node $v$
+is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds\bar{v} = \frac{\partial y}{\partial v} 
+            = \sum\limits_{i=1}^k \frac{\partial y}{\partial p_k} \cdot \frac{\partial p_k}{\partial v}
+            = \sum\limits_{i=1}^k \bar{p}_k \cdot \frac{\partial p_k}{\partial v}
+$.
+\\[0.2cm]
+
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    def partial_derivative(Node, arg, Values):
+        result = 0
+        match Node:
+            case n, '+', a1, a2:
+                if arg == a1 == a2:
+                    return 2
+                if arg == a1 or arg == a2:
+                    return 1
+            case n, '-', a1, a2:
+                if arg == a1 == a2:
+                    return 0
+                if arg == a1:
+                    return 1
+                if arg == a2:
+                    return -1
+            case n, '*', a1, a2:
+                if arg == a1 == a2:
+                    return 2 * Values[a1]
+                if arg == a1:
+                    return Values[a2]
+                if arg == a2:
+                    return Values[a1]
+            case n, '/', a1, a2:
+                if arg == a1 == a2:
+                    return 0
+                if arg == a1:
+                    return 1 / Values[a2]
+                if arg == a2:
+                    return -Values[a1] / Values[a2] ** 2
+            case n, 'exp', a:
+                return math.exp(Values[a])
+            case n, 'log', a:
+                return math.log(Values[a])
+            case n, 'sin', a:
+                return math.cos(Values[a])
+            case n, 'cos', a:
+                return -math.sin(Values[a])
+            case n, 'atan', a:
+                return 1 / (1 + Values[a]**2)
+        return result
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Computing the partial derivative of a node.}
+\label{fig:Reverse-Mode-AD.ipynb:partial_derivative}
+\end{figure}
 
 
 %%% Local Variables:
