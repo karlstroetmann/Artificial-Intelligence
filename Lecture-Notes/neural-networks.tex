@@ -868,11 +868,11 @@ and \ref{fig:Digit-Regocnition.ipynb-4}.
 The code on Figure \ref{fig:Digit-Regocnition.ipynb-1} on page \pageref{fig:Digit-Regocnition.ipynb-1} shows the
 code to load the image files.  We discuss it line by line.
 \begin{enumerate}
-\item Since the images are have been compressed as a \texttt{.gz} file, we need the module \texttt{gzip} to
+\item Since the images have been compressed as a \texttt{.gz} file, we need the module \texttt{gzip} to
       uncompress the file.
 \item The format that has been used to store the images is called
       \href{https://docs.python.org/3.6/library/pickle.html}{pickle}.
-      This a binary format that can be used to \blue{serialize} \textsl{Python} objects into binary strings.  These
+      This is a binary format that can be used to \blue{serialize} \textsl{Python} objects into binary strings.  These
       strings can then be stored as files and later be used to restore the corresponding \textsl{Python} objects.  In order
       to read pickled objects, we import the module \texttt{pickle}.
 \item The images of the handwritten digits that we are going to import have a size of $28 \times 28$ pixels.
