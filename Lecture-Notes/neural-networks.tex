@@ -1238,7 +1238,7 @@ All modern libraries for Neural networks, i.e.~\href{https://www.tensorflow.org}
 on numeric approximation nor does it force us to compute symbolic derivatives manually.  In fact, the technique
 is one of the major methodological breakthroughs in machine learning in particular and science and engineering
 in general in recent years.  Although the idea was first published in 1964 by R.E.~Wengert \cite{wengert:1964},
-it has only been widely understood an accepted in recent years Baydin et.~al.~\cite{baydin:2018}.
+it has only been widely understood an accepted in recent years, cf.~Baydin et.~al.~\cite{baydin:2018}.
 
 There are two modes of automatic differentiation:  \blue{Forward mode} and \blue{reverse mode}.  Forward
 mode is quite inefficient when the number $n$ of input variables is big as it needs to traverse the
@@ -1246,9 +1246,9 @@ mode is quite inefficient when the number $n$ of input variables is big as it ne
 derivatives), while reverse mode needs to traverse the computational graph just twice.  We proceed the crucial
 notion of a computational graph.
 
-\begin{Definition}[Computational Graph]
-  A \blue{computational graph} \index{computational graph} is a list of \blue{computational nodes}
-  \index{computational node}.  There are five types of computational nodes:
+\begin{Definition}[Computational Graph] 
+  A \blue{computational graph} \index{computational graph} is a list of \blue{computational nodes}.
+  \index{computational node}  There are four types of computational nodes:
   \begin{enumerate}
   \item A \blue{variable node} is tuple of length 1 of the form   
         \\[0.2cm]
@@ -1256,7 +1256,7 @@ notion of a computational graph.
         $\langle x, \rangle$
         \\[0.2cm]
         where $x$ is a variable from the set $\{x_1,\cdots,x_n\}$.
-        This node is interpreted representing one of the input variables.
+        This node represents the given input variable.
   \item A \blue{constant node} is a pair of the form
         \\[0.2cm]
         \hspace*{1.3cm}
@@ -1303,21 +1303,8 @@ notion of a computational graph.
         \\[0.2cm]
         The name $n$ is a string that can be understood as the name of an auxiliary variable.
         The string $a$ is either the name of a variable or the name of another node occurring in the list.
+        \eoxs
  \end{enumerate}
-A computational graph $G$ is \blue{admissible} if for every node of the form
-\\[0.2cm]
-\hspace*{1.3cm}
-$\langle n, o, a_1, a_2\rangle$
-\\[0.2cm]
-that occurs in the list $G$ there are nodes labelled with $a_1$ and $a_2$ that occurs in the list $G$ before this node and for
-every  node of the form
-\\[0.2cm]
-\hspace*{1.3cm}
-$\langle n, f, a\rangle$
-\\[0.2cm]
-that occurs in the list $G$ there is a node labelled with $a$ that occurs in the list G before this node.
-If a computational graph is admissible, the nodes can be evaluated in the same order as they are listed in $G$.
-\eox
 \end{Definition}
 
 \begin{figure}[!ht]
@@ -1353,7 +1340,7 @@ Figure \ref{fig:computational-graph} shows a computational graph for the express
 $\sin(x_1 + x_2) \cdot \cos(x_1 - x_2) + (x_1 + x_2) \cdot (x_1 - x_2)$.
 \\[0.2cm]
 This computational graph uses the variables \texttt{x1} and \texttt{x2}.
-Figure \ref{fig:cg.eps} shows a rendering of this computational graph.
+Figure \ref{fig:cg.eps} shows a rendering of this computational graph. \eoxs
 
 \begin{figure}[!ht]
 \centering
@@ -1363,6 +1350,22 @@ Figure \ref{fig:cg.eps} shows a rendering of this computational graph.
 \label{fig:cg.eps}
 \end{figure}
 
+\begin{Definition}[admissible]
+A computational graph $G$ is \blue{admissible} \index{admissible, computational graph} if for every node of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\langle n, o, a_1, a_2\rangle$
+\\[0.2cm]
+that occurs in the list $G$ there are nodes labelled with $a_1$ and $a_2$ that occur in the list $G$ before this node and for
+every  node of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\langle n, f, a\rangle$
+\\[0.2cm]
+that occurs in the list $G$ there is a node labelled with $a$ that occurs in the list G before this node.
+If a computational graph is admissible, the nodes can be evaluated in the same order as they are listed in $G$.
+\eoxs
+\end{Definition}
 \begin{figure}[!ht]
 \centering
 \begin{minted}[ frame         = lines, 
@@ -1411,8 +1414,8 @@ Figure \ref{fig:cg.eps} shows a rendering of this computational graph.
 \end{figure}
 
 In order to \blue{evaluate} an admissible computational graph that contains $n$ variables, we will assume that the first
-$n$ nodes are labelled with the variables $x_1$, $\cdots$, $x_n$ and that the last node in a computational node
-is labelled with the name $y$.  Furthermore, we need a dictionary \texttt{Values} that assigns a value to each
+$n$ nodes are labelled with the variables $\mathtt{x}_1$, $\cdots$, $\mathtt{x}_n$ and that the last node in a computational node
+is labelled with the name \texttt{y}.  Furthermore, we need a dictionary \texttt{Values} that assigns a value to each
 of the variables $x_1$, $\cdots$, $x_n$.  Then the function \texttt{eval\_graph} that is shown in Figure
 \ref{fig:Reverse-Mode-AD.ipynb:eval_graph} can be used to evaluate the nodes of the computational graph
 \texttt{CG} one by one.  The idea is that initially the dictionary \texttt{Values} maps all variables to
@@ -1426,17 +1429,99 @@ has to be evaluated, then we can assume that the nodes that are labelled with $a
 evaluated and that their values are stored in the dictionary \texttt{Values}.  These values are added and the
 resulting value is stored under the key $v$ in the dictionary \texttt{Values}.
 
-Assume $v$ is a node of a computational graph $G$ and that $p_1, \cdots, p_k$ are all the parents of this node
-in $G$. Then, according to the chain rule of multi-dimensional calculus,  the adjoint $\bar{v}$ of the node $v$
-is given as
+In the following we will assume that all computational graphs are admissible.
+The crucial definition in the theory of reverse mode automatic differentiation is the notion of an
+\blue{adjoint}, which is given next.  
+
+\begin{Definition}[Adjoint]
+  Assume $G$ is a computational graph such that the last node is labelled with then name \texttt{y}.
+  If $v$ is any node in $G$, then the \blue{adjoint} \index{adjoint} of $v$, which is written as $\bar{v}$, is defined
+  as the partial derivative of the output variable \texttt{y} w.r.t.~$v$, i.e.
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\ds\bar{v} := \frac{\partial \mathtt{y}}{\partial v}$.  \eoxs
+\end{Definition}
+
+\noindent
+The next theorem is an immediate consequence of the
+\href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{chain rule} of functions depending on
+multiple variables.
+
+\begin{Theorem}
+  Assume $v$ is a node of a computational graph $G$ and that $p_1, \cdots, p_k$ are all the parents of this node
+  in $G$. Then the adjoint $\bar{v}$ of the node $v$
+  is given as
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\ds\bar{v} = \frac{\partial y}{\partial v} 
+              = \sum\limits_{i=1}^k \frac{\partial y}{\partial p_k} \cdot \frac{\partial p_k}{\partial v}
+              = \sum\limits_{i=1}^k \bar{p}_k \cdot \frac{\partial p_k}{\partial v}
+  $.
+\end{Theorem}
+
+\example
+To keep things simple, assume that the variables $\mathtt{x}_1$ and $\mathtt{x}_2$ that are shown in the
+computational graph in Figure \ref{fig:cg.eps} are both initialized with the value $\pi/4$.
+Before the adjoints can be computed, we have to compute the values associated with the nodes.
+These are as follows:
+\begin{enumerate}
+\item $\mathtt{v}_1 = \pi/2$,
+\item $\mathtt{v}_2 = 0$,
+\item $\mathtt{v}_3 = 1$,
+\item $\mathtt{v}_4 = 1$,
+\item $\mathtt{v}_5 = 1$,
+\item $\mathtt{v}_6 = 0$,
+\item $\mathtt{y} = 1$.
+\end{enumerate}
+Next, we compute the adjoints.
+\begin{enumerate}
+\item $\ds \bar{\mathtt{y}} = \frac{\partial \mathtt{y}}{\partial \mathtt{y}} = 1$,
+\item $\ds \bar{\mathtt{v}}_6 = \frac{\partial \mathtt{y}}{\partial \mathtt{v}_6} = 1$,
+\item $\ds \bar{\mathtt{v}}_5 = \frac{\partial \mathtt{y}}{\partial \mathtt{v}_5} = 1$.
+\item $\ds \bar{\mathtt{v}}_4 =
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_5} \cdot  \frac{\partial \mathtt{v}_5}{\partial \mathtt{v}_4}
+       = \bar{\mathtt{v}}_5 \cdot \mathtt{v}_3 = 1 \cdot 1 = 1$.
+\item $\ds \bar{\mathtt{v}}_3 =
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_5} \cdot  \frac{\partial \mathtt{v}_5}{\partial \mathtt{v}_3}
+       = \bar{\mathtt{v}}_5 \cdot \mathtt{v}_4 = 1 \cdot 1 = 1$.
+\item $\ds \bar{\mathtt{v}}_2 =
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_6} \cdot  \frac{\partial \mathtt{v}_6}{\partial \mathtt{v}_2} +
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_4} \cdot  \frac{\partial \mathtt{v}_4}{\partial \mathtt{v}_2} 
+       = \bar{\mathtt{v}}_6 \cdot \mathtt{v}_1 - \bar{\mathtt{v}}_4 \cdot \sin(\mathtt{v}_2)
+          = 1 \cdot \pi/2 - 1 \cdot \sin(0) = \pi/2 - 1 \cdot 0 = \pi/2$.
+\item $\ds \bar{\mathtt{v}}_1 =
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_6} \cdot  \frac{\partial \mathtt{v}_6}{\partial \mathtt{v}_1} +
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_3} \cdot  \frac{\partial \mathtt{v}_3}{\partial \mathtt{v}_1} 
+       = \bar{\mathtt{v}}_6 \cdot \mathtt{v}_2 + \bar{\mathtt{v}}_3 \cdot \cos(\mathtt{v}_1)
+          = 1 \cdot 0 + 1 \cdot \cos(\pi/2) = 0 + 0 = 0$.
+\item $\ds \bar{\mathtt{x}}_1 =
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_1} \cdot  \frac{\partial \mathtt{v}_1}{\partial \mathtt{x}_1} +
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_2} \cdot  \frac{\partial \mathtt{v}_2}{\partial \mathtt{x}_1} 
+       = \bar{\mathtt{v}}_1 \cdot 1 + \bar{\mathtt{v}}_2 \cdot 1
+          = 0 \cdot 1 + \pi/2 \cdot 1 = \pi/2$.
+\item $\ds \bar{\mathtt{x}}_2 =
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_1} \cdot  \frac{\partial \mathtt{v}_1}{\partial \mathtt{x}_2} +
+       \frac{\partial \mathtt{y}}{\partial \mathtt{v}_2} \cdot  \frac{\partial \mathtt{v}_2}{\partial \mathtt{x}_2} 
+       = \bar{\mathtt{v}}_1 \cdot 1 + \bar{\mathtt{v}}_2 \cdot (-1)
+       = 0 \cdot 1 + \pi/2 \cdot (-1) = - \pi/2$.
+\end{enumerate}
+Hence we have shown the following:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\bar{v} = \frac{\partial y}{\partial v} 
-            = \sum\limits_{i=1}^k \frac{\partial y}{\partial p_k} \cdot \frac{\partial p_k}{\partial v}
-            = \sum\limits_{i=1}^k \bar{p}_k \cdot \frac{\partial p_k}{\partial v}
-$.
-\\[0.2cm]
+$\ds \frac{\partial \mathtt{y}}{\partial \mathtt{x}_1}\Bigl(\frac{\pi}{4}, \frac{\pi}{4}\Bigr) = \frac{\pi}{2}$ \quad and \quad
+$\ds \frac{\partial \mathtt{y}}{\partial \mathtt{x}_2}\Bigl(\frac{\pi}{4}, \frac{\pi}{4}\Bigr) = - \frac{\pi}{2}$.
+\\[0.2cm]     
+Note that we have found the exact partial derivatives for a specific point, namely for the arguments
+$\mathtt{x}_1 = \pi/4$ and $\mathtt{x}_2 = \pi/4$.  Automatic differentiation is not symbolic differentiation
+and hence is not able to derive general formulas but rather computes values for specific arguments.  However,
+these values are not numerical approximations but are, instead, exact.
+\eoxs
 
+Of course, we do not want to perform computations like the following ourselves.  The function
+\texttt{partial\_derivative} shown in Figure \ref{fig:Reverse-Mode-AD.ipynb:partial_derivative} takes a
+computational \texttt{Node} and computes the partial derivative of this node with respect to the given
+argument \texttt{arg}.  The last argument \texttt{Values} is a dictionary containing the values that are
+associated with the different nodes.
 
 \begin{figure}[!ht]
 \centering
@@ -1493,6 +1578,86 @@ $.
 \vspace*{-0.3cm}
 \caption{Computing the partial derivative of a node.}
 \label{fig:Reverse-Mode-AD.ipynb:partial_derivative}
+\end{figure}
+\FloatBarrier
+
+The function \texttt{adjoints} shown in Figure \ref{fig:Reverse-Mode-AD.ipynb:adjoints} computes the adjoints
+of a given computational graph.  It needs a dictionary \texttt{Values} that maps the variables $x_1$, $\cdots$,
+$x_n$ to their values. Figure \ref{fig:Reverse-Mode-AD.ipynb:auxiliary} contains a number of auxiliary functions.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    def adjoints(CG, Values):
+        eval_graph(CG, Values)
+        NodeDict = node_dictionary(CG)
+        Parents  = parents(CG)
+        n        = len(CG)
+        Adjoints = {}
+        Adjoints['y'] = 1
+        for k in range(2, n+1):
+            Node   = CG[-k]
+            name   = Node[0]
+            result = 0
+            print(f'inspecting {Node}')
+            for parent_name in Parents[name]:
+                parent_node = NodeDict[parent_name]
+                pd          = partial_derivative(parent_node, name, Values)
+                result += Adjoints[parent_name] * pd
+            Adjoints[name] = result
+        return Adjoints
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Computing the adjoints of a computational graph.}
+\label{fig:Reverse-Mode-AD.ipynb:adjoints}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    def parents(CG):
+        Parents = {}
+        for node in CG:
+            match node:
+                case (p, _, a):
+                    add_to_dictionary(Parents, a, p)
+                case (p, _, a1, a2):
+                    add_to_dictionary(Parents, a1, p)
+                    add_to_dictionary(Parents, a2, p)
+        return Parents                 
+    
+    def add_to_dictionary(D, key, value):
+        if key in D:
+            D[key] |= { value }
+        else:
+            D[key]  = { value }
+    
+    def node_dictionary(CG):
+        D = {}
+        for node in CG:
+            name    = node[0]
+            D[name] = node
+        return D
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Auxiliary functions.}
+\label{fig:Reverse-Mode-AD.ipynb:auxiliary}
 \end{figure}
 
 
