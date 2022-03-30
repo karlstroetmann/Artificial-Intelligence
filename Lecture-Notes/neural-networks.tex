@@ -1416,7 +1416,7 @@ If a computational graph is admissible, the nodes can be evaluated in the same o
 In order to \blue{evaluate} an admissible computational graph that contains $n$ variables, we will assume that the first
 $n$ nodes are labelled with the variables $\mathtt{x}_1$, $\cdots$, $\mathtt{x}_n$ and that the last node in a computational node
 is labelled with the name \texttt{y}.  Furthermore, we need a dictionary \texttt{Values} that assigns a value to each
-of the variables $x_1$, $\cdots$, $x_n$.  Then the function \texttt{eval\_graph} that is shown in Figure
+of the variables $\mathtt{x}_1$, $\cdots$, $\mathtt{x}_n$.  Then the function \texttt{eval\_graph} that is shown in Figure
 \ref{fig:Reverse-Mode-AD.ipynb:eval_graph} can be used to evaluate the nodes of the computational graph
 \texttt{CG} one by one.  The idea is that initially the dictionary \texttt{Values} maps all variables to
 floating point values.  Then the nodes of the computational graph are evaluated one by one.  For example, if a
@@ -1432,6 +1432,60 @@ resulting value is stored under the key $v$ in the dictionary \texttt{Values}.
 In the following we will assume that all computational graphs are admissible.
 The crucial definition in the theory of reverse mode automatic differentiation is the notion of an
 \blue{adjoint}, which is given next.  
+\FloatBarrier
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = sepia,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+    def parents(CG):
+        Parents = {}
+        for node in CG:
+            match node:
+                case (p, _, a):
+                    add_to_dictionary(Parents, a, p)
+                case (p, _, a1, a2):
+                    add_to_dictionary(Parents, a1, p)
+                    add_to_dictionary(Parents, a2, p)
+        return Parents                 
+    
+    def add_to_dictionary(D, key, value):
+        if key in D:
+            D[key] |= { value }
+        else:
+            D[key]  = { value }
+    
+    def node_dictionary(CG):
+        D = {}
+        for node in CG:
+            name    = node[0]
+            D[name] = node
+        return D
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Auxiliary functions.}
+\label{fig:Reverse-Mode-AD.ipynb:auxiliary}
+\end{figure}
+
+\begin{Definition}[Parent]
+  If $G$ is a computational graph and $\langle v, o, a_1, a_2\rangle$ is a node in $G$, then $v$ is a parent
+  of the nodes that are labelled with $a_1$ and $a_2$.  Furthermore, if $\langle v, o, a\rangle$ is a node in
+  $G$, then $v$ is a parent of the node that is labelled with $a$.
+  \eoxs
+\end{Definition}
+
+Figure \ref{fig:Reverse-Mode-AD.ipynb:auxiliary} shows the implementation of the function \texttt{parents}
+that can be used to compute the parents of a node.  It also contains the auxiliary function
+\texttt{node\_dictionary} that takes a computational graph \texttt{CG} as its argument and returns a dictionary
+associating every node with its name.
+\FloatBarrier
 
 \begin{Definition}[Adjoint]
   Assume $G$ is a computational graph such that the last node is labelled with then name \texttt{y}.
@@ -1517,12 +1571,6 @@ and hence is not able to derive general formulas but rather computes values for 
 these values are not numerical approximations but are, instead, exact.
 \eoxs
 
-Of course, we do not want to perform computations like the following ourselves.  The function
-\texttt{partial\_derivative} shown in Figure \ref{fig:Reverse-Mode-AD.ipynb:partial_derivative} takes a
-computational \texttt{Node} and computes the partial derivative of this node with respect to the given
-argument \texttt{arg}.  The last argument \texttt{Values} is a dictionary containing the values that are
-associated with the different nodes.
-
 \begin{figure}[!ht]
 \centering
 \begin{minted}[ frame         = lines, 
@@ -1535,7 +1583,6 @@ associated with the different nodes.
                  xrightmargin  = 0.8cm,
                ]{python3}
     def partial_derivative(Node, arg, Values):
-        result = 0
         match Node:
             case n, '+', a1, a2:
                 if arg == a1 == a2:
@@ -1573,19 +1620,21 @@ associated with the different nodes.
                 return -math.sin(Values[a])
             case n, 'atan', a:
                 return 1 / (1 + Values[a]**2)
-        return result
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Computing the partial derivative of a node.}
 \label{fig:Reverse-Mode-AD.ipynb:partial_derivative}
 \end{figure}
+
+Of course, we do not want to perform computations like the following ourselves.  The function
+\texttt{partial\_derivative} shown in Figure \ref{fig:Reverse-Mode-AD.ipynb:partial_derivative} takes a
+computational \texttt{Node} and computes the partial derivative of this node with respect to the given
+argument \texttt{arg}.  The last argument \texttt{Values} is a dictionary containing the values that are
+associated with the different nodes.
 \FloatBarrier
 
-The function \texttt{adjoints} shown in Figure \ref{fig:Reverse-Mode-AD.ipynb:adjoints} computes the adjoints
-of a given computational graph.  It needs a dictionary \texttt{Values} that maps the variables $x_1$, $\cdots$,
-$x_n$ to their values. Figure \ref{fig:Reverse-Mode-AD.ipynb:auxiliary} contains a number of auxiliary functions.
 
-\begin{figure}[!ht]
+\begin{figure}[h]
 \centering
 \begin{minted}[ frame         = lines, 
                  framesep      = 0.3cm, 
@@ -1607,7 +1656,6 @@ $x_n$ to their values. Figure \ref{fig:Reverse-Mode-AD.ipynb:auxiliary} contains
             Node   = CG[-k]
             name   = Node[0]
             result = 0
-            print(f'inspecting {Node}')
             for parent_name in Parents[name]:
                 parent_node = NodeDict[parent_name]
                 pd          = partial_derivative(parent_node, name, Values)
@@ -1620,45 +1668,14 @@ $x_n$ to their values. Figure \ref{fig:Reverse-Mode-AD.ipynb:auxiliary} contains
 \label{fig:Reverse-Mode-AD.ipynb:adjoints}
 \end{figure}
 
-\begin{figure}[!ht]
-\centering
-\begin{minted}[ frame         = lines, 
-                 framesep      = 0.3cm, 
-                 firstnumber   = 1,
-                 bgcolor       = sepia,
-                 numbers       = left,
-                 numbersep     = -0.2cm,
-                 xleftmargin   = 0.8cm,
-                 xrightmargin  = 0.8cm,
-               ]{python3}
-    def parents(CG):
-        Parents = {}
-        for node in CG:
-            match node:
-                case (p, _, a):
-                    add_to_dictionary(Parents, a, p)
-                case (p, _, a1, a2):
-                    add_to_dictionary(Parents, a1, p)
-                    add_to_dictionary(Parents, a2, p)
-        return Parents                 
-    
-    def add_to_dictionary(D, key, value):
-        if key in D:
-            D[key] |= { value }
-        else:
-            D[key]  = { value }
-    
-    def node_dictionary(CG):
-        D = {}
-        for node in CG:
-            name    = node[0]
-            D[name] = node
-        return D
-\end{minted}
-\vspace*{-0.3cm}
-\caption{Auxiliary functions.}
-\label{fig:Reverse-Mode-AD.ipynb:auxiliary}
-\end{figure}
+
+The function \texttt{adjoints} shown in Figure \ref{fig:Reverse-Mode-AD.ipynb:adjoints} computes the adjoints
+of a given computational graph.  It needs a dictionary \texttt{Values} that maps the variables $x_1$, $\cdots$,
+$x_n$ to their values.  It returns a dictionary that associates all node names with their adjoints.
+\FloatBarrier
+
+
+
 
 
 %%% Local Variables:
