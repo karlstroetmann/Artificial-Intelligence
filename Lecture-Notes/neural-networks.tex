@@ -1237,14 +1237,15 @@ All modern libraries for Neural networks, i.e.~\href{https://www.tensorflow.org}
 \blue{Automatic differentiation} is a technique for computing the gradient of a function that does neither rely
 on numeric approximation nor does it force us to compute symbolic derivatives manually.  In fact, the technique
 is one of the major methodological breakthroughs in machine learning in particular and science and engineering
-in general in recent years.  Although the idea was first published in 1964 by R.E.~Wengert \cite{wengert:1964},
-it has only been widely understood an accepted in recent years, cf.~Baydin et.~al.~\cite{baydin:2018}.
+in general in recent years.  Although the idea was first published in 1964 by R.~E.~Wengert \cite{wengert:1964},
+it has only been widely understood and accepted in recent years, cf.~Baydin et.~al.~\cite{baydin:2018}.
 
 There are two modes of automatic differentiation:  \blue{Forward mode} and \blue{reverse mode}.  Forward
 mode is quite inefficient when the number $n$ of input variables is big as it needs to traverse the
 \blue{computational graph} $n+1$ times (once to compute the values and $n$ times to compute the partial
-derivatives), while reverse mode needs to traverse the computational graph just twice.  We proceed the crucial
-notion of a computational graph.
+derivatives), while reverse mode needs to traverse the computational graph just twice.  Hence for big values of
+$n$ only reverse mode automatic differentiation is a viable option.  We proceed the crucial notion of a
+computational graph. 
 
 \begin{Definition}[Computational Graph] 
   A \blue{computational graph} \index{computational graph} is a list of \blue{computational nodes}.
