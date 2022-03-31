@@ -774,8 +774,8 @@ The implementation of  \texttt{search} works as follows:
 When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes 264 milliseconds 
 on my computer to find a solution.  This is an improvement compared to breadth first search.
 The memory consumption is reduced to 3 megabytes.  This is still a lot and is due to the fact that we still
-have to maintain the set $\texttt{Parent}$.  Fortunately, we will 
-be able to get rid of the set $\texttt{Parent}$ when we develop a recursive implementation of depth first
+have to maintain the dictionary $\texttt{Parent}$.  Fortunately, we will 
+be able to get rid of the dictionary $\texttt{Parent}$ when we develop a recursive implementation of depth first
 search in the following subsection. 
 
 However, there is also bad news: the solution that is found has a length of $8,251$ steps.  As the
