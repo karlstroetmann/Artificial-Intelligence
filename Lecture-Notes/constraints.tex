@@ -687,7 +687,7 @@ However, we only have to check those formulas \texttt{f} that contain the variab
 furthermore, have the property that
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{Vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{NewAssign})$,
+$\texttt{vars}(\texttt{f}) \subseteq \texttt{dom}(\texttt{NewAssign})$,
 \\[0.2cm]
 i.e.~all variables occurring in the formula $\texttt{f}$ need to have a value assigned in
 $\texttt{NewAssign}$.  The reasoning is as follows:
@@ -696,7 +696,7 @@ $\texttt{NewAssign}$.  The reasoning is as follows:
       $\texttt{Assignment}$ cannot change the result of evaluating $\texttt{f}$ and as
       $\texttt{Assignment}$ is assumed to be partially consistent with respect to $\texttt{f}$, 
       $\texttt{NewAssign}$ is also partially consistent with respect to $\texttt{f}$.
-\item If $\texttt{dom}(\texttt{NewAssign}) \not\subseteq \texttt{Vars}(\texttt{f})$, then $\texttt{f}$ can not
+\item If $\texttt{dom}(\texttt{NewAssign}) \not\subseteq \texttt{vars}(\texttt{f})$, then $\texttt{f}$ can not
       be evaluated anyway. 
 
       Note that the domain of a variable assignment \texttt{A} can be computed with the expression 
