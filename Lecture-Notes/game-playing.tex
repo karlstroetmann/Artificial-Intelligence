@@ -850,7 +850,7 @@ The cache satisfies the following specification:
 
 \item $\texttt{gCache}[s] = (\quoted{\geq}, v) \rightarrow f(s, \alpha, \beta) \geq v$,
 
-      i.e.~if the flag is equal to \quoted{\geq}, then the value stored in \textts{gCache[State]}
+      i.e.~if the flag is equal to \quoted{\geq}, then the value stored in $\textts{gCache[s]}$
       is a lower bound for $f(s, \alpha, \beta)$.
 \end{enumerate}
 If $\textts{gCache}[s]$ is defined, then the computation of $\texttt{evaluate}(s, f, \alpha, \beta)$
