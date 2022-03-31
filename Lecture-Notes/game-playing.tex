@@ -480,7 +480,7 @@ that $s$ can be reached in one step from $\textts{State}$.  Furthermore, $v$ is 
 \subsection{Memoization}
 Let us consider how many states have to be explored in the case of tic-tac-toe by the minimax algorithm
 described previously.  We have 9 possible moves for player \textts{X} in the start state, then the player
-\textts{O} can respect with 8 moves, then there are 7 moves for player \textts{O} and so on until in the end
+\textts{O} can respect with 8 moves, then there are 7 moves for player \textts{X} and so on until in the end
 player \textts{X} has only $1$ move left.  If we disregard 
 the fact that some games are decided after fewer than 9 moves, the functions $\textts{maxValue}$ and
 $\textts{minValue}$ need to consider  a total of
