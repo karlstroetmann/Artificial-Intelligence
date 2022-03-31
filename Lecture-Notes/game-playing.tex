@@ -1061,7 +1061,7 @@ that tries to guess the approximate value of a given state.
 Notice that in the calls of the function \textts{evaluate} we have to take care to decrease the parameter
 $\textts{limit}$.  The function $\textts{evaluate}$ is responsible for administering the cache as previously.
 
-There is one further difference between the functions $\textts{maxValue}$ and $\textts{minValue}$ shown in
+There is one further difference between the functions $\textts{alphaBetaMax}$ and $\textts{alphaBetaMin}$ shown in
 Figure \ref{fig:Game.ipynb} and those versions of these functions that were shown previoulsly:
 In Figure \ref{fig:Game.ipynb} the $\textts{NextStates}$ are stored in a priority queue such that the move that
 is considered to be the best has the highest priority.  This way, the best moves are tried first and as a
