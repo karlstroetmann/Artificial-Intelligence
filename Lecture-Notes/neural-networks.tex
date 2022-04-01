@@ -1256,7 +1256,7 @@ computational graph.
         \hspace*{1.3cm}
         $\langle x, \rangle$
         \\[0.2cm]
-        where $x$ is a variable from the set $\{x_1,\cdots,x_n\}$.
+        where $x$ is a variable from the set $\{x_1,\cdots,x_k\}$.
         This node represents the given input variable.
   \item A \blue{constant node} is a pair of the form
         \\[0.2cm]
@@ -1507,8 +1507,8 @@ multiple variables.
   \\[0.2cm]
   \hspace*{1.3cm}
   $\ds\bar{v} = \frac{\partial y}{\partial v} 
-              = \sum\limits_{i=1}^k \frac{\partial y}{\partial p_k} \cdot \frac{\partial p_k}{\partial v}
-              = \sum\limits_{i=1}^k \bar{p}_k \cdot \frac{\partial p_k}{\partial v}
+              = \sum\limits_{i=1}^k \frac{\partial y}{\partial p_i} \cdot \frac{\partial p_i}{\partial v}
+              = \sum\limits_{i=1}^k \bar{p}_i \cdot \frac{\partial p_i}{\partial v}
   $.
 \end{Theorem}
 
