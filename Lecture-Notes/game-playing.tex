@@ -369,7 +369,7 @@ this implementation.
             player \textts{O} is encoded as the number $1$.
       \end{enumerate}
       The function returns $1$ if \textts{player} has won the game, $-1$ if the game is lost for
-      \textts{player}, $0$ if its a draw, and \textts{None} if the game has not yet been decided.
+      \textts{player}, $0$ if it's a draw, and \textts{None} if the game has not yet been decided.
 \item The function \textts{finished} returns \textts{True} if the game is over.
 \end{enumerate}
 
@@ -794,7 +794,7 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
 
 \remark
 There is a nice simulator for alpha-beta-pruning available at the following web address:
-\href{https://www.usama.dev/minimax-simulator}{https://www.usama.dev/minimax-simulator}.
+\href{https://raphsilva.github.io/utilities/minimax_simulator}{https://raphsilva.github.io/utilities/minimax_simulator}.
 
 \subsection{Alpha-Beta-Pruning with Memoization}
 Adding memoization to the functions \textts{maxValue} and \textts{minValue} is non-trivial.
@@ -1062,7 +1062,7 @@ Notice that in the calls of the function \textts{evaluate} we have to take care 
 $\textts{limit}$.  The function $\textts{evaluate}$ is responsible for administering the cache as previously.
 
 There is one further difference between the functions $\textts{alphaBetaMax}$ and $\textts{alphaBetaMin}$ shown in
-Figure \ref{fig:Game.ipynb} and those versions of these functions that were shown previoulsly:
+Figure \ref{fig:Game.ipynb} and those versions of these functions that were shown previously:
 In Figure \ref{fig:Game.ipynb} the $\textts{NextStates}$ are stored in a priority queue such that the move that
 is considered to be the best has the highest priority.  This way, the best moves are tried first and as a
 result alpha-beta-pruning is able to prune larger parts of the search space.
@@ -1163,7 +1163,7 @@ More details about the weights of the pieces can be found in the Wikipedia artic
 ``\href{https://en.wikipedia.org/wiki/Chess_piece_relative_value}{chess piece relative value}''.
 
 \exercise
-The game \blue{three men's morris} is discribed in the following YouTube video:
+The game \blue{three men's morris} is described in the following YouTube video:
 \\[0.2cm]
 \hspace*{1.3cm}
 \href{https://www.youtube.com/watch?v=R-aSW1MQwEo}{\textts{https://www.youtube.com/watch?v=R-aSW1MQwEo}}
