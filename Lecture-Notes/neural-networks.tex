@@ -1405,8 +1405,6 @@ If a computational graph is admissible, the nodes can be evaluated in the same o
                     Values[v] = math.cos(Values[a])
                 case (v, 'atan', a):
                     Values[v] = math.atan(Values[a])
-                case (v, r):
-                    Values[v] = r
         return Values['y']
 \end{minted}
 \vspace*{-0.3cm}
@@ -1477,7 +1475,7 @@ The crucial definition in the theory of reverse mode automatic differentiation i
 
 \begin{Definition}[Parent]
   If $G$ is a computational graph and $\langle v, o, a_1, a_2\rangle$ is a node in $G$, then $v$ is a parent
-  of the nodes that are labelled with $a_1$ and $a_2$.  Furthermore, if $\langle v, o, a\rangle$ is a node in
+  of the nodes that are labelled with $a_1$ and $a_2$.  Furthermore, if $\langle v, f, a\rangle$ is a node in
   $G$, then $v$ is a parent of the node that is labelled with $a$.
   \eoxs
 \end{Definition}
@@ -1611,6 +1609,8 @@ these values are not numerical approximations but are, instead, exact.
                     return 1 / Values[a2]
                 if arg == a2:
                     return -Values[a1] / Values[a2] ** 2
+            case n, 'sqrt', a:
+                return 0.5 / math.sqrt(Values[a])
             case n, 'exp', a:
                 return math.exp(Values[a])
             case n, 'log', a:
