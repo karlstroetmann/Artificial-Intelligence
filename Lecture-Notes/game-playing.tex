@@ -725,37 +725,27 @@ E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
-                firstnumber   = 1,
-                bgcolor       = sepia,
-                numbers       = left,
-                numbersep     = -0.2cm,
-                xleftmargin   = 0.0cm,
-                xrightmargin  = 0.0cm,
-              ]{python3}
-    def alphaBetaMax(State, alpha, beta):
-        if finished(State):
-            return utility(State)
-        value = alpha
-        for ns in next_states(State, gPlayers[0]):
-            value = max(value, alphaBetaMin(ns, alpha, beta))
-            if value >= beta:
-                return value
-            alpha = max(value, alpha)
-        return value
-    
-    def alphaBetaMin(State, alpha, beta):
-        if finished(State):
-            return utility(State)
-        value = beta
-        for ns in next_states(State, gPlayers[1]):
-            value = min(value, alphaBetaMax(ns, alpha, beta))
-            if value <= alpha:
-                return value
-            beta = min(value, beta)
-        return value    
-\end{minted}
+\begin{python3code}
+def alphaBetaMax(State, alpha, beta):
+    if finished(State):
+        return utility(State)
+    for ns in next_states(State, gPlayers[0]):
+        value = alphaBetaMin(ns, alpha, beta)
+        if value >= beta:
+            return value
+        alpha = max(alpha, value)
+    return alpha
+
+def alphaBetaMin(State, alpha, beta):
+    if finished(State):
+        return utility(State)
+    for ns in next_states(State, gPlayers[1]):
+        value = alphaBetaMax(ns, alpha, beta)
+        if value <= alpha:
+            return value
+        beta = min(beta, value)
+    return beta
+\end{python3code}
 \caption{$\alpha$-$\beta$-Pruning.}
 \label{fig:Alpha-Beta-Pruning.ipynb:alphaBeta}
 \end{figure}
@@ -767,29 +757,21 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
 \begin{enumerate}
 \item If $\textts{State}$ is a terminal state, the function returns the $\textts{utility}$ of the given
       $\textts{State}$.
-\item The variable $\textts{value}$ is supposed to store the maximum of the values of all states
-      that can be reached from the given $\textts{State}$.
-      
-      According to the specification of $\textts{alphaBetaMax}$,  we are not interested in values that are less than
-      $\textts{alpha}$.  Hence, it suffices to initialize $\textts{value}$ with $\textts{alpha}$.   This way, in the case that we have
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\textts{maxValue}(\textts{State}) < \alpha$,
-      \\[0.2cm]
-      instead of returning the true value of the given $\textts{State}$, the function
-      $\textts{alphaBeta}(\textts{State},\alpha,\beta)$ will instead return the value $\alpha$, which is permitted by its specification.
-\item Next, we iterate over all successor states $\textts{ns} \in \textts{next\_states}(\textts{State}, \textts{gPlayers}[0])$.
+\item We iterate over all successor states $\textts{ns} \in \textts{next\_states}(\textts{State}, \textts{gPlayers}[0])$.
 \item We have to recursively evaluate the states $\textts{ns}$ with respect to the minimizing player \textts{gPlayers[1]}.
-\item As the specification of $\textts{alphaBetaMax}$ ask us to compute the value of $\textts{State}$ only in
-      those cases where it is less than or equal to $\beta$, once we find a successor state $s$ that has a
-      value $\textts{value}$ that is at least as big as $\beta$ we can \blue{stop any further evaluation} of the successor
-      states and return the value $\textts{value}$.
+\item As the specification of $\textts{alphaBetaMax}$ asks us to compute the value of $\textts{State}$ only in
+      those cases where it is less than or equal to $\mathtt{beta}$, once we find a successor state $s$ that has a
+      $\textts{value}$ that is at least as big as $\mathtt{beta}$ we can \blue{stop any further evaluation} of the successor
+      states and return $\textts{value}$.
 
       This shortcut results in significant savings of computation time!
 \item Once we have found a successor state that has a value $\textts{value}$ greater than $\textts{alpha}$,
-      we can increase $\textts{alpha}$ to the value $\textts{value}$.  The reason is, that once we know we can
-      achieve a value of $\textts{value}$ we are no longer interested in any values that are less than $\textts{value}$.
+      we can increase $\textts{alpha}$ to $\textts{value}$.  The reason is, that once we know we can
+      achieve $\textts{value}$ we are no longer interested in any smaller values.
       This is the reason for assigning the maximum of $\textts{value}$ and $\textts{alpha}$ to $\textts{alpha}$.
+
+      After this assignment, $\texttt{alpha}$ will be at least $\texttt{value}$ and according to the specification
+      of $\texttt{alphaBetaMax}$ we can therefore return $\texttt{alpha}$.
 \end{enumerate}
 
 \remark
@@ -971,35 +953,27 @@ proceeds according to the following case distinction:
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
-                firstnumber   = 1,
-                bgcolor       = sepia,
-                numbers       = left,
-                numbersep     = -0.2cm,
-                xleftmargin   = 0.0cm,
-                xrightmargin  = 0.0cm,
-              ]{python3}
-    def alphaBetaMax(State, alpha, beta):
-        if finished(State):
-            return utility(State)
-        v = alpha
-        for ns in next_states(State, gPlayers[0]):
-            v = max(v, evaluate(ns, alphaBetaMin, v, beta))
-            if v >= beta:
-                return v
-        return v
-    
-    def alphaBetaMin(State, alpha, beta):
-        if finished(State):
-            return utility(State)
-        v = beta
-        for ns in next_states(State, gPlayers[1]):
-            v = min(v, evaluate(ns, alphaBetaMax, alpha, v))
-            if v <= alpha:
-                return v
-        return v
-\end{minted}
+\begin{python3code}
+def maxValue(State, alpha, beta):
+    if finished(State):
+        return utility(State)
+    for ns in next_states(State, gPlayers[0]):
+        value = evaluate(ns, minValue, alpha, beta)
+        if value >= beta:
+            return value
+        alpha = max(alpha, value)
+    return alpha
+
+def minValue(State, alpha, beta):
+    if finished(State):
+        return utility(State)
+    for ns in next_states(State, gPlayers[1]):
+        value = evaluate(ns, maxValue, alpha, beta)
+        if value <= alpha:
+            return value
+        beta = min(beta, value)
+    return beta    
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{Cached implementation of the functions \texttt{alphaBetaMax} and \texttt{alphaBetaMin}.}
 \label{fig:alphaBetaCached}

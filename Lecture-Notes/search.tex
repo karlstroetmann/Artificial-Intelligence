@@ -103,7 +103,7 @@ of the problem.
 
 \begin{figure}[!ht]
 \centering
-\begin{pythonsample}         
+\begin{python3code}         
     problem = lambda m, i: 0 < m < i
 
     no_problem = lambda m, i: not problem(m, i) and not problem(3 - m, 3 - i)
@@ -125,7 +125,7 @@ of the problem.
 
     start = (3, 3, 1)
     goal  = (0, 0, 0)
-\end{pythonsample}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{The missionary and cannibals problem coded as a search problem.}
 \label{fig:missionaries.stlx}
@@ -308,7 +308,7 @@ entire state space in memory.
 
 \begin{figure}[!ht]
 \centering
-\begin{pythonsample}
+\begin{python3code}
     to_list = lambda State: [list(row) for row in State]
     
     to_tuple = lambda State: tuple(tuple(row) for row in State)
@@ -345,7 +345,7 @@ entire state space in memory.
              (3, 4, 5), 
              (6, 7, 8)
            )
-\end{pythonsample}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{The $3 \times 3$ sliding puzzle.}
 \label{fig:Sliding-Puzzle.ipynb}
