@@ -372,7 +372,7 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
 \pagebreak
 
 \begin{Definition}[Subterm Replacement, \mbox{$t[u \mapsto s]$}] \hspace*{\fill} \\
-  Given a term $t$, a position $t \in \Pos(t)$, and a term $s$, the expression
+  Given a term $t$, a position $u \in \Pos(t)$, and a term $s$, the expression
   $t[u \mapsto s]$ denotes the term that results from $t$ when the subterm $t/u$ is replaced by the term 
   $s$.  This expression is defined by induction on $u$.
   \begin{enumerate}
@@ -453,7 +453,7 @@ induction.
 \subsection{Proofs via Rewriting}
 Implementing the relation $\leftrightarrow_E$ is rather inefficient because every equation from $E$ can
 be used in two different ways:  If $E$ contains the equation $l \approx r$ we can use this equation from left to right
-to replace a subterm of the form $l\sigma$ by the $r\sigma$, or we can use this equation from right to left by
+to replace a subterm of the form $l\sigma$ by $r\sigma$, or we can use this equation from right to left by
 replacing a subterm of the form $r\sigma$ by $l\sigma$.  Additionally, unless we have derived the equation we
 want to prove, we don't know when to stop our proof efforts. It was the brilliant idea of Donald E.~Knuth and
 Peter B.~Bendix \cite{knuth:1970} who
@@ -578,7 +578,7 @@ transitive closure of $\rightarrow$ is written as $\stackrel{_*}{\rightarrow}$.
 The next theorem shows that confluence is all we need to reduce the relation $\stackrel{_*}{\leftrightarrow}$
 to the relation $\stackrel{_*}{\rightarrow}$. 
 
-\begin{Theorem}[\href{https://en.wikipedia.org/wiki/Church–Rosser_theorem}{Church-Rosser}]
+\begin{Theorem}[\href{https://en.wikipedia.org/wiki/Church%E2%80%93Rosser_theorem}{Church-Rosser}]
   If the relation $\rightarrow \;\subseteq\; M \times M$ is confluent, then we have
   \\[0.2cm]
   \hspace*{1.3cm}
