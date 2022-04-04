@@ -21,6 +21,7 @@ SetlX/Neural-Networks/mnist_train.csv
 SetlX/Neural-Networks/mnist_test.csv
 Literature/*
 Exercises/*
+Klausur/*
 **/__pycache__
 **/.ipynb_checkpoints
 Python/2 Constraint Solver/Constraint-Propagation-Solver-All-Solutions.ipynb
