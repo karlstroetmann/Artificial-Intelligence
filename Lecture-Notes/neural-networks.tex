@@ -1244,7 +1244,7 @@ There are two modes of automatic differentiation:  \blue{Forward mode} and \blue
 mode is quite inefficient when the number $n$ of input variables is big as it needs to traverse the
 \blue{computational graph} $n+1$ times (once to compute the values and $n$ times to compute the partial
 derivatives), while reverse mode needs to traverse the computational graph just twice.  Hence for big values of
-$n$ only reverse mode automatic differentiation is a viable option.  We proceed the crucial notion of a
+$n$ only reverse mode automatic differentiation is a viable option.  We proceed to define the crucial notion of a
 computational graph. 
 
 \begin{Definition}[Computational Graph] 
@@ -1256,7 +1256,7 @@ computational graph.
         \hspace*{1.3cm}
         $\langle x, \rangle$
         \\[0.2cm]
-        where $x$ is a variable from the set $\{x_1,\cdots,x_k\}$.
+        where $x$ is a variable from the set of variables $\{x_1,\cdots,x_k\}$.
         This node represents the given input variable.
   \item A \blue{constant node} is a pair of the form
         \\[0.2cm]
@@ -1270,7 +1270,7 @@ computational graph.
         $n \;\mathtt{:=}\; r$.
         \\[0.2cm]
         The name $n$ is a string that can be understood as the name of an auxiliary variable.
-  \item A \blue{unary node} is a pair of the form
+  \item A \blue{unary node} is a tuple of the form
         \\[0.2cm]
         \hspace*{1.3cm}
         $\langle n, f, a\rangle$
@@ -1280,12 +1280,11 @@ computational graph.
         \hspace*{1.3cm}
         $\{ \mathrm{sqrt}, \exp, \ln, \sin, \cos, \arctan \}$
         \\[0.2cm]
-        and $a$ is either the name of a variable or the name of another node occurring in the list.
-        This node is interpreted as the assignment
+        and $a$ is the name of another node occurring in the list.  This node is interpreted as the assignment
         \\[0.2cm]
         \hspace*{1.3cm}
         $n \;\mathtt{:=}\; f(a)$.        
-  \item A \blue{binary node} is a pair of the form
+  \item A \blue{binary node} is a tuple of the form
         \\[0.2cm]
         \hspace*{1.3cm}
         $\langle n, o, a_1, a_2\rangle$
@@ -1295,15 +1294,14 @@ computational graph.
         \hspace*{1.3cm}
         $\{ +, -, *, / \}$
         \\[0.2cm]
-        and $a$ are either the names of a variable or the name of another node occurring in the list.
+        and $a_1$ and $a_2$ are the names of other computational nodes.
         
-        This node is interpreted         as the assignment
+        This node is interpreted as the assignment
         \\[0.2cm]
         \hspace*{1.3cm}
         $n \;\mathtt{:=}\; a_1\; o\,\; a_2$.
         \\[0.2cm]
         The name $n$ is a string that can be understood as the name of an auxiliary variable.
-        The string $a$ is either the name of a variable or the name of another node occurring in the list.
         \eoxs
  \end{enumerate}
 \end{Definition}
@@ -1430,7 +1428,7 @@ resulting value is stored under the key $v$ in the dictionary \texttt{Values}.
 
 In the following we will assume that all computational graphs are admissible.
 The crucial definition in the theory of reverse mode automatic differentiation is the notion of an
-\blue{adjoint}, which is given next.  
+\blue{adjoint}, which will be given later after we have defined to notion of a \blue{parent} of a node.  
 \FloatBarrier
 
 \begin{figure}[!ht]
@@ -1496,9 +1494,8 @@ associating every node with its name.
 \end{Definition}
 
 \noindent
-The next theorem is an immediate consequence of the
-\href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{chain rule} of functions depending on
-multiple variables.
+The next theorem is an immediate consequence of the 
+\href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{multivariable chain rule}.
 
 \begin{Theorem}
   Assume $v$ is a node of a computational graph $G$ and that $p_1, \cdots, p_k$ are all the parents of this node
