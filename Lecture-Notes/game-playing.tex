@@ -360,7 +360,7 @@ this implementation.
 \item Given a \textts{state} and the \textts{player} who is next to move, the function \textts{next\_states}
       computes the set of states that can be reached from \textts{state}.  Note that player \textts{X} is
       encoded as the number $0$, while player \textts{O} is encoded as the number $1$.
-\item The global variable \textts{All\_Lines} is a list of eight bit masks.  These masks can be used to test
+\item The global variable \textts{gAllLines} is a list of eight bit masks.  These masks can be used to test
       whether there are three identical marks in a row, column, or diagonal. 
 \item The function \textts{utility} takes two arguments:
       \begin{enumerate}[(a)]
