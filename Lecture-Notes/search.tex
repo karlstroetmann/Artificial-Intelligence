@@ -37,7 +37,7 @@ After that we introduce various algorithms for solving search problems.  In part
         $\texttt{next\_states}:Q \rightarrow 2^Q$.
         \\[0.2cm]
         The function \texttt{next\_states} gives rise to the \blue{transition relation} $R$, which is a
-        relation on $Q$, i.e.~we have $R \subseteq Q \times Q$.  This relation is defined as follows:
+        binary relation on $Q$, i.e.~we have $R \subseteq Q \times Q$.  This relation is defined as follows:
         \\[0.2cm]
         \hspace*{1.3cm}
         $R := \bigl\{ \pair(s_1, s_2) \in Q \times Q \mid s_2 \in \mathtt{next\_states}(s_1) \bigr\}$.
@@ -50,7 +50,7 @@ After that we introduce various algorithms for solving search problems.  In part
   \item \texttt{goal} is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
         \index{goal state}
     
-        Sometimes, instead of a single $\texttt{goal}$ there is a set of goal states $\texttt{Goals}$.
+        Sometimes, instead of a single state $\texttt{goal}$ there is a set of states $\texttt{Goals}$.
   \end{enumerate}
   A \blue{path} \index{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{next\_states}(s_i)$ for all $i \in
   \{1,\cdots,n-1\}$.
@@ -90,7 +90,8 @@ Initially, both the missionaries and the infidels are on the western shore.  The
 that can carry at most two passengers.  Both the missionaries and the infidels can steer the boat.
 However, if at any time the missionaries are confronted with a majority of infidels on either shore of the
 river, then the missionaries have a problem.  Figure \ref{fig:missionaries-and-infidels.pdf} shows an 
-artist's rendition\footnote{Thanks to Marcel Vilas for providing this beautiful painting.}
+artist's rendition\footnote{Thanks to Marcel Vilas for providing this beautiful painting as well as an
+  animation of this problem.}
 of the problem.
 
 \begin{figure}[!ht]
@@ -104,9 +105,11 @@ of the problem.
 \begin{figure}[!ht]
 \centering
 \begin{python3code}         
-    problem = lambda m, i: 0 < m < i
+    def problem(m, i):
+        return 0 < m < i
 
-    no_problem = lambda m, i: not problem(m, i) and not problem(3 - m, 3 - i)
+    def no_problem(m, i): 
+        return not problem(m, i) and not problem(3 - m, 3 - i)
 
     def next_states(state):
         m, i, b = state
@@ -140,17 +143,17 @@ as a search problem.  We discuss this formalization line by line.
       that same shore, then $\texttt{problem}(m, i)$ is \texttt{True} iff the missionaries have a problem on that
       shore.  There is a problem if the number of missionaries is greater than $0$ but less than the number of
       infidels. 
-\item Line 3 defines the auxiliary function \texttt{no\_problem}.
+\item Line 4 defines the auxiliary function \texttt{no\_problem}.
 
       If $m$ is the number of missionaries on the western shore and $i$ is the number of infidels on
-      that shore, then the expression $\texttt{no\_problem}(m, i)$ is true, if there is no problem
+      that shore, then the expression $\texttt{no\_problem}(m, i)$ is \texttt{True}, if there is no problem
       for the missionaries on either shore.
 
       The implementation of this function uses the fact that if $m$ is the number of missionaries on
       the western shore, then $3-m$ is the number of missionaries on the eastern shore.  Similarly,
       if $i$ is the number of infidels on the western shore, then the number of infidels on the
       eastern shore is $3 - i$.
-\item Lines 5 to 18 define the function \texttt{next\_states}.  A state $s$ is represented as a triple of
+\item Lines 7 to 20 define the function \texttt{next\_states}.  A state $s$ is represented as a triple of
       the form
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -159,8 +162,8 @@ as a search problem.  We discuss this formalization line by line.
       Here $m$, $i$, and $b$ are, respectively, the number of missionaries, the number of infidels, and the number
       of boats on the western shore. 
       \begin{enumerate}[(a)]
-      \item Line 6 extracts the components $m$, $i$, and $b$ from the state $s$.
-      \item Line 7 checks whether the boat is on the western shore.
+      \item Line 8 extracts the components $m$, $i$, and $b$ from the state $s$.
+      \item Line 9 checks whether the boat is on the western shore.
       \item If this is the case,  then the states reachable from the given state $s$ are those
             states where $\texttt{mb}$ missionaries and $\texttt{ib}$ infidels cross the river.
             After $\texttt{mb}$ missionaries and $\texttt{ib}$ infidels have crossed the river and
@@ -171,7 +174,7 @@ as a search problem.  We discuss this formalization line by line.
             \hspace*{1.3cm}
             \texttt{(m - mb, i - ib, 0)}.
             \\[0.2cm]
-            This explains line 8.
+            This explains line 10.
       \item Since the number $\texttt{mb}$ of missionaries leaving the western shore can not be greater
             than the number $m$ of all missionaries on the western shore, we have the condition
             \\[0.2cm]
@@ -215,7 +218,7 @@ as a search problem.  We discuss this formalization line by line.
       As the number of missionaries on the eastern shore is $3 - \mathrm{m}$ and the number of infidels on the
       eastern shore is $3 - \mathrm{i}$, $\texttt{mb}$ has to be a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while
       $\texttt{ib}$ has to be a member of the set $\{0,\cdots,3 - \mathtt{i}\}$.
-\item Finally the start state and the goal state are defined in line 20 and line 21.
+\item Finally the start state and the goal state are defined in line 22 and line 23.
 \end{enumerate}
 The code in Figure \ref{fig:missionaries.stlx} does not define the set of states $Q$ of the search problem.  The
 reason is that, in order to solve the problem, we do not need to define this set.  If we wanted to, we could
@@ -228,7 +231,7 @@ define the set of states as follows:
              }
 \end{verbatim}
 However, in general the set of states is not needed by the algorithms solving search problems and in many cases
-this set is so big that it would be impossible to compute it.  Hence, in practice the set of states is only an
+this set is so big that it would be impossible to compute and store it.  Hence, in practice the set of states is only an
 abstract notion that is needed in order to specify the function \texttt{next\_states}, but it is not implemented.
 
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
@@ -309,10 +312,10 @@ entire state space in memory.
 \begin{figure}[!ht]
 \centering
 \begin{python3code}
-    to_list = lambda State: [list(row) for row in State]
-    
-    to_tuple = lambda State: tuple(tuple(row) for row in State)
-    
+    def to_list(State):
+        return [list(row) for row in State]
+    def to_tuple(State):
+        tuple(tuple(row) for row in State)
     def find_tile(tile, State):
         n = len(State)
         for row in range(n):
@@ -362,7 +365,7 @@ represented as tuples of tuples.  For example, the state shown above on the left
 \end{verbatim}
 Here, we have represented the empty tile as $0$.
 If states are represented as tuples of tuples, given a state $s$, the expression $s[r][c]$ returns the tile in
-the row $r$ and column $c$, where counting of rows and columns starts from $0$.
+the row $r$ and column $c$, where the counting of rows and columns starts from $0$.
 We have to represent states as tuples of tuples rather than lists of lists since
 tuples are immutable while lists are mutable and we need to store states in sets later.  In \textsl{Python},
 sets can only store immutable objects.  However, we also have to manipulate the states.  To this end, we have
@@ -392,7 +395,7 @@ We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb}
       $\mathtt{row}+\mathtt{dx} \in \{0,\cdots,n-1\}$ \quad and \quad
       $\mathtt{col}+\mathtt{dy} \in \{0,\cdots,n-1\}$
       \\[0.2cm]
-      hold, where $n$ is the size of the board.
+      hold, where $n$ is the size of the board. \eox 
 \end{enumerate}
 
 Next, we want to develop an algorithm that can solve puzzles of the kind described so far.  The most basic
@@ -591,13 +594,11 @@ search shown in Figure \ref{fig:Breadth-First-Search.ipynb}.  We prove by induct
 iterations of the \texttt{while} loop that after $n$ iterations of the \texttt{while} loop,
 the set $\texttt{Frontier}$ contains exactly those states that have a distance of $n$ to the state
 $\texttt{start}$.
-\pagebreak
-
 \begin{description}
 \item[Base Case:] $n = 0$.
 
       After $0$ iterations of the \texttt{while} loop, i.e.~before the first iteration of this loop,
-      the set $\texttt{Frontier}$ only contains state $\texttt{start}$.  As this is the only state that has a
+      the set $\texttt{Frontier}$ only contains the state $\texttt{start}$.  As this is the only state that has a
       distance of $0$ to the state \texttt{start}, the claim is true in this case.
 \item[Induction Step:] $n \mapsto n+1$.
 
@@ -625,26 +626,6 @@ impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzl
 In the literature, for example in Figure 3.9 of Russell \& Norvig \cite{russell:2020}, breadth
 first search is often implemented using a
 \href{https://en.wikipedia.org/wiki/Queue_(abstract_data_type)}{queue} data structure.
-Figure \ref{fig:Breadth-First-Search-Queue.ipynb} on page
-\pageref{fig:Breadth-First-Search-Queue.ipynb} shows an implementation of breadth first search that
-uses a queue to store the set \texttt{Frontier}.   Here we use the module \texttt{deque} from the package
-\texttt{collections}. This module implements a
-\href{https://en.wikipedia.org/wiki/Double-ended_queue}{double-ended queue}, \index{double-ended queue}
-which is implemented as a 
-\href{https://en.wikipedia.org/wiki/Doubly_linked_list}{doubly linked list}. \index{doubly linked list}
-Besides the constructor, our
-implementation uses two methods from the class \texttt{deque}:
-\begin{enumerate}
-\item Line 4 initializes the $\texttt{Frontier}$ as a double-ended queue that contains the state \texttt{start}.
-\item In line 7 we remove the oldest element in the queue $\texttt{Frontier}$, which is supposed to be at the
-      left end of the queue.  This is achieved via the method \texttt{popleft}.
-\item In line 14 we add the states that have not been encountered previously at the right end of the queue
-      \texttt{Frontier} using the method \texttt{append}.
-\end{enumerate}
-Additionally, we have used the fact that the information contained in the set $\texttt{Visited}$ is already
-available in the dictionary $\texttt{Parent}$, because when we visit a state $s$, we add an entry for
-$\mathtt{Parent}[s]$.  As a result, this implementation of breadth first search is slightly faster than our
-previous implementation.  Furthermore, only 76 megabytes of memory are used for the computation.
 
 \begin{figure}[!ht]
 \centering
@@ -675,7 +656,29 @@ previous implementation.  Furthermore, only 76 megabytes of memory are used for 
 \caption{A queue based implementation of breadth first search.}
 \label{fig:Breadth-First-Search-Queue.ipynb}
 \end{figure}
-\FloatBarrier
+
+Figure \ref{fig:Breadth-First-Search-Queue.ipynb} on page
+\pageref{fig:Breadth-First-Search-Queue.ipynb} shows an implementation of breadth first search that
+uses a queue to store the set \texttt{Frontier}.   Here we use the module \texttt{deque} from the package
+\texttt{collections}. This module implements a
+\href{https://en.wikipedia.org/wiki/Double-ended_queue}{double-ended queue}, \index{double-ended queue}
+which is implemented as a 
+\href{https://en.wikipedia.org/wiki/Doubly_linked_list}{doubly linked list}. \index{doubly linked list}
+Besides the constructor, our
+implementation uses two methods from the class \texttt{deque}:
+\begin{enumerate}
+\item Line 4 initializes the $\texttt{Frontier}$ as a double-ended queue that contains the state \texttt{start}.
+\item In line 7 we remove the oldest element in the queue $\texttt{Frontier}$, which is supposed to be at the
+      left end of the queue.  This is achieved via the method \texttt{popleft}.
+\item In line 14 we add the states that have not been encountered previously at the right end of the queue
+      \texttt{Frontier} using the method \texttt{append}.
+\end{enumerate}
+Additionally, we have used the fact that the information contained in the set $\texttt{Visited}$ is already
+available in the dictionary $\texttt{Parent}$, because when we visit a state $s$, we add an entry for
+$\mathtt{Parent}[s]$.  As a result, this implementation of breadth first search is slightly faster than our
+previous implementation.  Furthermore, only 76 megabytes of memory are used for the computation.
+
+
 
 
 \section{Depth First Search}
@@ -714,14 +717,14 @@ breadth first search to depth first search:
                     Parent[ns] = state
                     Stack.append(ns)
                 if ns == goal:
-                    return path_to(start, goal, Parent)
-    
-    def path_to(start, state, Parent):
-        Path = [state]
-        while state != start:
-            state = Parent[state]
-            Path  = [ state ] + Path
-        return Path
+                    return path_to(goal, Parent)
+
+    def path_to(state, Parent):
+       Path = [state]
+       while state != Parent[state]:
+           state = Parent[state]
+           Path  = [ state ] + Path
+       return Path
 \end{minted}
 \vspace*{-0.3cm}
 \caption{The depth first search algorithm.}
@@ -753,7 +756,7 @@ The implementation of  \texttt{search} works as follows:
 \item We have reimplemented the function \texttt{path\_to} using a \texttt{while} loop.  The reason is that 
       the recursive implementation that we had used before is not viable when the path gets too long because
       the recursion limit in \textsl{Python} is set to 3000 and hence the previous implementation of
-      \texttt{path\_to} would not work if the path exceeds a length of $3000$.
+      \texttt{path\_to} does not work if the path exceeds a length of $3000$.
 \end{enumerate}
 When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes 264 milliseconds 
 on my computer to find a solution.  This is an improvement compared to breadth first search.
@@ -762,7 +765,7 @@ have to maintain the dictionary $\texttt{Parent}$.  Fortunately, we will
 be able to get rid of the dictionary $\texttt{Parent}$ when we develop a recursive implementation of depth first
 search in the following subsection. 
 
-However, there is also bad news: the solution that is found has a length of $8,251$ steps.  As the
+However, there is also bad news: the solution that is found has a length of $17,510$ steps.  As the
 shortest path from $\texttt{start}$ to $\texttt{goal}$ has only 31 steps, the solution found by depth
 first search is very far from being optimal.
 
@@ -843,13 +846,14 @@ The implementation of $\texttt{dfs}$ works as follows:
 \item Note that the recursive invocation of $\texttt{dfs}$ returns $\mathtt{None}$ if the end of the
       \texttt{for} loop is reached and no solution has been returned so far.  
 \end{enumerate}
-When we test the implementation shown above with the $3 \times 3$ sliding puzzle, it takes 297 milliseconds 
-on my computer to find a solution.  The memory consumption is now back to 50 megabytes.  Furthermore, the
-solution now has a length of $20,923$ steps, which explains the high memory consumption.  
+Unfortunately, due to a bug in \textsl{Python} \texttt{3.10}, the \textsl{Python} kernel just dies
+when trying to solve the $3 \times 3$ sliding puzzle.  With \textsl{Python} \texttt{3.8} it took 297 milliseconds 
+on my computer to find a solution.  The memory consumption was back to 50 megabytes.  Furthermore, the
+solution had a length of $20,923$ steps, which explains the high memory consumption.  
 
 \section{Iterative Deepening}
 The fact that the stack-based version of depth first search took less than one second to find a solution is very
-impressive, but the fact that this solution has a length of more than eight thousand steps is disappointing.
+impressive, but the fact that this solution has a length of more than ten thousand steps is disappointing.
 The questions is, whether it might be possible to force depth first search to find the shortest 
 solution.  The answer to this question leads to an algorithm that is known as
 \href{https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search}{iterative deepening}.
@@ -1197,7 +1201,6 @@ that visits $s_2$ first.  Hence, we have the inequality
 \\[0.2cm]
 \hspace*{1.3cm}
 $h(s_1) \leq 1 + h(s_2)$.
-\pagebreak
 
 \begin{Theorem}
   Every consistent heuristic is an admissible heuristic.
@@ -2113,7 +2116,7 @@ shows an implementation of \textsc{ida} search.  We proceed to discuss this prog
             \hspace*{1.3cm}
             $\texttt{heuristic}(s_1, s_2)$
             \\[0.2cm]
-            computes an estimate of the distance between $s_1$ and $s_2$.  In \textsc{ida} search it is required that this
+            computes an estimate of the distance between $s_1$ and $s_2$.  In \textsc{Ida} search it is required that this
             estimate is optimistic, i.e.~the \texttt{heuristic} has to be \blue{admissible}.
 
             Note that this is different from A$^*$ search. A$^*$ search requires that the \texttt{heuristic} is 
@@ -2429,7 +2432,6 @@ A frame for solving this problem is available at
 \caption{A solution of the eight queens puzzle.}
 \label{fig:queens.pdf}
 \end{figure}
-\pagebreak
 
 \exercise
 The founder of \href{https://en.wikipedia.org/wiki/Taoism}{Taoism}, the Chinese philosopher

@@ -25,7 +25,8 @@ Machine learning is mostly responsible for the recent hype in AI.
 \section{Overview}
 This lecture consists of two parts.
 \begin{enumerate}
-\item The common theme of the first part symbolic AI is \blue{declarative programming}.  
+\item The first part deals with symbolic AI.
+      The common theme of symbolic AI is \blue{declarative programming}.  
       The main idea of declarative programming is that we start with a \blue{formal problem specification}.
       This problem specification is a concise description of the problem that is to be solved, which is
       then fed into an \blue{automatic problem solver} that returns a solution of the problem.  Originally, 
@@ -48,24 +49,68 @@ This lecture consists of two parts.
       \item \blue{Search problems} are problems where the task is to find a path in a graph.  A typical example of a
             search problem is the \href{https://en.wikipedia.org/wiki/15_puzzle}{fifteen puzzle}.
             We discuss various state-of-the-art algorithms that can solve search problems.
-      \item \blue{Games} like \href{https://en.wikipedia.org/wiki/Chess}{chess} or
-            \href{https://en.wikipedia.org/wiki/checkers}{checkers} can be specified quite easily and there are
-            various techniques for computers to find optimal strategies for playing adversarial games.
       \item \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{Constraint satisfaction problems} 
             have great practical importance.  Today, very efficient constraint solvers have been developed to
             solve various constraint satisfaction problems that occur in practise.
 
             We will first discuss various techniques for solving constraint satisfaction problems.
-            Then we discuss \href{https://github.com/Z3Prover/z3}{Z3}, which is a state-of-the-art automatic theorem
-            prover and constraint solver developed by
+            Furthermore, we discuss \href{https://github.com/Z3Prover/z3}{Z3}, which is a state-of-the-art
+            automatic theorem prover and constraint solver developed by
             \href{https://www.microsoft.com/en-us/research/project/z3-3/}{Microsoft}.
+      \item \blue{Games} like \href{https://en.wikipedia.org/wiki/Chess}{chess} or
+            \href{https://en.wikipedia.org/wiki/checkers}{checkers} can be specified declaritively and there are
+            various techniques for computers to find optimal strategies for playing adversarial games.
       \end{enumerate}
       Additionally we will cover \blue{automatic theorem proving}.  As we have already discussed 
       \blue{resolution theorem proving} in our lecture on
       \href{https://github.com/karlstroetmann/Logic}{logic}, we discuss \blue{equational theorem proving} in
       the last chapter of the first part of this lecture. 
 \item In the second part of this lecture we discuss \blue{machine learning}.  In the last ten years, a number of
-      advances in machine learning have made it into the headlines of the news.  It is fair to say that
+      advances in machine learning have made it into the headlines of the news.  The latest hype is caused by
+      \href{https://openai.com/blog/chatgpt/}{ChatGPT}.
+      When asked to describe itself in 100 words, ChatGPT gave the following answer:
+      \begin{center}
+        \colorbox{blue}{\framebox{\colorbox{sepia}{
+          \begin{minipage}{15cm}
+        \textsl{ChatGPT is a large language model created by OpenAI. It uses cutting-edge machine learning
+        techniques such as deep learning and neural networks to generate human-like text. It can answer
+        questions, write essays, and carry out a wide variety of natural language tasks. ChatGPT is fine-tuned
+        on a massive dataset and can generate responses to a wide range of topics. It's designed to be a
+        powerful tool for automated content generation, customer service, and other applications where
+        understanding and generating human language is critical. With a powerful language model like ChatGPT,
+        it's now possible to automate many tasks that once required human intelligence.} 
+      \end{minipage}}}}
+      \end{center}
+      In order to temper the hype about ChatGPT a bit, I would like to share the following conversation that I
+      recently had with ChatGPT.
+      \begin{description}
+       \item[Q:] I have as many brothers as I have sisters.  My sister has twice as many brothers as she has
+                 sisters.  How many children does my father have?  
+       \item[A:] It is not possible to determine the number of children your father has based on the
+                 information provided. Additional information is needed.        
+       \item[Q:] What information do you need to proceed?
+       \item[A:] I would need to know the number of brothers and sisters you have in order to determine the
+                 number of children your father has.  
+       \item[Q:] You can find these numbers if you convert the information I have given into two equations
+                 where $b$ is the number of boys and $g$ is the number of girls.  You can then solve this
+                 system of equations.    
+       \item[A:] Sure, using the information you've provided, we can set up the following system of equations:
+                \begin{enumerate}[(a)]
+                \item $b + g = bs$ (the number of brothers is equal to the number of sisters)
+                \item $b = 2gs$ (your sister has twice as many brothers as she has sisters)
+
+                      To find the number of children your father has, we can substitute the second equation into
+                      the first equation: 
+                \item $b + g = bs$
+                \item $2gs + g = gs$
+                \item $2gs + g = g (b + g)$
+                \item $2gs + g = g^2$
+                \end{enumerate}
+                then we can solve for g and find the total number of children.
+      \end{description}
+      As you can see for yourself, ChatGPT doesn'nt get any closer to solving this problem.
+      
+      It is fair to say that
       currently machine learning is the hottest topic in computer science.  Among others, we discuss the following
       algorithms:
       \begin{enumerate}
@@ -90,7 +135,6 @@ This lecture consists of two parts.
             recognize digits. 
       \end{enumerate}
 \end{enumerate}
-\pagebreak
 
 \section{Literature}
 The main sources of these lecture notes are the following:
@@ -120,11 +164,11 @@ When it comes to the exam, you should be fine if you have mastered the material 
 lecture notes.  Hence, there is no need to buy any book or take any other course.
 
 \remark
-The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.9.
+The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.10.
 The file 
 \\[0.2cm]
-\hspace*{-0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/conda-environment.txt}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/conda-environment.txt}
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/ai.sh}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/ai.sh}
 \\[0.2cm]
 contains a list of commands that can be used to create the \textsl{Python} environment that I have used to test
 the notebooks presented in my lectures.  
