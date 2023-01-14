@@ -1,0 +1,10 @@
+      x + y = y + x;
+      x * y = y * x;
+(x + y) + z = x + (y + z);
+(x * y) * z = x * (y * z);
+      x + x = 0;
+      0 + x = x;
+      1 * x = x;
+      0 * x = 0;
+      x * x = x;
+x * (y + z) = x * y + x * z;

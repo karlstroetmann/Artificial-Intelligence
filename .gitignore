@@ -21,7 +21,11 @@ SetlX/Neural-Networks/mnist_train.csv
 SetlX/Neural-Networks/mnist_test.csv
 Literature/*
 Exercises/*
-Klausur/*
+Klausuren/*
+Julia/*
+Seminar-Arbeiten/*
+Python/Solutions/*
+Python/Experimental/*
 **/__pycache__
 **/.ipynb_checkpoints
 Python/2 Constraint Solver/Constraint-Propagation-Solver-All-Solutions.ipynb
@@ -38,5 +42,4 @@ Python/3 Games/Connect-Four.ipynb
 *.fdb_latexmk
 *.fls
 *.pyg
-
-*.synctex(busy)
+todo.txt
