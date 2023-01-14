@@ -400,7 +400,7 @@ algorithm to solve search problems is \href{https://en.wikipedia.org/wiki/Breadt
 We discuss this algorithm next.
 
 \section{Breadth First Search}
-Informally, breadth first search, abbreviated as \ac{bfs}, works as follows: \index{breadth first search}
+Informally, breadth first search, abbreviated as \textsc{Bfs}, works as follows: \index{breadth first search}
 \begin{enumerate}
 \item Given a search problem $\langle Q,\;\mathtt{next\_states},\; \mathtt{start},\; \mathtt{goal}\rangle$,
       we initialize a set $\texttt{Frontier}$ to contain the state $\texttt{start}$.
@@ -681,12 +681,12 @@ previous implementation.  Furthermore, only 76 megabytes of memory are used for 
 \section{Depth First Search}
 To overcome the memory limitations of breadth first search, the
 \href{https://en.wikipedia.org/wiki/Depth-first_search}{depth first search} algorithm \index{depth first search}
-has been developed.  Depth first search is abbreviated as \ac{dfs}.  There are two ideas involved when going from
+has been developed.  Depth first search is abbreviated as \textsc{Dfs}.  There are two ideas involved when going from
 breadth first search to depth first search:
 \begin{enumerate}
-\item In order to save memory, \ac{dfs} removes the set \texttt{Visited} of \ac{bfs}.
-\item While \ac{bfs} ensures that every state is visited by implementing the \texttt{Frontier} as a queue,
-      \ac{dfs} replaces this queue by a stack.  This way, \ac{dfs} tries to get as far away from the state
+\item In order to save memory, \textsc{Dfs} removes the set \texttt{Visited} of \textsc{Bfs}.
+\item While \textsc{Bfs} ensures that every state is visited by implementing the \texttt{Frontier} as a queue,
+      \textsc{Dfs} replaces this queue by a stack.  This way, \textsc{dfs} tries to get as far away from the state
       \texttt{start} as early as possible.  In order to prevent loops, we still have the parent dictionary.
 
       Since a stack can be implemented as an ordinary \textsl{Python} list, we don't need the module
@@ -1087,7 +1087,7 @@ keeping two trillion states in memory is impossible on most devices.
 Figure \ref{fig:Bidirectional-BFS.ipynb} on page \pageref{fig:Bidirectional-BFS.ipynb} shows the implementation
 of bidirectional breadth first search.  Essentially, we have two copies of the breadth first search program shown in
 Figure \ref{fig:Breadth-First-Search.ipynb}.  However, since the information that was stored in the set
-$\texttt{Visited}$ in the implementation of \ac{bfs} shown in Figure \ref{fig:Breadth-First-Search.ipynb} is
+$\texttt{Visited}$ in the implementation of \textsc{bfs} shown in Figure \ref{fig:Breadth-First-Search.ipynb} is
 also available in the dictionary $\texttt{Parent}$, we have removed the variable $\texttt{Visited}$ in our
 implementation of bidirectional breadth first search.
 
@@ -2055,10 +2055,10 @@ So far, we have combined $\mathrm{A}^*$ search with bidirectional search and ach
 memory space is too limited for bidirectional $\mathrm{A}^*$ search to be possible, we can instead
 combine $\mathrm{A}^*$ search with \blue{iterative deepening}.  The resulting search technique is known as
 \href{https://en.wikipedia.org/wiki/Iterative_deepening_A*}{\color{blue}iterative deepening $\mathrm{A}^*$ search}
-and is commonly abbreviated as  \ac{ida} search.  \index{IDA$^*$ search}
+and is commonly abbreviated as  \textsc{ida} search.  \index{IDA$^*$ search}
 It has been invented by Richard Korf \cite{korf:1985}.
  \myFig{iterative-deepening-a-star.stlx}
-shows an implementation of \ac{ida} search.  We proceed to discuss this program.
+shows an implementation of \textsc{ida} search.  We proceed to discuss this program.
 
 \begin{figure}[!ht]
 \centering
@@ -2113,7 +2113,7 @@ shows an implementation of \ac{ida} search.  We proceed to discuss this program.
             \hspace*{1.3cm}
             $\texttt{heuristic}(s_1, s_2)$
             \\[0.2cm]
-            computes an estimate of the distance between $s_1$ and $s_2$.  In \ac{ida} search it is required that this
+            computes an estimate of the distance between $s_1$ and $s_2$.  In \textsc{ida} search it is required that this
             estimate is optimistic, i.e.~the \texttt{heuristic} has to be \blue{admissible}.
 
             Note that this is different from A$^*$ search. A$^*$ search requires that the \texttt{heuristic} is 

@@ -1,5 +1,4 @@
 \documentclass[11pt]{report}
-\usepackage{acro}
 \usepackage{fleqn}
 \usepackage{placeins}
 \usepackage{graphicx}
@@ -170,7 +169,7 @@
 
 \title{\epsfig{file=Figures/dhbw-logo.pdf, scale=1.5}\\[0.3cm]
       An Introduction to Artificial Intelligence \\[0.3cm]
-      --- Lecture Notes in Progress ---}
+      --- Lecture Notes for 2023 ---}
 \author{Prof.~Dr.~Karl Stroetmann}
 \date{\today \\[0.5cm]
 \noindent
@@ -209,35 +208,11 @@ You are also welcome to send a \blue{pull request} on \href{https://guides.githu
 \end{minipage}
 }
 
-\DeclareAcronym{ai}{
-  short = \textsc{Ai},
-  long  = artificial intelligence,
-}
-\DeclareAcronym{bfs}{
-  short = \textsc{Bfs},
-  long  = breadth first search,
-}
-\DeclareAcronym{csp}{
-  short = \textsc{Csp},
-  long  = constraint satisfaction problem,
-}
-\DeclareAcronym{dfs}{
-  short = \textsc{Dfs},
-  long  = depth first search,
-}
-\DeclareAcronym{ida}{
-  short = \textsc{Ida}$^*$,
-  long  = iterative deepening A$^*$ search,
-}
-\acsetup{first-style=short}
-
 \makeindex
 
 \begin{document}
 \maketitle
 \tableofcontents
-
-\printacronyms[include=abbrev, name=Abbreviations]
 
 \include{introduction}
 \include{search}
