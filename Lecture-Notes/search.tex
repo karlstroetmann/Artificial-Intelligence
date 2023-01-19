@@ -574,7 +574,7 @@ Breadth first search has two important properties:
 \end{enumerate}
 \proof
 Both of these claims can be shown simultaneously.  Consider the implementation of breadth first
-search shown in Figure \ref{fig:Breadth-First-Search.ipynb}.  We prove by induction on the number of
+search shown in \myFig{Breadth-First-Search.ipynb}.  We prove by induction on the number of
 iterations of the \texttt{while} loop that after $n$ iterations of the \texttt{while} loop,
 the set $\texttt{Frontier}$ contains exactly those states that have a distance of $n$ to the state
 $\texttt{start}$.
@@ -684,8 +684,8 @@ breadth first search to depth first search:
                 if ns not in Parent:
                     Parent[ns] = state
                     Stack.append(ns)
-                if ns == goal:
-                    return path_to(goal, Parent)
+                    if ns == goal:
+                        return path_to(goal, Parent)
 
     def path_to(state, Parent):
        Path = [state]
@@ -756,7 +756,7 @@ implementation is shown in \myFig{Depth-First-Search.ipynb}.
             if ns not in PathSet:
                 PathSet.add(ns)
                 Result = dfs(ns, goal, next_states, Path + [ns], PathSet)
-                if Result is not None:
+                if Result:
                     return Result
                 PathSet.remove(ns)
         return None
@@ -844,7 +844,7 @@ implements this strategy.  We proceed to discuss the details of this program.
                 Path   .append(ns)
                 PathSet.add(ns)
                 Result = dls(ns, goal, next_states, Path, PathSet, limit)
-                if Result is not None:
+                if Result:
                     return Result
                 else:
                     Path   .pop()
