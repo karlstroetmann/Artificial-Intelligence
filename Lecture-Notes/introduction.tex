@@ -31,12 +31,12 @@ This lecture consists of two parts.
       This problem specification is a concise description of the problem that is to be solved, which is
       then fed into an \blue{automatic problem solver} that returns a solution of the problem.  Originally, 
       \href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming} was a very general
-      approach to problem solving.  The idea was that in order to solve a problem, the problem would first be
+      approach to problem-solving.  The idea was that in order to solve a problem, the problem would first be
       formulated as a logic formula and an
       \href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem prover} would then be
       able to solve the problem.  The programming language \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}
       was based on that paradigm.  Unfortunately, the idea of declarative programming has
-      turned out to be unsuitable as a general problem solving framework for two reasons:
+      turned out to be unsuitable as a general problem-solving framework for two reasons:
       \begin{enumerate}
       \item First, it is very difficult to specify practical problems completely in a logical framework.
       \item Second, even in those cases where it is feasible to completely specify a problem via logic formulae,
@@ -58,14 +58,14 @@ This lecture consists of two parts.
             automatic theorem prover and constraint solver developed by
             \href{https://www.microsoft.com/en-us/research/project/z3-3/}{Microsoft}.
       \item \blue{Games} like \href{https://en.wikipedia.org/wiki/Chess}{chess} or
-            \href{https://en.wikipedia.org/wiki/checkers}{checkers} can be specified declaritively and there are
+            \href{https://en.wikipedia.org/wiki/checkers}{checkers} can be specified declaratively and there are
             various techniques for computers to find optimal strategies for playing adversarial games.
       \end{enumerate}
       Additionally we will cover \blue{automatic theorem proving}.  As we have already discussed 
       \blue{resolution theorem proving} in our lecture on
       \href{https://github.com/karlstroetmann/Logic}{logic}, we discuss \blue{equational theorem proving} in
       the last chapter of the first part of this lecture. 
-\item In the second part of this lecture we discuss \blue{machine learning}.  In the last ten years, a number of
+\item In the second part of this lecture, we discuss \blue{machine learning}.  In the last ten years, a number of
       advances in machine learning have made it into the headlines of the news.  The latest hype is caused by
       \href{https://openai.com/blog/chatgpt/}{ChatGPT}.
       When asked to describe itself in 100 words, ChatGPT gave the following answer:
@@ -91,7 +91,7 @@ This lecture consists of two parts.
        \item[Q:] What information do you need to proceed?
        \item[A:] I would need to know the number of brothers and sisters you have in order to determine the
                  number of children your father has.  
-       \item[Q:] You can find these numbers if you convert the information I have given into two equations
+       \item[Q:] You can find these numbers if you convert the information I have given into two equations,
                  where $b$ is the number of boys and $g$ is the number of girls.  You can then solve this
                  system of equations.    
        \item[A:] Sure, using the information you've provided, we can set up the following system of equations:
@@ -108,11 +108,10 @@ This lecture consists of two parts.
                 \end{enumerate}
                 then we can solve for g and find the total number of children.
       \end{description}
-      As you can see for yourself, ChatGPT doesn'nt get any closer to solving this problem.
+      As you can see for yourself, ChatGPT doesn't get any closer to solving this problem.
       
-      It is fair to say that
-      currently machine learning is the hottest topic in computer science.  Among others, we discuss the following
-      algorithms:
+      It is fair to say that currently, machine learning is the hottest topic in computer science.
+      Among others, we discuss the following algorithms:
       \begin{enumerate}
       \item \blue{Linear regression} is one of the most fundamental machine learning algorithms.
             In machine learning, we are given a number of data pairs of the form  $\langle \mathbf{x}_i, y_i \rangle$ 

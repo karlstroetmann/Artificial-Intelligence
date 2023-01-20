@@ -8,7 +8,7 @@ program that solves the given problem.  In this chapter, this idea is illustrate
 First, we define the notion of a \blue{search problem} formally.  This notion is then illustrated with two
 examples.  We start with the \blue{missionaries and cannibals problem}.  Next, we use the 
 \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle} as our running example. \index{sliding puzzle}
-After that we introduce various algorithms for solving search problems.  In particular, we present
+After that, we introduce various algorithms for solving search problems.  In particular, we present
 \begin{enumerate}
 \item \blue{breadth first search},
 \item \blue{depth first search},
@@ -168,7 +168,7 @@ as a search problem.  We discuss this formalization line by line.
             states where $\texttt{mb}$ missionaries and $\texttt{ib}$ infidels cross the river.
             After $\texttt{mb}$ missionaries and $\texttt{ib}$ infidels have crossed the river and
             reached the eastern shore, $\mathtt{m} - \mathtt{mb}$ missionaries and $\mathtt{i} - \mathtt{ib}$ infidels
-            remain on the western shore.  Of course, after the crossing the boat is no longer on the
+            remain on the western shore.  Of course, after the crossing, the boat is no longer on the
             western shore.  Therefore, the new state has the form
             \\[0.2cm]
             \hspace*{1.3cm}
@@ -218,7 +218,7 @@ as a search problem.  We discuss this formalization line by line.
       As the number of missionaries on the eastern shore is $3 - \mathrm{m}$ and the number of infidels on the
       eastern shore is $3 - \mathrm{i}$, $\texttt{mb}$ has to be a member of the set $\{0,\cdots,3 -\mathtt{m}\}$, while
       $\texttt{ib}$ has to be a member of the set $\{0,\cdots,3 - \mathtt{i}\}$.
-\item Finally the start state and the goal state are defined in line 22 and line 23.
+\item Finally, the start state and the goal state are defined in line 22 and line 23.
 \end{enumerate}
 The code in Figure \ref{fig:missionaries.stlx} does not define the set of states $Q$ of the search problem.  The
 reason is that, in order to solve the problem, we do not need to define this set.  If we wanted to, we could
@@ -235,7 +235,7 @@ this set is so big that it would be impossible to compute and store it.  Hence, 
 abstract notion that is needed in order to specify the function \texttt{next\_states}, but it is not implemented.
 
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
-missionaries and cannibals puzzle.  In that figure, for every state both the western and the
+missionaries and cannibals puzzle.  In that figure, for every state, both the western and the
 eastern shore are shown.  The start state is covered with a blue ellipse, while the goal state is
 covered with a green ellipse.  The figure clearly shows that the problem is solvable and that there
 is a solution involving just 11 crossings of the river.
@@ -257,7 +257,7 @@ square board, where each side has a length of 3.  This board is subdivided into 
 these 9 squares, 8 are occupied with square tiles that are numbered from 1 to 8.  One square remains
 empty. Figure \ref{fig:8-puzzle.pdf} on page \pageref{fig:8-puzzle.pdf} shows two possible states of this
 sliding puzzle.  The $4 \times 4$ \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle}
-is similar to the $3 \times 3$ sliding puzzle but uses a square board of size 4
+is similar to the $3 \times 3$ sliding puzzle, but uses a square board of size 4
 instead.  The $4 \times 4$ sliding puzzle is also known as the \blue{15 puzzle}, while the $3 \times 3$ puzzle is
 called the \blue{8 puzzle}. \index{8 puzzle} \index{15 puzzle}
 
@@ -268,10 +268,10 @@ called the \blue{8 puzzle}. \index{8 puzzle} \index{15 puzzle}
 \label{fig:8-puzzle.pdf}
 \end{figure}
 
-In order to \href{http://www.artbylogic.com/puzzles/numSlider/numberShuffle.htm?rows=3&cols=3&sqr=1}{solve} the $3 \times 3$ sliding puzzle shown in Figure \ref{fig:8-puzzle.pdf} we have to
-transform the state shown on the left of Figure \ref{fig:8-puzzle.pdf} into the state shown on the
-right of this figure.  The following operations are permitted when transforming a state of the
-sliding puzzle:
+In order to \href{http://www.artbylogic.com/puzzles/numSlider/numberShuffle.htm?rows=3&cols=3&sqr=1}{solve} the $3 \times 3$
+sliding puzzle shown in Figure \ref{fig:8-puzzle.pdf} we have to transform the state shown on the left of
+Figure \ref{fig:8-puzzle.pdf} into the state shown on the right of this figure.  The following operations are permitted
+when transforming a state of the sliding puzzle:
 \begin{enumerate}
 \item If a tile is to the left  of the free square, this tile can be moved to the right.
 \item If a tile is to the right of the free square, this tile can be moved to the left.
@@ -300,12 +300,12 @@ $16!/2 = 10,461,394,944,000$
 \\[0.2cm]
 different states reachable from a given start state.  If a state is represented as a matrix containing
 16 numbers and we store every number using just 4 bits, we still need $16 \cdot 4 = 64$ bits or 8
-bytes for every state.  Hence we would need a total of
+bytes for every state.  Hence, we would need a total of
 \\[0.2cm]
 \hspace*{1.3cm}
 $(16! / 2) \cdot 8 = 83,691,159,552,000$
 \\[0.2cm]
-bytes to store every state. We would thus need about 84 Terabytes to store the set of all states.  As few
+bytes to store every state. We would thus need about 84 terabytes to store the set of all states.  As few
 computers are equipped with this kind of memory, it is obvious that we won't be able to store the
 entire state space in memory.
 
@@ -369,7 +369,7 @@ the row $r$ and column $c$, where the counting of rows and columns starts from $
 We have to represent states as tuples of tuples rather than lists of lists since
 tuples are immutable while lists are mutable and we need to store states in sets later.  In \textsl{Python},
 sets can only store immutable objects.  However, we also have to manipulate the states.  To this end, we have
-to first transform the states to lists of lists, which can be manipulated.  After the manipulation these lists of
+to first transform the states to lists of lists, which can be manipulated.  After the manipulation, these lists of
 lists have to be transformed back to tuples of tuples.
 We proceed to discuss the program shown in Figure \ref{fig:Sliding-Puzzle.ipynb} line by line.
 \begin{enumerate}
@@ -429,15 +429,7 @@ $s \in \mathtt{next\_states}(\mathtt{Parent}[s])$.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]{python3}
+\begin{python3code}
     def search(start, goal, next_states):
         Frontier = { start }
         Visited  = set()
@@ -453,7 +445,7 @@ $s \in \mathtt{next\_states}(\mathtt{Parent}[s])$.
                             return path_to(goal, Parent)
             Visited |= Frontier
             Frontier = NewFrontier
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{Breadth first search.}
 \label{fig:Breadth-First-Search.ipynb}
@@ -504,21 +496,13 @@ Next, we discuss the implementation of the function \texttt{search}:
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]{python3}
+\begin{python3code}
     def path_to(state, Parent):
         p = Parent[state]
         if p == state:
             return [state]
         return path_to(p, Parent) + [state]
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{The function $\texttt{path\_to}$.}
 \label{fig:pathTo.stlx}
@@ -546,27 +530,27 @@ inspected all the states.  This is a typical behaviour for breadth first search.
                 ]
     MMM   KKK   B      |~~~~~|
                        >  KK >
-    MMM   K            |~~~~~|              KK  B
+    MMM   K            |~~~~~|              KK   B
                        <  K  <
     MMM   KK    B      |~~~~~|               K
                        >  KK >
-    MMM                |~~~~~|             KKK  B
+    MMM                |~~~~~|             KKK   B
                        <  K  <
     MMM   K     B      |~~~~~|              KK
                        > MM  >
-    M     K            |~~~~~|        MM    KK  B
+    M     K            |~~~~~|        MM    KK   B
                        < M K <
     MM    KK    B      |~~~~~|         M     K
                        > MM  >
-          KK           |~~~~~|       MMM     K  B
+          KK           |~~~~~|       MMM     K   B
                        <  K  <
           KKK   B      |~~~~~|       MMM
                        >  KK >
-          K            |~~~~~|       MMM    KK  B
+          K            |~~~~~|       MMM    KK   B
                        <  K  <
           KK    B      |~~~~~|       MMM     K
                        >  KK >
-                       |~~~~~|       MMM   KKK  B
+                       |~~~~~|       MMM   KKK   B
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{A solution of the missionaries and cannibals problem.}
@@ -590,7 +574,7 @@ Breadth first search has two important properties:
 \end{enumerate}
 \proof
 Both of these claims can be shown simultaneously.  Consider the implementation of breadth first
-search shown in Figure \ref{fig:Breadth-First-Search.ipynb}.  We prove by induction on the number of
+search shown in \myFig{Breadth-First-Search.ipynb}.  We prove by induction on the number of
 iterations of the \texttt{while} loop that after $n$ iterations of the \texttt{while} loop,
 the set $\texttt{Frontier}$ contains exactly those states that have a distance of $n$ to the state
 $\texttt{start}$.
@@ -629,15 +613,7 @@ first search is often implemented using a
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                  ]{python3}
+\begin{python3code}
     from collections import deque
 
     def search(start, goal, next_states):
@@ -651,7 +627,7 @@ first search is often implemented using a
                 if ns not in Parent:
                     Parent[ns] = state
                     Frontier.append(ns)
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{A queue based implementation of breadth first search.}
 \label{fig:Breadth-First-Search-Queue.ipynb}
@@ -698,15 +674,7 @@ breadth first search to depth first search:
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                framesep      = 0.3cm,
-                firstnumber   = 1,
-                bgcolor       = sepia,
-                numbers       = left,
-                numbersep     = -0.2cm,
-                xleftmargin   = 0.8cm,
-                xrightmargin  = 0.8cm,
-              ]{python3}
+\begin{python3code}
     def search(start, goal, next_states):
         Stack  = [start]
         Parent = { start: start }
@@ -716,8 +684,8 @@ breadth first search to depth first search:
                 if ns not in Parent:
                     Parent[ns] = state
                     Stack.append(ns)
-                if ns == goal:
-                    return path_to(goal, Parent)
+                    if ns == goal:
+                        return path_to(goal, Parent)
 
     def path_to(state, Parent):
        Path = [state]
@@ -725,7 +693,7 @@ breadth first search to depth first search:
            state = Parent[state]
            Path  = [ state ] + Path
        return Path
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{The depth first search algorithm.}
 \label{fig:Depth-First-Search-Stack.ipynb}
@@ -777,15 +745,7 @@ implementation is shown in \myFig{Depth-First-Search.ipynb}.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]{python3}
+\begin{python3code}
     def search(start, goal, next_states):
         return dfs(start, goal, next_states, [start], { start })
     
@@ -796,11 +756,11 @@ implementation is shown in \myFig{Depth-First-Search.ipynb}.
             if ns not in PathSet:
                 PathSet.add(ns)
                 Result = dfs(ns, goal, next_states, Path + [ns], PathSet)
-                if Result is not None:
+                if Result:
                     return Result
                 PathSet.remove(ns)
         return None
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{A recursive implementation of depth first search.}
 \label{fig:Depth-First-Search.ipynb}
@@ -854,7 +814,7 @@ solution had a length of $20,923$ steps, which explains the high memory consumpt
 \section{Iterative Deepening}
 The fact that the stack-based version of depth first search took less than one second to find a solution is very
 impressive, but the fact that this solution has a length of more than ten thousand steps is disappointing.
-The questions is, whether it might be possible to force depth first search to find the shortest 
+The question is, whether it might be possible to force depth first search to find the shortest
 solution.  The answer to this question leads to an algorithm that is known as
 \href{https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search}{iterative deepening}.
 \index{iterative deepening} The main idea behind iterative deepening is to run depth first with a \blue{depth
@@ -865,15 +825,7 @@ implements this strategy.  We proceed to discuss the details of this program.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]{python3}
+\begin{python3code}
     def search(start, goal, next_states):
         limit = 1
         while True:
@@ -892,13 +844,13 @@ implements this strategy.  We proceed to discuss the details of this program.
                 Path   .append(ns)
                 PathSet.add(ns)
                 Result = dls(ns, goal, next_states, Path, PathSet, limit)
-                if Result is not None:
+                if Result:
                     return Result
                 else:
                     Path   .pop()
                     PathSet.remove(ns)
         return None
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{Iterative deepening implemented in \textsl{Python}.}
 \label{fig:Iterative-Deepening.ipynb}
@@ -925,11 +877,11 @@ However, when we run this program to solve the $3 \times 3$ sliding puzzle, the 
 about 7 minutes.  There are two reasons for the long computation time:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
-      to 31.  Essentially, all the computations done with a limit less than $32$ are wasted. However,
+      to $31$.  Essentially, all the computations done with a limit less than $32$ are wasted. However,
       this process is not as wasteful as we might first expect.  To see this, assume that the number of states
       reached is doubled\footnote{
-        When we run breadth first search for the sliding puzzle we can observe that at least at the beginning
-        of the search the number of states is roughly doubled after each step.  This observation holds true for
+        When we run breadth first search for the sliding puzzle, we can observe that at least at the beginning
+        of the search, the number of states is roughly doubled after each step.  This observation holds true for
         the first 16 steps. 
       }
       after every iteration.  Then the number of states to explore when searching with a depth limit of $d$ is 
@@ -1049,15 +1001,7 @@ keeping two trillion states in memory is impossible on most devices.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]{python3}
+\begin{python3code}
     def search(start, goal, next_states):        
         FrontierA = { start }
         ParentA   = { start: start}
@@ -1082,7 +1026,7 @@ keeping two trillion states in memory is impossible on most devices.
                         if ns in ParentA:
                             return combinePaths(ns, ParentA, ParentB)
             FrontierB = NewFrontier
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{Bidirectional breadth first search.}
 \label{fig:Bidirectional-BFS.ipynb}

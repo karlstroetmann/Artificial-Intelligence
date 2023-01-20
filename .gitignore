@@ -43,3 +43,4 @@ Python/3 Games/Connect-Four.ipynb
 *.fls
 *.pyg
 todo.txt
+.idea/
