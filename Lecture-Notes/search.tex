@@ -931,7 +931,52 @@ Finally, the search problem $\mathcal{P}$ is defined as
 $\mathcal{P} := \langle Q, \mathtt{next\_states}, \mathtt{start}, \mathtt{goal} \rangle$.
 \\[0.2cm]
 Given a natural number $n$, compute the number of different solutions of this search problem and prove
-your claim.  
+your claim.  The \myFig{example-paths-in-graph.tikz} shows possible solutions in a graph.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \draw[color = gray!50] [] (0,0) grid (4,4);
+
+        \foreach \c in {0,...,4}{
+            \draw (\c,-.1) -- (\c,.1) node[below=4pt] {$\scriptstyle\c$};
+            \draw (-.1,\c) -- (.1,\c) node[left=4pt] {$\scriptstyle\c$};
+        }
+
+        \node[label=above:$start$,style={fill, circle, inner sep = 1pt}] (A) at (0,0) {};
+        \node[label=above:$goal$,style={fill, circle, inner sep = 1pt}] (Z) at (4,4) {};
+
+        \draw[->, green!50, thick] (6,3) to node[above, midway, black] {\small{allowed direction}}  (10,3); 
+        \draw[->, blue!50, thick]  (6,2) to node[above, midway, black] {\small{example 1}}           (10,2); 
+        \draw[->, red!50, thick]   (6,1) to node[above, midway, black] {\small{example 2}}           (10,1); 
+
+        \draw[->, green!50] (0,0) to (1,0);
+        \draw[->, green!50] (0,0) to (0,1);
+        \draw[->, green!50] (0,1) to (1,1);
+        \draw[->, green!50] (0,1) to (0,2);
+        \draw[->, green!50] (0,2) to (1,2);
+
+        \draw[->, blue!50, thick] (0,0) to (1,0);
+        \draw[->, blue!50, thick] (1,0) to (2,0);
+        \draw[->, blue!50, thick] (2,0) to (2,1);
+        \draw[->, blue!50, thick] (2,1) to (3,1);
+        \draw[->, blue!50, thick] (3,1) to (3,2);
+        \draw[->, blue!50, thick] (3,2) to (3,3);
+        \draw[->, blue!50, thick] (3,3) to (4,3);
+        \draw[->, blue!50, thick] (4,3) to (4,4);
+
+        \draw[->, red!50, thin]  (0,0) to (1,0);
+        \draw[->, red!50, thick] (1,0) to (1,1);
+        \draw[->, red!50, thick] (1,1) to (1,2);
+        \draw[->, red!50, thick] (1,2) to (1,3);
+        \draw[->, red!50, thick] (1,3) to (2,3);
+        \draw[->, red!50, thick] (2,3) to (2,4);
+        \draw[->, red!50, thick] (2,4) to (3,4);
+        \draw[->, red!50, thick] (3,4) to (4,4);
+    \end{tikzpicture}
+    \caption{Example for possible paths in a graph}
+    \label{fig:example-paths-in-graph.tikz}
+\end{figure}
 
 \hint
 The expression giving the number of different solutions contains factorials.  In order to get a better feeling
@@ -977,7 +1022,7 @@ path starting from $\texttt{goal}$ will meet in the middle and hence they will b
 $d/2$.  If this is the case, only
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds 2 \cdot \frac{b^{d/2+1} - 1}{b - 1}$
+$\ds 2 \cdot ( 1 + b + \cdots + b^{\frac{d}{2}} ) = 2 \cdot \frac{b^{\frac{d}{2}+1} - 1}{b - 1}$
 \\[0.2cm]
 nodes need to be explored and even for modest values of $b$ this number is much smaller than
 \\[0.2cm]
@@ -986,7 +1031,7 @@ $\ds\frac{b^{d+1} - 1}{b - 1}$
 \\[0.2cm]
 which is the number of nodes expanded in breadth first search.  For example, assume that the branching factor
 $b = 2$ and that the length of the shortest path leading from $\texttt{start}$ to $\texttt{goal}$
-is $40$.  Then we need to explore
+is $d = 40$.  Then we need to explore
 \\[0.2cm]
 \hspace*{1.3cm}
 $2^{41} - 1 = 2,199,023,255,551$
@@ -994,10 +1039,64 @@ $2^{41} - 1 = 2,199,023,255,551$
 states in breadth first search, while we only have to explore
 \\[0.2cm]
 \hspace*{1.3cm}
-$2 \cdot \bigl(2^{40/2+1} - 1\bigr) = 4,194,302 $
+$2 \cdot \bigl(2^{\frac{40}{2}+1} - 1\bigr) = 4,194,302 $
 \\[0.2cm]
 states with bidirectional breadth first search.  While it is certainly feasible to keep four million states in memory,
-keeping two trillion states in memory is impossible on most devices.
+keeping two trillion states in memory is impossible on most devices.  The \myFig{example-area-usage-of-search.tikz} should
+demonstrate, how the conventional search algorithm has to use a lot more space than the bidirectional approach.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \clip (0,0) rectangle + (8,4);
+            \draw (0,0) -- (0,4);
+            \draw (8,0) -- (8,4);
+
+            \foreach \r in {1.1,2.2,...,4.4}{
+                \draw[gray!50, line width = 0.5pt] (1,2) circle (\r cm);
+            }
+            \draw[green!50, line width = 0.5pt] (1,2) circle (5.5 cm);
+
+            \draw (1,2) circle (0.5cm) node (A) {start};
+            \draw (7,2) circle (0.5cm) node (B) {goal};
+
+            \draw[<->, green, thick] (A) to node[above, midway] {$d$} (B); 
+        \end{tikzpicture}
+        \caption{Conventional search}
+        \label{fig:area-conventional-search.tikz}
+    \end{subfigure}%
+    \begin{subfigure}{.5\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \clip (0,0) rectangle + (8,4);
+            \draw (0,0) -- (0,4);
+            \draw (8,0) -- (8,4);
+
+            \foreach \r in {1,2}{
+                \draw[gray!50, line width = 0.5pt] (1,2) circle (\r cm);
+            }
+            \draw[green!50, line width = 0.5pt] (1,2) circle (3 cm);
+
+            \foreach \r in {1,2}{
+                \draw[gray!50, line width = 0.5pt] (7,2) circle (\r cm);
+            }
+            \draw[green!50, line width = 0.5pt] (7,2) circle (3 cm);
+
+            \draw (1,2) circle (0.5cm) node (A) {start};
+            \draw (7,2) circle (0.5cm) node (B) {goal};
+
+            \draw[<->, green, thick] (A) to node[above, midway] {$\frac{d}{2}$} (4,2); 
+            \draw[<->, green, thick] (B) to node[above, midway] {$\frac{d}{2}$} (4,2); 
+        \end{tikzpicture}
+        \caption{Bidirectional search}
+        \label{fig:area-bidirectional-search.tikz}
+    \end{subfigure}
+    \caption{Example of space usage of conventional and bidrectional-BFS}
+    \label{fig:example-area-usage-of-search.tikz}
+\end{figure}
+
 
 \begin{figure}[!ht]
 \centering
@@ -1065,20 +1164,12 @@ be computed is just too big to fit into memory.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-                ]{python3}
+\begin{python3code}
     def combinePaths(state, ParentA, ParentB):
             Path1 = path_to(state, ParentA)
             Path2 = path_to(state, ParentB)
             return Path1[:-1] + Path2[::-1] # Path2 is reversed
-\end{minted}
+\end{python3code}
 \vspace*{-0.3cm}
 \caption{Combining two paths.}
 \label{fig:combine-paths.stlx}
@@ -1114,7 +1205,7 @@ The heuristic is \blue{admissible} \index{admissible heuristic} if it never
 \underline{\color{red}{overestimates}} the true distance, i.e.~if the function 
 \\[0.2cm]
 \hspace*{1.3cm}
-$d:Q \rightarrow \mathbb{R}\cup \{ \infty\}$
+$d:Q \rightarrow \mathbb{N}$
 \\[0.2cm]
 computes the \blue{true distance} from a state $s$ to the goal, then we must have
 \\[0.2cm]
@@ -1145,6 +1236,25 @@ that visits $s_2$ first.  Hence, we have the inequality
 \\[0.2cm]
 \hspace*{1.3cm}
 $h(s_1) \leq 1 + h(s_2)$.
+\\[0.2cm]
+The \myFig{demonstration-heuristic.tikz} demonstrates this equation.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \node (start)   at (0,0)   [circle, fill=red!20, inner sep=0pt, minimum size=1cm] {start};
+        \node (s1)      at (4,0)   [circle, fill=red!20, inner sep=0pt, minimum size=1cm] {$s_1$};
+        \node (s2)      at (6,0)   [circle, fill=red!20, inner sep=0pt, minimum size=1cm] {$s_2$};
+        \node (goal)    at (10,0)  [circle, fill=red!20, inner sep=0pt, minimum size=1cm] {goal};
+
+        \draw[->, thick, draw=green, decorate, decoration=snake]   (start) to                                              (s1);
+        \draw[->, thick, draw=green]                               (s1)    to                                              (s2);
+        \draw[->, thick, draw=blue, decorate, decoration=snake]    (s2)    to                node[midway,above] {$h(s_2)$} (goal);
+        \draw[->, thick, draw=blue, decorate, decoration=snake]    (s1)    to[bend right=30] node[midway,above] {$h(s_1)$} (goal);
+    \end{tikzpicture}
+    \caption{Visual demonstration of a heuristic function}
+    \label{fig:demonstration-heuristic.tikz}
+\end{figure}
 
 \begin{Theorem}
   Every consistent heuristic is an admissible heuristic.
