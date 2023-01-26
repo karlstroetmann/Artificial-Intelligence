@@ -17,15 +17,17 @@ structured as follows:
       The idea behind \emph{brute force search} is to test all possible \blue{variable assignments}.
 \item In most cases, the search space is so large that it is not feasible to enumerate all variable assignments.
       \blue{Backtracking search} improves on brute force search by mixing the generation
-      of variable assignments with the testing of the constraints.  In many cases, this approach
+      of variable assignments with the testing of the constraints.  This approach
       improves the performance of the brute search algorithm drastically.
 \item Backtracking search can be refined by using both \blue{constraint propagation} and 
       the \blue{most restricted variable} heuristic.
 \item Furthermore, checking the \blue{consistency} of the values assigned to different variables
       can reduce the size of the search space considerably. 
-\item Finally, \blue{local search} is a completely different approach to solve
+\item \blue{Local search} is a completely different approach to solve
       constraint satisfaction problems.  This approach is especially useful if the constraint satisfaction
       problem is huge, but not complicated.
+\item Finally, we discuss the theorem prover \href{https://microsoft.github.io/z3guide/}{\texttt{Z3}}, which
+      can be used as an industrial strength constraint solver.
 \end{enumerate}
 When we have finished our discussion of constraint satisfaction problems, we will have implemented a
 \blue{constraint solver} that is able to solve instances of the most difficult
@@ -47,7 +49,7 @@ where \index{constraint satisfaction problem}
 
       In order to be able to interpret these formulas, we need a \blue{first order structure} $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
       Here, $\mathcal{U}$ is the \blue{universe} of $\mathcal{S}$ and we will assume that this
-      universe is identical to the set $\texttt{Values}$, that is why we have
+      universe is identical to the set $\texttt{Values}$, that is we have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathcal{U} = \texttt{Values}$.
@@ -130,7 +132,7 @@ constraint satisfaction problem.  To this end we define:
       $\bigl\{ \texttt{WA} \not= \texttt{NT},\, \texttt{WA} \not= \texttt{SA},\, \texttt{SA} \not= \texttt{Q},\, 
                 \texttt{NT} \not= \texttt{Q},\,
                 \texttt{SA} \not= \texttt{Q},\, \texttt{SA} \not= \texttt{NSW},\, \texttt{SA} \not= \texttt{V},\,
-                \texttt{Q} \not= \texttt{NSW},\, \texttt{NSW} \not= \texttt{V},\, \texttt{V} \not= \texttt{T}
+                \texttt{Q} \not= \texttt{NSW},\, \texttt{NSW} \not= \texttt{V}
        \bigr\}$.
 \end{enumerate}
 Then $\mathcal{P} := \langle \texttt{Vars},\, \texttt{Values},\, \texttt{Constraints} \rangle$ is a constraint satisfaction problem.  
@@ -212,73 +214,48 @@ $\mathcal{P} := \langle \texttt{Vars}, \texttt{Values}, \texttt{Constraints} \ra
 If we define the assignment $A$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
-$A(V_1) := 4,\; A(V_2) := 8,\; A(V_3) := 1,\; A(V_4) := 2,\; A(V_5) := 6,\; A(V_6) := 2$,
+$A(V_1) := 4,\; A(V_2) := 7,\; A(V_3) := 5,\; A(V_4) := 2,\; A(V_5) := 6,\; A(V_6) := 1$,
 \\[0.2cm]
 \hspace*{1.3cm}
-$A(V_7) := 7,\; A(V_8) := 5$,
+$A(V_7) := 3,\; A(V_8) := 8$,
 \\[0.2cm]
 then it is easy to see that this assignment is a solution of the eight queens problem.  This solution is shown
-in \myFig{eight-queens.txt}.  In this figure, we have numbered the rows from top to bottom, i.e.~the topmost
-row is row number $1$ and therefore the column of the queen in the first is determined by the variable $V_1$.
-
+in \myFig{eight-queens.png}.  In this figure, we have numbered the rows from bottom to top, i.e.~the topmost
+row is row number $8$ and therefore the column of the queen in the first row is determined by the variable $V_8$.
 
 \begin{figure}[!ht]
   \centering
-\hspace*{0.0cm}
-\vbox{\offinterlineskip
-   \hrule height1pt
-   \hbox{\vrule width1pt\bigchess
-         \vbox{\hbox{0Z0L0Z0Z}
-               \hbox{Z0Z0Z0ZQ}
-               \hbox{QZ0Z0Z0Z}
-               \hbox{Z0L0Z0Z0}
-               \hbox{0Z0Z0L0Z}
-               \hbox{ZQZ0Z0Z0}
-               \hbox{0Z0Z0ZQZ}
-               \hbox{Z0Z0L0Z0}}%
-         \vrule width1pt}
-   \hrule height1pt}
-
-  \caption{A solution of the eight queens problem.}
-  \label{fig:eight-queens.txt}
+  \framebox{\epsfig{file=Figures/eight-queens.png,scale=0.5}} 
+  \caption{A solution of the eight queens puzzle.}
+  \label{fig:eight-queens.png}
 \end{figure}
+
 Later, when we develop algorithms to solve  \textsc{Csp}s, we will represent variable assignments and partial
 variable assignments as \textsl{Python} \blue{dictionaries}.  For example, $A$ would then be represented as the
 dictionary 
 \\[0.2cm]
 \hspace*{1.3cm}
-$A := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1, \mathrm{V}_4:2, 
-             \mathrm{V}_5:6, \mathrm{V}_6:2, \mathrm{V}_7:7, \mathrm{V}_8:5 
+$A := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:7, \mathrm{V}_3:5, \mathrm{V}_4:2, 
+             \mathrm{V}_5:6, \mathrm{V}_6:1, \mathrm{V}_7:3, \mathrm{V}_8:8 
       \bigr\}$.
 \\[0.2cm]
 If we define 
 \\[0.2cm]
 \hspace*{1.3cm}
-$B := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1 \bigr\}$,
+$B := \bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:7, \mathrm{V}_3:3 \bigr\}$,
 \\[0.2cm]
 then $B$ is a \blue{partial} variable assignment and $\texttt{dom}(B) = \{ \mathrm{V}_1, \mathrm{V}_2, \mathrm{V}_3 \}$.  This
-partial variable assignment is shown in \myFig{eight-queens-partial.txt}.
+partial variable assignment is shown in \myFig{eight-queens-partial.png}.  Note that the bottom-most row is the
+row number $1$.
+
 
 \begin{figure}[!ht]
   \centering
-\hspace*{0.0cm}
-\vbox{\offinterlineskip
-   \hrule height1pt
-   \hbox{\vrule width1pt\bigchess
-         \vbox{\hbox{0Z0L0Z0Z}
-               \hbox{Z0Z0Z0ZQ}
-               \hbox{QZ0Z0Z0Z}
-               \hbox{Z0Z0Z0Z0}
-               \hbox{0Z0Z0Z0Z}
-               \hbox{Z0Z0Z0Z0}
-               \hbox{0Z0Z0Z0Z}
-               \hbox{Z0Z0Z0Z0}}%
-         \vrule width1pt}
-   \hrule height1pt}
-
-  \caption{The partial assignment $\bigl\{ \mathrm{V}_1:4, \mathrm{V}_2:8, \mathrm{V}_3:1 \bigr\}$.}
-  \label{fig:eight-queens-partial.txt}
+  \framebox{\epsfig{file=Figures/eight-queens-partial.png,scale=0.5}} 
+  \caption{A partial solution of the eight queens puzzle.}
+  \label{fig:eight-queens-partial.png}
 \end{figure}
+
 
 \begin{figure}[!ht]
 \centering
@@ -346,18 +323,18 @@ aircraft.  Stewards and pilots work in different crews as they have different re
 
 \section{Brute Force Search}
 The most straightforward algorithm to solve a \textsc{Csp} is to test all possible combinations of assigning
-values to variables.  If there are $n$ different values that can be assigned to $k$ variables, this amounts to 
-checking $n^k$ different assignments.  For example, for the eight queens problem there are 8 variables and
-8 possible values leading to 
+values to variables.  This approach is known as
+\href{https://en.wikipedia.org/wiki/Brute-force_search}{brute-force search}.
+If there are $n$ different values that can be assigned to $k$ variables, this approach amounts to 
+checking at most $n^k$ different variable assignments.  For example, for the eight queens problem there are 8
+variables and 8 possible values and hence there are at most
 \\[0.2cm]
 \hspace*{1.3cm}
 $8^8 = 2^{24} = 16,777,216$
 \\[0.2cm]
 different assignments that need to be tested.  Given the clock rate of modern computers, checking a million
 assignments per second is plausible.  Hence, this approach is able to solve the eight queens problem in
-about 30 seconds.  The approach of testing all possible combinations is known as
-\href{https://en.wikipedia.org/wiki/Brute-force_search}{brute force search}.  \index{brute force search}
-An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ipynb}. 
+about 30 seconds.  An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ipynb}. 
 
 \begin{figure}[!ht]
 \centering
@@ -377,7 +354,6 @@ An implementation of brute force search is shown in \myFig{Brute-Force-Solver.ip
         Variables, Values, Constraints = csp
         if len(Assignment) == len(Variables): # all variables have been assigned
             if check_all_constraints(Assignment, Constraints):
-                print('Assignment:', Assignment)
                 return Assignment
             else:
                 return None
