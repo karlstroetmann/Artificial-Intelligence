@@ -804,7 +804,7 @@ in any of the first three columns.  Abstractly, constraint propagation works as 
       Finally, we can explain how the \blue{least constraining value} heuristic orders the values:  For every value
       $\texttt{v}$ from the set $\texttt{ValuesPerVar[x]}$ the heuristic computes the \blue{shrinkage number},
       which is the number of values that have to be removed from the sets $\texttt{ValuesPerVar[y]}$ where
-      $\texttt{y}$ is any variable that is different from $\texttt{x}$ and that have not yet been assigned.
+      $\texttt{y}$ is any variable that is different from $\texttt{x}$ and that has not yet been assigned.
       Then the different values are ordered ascendingly with respect to their shrinkage number.  Hence values
       with a low shrinkage number are tried before values with a higher shrinkage number.
 \end{enumerate}
