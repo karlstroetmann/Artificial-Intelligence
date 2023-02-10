@@ -1384,8 +1384,8 @@ $.
 The problem with this constraint is that it involves far too many variables.  As this constraint can only be
 checked when all the variables have values assigned to them, the backtracking search would essentially
 boil down to a mere brute force search.  We would have 8 variables that each could take 10 different values and
-hence we would have to test $10^{8}$ possible assignments. In order to do better, we have to perform the addition in Figure
- \ref{fig:send-more-money.pdf} column by column, just as it is taught in elementary school.
+hence we would have to test $10^{8}$ possible assignments. In order to do better, we have to perform the
+addition shown in Figure \ref{fig:send-more-money.pdf} column by column, just as it is taught in elementary school.
  \myFig{Crypto-Arithmetic.ipynb} shows how this can be implemented in \textsl{Python}.
 
 \begin{figure}[!ht]
@@ -1426,22 +1426,22 @@ hence we would have to test $10^{8}$ possible assignments. In order to do better
 
 Notice that we have introduced three additional variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$''. 
 These variables serve as the \href{https://en.wikipedia.org/wiki/Carry_(arithmetic)}{carry digits}.  For
-example, ``$\texttt{C1}$'' is the carry digit that we get when we do the addition of the last places of the two
+example, ``$\texttt{C1}$'' is the carry digit that we get when we add the final digits of the two
 numbers, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{D} + \texttt{E} = \texttt{C1} \cdot 10 + \texttt{Y}$.
 \\[0.2cm]
-This equation still contains four variables.  We can reduce it to two equations that each involve only three
-variables as follows:
+This equation still contains four variables.  We can split this equation into two smaller equations that each
+involve only three variables with the help of the \href{https://en.wikipedia.org/wiki/Modulo}{modulo operator}
+``\texttt{\%}'' 
+and the operator for \href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}
+``\texttt{//}`` as follows:  
 \\[0.2cm]
 \hspace*{1.3cm}
 $(\texttt{D} + \texttt{E})\; \texttt{\symbol{37}}\; 10 = \texttt{Y}$ \quad and \quad
 $(\texttt{D} + \texttt{E}) \;\texttt{//}\; 10 = \texttt{C1}$.
 \\[0.2cm]
-Here, the symbol ``$\texttt{//}$'' denotes 
-\href{https://en.wikipedia.org/wiki/Division_(mathematics)#Of_integers}{integer division}, 
-e.g.~we have $7 \;\texttt{//}\; 3 = 2$ because $7 = 2 \cdot 3 + 1$.
 If we solve the cryptarithmetic puzzle as coded in \myFig{Crypto-Arithmetic.ipynb} using the
 constraint solver developed, then solving the puzzle takes about
 a second on my computer.  The reason is that most constraints involve either three or four variables and
@@ -1454,7 +1454,7 @@ variables ``$\texttt{C1}$'', ``$\texttt{C2}$'', ``$\texttt{C3}$'':
 \\[0.2cm]
 Although these constraints are certainly true, the problem with this approach is that we would prefer our
 constraint solver to figure out these constraints by itself.  After all, since $\texttt{D}$ and
-$\texttt{E}$ are both less than $10$, there sum is obviously less than $20$ and hence the carry $\texttt{C1}$
+$\texttt{E}$ are both less than $10$, their sum is obviously less than $20$ and hence the carry $\texttt{C1}$
 has to be less than $2$.  This line of reasoning is known as \blue{consistency maintenance}:
 Assume that the formula $f$ is a constraint and the set of variables occurring in $f$ has the form
 \\[0.2cm]
@@ -1465,17 +1465,24 @@ i.e.~the variable $x$ occurs in the constraint $f$ and, furthermore, $R = \{y_1,
 all variables occurring 
 in $f$ that are different from $x$.  In addition, assume that we have a dictionary $\texttt{ValuesPerVar}$ such that
 for every variable $y$, the dictionary entry $\texttt{ValuesPerVar}[y]$ is the set of values that can be substituted
-for the variable $y$.  Formally, we define: 
-\blue{A value $v$ is consistent for $x$ with respect to the constraint $f$} 
+for the variable $y$.  The formal definition follows.
+
+\begin{Definition}[Consistent Value for a Variable]
+A value $v$ is \blue{consistent} for the variable $x$ with respect to the constraint $f$ 
 iff the partial assignment $\{ x \mapsto v \}$ can be extended to an assignment $A$ satisfying the constraint $f$,
-i.e.~for every variable $y_i \in R$ we have to find a value $w_i \in \texttt{ValuesPerVar}[y_i]$ such that the resulting
-assignment $A = \{ x \mapsto v, y_1 \mapsto w_1, \cdots, y_n \mapsto w_n \}$ satisfies the equations
+i.e.~for every variable $y_i$ that is different from $x$ we have to find a value $w_i \in
+\texttt{ValuesPerVar}[y_i]$ such that the resulting assignment $A = \{ x \mapsto v, y_1 \mapsto w_1, \cdots, y_n \mapsto w_n \}$ satisfies the equations
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{eval}(f, A) = \texttt{True}$.
 \\[0.2cm]
-Here, the function $\texttt{eval}$ takes a formula $f$ and an assignment $A$ and evaluates $f$ using the
-assignment $A$.  Now, \blue{consistency maintenance} works as follows. \index{consistency maintenance}
+Here, the function $\texttt{eval}$ takes a formula $f$ and a variable assignment $A$ and evaluates $f$ using this
+assignment. \eoxs
+\end{Definition}
+
+\noindent
+Given a \textsc{CSP} $\mathcal{P} = \langle \mathtt{Vars}, \mathtt{Values}, \mathtt{Constraints} \rangle$, 
+the algorithm for \blue{consistency maintenance} is shown below. \index{consistency maintenance}
 \begin{enumerate}
 \item The dictionary $\texttt{ValuesPerVar}$ is initialized as follows:
       \\[0.2cm]
@@ -1502,7 +1509,7 @@ assignment $A$.  Now, \blue{consistency maintenance} works as follows. \index{co
             their values might have become inconsistent by removing the value $v$ from
             $\texttt{ValuesPerVar}[x]$.
       \end{enumerate}
-\item Once $\texttt{UncheckedVariables}$ is empty, the algorithm terminates.  Otherwise, we jump back to step 3
+\item Once the set $\texttt{UncheckedVariables}$ is empty, the algorithm terminates.  Otherwise, we jump back to step 3
       and remove the next variable from the set $\texttt{UncheckedVariables}$.
 \end{enumerate}
 The algorithm terminates as every iteration removes either a variable from the set
@@ -1537,20 +1544,17 @@ variable from this set and hence the algorithm terminates eventually.
     def enforce_consistency(ValuesPerVar, Var2Formulas, Annotated, Connected):
         UncheckedVars = set(Var2Formulas.keys())
         while UncheckedVars:
-            var         = UncheckedVars.pop()
-            Constraints = Var2Formulas[var]
-            Values      = ValuesPerVar[var]
+            variable    = UncheckedVars.pop()
             RemovedVals = set()
-            for f in Constraints:
-                OtherVars = Annotated[f] - { var }
-                for value in Values:
-                    if not exists_values(var, value, f, OtherVars, ValuesPerVar):
+            for f in Var2Formulas[variable]:
+                OtherVars = Annotated[f] - { variable }
+                for value in ValuesPerVar[variable]:
+                    if not exists_values(variable,value,f,OtherVars,ValuesPerVar):
                         RemovedVals   |= { value }
-                        UncheckedVars |= Connected[var]
-            Remaining = Values - RemovedVals
-            if not Remaining:
+                        UncheckedVars |= Connected[variable]
+            ValuesPerVar[variable] -= RemovedVals
+            if len(ValuesPerVar[variable]) == 0: # the problem is unsolvable
                 raise Backtrack()
-            ValuesPerVar[var] = Remaining
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Consistency maintenance in \textsl{Python}.}
@@ -1580,28 +1584,27 @@ $\texttt{ValuesPerVar}[x]$ are consistent with the constraints for $x$.  The imp
       is defined to be the set of all variables that occur in any of the constraints.
 \item The \texttt{while}-loop iterates as long as there are still variables $x$ left in $\texttt{UncheckedVars}$
       such that the consistency of $\texttt{ValuesPerVar}[x]$ has not been established.
-\item Next, a variable $\texttt{var}$ is selected and removed from $\texttt{UncheckedVars}$. 
-\item $\texttt{Constraints}$ is the set of all constraints $f$ such that $\texttt{var}$ occurs in $f$.
-\item $\texttt{Values}$ is the set of those values that can be assigned to the variable $\texttt{var}$.
+\item Next, a variable $\texttt{variable}$ is selected and removed from $\texttt{UncheckedVars}$. 
 \item $\texttt{RemovedVals}$ is the subset of those values that are found to be \blue{inconsistent} with some
-      constraint. 
-\item We iterate over all constraints $\texttt{f} \in \texttt{Constraints}$.
+      constraint for $\texttt{variable}$. 
+\item We iterate over all constraints $\texttt{f} \in \texttt{Var2Formulas[variable]}$.
 \item $\texttt{OtherVars}$ is the set of variables occurring in $\texttt{f}$ that are different from 
-      the chosen variable $\texttt{var}$.
-\item We iterate over all $\texttt{value} \in \texttt{Values}$ that can be substituted for the variable $\texttt{var}$
-      and check whether $\texttt{value}$ is consistent with $\texttt{f}$.   To this end, we need to find values
+      the chosen variable $\texttt{variable}$.
+\item We iterate over all $\texttt{value} \in \texttt{ValuesPerVar[variable]}$ that can be substituted for the
+      variable $\texttt{variable}$ and check whether $\texttt{value}$ is consistent with $\texttt{f}$.   To
+      this end, we need to find values 
       that can be assigned to the variables in the set $\texttt{OtherVars}$ such that $\texttt{f}$ evaluates as
       $\texttt{True}$.  This is checked using the function $\texttt{exists\_values}$.
-\item If we do not find such values, then $\texttt{value}$ is inconsistent for the variables
-      $\texttt{var}$ w.r.t.~$\texttt{f}$ and needs to be removed from the set 
-      $\texttt{ValuesPerVar}[\texttt{var}]$.  Furthermore, all variables that are connected to
-      $\texttt{var}$ have to be added to the set $\texttt{UncheckedVars}$.  The reason is that once a
+\item If we do not find such values, then $\texttt{value}$ is inconsistent for the variable
+      $\texttt{variable}$ w.r.t.~$\texttt{f}$ and needs to be removed from the set 
+      $\texttt{ValuesPerVar}[\texttt{variable}]$.  Furthermore, all variables that are connected to
+      $\texttt{variable}$ have to be added to the set $\texttt{UncheckedVars}$.  The reason is that once a
       value is removed for the variable $\texttt{var}$, the value assigned to another variable $y$ occurring in a
       constraint that mentions both $\texttt{var}$ and $y$ might now become inconsistent.
-\item If there are no consistent values for $\texttt{var}$ left, the problem is unsolvable and an exception is
+\item The set of values that are known to be consistent for $\texttt{variable}$ is stored as
+      $\texttt{ValuesPerVar}[\texttt{variable}]$.
+\item If there are no consistent values for $\texttt{variable}$ left, the problem is unsolvable and an exception is
       raised.
-\item Otherwise, the set of values that are known to be consistent for \texttt{var} is stored
-      as \\ $\texttt{ValuesPerVar}[\texttt{var}]$.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -1702,7 +1705,7 @@ without consistency checking.
             print("Did you misspell any of the following Variables?")
             for v in MisspelledVars:
                 print(v)
-        ValuesPerVar = { x: Values for x in Variables }
+        ValuesPerVar = { x: Values.copy() for x in Variables }
         Annotated    = { f: collect_variables(f) for f in Constraints }
         UnaryConstrs = { (f, V) for f, V in Annotated.items() 
                                 if  len(V) == 1 
@@ -2036,6 +2039,81 @@ command in the shell:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{pip install z3}
+\\[0.2cm]
+Once we have done this and we have added the directory
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{export PATH="\~/opt/anaconda3/envs/ai/bin/}
+\\[0.2cm]
+to the environment variable \texttt{PATH}, we can use the file shown in Figure
+\ref{fig:Brothers-and-Sisters.z3} to solve the problem.  The command to invoke \texttt{Z3} has the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{z3} \textsl{file}\texttt{.z3}
+\\[0.2cm]
+where \textsl{file}\texttt{.z3} is the name of the file that stores the Z3 specification of the problem.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = bg,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{lisp}
+    (declare-const b Int)
+    (declare-const g Int)
+    
+    (assert (= (- b 1) g))
+    (assert (= (* 2 (- g 1)) b))
+    
+    (check-sat)
+    (get-model)
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Solving a simple text problem with \texttt{Z3}.}
+\label{fig:Brothers-and-Sisters.z3}
+\end{figure}
+\begin{enumerate}[(a)]
+\item Line 1 and 2 declare the variables \texttt{b} and \texttt{g} as integer variables.
+
+      With Z3 we are not confined to use a finite set of values.  Instead we can use inter variables and also
+      floating point variables.
+
+      The syntax of \texttt{Z3} files is \href{https://en.wikipedia.org/wiki/Lisp_(programming_language)}{lisp}
+      like.  As we will only use the \textsl{Python} API of Z3 you do not need to worry about this syntax.
+\item Line 4 specifies the equation $b - 1 = g$ as a constraint.
+
+      Note that we can use operators only in prefix notation here.
+      
+\item Similarly, line 5 specifies the equation $2 * (g - 1) = b$ as a constraint.
+\item Line 7 asks Z3 to check whether the problem is solvable.
+\item Line 8 prints the solution of the problem.
+\end{enumerate}
+If we run this command with the specification shown in Figure \ref{fig:Brothers-and-Sisters.z3}, then we get
+the output shown below:
+\pagebreak
+
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = bg,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{lisp}
+    sat
+    (
+      (define-fun b () Int 4)
+      (define-fun g () Int 3)
+    )
+\end{minted}
+The string ``\texttt{sat}'' tells us that the problem is solvable and the following lines show that
+$b = 4$ and $g = 3$ is the solution, i.e.~there are 4 boys and 3 sisters.
 
 \begin{figure}[!ht]
 \centering
@@ -2071,8 +2149,10 @@ command in the shell:
 \end{figure}
 
 \noindent
-Then the Python program shown in Figure \ref{fig:Brothers-and-Sisters.ipynb} solves the text problem
-given above using \texttt{Z3}.\begin{enumerate}
+Instead of using the command line to solve \textsc{Csp}s it is more convenient to utilize the \textsl{Python}
+interface of Z3.  For example, the Python program shown in Figure \ref{fig:Brothers-and-Sisters.ipynb} solves
+the text problem given above via \texttt{Z3}.
+\begin{enumerate}
 \item In line 1 we import the module \texttt{z3} so that we can use the Python \textsc{Api} of Z3.
       The documentation of this \textsc{Api} is available at the following address:
       \\[0.2cm]
