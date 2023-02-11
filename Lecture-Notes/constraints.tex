@@ -1246,99 +1246,6 @@ puzzle.  Hence, for problems like the eight queens puzzle, the least constrainin
 off.  However, for more complicated puzzles like Sudoku puzzles, the least constraining value heuristic speeds
 up the computation.
 
-
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
-    \hline
-    \hline
-      & 3 & 9 &   &   &   &   &   & 7 \\
-    \hline
-      &   &   & 7 &   &   & 4 & 9 & 2 \\
-    \hline
-      &   &   &   & 6 & 5 &   & 8 & 3 \\
-    \hline
-    \hline
-      &   &   & 6 &   & 3 & 2 & 7 &   \\
-    \hline
-      &   &   &   & 4 &   & 8 &   &   \\
-    \hline
-    5 & 6 &   &   &   &   &   &   &   \\
-    \hline
-    \hline
-      &   & 5 & 2 &   & 9 &   &   & 1 \\
-    \hline
-      & 2 & 1 &   &   &   &   & 4 &   \\
-    \hline
-    7 &   &   &   &   &   & 5 &   &   \\
-    \hline
-    \hline
-  \end{tabular}
-  \caption{A super hard sudoku from the magazine ``Zeit Online''.}
-  \label{tab:sudoku}
-\end{table}
-
-\begin{figure}[!ht]
-\centering
-\begin{Verbatim}[ frame         = lines, 
-                  framesep      = 0.3cm, 
-                  firstnumber   = 1,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
-               ]
-    Sudoku = [ ['*',  3 ,  9 , '*', '*', '*', '*', '*',  7 ], 
-               ['*', '*', '*',  7 , '*', '*',  4 ,  9 ,  2 ],
-               ['*', '*', '*', '*',  6 ,  5 , '*',  8 ,  3 ],
-               ['*', '*', '*',  6 , '*',  3 ,  2 ,  7 , '*'],
-               ['*', '*', '*', '*',  4 , '*',  8 , '*', '*'],
-               [ 5 ,  6 , '*', '*', '*', '*', '*', '*', '*'],
-               ['*', '*',  5 ,  2 , '*',  9 , '*', '*',  1 ],
-               ['*',  2 ,  1 , '*', '*', '*', '*',  4 , '*'],
-               [ 7 , '*', '*', '*', '*', '*',  5 , '*', '*']
-             ]
-\end{Verbatim}
-\vspace*{-0.3cm}
-\caption{\textsl{Python} representation of the sudoku puzzle shown in Table \ref{tab:sudoku}.}
-\label{fig:Sudoku.ipynb}
-\end{figure}
-
-% \exercise
-% \index{sudoku}
-% Table \ref{tab:sudoku} on page \pageref{tab:sudoku} shows a \href{https://en.wikipedia.org/wiki/Sudoku}{sudoku}
-% that I have taken from the
-% \href{http://sudoku.zeit.de/cgi-bin/sudoku/sudoku_kd_app_2016.pl?action=level&kd_nr=24091123601092&year=2018&month=03&day=23&level=-c+5}{Zeit Online}
-% magazine.  This sudoku can be represented in \textsl{Python} as the list of lists that is shown in Figure
-% \ref{fig:Sudoku.ipynb}. 
-% \begin{enumerate}[(a)]
-% \item Implement a \textsl{Python} function \texttt{sudoku\_csp} that takes a description of a sudoku puzzle
-%       and returns a \textsc{Csp} such that the solution of the \textsc{Csp} is a solution of the given sudoku puzzle.
-%       A framework for turning a sudoku puzzle into a \textsc{Csp} can be found at:
-%       \\[0.2cm]
-%       \hspace*{1.3cm}
-%       \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/2 Constraint
-%         Solver/Sudoku-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/\\
-%       \hspace*{2.6cm}  
-%           Python/2 Constraint Solver/Sudoku-Frame.ipynb}
-% \item Implement a function \texttt{find\_alternative} that takes two arguments:
-%   \begin{itemize}
-%   \item The first argument is sudoku \texttt{Puzzle}.
-%   \item The second argument is a \texttt{Solution} to this puzzle.
-%   \end{itemize}
-%   The function \texttt{find\_alternative} returns a \textsc{Csp} that has a solution if and only if there is a
-%   solution of the sudoku \texttt{Puzzle} that is different from the \texttt{Solution} that is given as the second argument.
-% \item Rewrite the \textsc{Csp} solver that has been discussed in this section so that instead of computing a single
-%       solution of a given \textsc{Csp} it computes the set of all solutions. 
-%       The solver can be found here:
-%       \\[0.2cm]
-%       \hspace*{1.3cm}
-%       \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/2 Constraint Solver/Constraint-Propagation-Solver.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/\\
-%       \hspace*{2.6cm}  
-%         Python/2 Constraint Solver/Constraint-Propagation-Solver.ipynb}    
-% \end{enumerate}
-
 \section{Consistency Checking \label{sec:consistency}}
 So far, the constraints in the constraints satisfaction problems discussed are either \blue{unary constraints} 
 or \blue{binary constraints}:  A \blue{unary} constraint is a constraint $\texttt{f}$
@@ -2001,13 +1908,9 @@ constraint satisfaction problem is \href{https://en.wikipedia.org/wiki/NP-comple
 it is unlikely that there is an efficient algorithm that works \blue{always}.  However, today many practically
 relevant constraint satisfaction problems can be solved in a reasonably short time. 
 
-In this chapter we could only give a glimpse of the theory of constraint satisfaction problems.
-For further details on the theory of \textsc{Csp}s, consult the book \blue{Constraint Processing} by Rina Dechter
-\cite{dechter:2003}.
-
 \section{Z3}
-We conclude this chapter by showcasing the solver
-\href{https://www.microsoft.com/en-us/research/project/z3-3/}{Z3}, which can be used as a constraint solver.  
+We conclude this chapter with a discussion of the solver
+\href{https://www.microsoft.com/en-us/research/project/z3-3/}{Z3}.  
 Z3 implements most of the state-of-the-art constraint solving algorithms and is exceptionally powerful.  We
 introduce Z3 via a series of examples.
 
@@ -2080,14 +1983,15 @@ where \textsl{file}\texttt{.z3} is the name of the file that stores the Z3 speci
 \begin{enumerate}[(a)]
 \item Line 1 and 2 declare the variables \texttt{b} and \texttt{g} as integer variables.
 
-      With Z3 we are not confined to use a finite set of values.  Instead we can use inter variables and also
+      With Z3 we are not confined to use a finite set of values.  Instead we can use integer variables and
       floating point variables.
 
-      The syntax of \texttt{Z3} files is \href{https://en.wikipedia.org/wiki/Lisp_(programming_language)}{lisp}
-      like.  As we will only use the \textsl{Python} API of Z3 you do not need to worry about this syntax.
+      The syntax of \texttt{Z3} files is similar to the syntax of the programming language
+      \href{https://en.wikipedia.org/wiki/Lisp_(programming_language)}{lisp}.  Later, we will only use the
+      \textsl{Python} API of Z3.  Therefore, you do not need to worry about this syntax. 
 \item Line 4 specifies the equation $b - 1 = g$ as a constraint.
 
-      Note that we can use operators only in prefix notation here.
+      Note that we have to use prefix notation for all operators.
       
 \item Similarly, line 5 specifies the equation $2 * (g - 1) = b$ as a constraint.
 \item Line 7 asks Z3 to check whether the problem is solvable.
@@ -2095,7 +1999,6 @@ where \textsl{file}\texttt{.z3} is the name of the file that stores the Z3 speci
 \end{enumerate}
 If we run this command with the specification shown in Figure \ref{fig:Brothers-and-Sisters.z3}, then we get
 the output shown below:
-\pagebreak
 
 \begin{minted}[ frame         = lines, 
                  framesep      = 0.3cm, 
@@ -2113,7 +2016,7 @@ the output shown below:
     )
 \end{minted}
 The string ``\texttt{sat}'' tells us that the problem is solvable and the following lines show that
-$b = 4$ and $g = 3$ is the solution, i.e.~there are 4 boys and 3 sisters.
+$b = 4$ and $g = 3$ is the solution, i.e.~there are 4 boys and 3 girls.
 
 \begin{figure}[!ht]
 \centering
@@ -2149,9 +2052,16 @@ $b = 4$ and $g = 3$ is the solution, i.e.~there are 4 boys and 3 sisters.
 \end{figure}
 
 \noindent
-Instead of using the command line to solve \textsc{Csp}s it is more convenient to utilize the \textsl{Python}
-interface of Z3.  For example, the Python program shown in Figure \ref{fig:Brothers-and-Sisters.ipynb} solves
-the text problem given above via \texttt{Z3}.
+Instead of using the command line to solve \textsc{Csp}s we will utilize the \textsl{Python}
+interface of Z3.  There are two reasons why this is more convenient:
+\begin{enumerate}
+\item In an interesting CSP there can easily be hundreds of variables and thousands of constraints.
+      It would be very inconvenient if we had to write these variables and constraints manually into a file.
+\item The \textsl{Python} interface allows us to extract the solution that has been computed so that we can
+      then proceed to use the values of the solution in our own programs.
+\end{enumerate}
+The Python program shown in Figure \ref{fig:Brothers-and-Sisters.ipynb} solves
+the text problem given above via the \textsl{Python} \textsc{Api} of \texttt{Z3}.
 \begin{enumerate}
 \item In line 1 we import the module \texttt{z3} so that we can use the Python \textsc{Api} of Z3.
       The documentation of this \textsc{Api} is available at the following address:
@@ -2162,14 +2072,15 @@ the text problem given above via \texttt{Z3}.
       The function \texttt{Int} takes one argument, which has to be a string.  This string is the name of the
       variable.  We store these variables in Python variables of the same name.  It would be possible to use
       different names for the Python variables, but that would be very confusing.
-\item Line 6 creates an object of the class \texttt{Solver}.
+\item Line 6 creates an object of the class \texttt{Solver}.  This is the constraint solver provided by
+      \texttt{Z3}.
 \item Lines 8 and 9 add the constraints expressing that the number of girls is one less than the number of boys
-      and that my sister has twice as many brothers as sisters as constraints to the solver \texttt{S}. 
+      and that my sister has twice as many brothers as she has sisters as constraints to the solver \texttt{S}. 
 \item In line 10 the method \texttt{check} examines whether the given set of constraints is satisfiable.
       In general, this method returns one of the following results:
       \begin{enumerate}[(a)]
       \item \texttt{sat} is returned if the problem is solvable, (\texttt{sat} is short for \emph{satisfiable})
-      \item \texttt{unsat} is returned if the problem is unsatisfiable,
+      \item \texttt{unsat} is returned if the problem is unsolvable,
       \item \texttt{unknown} is returned if \texttt{Z3} is not powerful enough to solve the given problem.
       \end{enumerate}
 \item Since in our case the method \texttt{check} returns \texttt{sat}, we can extract the solution that is
@@ -2184,36 +2095,37 @@ the text problem given above via \texttt{Z3}.
 \exercise
 Solve the following text problem using \texttt{Z3}.
 \textsl{
-  \begin{itemize}
+  \begin{enumerate}[(a)]
   \item A Japanese deli offers both
         \href{https://www.discovermagazine.com/health/hearty-penguin-steaks-the-old-school-explorers-salve-for-scurvy}{penguins}
         and \href{http://fancytoast.blogspot.com/2007/04/parrot-three-ways.html}{parrots}.  
   \item A parrot and a penguin together cost 666 bucks.
-  \item The penguin costs 600 dollars more than the parrot.  
+  \item The penguin costs 600 bucks more than the parrot.  
   \item \textbf{What is the price of the parrot?}
-        \eox
- \end{itemize}}
+  \end{enumerate}}
+  You may assume that the prizes of these delicacies are integer valued. 
+\eox
 
 \exercise
 Solve the following text problem using \texttt{Z3}.
 \textsl{
-  \begin{itemize}
+  \begin{enumerate}[(a)]
   \item  A train travels at a uniform speed for 360 miles.  
   \item  The train would have taken 48 minutes less to travel the same distance 
          if it had been faster by 5 miles per hour.
   \item \textbf{Find the speed of the train!}  
-  \end{itemize}}
+  \end{enumerate}}
 \noindent
 \textbf{Hints:}
 \begin{enumerate}
-\item As the speed is a real number you should declare it via the \texttt{Z3} function \texttt{Real} instead of using
+\item As the speed is a real number you should declare this variable via the \texttt{Z3} function \texttt{Real} instead of using
       the function \texttt{Int}.
 \item 48 minutes are four fifth of an hour.  The fraction $\ds\frac{4}{5}$ can be represented in \texttt{Z3} by the expression
       \texttt{Q(4, 5)}.
 \item When you formulate the information given above, you will get a system of \textbf{non-linear} equations,
       which is equivalent to a quadratic equation.  This quadratic equation has two different solutions.
       One of these solutions is negative.  In order to exclude the negative solution you need to add a
-      constraint stating that the speed of the train is positive.
+      constraint stating that the speed of the train has to be greater than zero.
 \item The solution will be some real number which is represented internally as an object of type
       \texttt{RatNumRef}.  If \texttt{o} is an object of this type, then this object can be converted to a
       string as follows:
@@ -2228,23 +2140,23 @@ Solve the following text problem using \texttt{Z3}.
 \subsection{The Knight's Tour}
 In this subsection we will solve the puzzle \href{https://en.wikipedia.org/wiki/Knight%27s_tour}{The Knight's Tour} 
 using \texttt{Z3}.  This puzzle asks whether it is possible for a knight to visit all 64 squares of the board
-in 63 moves when it starts in one of the corners of the board.
+and return to its starting square in 64 moves.  The tour starts in one of the corners of the board.  
 
 In order to model this puzzle as a constraint satisfaction problem we first have to decide on the variables
-that we want to use. The idea is to have 64 variables that describe the position of the knight before its
-$i^{\mathrm{th}}$ move.  However, it turns out that it is best to split the values of these positions up into a
-row and a column.  If we do this, we end up with 128 variables of the form
+that we want to use. The idea is to have 65 variables that describe the position of the knight after its
+$i^{\mathrm{th}}$ move where $i=0,1,\cdots,64$.  However, it turns out that it is best to split the values of these positions up into a
+row and a column.  If we do this, we end up with 130 variables of the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{R}_i$ and $\mathtt{C}_i$ \quad for $i \in \{1,\cdots,64\}$.
+$\mathtt{R}_i$ and $\mathtt{C}_i$ \quad for $i \in \{0, 1, \cdots, 64\}$.
 \\[0.2cm]
-Here $\mathtt{R}_i$ denotes the row of the knight before its $i^{\mathrm{th}}$ move, while $\mathtt{C}_i$
-denotes its column.  
+Here $\mathtt{R}_i$ denotes the row of the knight after its $i^{\mathrm{th}}$ move, while $\mathtt{C}_i$
+denotes the corresponding column.  
 
 Next, we have to formulate the constraints.  In this case, there are two kinds of constraints:
 \begin{enumerate}
 \item We have to specify that the move from the position $\langle \mathtt{R}_i, \mathtt{C}_i \rangle$
-      to the position $\langle \mathtt{R}_{i+1}, \mathtt{C}_{i+1} \rangle$ is legal for a knight.
+      to the position $\langle \mathtt{R}_{i+1}, \mathtt{C}_{i+1} \rangle$ is legal move for a knight.
       In chess, there are two ways for a knight to move:
       \begin{enumerate}[(a)]
       \item The knight can move two squares horizontally left or right followed by moving vertically
@@ -2252,18 +2164,18 @@ Next, we have to formulate the constraints.  In this case, there are two kinds o
       \item the knight can move two squares vertically up or down followed by moving
             one square left or right.
       \end{enumerate}
-      Figure \ref{fig:knight-moves.png} shows all legal moves of a knight.
+      Figure \ref{fig:knight-moves.png} shows all legal moves of a knight that is positioned in the square \texttt{e4}.
       Therefore, a formula that expresses that the $i^{\mathrm{th}}$ move is a legal move of the knight is a disjunction
-      of the following eight formulas that each describe one possible way to move:
+      of the following eight formulas that each describe one possible way for the knight to move:
       \begin{enumerate}
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 2 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} + 1$,
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 2 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} - 1$, 
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 2 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} + 1$, 
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 2 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} - 1$, 
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 1 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} + 2$, 
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 1 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} - 2$, 
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 1 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} + 2$, 
-      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 1 \wedge \mathtt{C}_{i+1} = \mathtt{C}_{i} - 2$. 
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 2 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} + 1$,
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 2 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} - 1$, 
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 2 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} + 1$, 
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 2 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} - 1$, 
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 1 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} + 2$, 
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} + 1 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} - 2$, 
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 1 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} + 2$, 
+      \item $\mathtt{R}_{i+1} = \mathtt{R}_{i} - 1 \;\wedge\; \mathtt{C}_{i+1} = \mathtt{C}_{i} - 2$. 
       \end{enumerate}
 \item Furthermore, we have to specify that the position  $\langle \mathtt{R}_i, \mathtt{C}_i \rangle$ is
       different from the position  $\langle \mathtt{R}_j, \mathtt{C}_j \rangle$ if $i \not= j$.
@@ -2294,11 +2206,11 @@ Next, we have to formulate the constraints.  In this case, there are two kinds o
     
     def all_variables():
         Variables = set()
-        for i in range(1, 65):
+        for i in range(64+1):
             Variables.add(row(i))
             Variables.add(col(i))
         return Variables
-
+    
     def is_knight_move(i):
         r  = row(i)
         c  = col(i)
@@ -2309,25 +2221,25 @@ Next, we have to formulate the constraints.  In this case, there are two kinds o
             Formulas.add(f'And({rX} == {r} + {delta_r}, {cX} == {c} + {delta_c})')
             Formulas.add(f'And({rX} == {r} + {delta_r}, {cX} + {delta_c} == {c})')
             Formulas.add(f'And({rX} + {delta_r} == {r}, {cX} == {c} + {delta_c})')
-            Formulas.add(f'And({rX} + {delta_r} == {r}, {cX} + {delta_c} == {c})')
-        return 'Or(' + ', '.join(Formulas) + ')'    
+            Formulas.add(f'And({rX} + {delta_r} == {r}, {cX} + {delta_c} == {c})') 
+        return 'Or(' + ', '.join(Formulas) + ')'
     
     def all_different():
         Result = set()
-        for i in range(1, 64):
-            for j in range (i+1, 65):
+        for i in range(62+1):
+            for j in range (i+1, 63+1):
                 Result.add(f'Or({row(i)} != {row(j)}, {col(i)} != {col(j)})')
-        return Result
-    
+        return Result    
+
     def all_constraints():
         Constraints = all_different()
-        Constraints.add(f'{row(1)} == 0')
-        Constraints.add(f'{col(1)} == 0')
-        Constraints.add(f'{row(64)} == 1')
-        Constraints.add(f'{col(64)} == 2')
-        for i in range(1, 64):
+        Constraints.add(f'{row(0 )} == 0')
+        Constraints.add(f'{col(0 )} == 0')
+        Constraints.add(f'{row(64)} == 0')
+        Constraints.add(f'{col(64)} == 0')
+        for i in range(63+1):
             Constraints.add(is_knight_move(i))
-        for i in range(1, 65):
+        for i in range(64+1):
             Constraints.add(f'{row(i)} >= 0')
             Constraints.add(f'{col(i)} >= 0')
         return Constraints
@@ -2341,10 +2253,12 @@ Next, we have to formulate the constraints.  In this case, there are two kinds o
 
 Figure \ref{fig:Knight's Tour with Z3.ipynb-1} shows how we can formulate the puzzle using \texttt{Z3}.
 \begin{enumerate}
-\item In line 1 we import everything from the library \texttt{z3} so that we can write, e.g.~
-      \texttt{And} instead of \texttt{z3.And} etc.
-\item It is not convenient to declare all the 128 variables $\mathrm{R}_i$ and $\mathtt{C}_i$
-      explicitly.  Instead, we will write a function that declares these variables.  To implement
+\item In line 1 we import everything from the library \texttt{z3} so that we can write,
+      e.g.~$\texttt{And}(x, y)$ instead of having to write $\texttt{z3.And}(x, y)$.
+  
+      The expression $\texttt{z3.And}(x, y)$ computes the conjunction of $x$ and $y$.
+\item It is not convenient to declare all of the 130 variables $\mathrm{R}_i$ and $\mathtt{C}_i$ for $i=0,1,\cdots,64$
+      explicitly.  Instead, we will write a function that creates and declares these variables.  To implement
       this function, we define the auxiliary functions \texttt{row} and \texttt{col} in line 2 and 3.
       Given a natural number $i$, the expression $\mathtt{row}(i)$ returns the string $\texttt{'R}i\texttt{'}$
       and  $\mathtt{col}(i)$ returns the string  $\texttt{'C}i\texttt{'}$.  These strings in turn represent the
@@ -2354,14 +2268,13 @@ Figure \ref{fig:Knight's Tour with Z3.ipynb-1} shows how we can formulate the pu
       $\langle \mathtt{R}_i, \mathtt{C}_i \rangle$ to the position $\langle \mathtt{R}_{i+1}, \mathtt{C}_{i+1} \rangle$
       is a legal move for a knight.
 \item The function \texttt{all\_different} computes a set of formulas that state that the positions
-      $\langle \mathtt{R}_i, \mathtt{C}_i \rangle$ for $i=1,\cdots, 64$ are all different from each other.
+      $\langle \mathtt{R}_i, \mathtt{C}_i \rangle$ for $i=0,,1\cdots, 63$ are all different from each other.
 \item The function \texttt{all\_constraints} computes the set of all constraints.
       In addition to the constraints already discussed this function specifies that the knight starts
-      its tour at the leftmost topmost corner of the board and that the tour ends in the third column of the
-      second row.
+      its tour at the leftmost topmost corner of the board and that the tour also ends in this corner.
 
       Additionally there are constraints that the variables $\mathtt{R}_i$ and $\mathtt{C}_i$ are all
-      non-negative.  This constraint is needed as we will model the variables with bit vectors of length 4.
+      non-negative.  These constraints are needed as we will model the variables with bit vectors of length 4.
       These bit vectors store integers in
       \href{https://en.wikipedia.org/wiki/Two%27s_complement}{two's complement} representation.
       In two's complement representation of a bit vector of length 4 we can model integers from the set
@@ -2375,7 +2288,7 @@ Figure \ref{fig:Knight's Tour with Z3.ipynb-1} shows how we can formulate the pu
 \centering
 \begin{minted}[ frame         = lines, 
                  framesep      = 0.3cm, 
-                 firstnumber   = last,
+                 firstnumber   = 1,
                  bgcolor       = bg,
                  numbers       = left,
                  numbersep     = -0.2cm,
@@ -2384,16 +2297,21 @@ Figure \ref{fig:Knight's Tour with Z3.ipynb-1} shows how we can formulate the pu
                ]{python3}
     def solve(Constraints, Variables):
         Environment = {}
-        exec('from z3 import *', Environment)
+        exec('import z3', Environment)
         for v in Variables:
-            exec(f'{v} = BitVec(f"{v}", 4)', Environment)
+            exec(f'{v} = z3.BitVec(f"{v}", 4)', Environment)
         s = z3.Solver()
         for c in Constraints:
             s.add(eval(c, Environment))
-        s.check()
-        m = s.model()
-        S = { v: m[eval(v, Environment)] for v in Variables }
-        return S
+        result = str(s.check())
+        if result == 'sat':
+            m = s.model()
+            S = { v: m[eval(v, Environment)] for v in Variables }
+            return S
+        elif result == 'unsat':
+            print('The problem is not solvable.')
+        else:
+            print('Z3 cannot determine whether the problem is solvable.')
 \end{minted}
 \vspace*{-0.3cm}
 \caption{The function \texttt{solve}.}
@@ -2406,28 +2324,78 @@ arguments:
 \item \texttt{Constraints} is a set of strings that are interpreted as \texttt{Z3} constraints.
 \item \texttt{Variables} is a set of strings that are interpreted as variables.
 \end{enumerate}
-The purpose of the function \texttt{solve} is solve the given \textsc{Csp}.
+The purpose of the function \texttt{solve} is to find a solution of the given \textsc{Csp}.
 If successful, it returns a dictionary that maps every variable name to the corresponding value of the solution
 that has been found.
 \begin{enumerate}
-\item In line 45 we define the dictionary \texttt{Environment}  which will serve as the local environment for
+\item In line 1 we define the dictionary \texttt{Environment}  which will serve as the local environment for
       the functions \texttt{exec} and \texttt{eval} below.
 \item We import everything form the package \texttt{z3} into this environment in line 45.
-\item Then we define the strings from the set \texttt{Variable} as \texttt{Z3} bit-vector variables of length $4$
-      via the function \texttt{exec}.
-\item We create a solver object in line 49 and add the constraints to this solver in the following two lines.
+\item Then we declare that the strings from the set \texttt{Variable} represent \texttt{Z3} bit-vector
+      variables of length $4$.   
+\item We create a solver object in line 6 and add the constraints to this solver in the following two lines.
 \item The function \texttt{check} tries to build a model satisfying the constraints, while the function
-      \texttt{model} extracts this model.
-\item Finally, in line 54 we create a dictionary that maps all of our variables to the corresponding value that
-      is found in the model.  Note that we have to turn the variable names, that are stored as strings in the set
+      \texttt{model} extracts this model if it exists.
+\item Finally, in line 12 we create a dictionary that maps all of our variables to the corresponding values that
+      are found in the model.  Note that we have to turn the variable names, that are stored as strings in the set
       \texttt{Variables}, into objects that represent the corresponding \texttt{Z3} variables using the
       function \texttt{eval}.
 
       This dictionary is then returned.
 \end{enumerate}
 
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{||c|c|c||c|c|c||c|c|c||}
+    \hline
+    \hline
+      & 3 & 9 &   &   &   &   &   & 7 \\
+    \hline
+      &   &   & 7 &   &   & 4 & 9 & 2 \\
+    \hline
+      &   &   &   & 6 & 5 &   & 8 & 3 \\
+    \hline
+    \hline
+      &   &   & 6 &   & 3 & 2 & 7 &   \\
+    \hline
+      &   &   &   & 4 &   & 8 &   &   \\
+    \hline
+    5 & 6 &   &   &   &   &   &   &   \\
+    \hline
+    \hline
+      &   & 5 & 2 &   & 9 &   &   & 1 \\
+    \hline
+      & 2 & 1 &   &   &   &   & 4 &   \\
+    \hline
+    7 &   &   &   &   &   & 5 &   &   \\
+    \hline
+    \hline
+  \end{tabular}
+  \caption{A super hard sudoku from the magazine ``Zeit Online''.}
+  \label{tab:sudoku}
+\end{table}
+
 \exercise
-Solve the 8-queens problem with the help of \texttt{Z3}.
+\index{sudoku}
+Table \ref{tab:sudoku} on page \pageref{tab:sudoku} shows a \href{https://en.wikipedia.org/wiki/Sudoku}{sudoku}
+that I have taken from the
+\href{http://sudoku.zeit.de/cgi-bin/sudoku/sudoku_kd_app_2016.pl?action=level&kd_nr=24091123601092&year=2018&month=03&day=23&level=-c+5}{Zeit Online}
+magazine.
+Solve this Sudoku using \texttt{Z3}.  I have written a frame for you to use that can be found at
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/2 Constraint
+  Solver/Sudoku-Z3-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/\\
+      \hspace*{2.6cm}  
+          Python/2 Constraint Solver/Sudoku-Z3-Frame.ipynb}
+    \eox
+
+In this chapter we could only give a glimpse of the theory of constraint satisfaction problems.
+For further details on the theory of \textsc{Csp}s, consult the book \blue{Constraint Processing} by Rina Dechter
+\cite{dechter:2003}.
+
 
 
 %%% Local Variables:
