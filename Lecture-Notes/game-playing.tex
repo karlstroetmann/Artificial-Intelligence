@@ -762,7 +762,9 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
 \item If $\textts{State}$ is a terminal state, the function returns the $\textts{utility}$ of the given
       $\textts{State}$.
 \item We iterate over all successor states $\textts{ns} \in \textts{next\_states}(\textts{State}, \textts{gPlayers}[0])$.
-\item We have to recursively evaluate the states $\textts{ns}$ with respect to the minimizing player \textts{gPlayers[1]}.
+\item We have to recursively evaluate the states $\textts{ns}$ with respect to the minimizing player
+      \textts{gPlayers[1]}.  Hence we call the function $\texttt{alphaBetaMin}$ when evaluating
+      the state $\mathtt{ns}$.
 \item As the specification of $\textts{alphaBetaMax}$ asks us to compute the value of $\textts{State}$ only in
       those cases where it is less than or equal to $\mathtt{beta}$, once we find a successor state $s$ that has a
       $\textts{value}$ that is at least as big as $\mathtt{beta}$ we can \blue{stop any further evaluation} of the successor
@@ -774,7 +776,7 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
       achieve $\textts{value}$ we are no longer interested in any smaller values.
       This is the reason for assigning the maximum of $\textts{value}$ and $\textts{alpha}$ to $\textts{alpha}$.
 
-      After this assignment, $\texttt{alpha}$ will be at least $\texttt{value}$ and according to the specification
+      After this assignment, $\texttt{alpha}$ will be at least as big as $\texttt{value}$ and according to the specification
       of $\texttt{alphaBetaMax}$ we can therefore return $\texttt{alpha}$.
 \end{enumerate}
 
@@ -1060,7 +1062,7 @@ $l-1$.
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]{python3}
-    def alphaBetaMax(State, limit, alpha=-1, beta=1):
+    def maxValue(State, limit, alpha=-1, beta=1):
         if finished(State):
             return utility(State)
         if limit == 0:
@@ -1069,16 +1071,19 @@ $l-1$.
         NextStates = next_states(State, gPlayers[0])
         Moves      = []  # empty priority queue
         for ns in NextStates:
+            val = value_cache(ns, limit-2) 
+            if val == None:
+                val = -1 # unknown values are assumed to be worse than known values
             # heaps are sorted ascendingly, hence the minus
-            heapq.heappush(Moves, (-value_cache(ns, limit-1), ns))
-        while Moves:
+            heapq.heappush(Moves, (-val, ns))
+        while Moves != []:
             _, ns = heapq.heappop(Moves)
             value = max(value, evaluate(ns, limit-1, minValue, value, beta))
             if value >= beta:
                 return value
-        return value    
-
-    def alphaBetaMin(State, limit, alpha=-1, beta=1):
+        return value
+    
+    def minValue(State, limit, alpha=-1, beta=1):
         if finished(State):
             return utility(State)
         if limit == 0:
@@ -1087,17 +1092,20 @@ $l-1$.
         NextStates = next_states(State, gPlayers[1])
         Moves      = []  # empty priority queue
         for ns in NextStates:
-            heapq.heappush(Moves, (value_cache(ns, limit-1), ns))
-        while Moves:
+            val = value_cache(ns, limit-2)
+            if val == None:
+                val = 1
+            heapq.heappush(Moves, (val, ns))
+        while Moves != []:
             _, ns = heapq.heappop(Moves)
             value = min(value, evaluate(ns, limit-1, maxValue, alpha, value))
             if value <= alpha:
                 return value
         return value
-
-    def value_cache(State, limit):
-        flag, value = gCache.get((State, limit), ('=', 0))
-        return value
+    
+        def value_cache(State, limit):
+        flag, value = gCache.get((State, limit), ('?', None))
+            return value
 \end{minted}
 \caption{Depth-limited $\alpha$-$\beta$-pruning.}
 \label{fig:Game.ipynb}
@@ -1151,7 +1159,7 @@ There are two players, which we will call \textts{X} and \textts{O}.  The bottom
 with three coins that are marked with an \textts{'X'} on top, while the top row is filled with three coins that
 are marked with an \textts{'O'} on top.  The coins marked with an \textts{'X'} are assigned to the player \textts{X},
 while the coins marked with an \textts{'O'} are assigned to player \textts{O}.
-Each turn, the player whose turn it is moves one of his coins into an adjacent empty field.  The coins can be
+On each turn, the player whose turn it is moves one of his coins into an adjacent empty field.  The coins can be
 moved vertically, horizontally, and diagonally. 
 Player \textts{X} starts.  The goal of the game for player \textts{X} is to get three \textts{X}s into a row, column, or
 diagonal line, while player \textts{O} needs to get three \textts{O}s into a row, column, or diagonal line.  However, for
