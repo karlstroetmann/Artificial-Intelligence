@@ -782,9 +782,36 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
 
 \remark
 There is a nice simulator for alpha-beta-pruning available at the following web address:
-\href{https://raphsilva.github.io/utilities/minimax_simulator/}{https://raphsilva.github.io/utilities/minimax\_simulator/}.
+\href{https://pascscha.ch/info2/abTreePractice/}{https://pascscha.ch/info2/abTreePractice/}.
 
-\subsection{Alpha-Beta-Pruning with Memoization}
+\exercise
+The game \href{https://en.wikipedia.org/wiki/Nim}{Nim} works as follows:
+\begin{enumerate}[(a)]
+\item There are four rows of matches:
+      \begin{enumerate}[1.]
+      \item the first  row contains 1 match,
+      \item the second row contains 3 matches,
+      \item the third  row contains 5 matches, and
+      \item the fourth row contains 7 matches.
+     \end{enumerate}
+\item The player whose turn it is first selects a line.
+     
+      Then she removes any number of matches from this line.
+\item The player that removes the last match has won the game. 
+\end{enumerate}
+Implement this game by adapting the notebook
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Nim-Frame.ipynb}{
+   Artificial-Intelligence/blob/master/Python/3 Games/Nim-Frame.ipynb}.
+Then,  test the game using the notebook
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Alpha-Beta-Pruning-Pure.ipynb}{Artificial-Intelligence/blob/master/Python/3 Games/Alpha-Beta-Pruning-Pure.ipynb}.
+\eox
+
+
+\subsection{Alpha-Beta Pruning with Memoization}
 Adding memoization to the functions \textts{maxValue} and \textts{minValue} is non-trivial.
 If memoization is added in a naive way, then the cache might have many entries for the same state that differ
 only in their values for the parameters $\alpha$ and $\beta$.  Although this is not a problem for trivial games
@@ -1148,39 +1175,39 @@ The resulting $\textts{sum}$ can then be used as an approximation of the value o
 More details about the weights of the pieces can be found in the Wikipedia article 
 ``\href{https://en.wikipedia.org/wiki/Chess_piece_relative_value}{chess piece relative value}''.
 
-\exercise
-The game \blue{three men's morris} is described in the following YouTube video:
-\\[0.2cm]
-\hspace*{1.3cm}
-\href{https://www.youtube.com/watch?v=R-aSW1MQwEo}{\textts{https://www.youtube.com/watch?v=R-aSW1MQwEo}}
-\\[0.2cm]
-The game is played on a board of size $3 \times 3$, i.e.~it is played on the same board as tic-tac-toe.
-There are two players, which we will call \textts{X} and \textts{O}.  The bottom row of the board is filled
-with three coins that are marked with an \textts{'X'} on top, while the top row is filled with three coins that
-are marked with an \textts{'O'} on top.  The coins marked with an \textts{'X'} are assigned to the player \textts{X},
-while the coins marked with an \textts{'O'} are assigned to player \textts{O}.
-On each turn, the player whose turn it is moves one of his coins into an adjacent empty field.  The coins can be
-moved vertically, horizontally, and diagonally. 
-Player \textts{X} starts.  The goal of the game for player \textts{X} is to get three \textts{X}s into a row, column, or
-diagonal line, while player \textts{O} needs to get three \textts{O}s into a row, column, or diagonal line.  However, for
-player \textts{X} filling the bottom row with \textts{'X'}s does not count as a victory, while for player
-\textts{O}  filling the top row with \textts{'O'}s does not count as a victory.
-\begin{enumerate}[(a)]
-\item Implement this game by adapting the notebook
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Tic-Tac-Toe.ipynb}{
-            Artificial-Intelligence/blob/master/Python/3 Games/Tic-Tac-Toe.ipynb}
-      \\[0.2cm]
-      from my GitHub page \textts{https://github.com/karlstroetmann}.
-\item Test the game using the notebook
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Game-Move-Ordering.ipynb}{
-           Artificial-Intelligence/blob/master/Python/3 Games/Game-Move-Ordering.ipynb}.
-      \eox
-\end{enumerate}
-\pagebreak
+% \exercise
+% The game \blue{three men's morris} is described in the following YouTube video:
+% \\[0.2cm]
+% \hspace*{1.3cm}
+% \href{https://www.youtube.com/watch?v=R-aSW1MQwEo}{\textts{https://www.youtube.com/watch?v=R-aSW1MQwEo}}
+% \\[0.2cm]
+% The game is played on a board of size $3 \times 3$, i.e.~it is played on the same board as tic-tac-toe.
+% There are two players, which we will call \textts{X} and \textts{O}.  The bottom row of the board is filled
+% with three coins that are marked with an \textts{'X'} on top, while the top row is filled with three coins that
+% are marked with an \textts{'O'} on top.  The coins marked with an \textts{'X'} are assigned to the player \textts{X},
+% while the coins marked with an \textts{'O'} are assigned to player \textts{O}.
+% On each turn, the player whose turn it is moves one of his coins into an adjacent empty field.  The coins can be
+% moved vertically, horizontally, and diagonally. 
+% Player \textts{X} starts.  The goal of the game for player \textts{X} is to get three \textts{X}s into a row, column, or
+% diagonal line, while player \textts{O} needs to get three \textts{O}s into a row, column, or diagonal line.  However, for
+% player \textts{X} filling the bottom row with \textts{'X'}s does not count as a victory, while for player
+% \textts{O}  filling the top row with \textts{'O'}s does not count as a victory.
+% \begin{enumerate}[(a)]
+% \item Implement this game by adapting the notebook
+%       \\[0.2cm]
+%       \hspace*{1.3cm}
+%       \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Tic-Tac-Toe.ipynb}{
+%             Artificial-Intelligence/blob/master/Python/3 Games/Tic-Tac-Toe.ipynb}
+%       \\[0.2cm]
+%       from my GitHub page \textts{https://github.com/karlstroetmann}.
+% \item Test the game using the notebook
+%       \\[0.2cm]
+%       \hspace*{1.3cm}
+%       \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/3 Games/Game-Move-Ordering.ipynb}{
+%            Artificial-Intelligence/blob/master/Python/3 Games/Game-Move-Ordering.ipynb}.
+%       \eox
+% \end{enumerate}
+% \pagebreak
 
 \exercise
 Read up on the game \href{https://en.wikipedia.org/wiki/Connect_Four}{Connect Four}.  You can play it online at
