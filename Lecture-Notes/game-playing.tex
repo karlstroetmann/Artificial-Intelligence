@@ -820,7 +820,8 @@ like Tic-Tac-Toe, it becomes a problem once we try to implement more complex gam
 \href{https://en.wikipedia.org/wiki/Connect_Four}{Connect Four}. The reason is that for those games we are no
 longer able to compute the complete game tree.  Instead, we need to approximate the value of a state with the
 help of a heuristic.  Then, $\alpha$ and $\beta$ will no longer be confined to the values from the set
-$\{-1,0,1\}$ and hence there will be many function calls of the form
+$\{-1,0,1\}$ but will rather take on a continuous set of values from the interval $[-1, +1]$.  Hence there will
+be many function calls of the form 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\textts{maxValue}(s, \alpha, \beta)$ 
@@ -828,7 +829,9 @@ $\textts{maxValue}(s, \alpha, \beta)$
 where the state $s$ is the same but $\alpha$ and $\beta$ are different.  If we would try to store every
 combination of $s$, $\alpha$, and $\beta$ we would waste a lot of memory and, furthermore, we would have only a
 small number of cache hits.  Therefore, we will now present a more effective way to cache the functions
-\textts{maxValue} and \textts{minValue}.  To this end we will define a function \textts{evaluate} that is
+\textts{maxValue} and \textts{minValue}.  The method we describe here is an adaption of the method published by
+Marsland and Campbell \cite{marsland:82}.
+To this end we will define a function \textts{evaluate} that is
 called as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -850,24 +853,29 @@ cache.  If this is the case, the value is returned.  Otherwise, the function $f$
 
 The function \textts{evaluate} makes use of a global variable \textts{gCache}.  This variable is used as a
 cache to store the results of the function \textts{evaluate}.  This cache is implemented as a dictionary.  The
-keys of this dictionary are the states, not triples of the form $\langle s, \alpha, \beta \rangle$.  The values
-are stored in pairs of the form $\langle \textts{flag}, v \rangle$, where $v$ is a value computed by the
-function $\textts{evaluate}(s, f, \alpha, \beta)$, while $\textts{flag} \in \{ \quoted{\leq}, \quoted{=}, \quoted{\geq}\}$.
+keys of this dictionary are the just the states, not triples of the form $\langle s, \alpha, \beta \rangle$.  The values
+stored in the cache are pairs of the form $(\textts{flag}, v)$, where $v$ is a value computed by the
+function $\textts{evaluate}(s, f, \alpha, \beta)$, while $\textts{flag}$ specifies whether $v$ is exact, a
+lower bound, or an upper bound.  We have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textts{flag} \in \{ \quoted{\leq}, \quoted{=}, \quoted{\geq}\}$.
+\\[0.2cm]
 The cache satisfies the following specification:
 \begin{enumerate}
-\item $\texttt{gCache}[s] = (\quoted{=}, v) \rightarrow f(s, \alpha, \beta) = v$,
+\item $\texttt{gCache}[s] = (\quoted{=}, v) \rightarrow f(s, \alpha, \beta) = v$
 
-      i.e.~if the flag is equal to \quoted{=}, then the value stored in $\textts{gCache}[s]$
-      is the value computed for the given state $s$ by the function $f$.
-\item $\texttt{gCache}[s] = (\quoted{\leq}, v) \rightarrow f(s, \alpha, \beta) \leq v$,
+      If the flag is equal to \quoted{=}, then the value stored in $\textts{gCache}[s]$
+      is the \blue{exact} value computed for the given state $s$ by the function $f$.
+\item $\texttt{gCache}[s] = (\quoted{\leq}, v) \rightarrow f(s, \alpha, \beta) \leq v$
 
-      i.e.~if the flag is equal to \quoted{\leq}, then the value stored in $\textts{gCache}[s]$
-      is an upper bound for the value returned from $f(s, \alpha, \beta)$.
+      If the flag is equal to \quoted{\leq}, then the value stored in $\textts{gCache}[s]$
+      is an \blue{upper bound} for the value returned from $f(s, \alpha, \beta)$.  
 
-\item $\texttt{gCache}[s] = (\quoted{\geq}, v) \rightarrow f(s, \alpha, \beta) \geq v$,
+\item $\texttt{gCache}[s] = (\quoted{\geq}, v) \rightarrow f(s, \alpha, \beta) \geq v$
 
-      i.e.~if the flag is equal to \quoted{\geq}, then the value stored in \textts{gCache[State]}
-      is a lower bound for $f(s, \alpha, \beta)$.
+      If the flag is equal to \quoted{\geq}, then the value stored in \textts{gCache[State]}
+      is a \blue{lower bound} for $f(s, \alpha, \beta)$.
 \end{enumerate}
 If $\textts{gCache}[s]$ is defined, then the computation of $\texttt{evaluate}(s, f, \alpha, \beta)$
 proceeds according to the following case distinction:
@@ -876,55 +884,46 @@ proceeds according to the following case distinction:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\texttt{gCache}[s] = (\quoted{=}, v) \rightarrow \texttt{evaluate}(s, f, \alpha, \beta) = v$.
-\item If the stored value $v$ is an upper bound and this upper bound is less or equal than $\alpha$, then we know that
-      the true value of $s$ is less or equal than $\alpha$ and hence we can also return the value $v$:
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{gCache}[s] = (\quoted{\leq}, v) \wedge v \leq \alpha \rightarrow 
+\item If the stored value $v$ is an upper bound, then there are two cases.
+      \begin{enumerate}[(a)]
+      \item If this upper bound $v$ is less or equal than $\alpha$, then we know that
+            the true value of the state $s$ is less or equal than $\alpha$ and hence we can also return the value $v$:
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $\texttt{gCache}[s] = (\quoted{\leq}, v) \wedge v \leq \alpha \rightarrow 
      \texttt{evaluate}(s, f, \alpha, \beta) = v$.
-\item If the stored value $v$ is an upper bound and this upper bound is bigger than $\alpha$ but less than
-      $\beta$, then we know that the true value is less or equal than $v$ and hence we shrink the interval
-      $[\alpha, \beta]$ into the interval $[\alpha, v]$.
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{gCache}[s] = (\quoted{\leq}, v) \wedge \alpha < v < \beta \rightarrow 
-     \texttt{evaluate}(s, f, \alpha, \beta) = f(s, \alpha, v)$.
-     
-      In this case, \textts{gCache} is updated.  
-
-\item If the stored value $v$ is an upper bound and this upper bound is bigger or equal than $\beta$, then the
-      stored value isn't of any help. 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{gCache}[s] = (\quoted{\leq}, v) \wedge \beta \leq v \rightarrow 
-     \texttt{evaluate}(s, f, \alpha, \beta) = f(s, \alpha, \beta)$.
-
-      In this case,  \textts{gCache} needs to be updated.
-
-\item If the stored value $v$ is a lower bound and this lower bound is greater or equal than $\beta$, then we 
-      know that the true value is bigger or equal than $\beta$ and hence we can return the value $v$: 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{gCache}[s] = (\quoted{\geq}, v) \wedge \beta \leq v \rightarrow 
+      \item Otherwise we can sharpen the upper bound $\beta$ by setting $\beta$ to be the minimum of $\beta$
+            and $v$:
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $\texttt{beta} = \texttt{min}(\texttt{beta}, v)$.
+            \\[0.2cm]
+            If this leads to a reduction of $\beta$, then size of the interval $[\alpha, \beta]$ is reduced
+            and hence Alpha-Beta pruning will be able to remove more nodes from the game tree, making the
+            search more efficient.
+      \end{enumerate}
+      \item If the stored value $v$ is a lower bound, there are again two cases.
+      \begin{enumerate}
+      \item If this lower bound is greater or equal than $\beta$, then we 
+            know that the true value is bigger or equal than $\beta$ and hence we can return the value $v$: 
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $\texttt{gCache}[s] = (\quoted{\geq}, v) \wedge \beta \leq v \rightarrow 
      \texttt{evaluate}(s, f, \alpha, \beta) = v$.
-\item If the stored value $v$ is a lower bound and this lower bound is less than $\beta$ but bigger than $\alpha$,
-      then we know that the true value is bigger or equal than $v$ and hence we shrink the interval $[\alpha,\beta]$
-      into the interval $[v, \beta]$: 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{gCache}[s] = (\quoted{\geq}, v) \wedge \alpha < v < \beta \rightarrow 
-     \texttt{evaluate}(s, f, \alpha, \beta) = f(s, v, \beta)$.
-     
-      In this case, \textts{gCache} is updated.    
-\item If the stored value $v$ is a lower bound and this lower bound is less or equal than $\alpha$, then the
-      stored value isn't of any help. 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{gCache}[s] = (\quoted{\geq}, v) \wedge v \leq \alpha \rightarrow 
-      \texttt{evaluate}(s, f, \alpha, \beta) = f(s, \alpha, \beta)$.
-
-      In this case, the \textts{gCache} needs to be updated.
+      \item Otherwise, we can sharpen the lower bound $\alpha$ by setting $\alpha$ to be the maximum of
+            $\alpha$ and $v$:
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            \texttt{alpha} = \texttt{max}(\texttt{alpha}, v)
+            \\[0.2cm]
+            If this leads to an increase of $\alpha$, then size of the interval $[\alpha, \beta]$ is reduced
+            and hence Alpha-Beta pruning will be able to remove more nodes from the game tree, making the
+            search more efficient.
+      \end{enumerate}
 \end{enumerate}
+Finally, we call the function $f$ on the given state with lower bound $\alpha$ and upper bound $\beta$ and
+store the value that is computed in the cache via the function \texttt{store\_cache}.  This function has to
+store both the value and the appropriate flag.
 
 \begin{figure}[!ht]
 \centering
@@ -946,29 +945,16 @@ proceeds according to the following case distinction:
             if flag == '<=':
                 if v <= alpha:
                     return v
-                elif alpha < v < beta:
-                    w = f(State, alpha, v)
-                    store_cache(State, alpha, v, w)
-                    return w
-                else: 
-                    w = f(State, alpha, beta)
-                    store_cache(State, alpha, beta, w)
-                    return w
+                else:
+                    beta = min(beta, v)
             if flag == '>=':
                 if beta <= v:
                     return v
-                elif alpha < v < beta:
-                    w = f(State, v, beta)
-                    store_cache(State, v, beta, w)
-                    return w
                 else:
-                    w = f(State, alpha, beta)
-                    store_cache(State, alpha, beta, w)
-                    return w
-        else: # no value stored in gCache for State
-            v = f(State, alpha, beta)
-            store_cache(State, alpha, beta, v)
-            return v
+                    alpha = max(alpha, v)
+        v = f(State, alpha, beta)
+        store_cache(State, alpha, beta, v)
+        return v
 
     def store_cache(State, alpha, beta, v):
         global gCache
