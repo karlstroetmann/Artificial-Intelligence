@@ -1055,16 +1055,6 @@ that tries to guess the approximate value of a given state.
 Notice that in the calls of the function \textts{evaluate} we have to take care to decrease the parameter
 $\textts{limit}$.  The function $\textts{evaluate}$ is responsible for administering the cache as previously.
 
-There is one further difference between the functions $\textts{maxValue}$ and $\textts{minValue}$ shown in
-Figure \ref{fig:Game.ipynb} and those versions of these functions that were shown previously:
-In Figure \ref{fig:Game.ipynb} the $\textts{NextStates}$ are stored in a priority queue such that the move that
-is considered to be the best has the highest priority.  This way, the best moves are tried first and as a
-result alpha-beta-pruning is able to prune larger parts of the search space.
-In order to guess which move is best we use the cached values of the corresponding states.  This is the real
-reason for using progressive deepening:  When we evaluate the states with a depth limit of $l$, we can use the
-values of the states that has been stored previously when those states were evaluated with a depth limit of
-$l-1$. 
-
 \begin{figure}[!ht]
 \centering
 \begin{minted}[ frame         = lines, 
@@ -1124,7 +1114,29 @@ $l-1$.
 \caption{Depth-limited $\alpha$-$\beta$-pruning.}
 \label{fig:Game.ipynb}
 \end{figure}
-\FloatBarrier
+
+There is one further difference between the functions $\textts{maxValue}$ and $\textts{minValue}$ shown in
+Figure \ref{fig:Game.ipynb} and those versions of these functions that were shown previously:
+In Figure \ref{fig:Game.ipynb} the $\textts{NextStates}$ are stored in a priority queue such that the move that
+is considered to be the best has the highest priority.  This way, the best moves are tried first and as a
+result alpha-beta-pruning is able to prune larger parts of the search space.
+In order to guess which move is best we use the cached values of the corresponding states.  This is the real
+reason for using progressive deepening:  When we evaluate the states with a depth limit of $l$, we can use the
+values of the states that has been stored previously when those states were evaluated with a depth limit of
+$l-2$.  At this point the reader might be surprised: Wouldn't the value computed for a depth limit of $l-1$ be
+more accurate than the value for a depth limit of $l-2$?  The answer is no.  This can be both verified
+experimentally and explained theoretically.  To understand why the value for the depth of $l-2$ is better than
+the value for $l-1$, let us think about the game of chess.  Assume first that we have a depth limit of $1$,
+i.e. we look only one half move into the future.  This would result in very aggressive play, i.e.~the computer
+would always try to capture a piece if possible.  For example, if the only capture possible would be the queen
+capturing a  pawn, the computer would take this pawn, even if it would loose the queen in the following move
+because a look ahead depth of 1 is just not sufficient.  With a depth limit of $2$ the computer would play more
+defensive. However, when the depth is incremented to 3, the computer would play more aggressive again.
+Although it would then not sacrifice a queen to capture a pawn, it still would prepare to capture a pawn with
+the queen in its second move.  For this reason, it is usually best to have a depth limit that is even, because
+if the depth limit is odd, the computer would play to aggressive as it would not be able to see the way in
+which his last move is answered by its opponent.  Therefore, the values stored for a depth limit of $l-2$ are
+actually better than those for a depth limit of $l-1$. 
 
 
 For a game like tic-tac-toe it is difficult to come up with a decent heuristic.  A very crude approach would be
