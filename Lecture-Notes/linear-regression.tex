@@ -12,7 +12,7 @@ learning can already be illustrated with linear regression.  Therefore it is onl
 study of machine learning with the study of linear regression.
 
 \section{Simple Linear Regression}
-\index{simple linear regression}
+\index{simple linear regression} 
 Assume we want to know how the \href{https://en.wikipedia.org/wiki/Engine_displacement}{engine displacement} of
 a car engine relates to its \blue{fuel consumption}.  One approach to understand this relation would be to derive a
 \blue{theoretical model} that is able to predict the fuel consumption from the engine displacement by using the
@@ -302,12 +302,12 @@ To this end, I have written the function \texttt{simple\_linear\_regression} sho
 
 
 \noindent
-The procedure $\mathtt{simple\_linear\_regression}$ takes two arguments:
+The function $\mathtt{simple\_linear\_regression}$ takes two arguments:
 \begin{enumerate}[(a)]
 \item $\mathtt{X}$ is a \texttt{NumPy} array containing the independent variable.
 \item $\mathtt{Y}$ is a \texttt{NumPy} array containing the dependent variable.
 \end{enumerate}
-The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works as follows:
+The implementation of the function $\mathtt{simple\_linear\_regression}$ works as follows:
 \begin{enumerate}
 \item $\mathtt{m}$ is the number of data that are present in the array $\texttt{X}.$
 \item $\mathtt{xMean}$ is the mean value $\bar{x}$ of the independent variable $\mathtt{x}$.
@@ -377,7 +377,7 @@ The implementation of the procedure $\mathtt{simple\_linear\_regression}$ works 
     print(f'The explained variance is {R2}%')
 \end{minted}
 \vspace*{-0.3cm}
-\caption{Calling the procedure $\mathtt{simple\_linear\_regression}$.}
+\caption{Calling the function $\mathtt{simple\_linear\_regression}$.}
 \label{fig:simple_linear_regression.py:test}
 \end{figure}
 In order to use the function we can use the code that is shown in 
@@ -454,7 +454,7 @@ In a \blue{general regression problem} we are given a list of $m$ pairs of the f
 where $\mathbf{x}^{(i)} \in \mathbb{R}^p$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1,\cdots,m\}$.  The
 number $p$ is called the number of \blue{features}, while the pairs are called the \blue{training examples}. 
 \index{training example}
-Our goal is to compute a function 
+Our goal is to compute a linear function 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds F:\mathbb{R}^p \rightarrow \mathbb{R}$
@@ -471,10 +471,10 @@ define the \blue{mean squared error} \index{mean squared error} \index{MSE}
   \label{eq:squared-error-1}
   \mathtt{MSE} := \frac{1}{m-1} \cdot \sum\limits_{i=1}^{m} \Bigl(F\bigl(\mathbf{x}^{(i)}\bigr) - y^{(i)}\Bigr)^2. 
 \end{equation}
-Then, given the list of training examples $[\langle \mathbf{x}^{(1)}, y^{(1)} \rangle, \cdots, \langle
-\mathbf{x}^{(n)}, y^{(n)} \rangle]$, our goal is to minimize the $\mathtt{MSE}$.  
-In order to proceed, we need to have a \blue{model} for the function $F$.  The simplest model is a 
-\blue{linear model}, \index{linear model} i.e.~we assume that $F$ is given as 
+Then, given the list of training examples
+$[\langle \mathbf{x}^{(1)}, y^{(1)} \rangle, \cdots, \langle \mathbf{x}^{(m)}, y^{(m)} \rangle]$, our goal is to
+minimize the $\mathtt{MSE}$.   
+In order to proceed, we assume that $F$ is given as 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds F(\mathbf{x}) = \sum\limits_{j=1}^p w_j \cdot x_j + b = \mathbf{x}^\top \cdot \mathbf{w} + b$ 
@@ -500,7 +500,8 @@ $(p+1)$-dimensional vector $\mathbf{x}'$ such that
 \hspace*{1.3cm}
 $x_j' := x_j$ \quad for all $j\in\{1,\cdots,p\}$ \quad and \quad $x_{p+1}' := 1$.
 \\[0.2cm]
-To put it in words, the vector $\mathbf{x}'$ results from the vector $\mathbf{x}$ by appending the number $1$:
+To put it in words, the feature vector $\mathbf{x}'$ results from the feature vector $\mathbf{x}$ by appending
+the number $1$ as a constant feature to every data point:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathbf{x}' = \langle x_1, \cdots, x_p, 1 \rangle^\top$ \quad where $\langle x_1, \cdots, x_p \rangle = \mathbf{x}^\top$.
@@ -603,7 +604,8 @@ $\ds f(\mathbf{x}) = \sum\limits_{i=1}^n x_i \cdot \sum\limits_{j=1}^n c_{i,j} \
                    = \sum\limits_{i=1}^n \sum\limits_{j=1}^n x_i \cdot c_{i,j} \cdot x_j
 $.
 \\[0.2cm]
-We compute the partial derivative of $f$ with respect to $x_k$ and use the product rule together with the
+We compute the partial derivative of $f$ with respect to $x_k$ and use the
+\href{https://en.wikipedia.org/wiki/Product_rule}{product rule} together with the
 definition of the \href{https://en.wikipedia.org/wiki/Kronecker_delta}{Kronecker delta} $\delta_{i,j}$, which
 is defined as $1$ if $i = j$ and as $0$ otherwise:
 \\[0.2cm]
@@ -673,7 +675,7 @@ $
  \\[0.5cm]
  & = & 
  \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\top \cdot X^\top - \textbf{y}^\top\bigr) \cdot \bigl(X \cdot \mathbf{w} - \textbf{y}\bigr) 
- & \mbox{since $(A \cdot B)^\top = B^\top \cdot A^\top$}
+ & \hspace*{-1.5cm}\mbox{since $(A \cdot B)^\top = B^\top \cdot A^\top$}
  \\[0.5cm]
  & = & 
  \ds \frac{1}{m-1} \cdot \bigl(\mathbf{w}^\top \cdot X^\top \cdot X \cdot \mathbf{w} 
@@ -687,7 +689,7 @@ $
                              - 2 \cdot \textbf{y}^\top \cdot X \cdot \mathbf{w} 
                              + \mathbf{y}^\top \cdot \mathbf{y}
                        \bigr)
- & \mbox{since $\mathbf{w}^\top \cdot X^\top \cdot \mathbf{y} = \textbf{y}^\top \cdot X \cdot \mathbf{w}$}
+ & \hspace*{-1.5cm}\mbox{since $\mathbf{w}^\top \cdot X^\top \cdot \mathbf{y} = \textbf{y}^\top \cdot X \cdot \mathbf{w}$}
 \end{array}
 $
 \\[0.2cm]
@@ -782,7 +784,7 @@ $A \cdot \mathbf{x} = \mathbf{b}$.  \eox
 
 \subsection{Implementation}
 \myFig{linear-regression.stlx} shows an implementation of general linear regression.
-The procedure
+The function
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathtt{linear\_regression}(\mathtt{fileName},\; \mathtt{target},\; \mathtt{explaining},\; \mathtt{f})$
