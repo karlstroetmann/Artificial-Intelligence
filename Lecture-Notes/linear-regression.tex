@@ -441,6 +441,39 @@ of the fuel consumption.
   \label{tab:explained-variance}
 \end{table}
 
+\exercise
+In this exercise we are going to investigate the concept of a
+\href{https://en.wikipedia.org/wiki/Random_walk}{random walk}.
+To understand the idea of a \blue{random walk}, imagine a person standing at the origin $(0,0)$ of a two
+dimensional plane.  Every second the robot chooses a random direction from the set
+\\[0.2cm]
+\hspace*{1.3cm}
+$\{ \texttt{north},  \texttt{east},  \texttt{south},  \texttt{west} \}$
+\\[0.2cm]
+and moves one unit into this direction.  For example, if the robot chooses the direction \texttt{north} in the
+first step, it will move from $(0,0)$ to the position $(0,1)$.  Then, it could choose the direction
+\texttt{west} to arrive at the position $(-1,1)$.  The link
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://upload.wikimedia.org/wikipedia/commons/c/cb/Random_walk_25000.svg}{https://upload.wikimedia.org/wikipedia/commons/c/cb/Random\_walk\_25000.svg}
+\\[0.2cm]
+shows a random walk with $25,000$ steps.  Our goal is to find a formula for the average distance of the robot
+after its $i^\texttt{th}$ step.  Our assumption is that the average distance after $i$ steps satisfies the
+following formula:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{Distance}[i] = \alpha \cdot i^\beta$.
+\\[0.2cm]
+In order to find $\alpha$ and $\beta$ we will simulate a large number of random walks and compute
+the average distance of the robot in all of these walks.  Then we use an appropriate variation of linear
+regression to find the coefficients $\alpha$ and $\beta$ formula.  Complete the notebook
+\\[0.2cm]
+\hspace*{0.8cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/5 Linear Regression/Random-Walk-Frame.ipynb}{
+   Artificial-Intelligence/blob/master/Python/5 Linear Regression/Random-Walk-Frame.ipynb}.
+\\[0.2cm]
+to solve this exercise.
+\eox
 
 \section{General Linear Regression}
 \index{general linear regression}
@@ -892,9 +925,9 @@ not take the aerodynamics of the cars into take account, this seems like a reaso
 containing a similar program is available at
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Linear-Regression.ipynb}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/\\
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/5 Linear Regression/6-Linear-Regression.ipynb}{\texttt{https://github.com/karlstroetmann/Artificial-Intelligence/\\
 \hspace*{2.2cm}
- blob/master/Python/Linear-Regression.ipynb}}.
+ blob/master/Python/5 Linear Regression/6-Linear-Regression.ipynb}}.
 
 \section{Polynomial Regression}
 \index{polynomial regression}
