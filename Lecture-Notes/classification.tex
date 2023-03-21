@@ -178,11 +178,13 @@ from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we defin
       i.e.~$\mathbf{x}_i$ is a $D$-dimensional column vector that collects the features of the $i$-th training object.
 \item $x_{i,j} := \mathtt{feature}(o_i, j)$ \quad for all $i \in \{1, \cdots, N\}$ and $j \in \{1, \cdots, D\}$.
 
-      i.e.~$x_{i,j}$ is the $j$-th feature of the $i$-th object.  The numbers $x_i{i,j}$ are combined into the
-      feature matrix $X$, \index{feature matrix} i.e.~we have
+      i.e.~$x_{i,j}$ is the $j$-th feature of the $i$-th object.  The numbers $x_{i,j}$ are combined into the
+      \blue{feature matrix} $X$, \index{feature matrix} i.e.~we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $X=(x_{i,j})_{i\in\{1,\cdots,N\} \atop j \in \{1,\cdots,D\}.}$ 
+      $X=(x_{i,j})_{i\in\{1,\cdots,N\} \atop j \in \{1,\cdots,D\}.}$
+      \\[0.2cm]
+      The matrix $X$ is similar to the \blue{design matrix} that was introduced in the previous chapter.
 \item $y_i := \mathtt{classify}(o_i)$ \quad for all $i \in \{1, \cdots, N\}$
 
       i.e.~$y_i$ is the class of the $i$-th object.  These number are collected into the $N$-dimensional column vector $\mathbf{y}$.
@@ -330,7 +332,7 @@ The function \texttt{findMaximum} takes four arguments:
 \item $\texttt{gradF}$ is the gradient of \texttt{f}.  It takes a vector
       $\texttt{x}\in \mathbb{R}^n$ as its input and returns the vector $\nabla \mathtt{f}(\mathtt{x})$.
 \item $\texttt{start}$ is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
-      practice, we will often use $\mathbf{0} \in \mathbb{R}^n$ as the start vector.
+      practise, we will often use $\mathbf{0} \in \mathbb{R}^n$ as the start vector.
 \item $\texttt{eps}$ is the precision that we need for the maximum.  We will have to say more on how \texttt{eps}
       is related to the precision later.  As we are using double precision floating point arithmetic, 
       it won't make sense to use a value for \texttt{eps} that is smaller than $10^{-15}$.
@@ -471,7 +473,8 @@ define this function and state some of its properties.
 $\ds S(t) = \frac{1}{1 + \exp(-t)}$.  
 \\[0.2cm]
 Figure \ref{fig:sigmoid.eps} on page \pageref{fig:sigmoid.eps} shows the sigmoid function.
-The sigmoid function is also known as the \blue{logistic function}. \index{logistic function}
+The sigmoid function is also known as the \href{https://en.wikipedia.org/wiki/Logistic_function}{logistic
+  function}. \index{logistic function} 
 \eox
 \end{Definition}
 
@@ -876,19 +879,27 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
 \item Line 7 starts the implementation of the natural logarithm of the sigmoid function, i.e.~we implement
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ds L(x) = \ln\bigl(S(X)\bigr) = \ln\left(\frac{1}{1 + \exp(-x)}\right) =- \ln\bigl(1 + \exp(-x)\bigr)$.
+      $\ds L(x) = \ln\bigl(S(x)\bigr) = \ln\left(\frac{1}{1 + \exp(-x)}\right) =- \ln\bigl(1 + \exp(-x)\bigr)$.
       \\[0.2cm]
       The implementation is more complicated than you might expect.  The reason has to do with
       \blue{numerical overflow}.  Consider values of $x$ that are smaller than, say, $-1000$.  The problem is that
-      the expression $\mathtt{exp}(1000)$ evaluates to \texttt{Infinity}, which represents the
-      mathematical value $\infty$.  But then $1 + \mathtt{exp}(1000))$ is also \texttt{Infinity} and
-      finally \texttt{log(1 + exp(1000))} is still \texttt{Infinity}.  However, in reality we have
+      the expression $\mathtt{exp}(1000)$ evaluates to the value \texttt{inf}, which represents the
+      mathematical concept of infinity, denoted as $\infty$.  But then $1 + \mathtt{exp}(1000))$ is also \texttt{inf} and
+      finally \texttt{log(1 + exp(1000))} is still \texttt{inf}.  However, in reality we have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ln\bigl(1 + \exp(1000)\bigr) \approx 1000$
       \\[0.2cm] 
       because $\exp(1000)$ is so big that adding $1$ to it does not make much of a difference.
-      The precise argument works as follows:
+      In fact, if we use \textsl{Pythons} 64-bit double arithmetic, then even adding $1$ to $\exp(100)$
+      does not make any difference at all as w.r.t.~machine arithmetic we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $1.0 \oplus 2.6881171418161356 \cdot 10^{43} = 2.6881171418161356 \cdot 10^{43}$.
+      \\[0.2cm]
+      Here, $\oplus$ denotes machine addition.
+      
+      The argument that $\ln\bigl(1 + \exp(1000)\bigr) \approx 1000$ works as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       $
@@ -1211,7 +1222,7 @@ Use logistic regression to predict whether a given plant is of the species
 \href{https://en.wikipedia.org/wiki/Iris_setosa}{iris setosa} (Deutsch: Borsten-Schwertlilie),
 \href{https://en.wikipedia.org/wiki/Iris_virginica}{iris virginica}\footnote{
 This plant is native to North America and hence has no German name.}, or
-\href{https://en.wikipedia.org/wiki/Iris_versicolor}{iris versicolor} (Deutsch: Verschiedenfarbige Schwertlilie).
+\href{https://en.wikipedia.org/wiki/Iris_versicolor}{iris versicolor} (Deutsch: verschiedenfarbige Schwertlilie).
 As logistic regression is only able to distinguish between two different classes, you
 have to build three different classifiers:
 \begin{itemize}
@@ -1622,7 +1633,7 @@ This data has been collected by Ion Androutsopoulos.  Figure \ref{fig:Spam-Detec
 \pageref{fig:Spam-Detection.ipynb-1} and \ref{fig:Spam-Detection.ipynb-2} on page
 \pageref{fig:Spam-Detection.ipynb-2} show parts of the notebook 
 \\[0.2cm]
-\hspace*{1.3cm}
+\hspace*{0.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Spam-Detection.ipynb}{
 https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Spam-Detection.ipynb}.
 \\[0.2cm]

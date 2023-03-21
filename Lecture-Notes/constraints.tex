@@ -562,7 +562,7 @@ satisfaction problem $\texttt{P}$ as input and tries to find a solution.
         Variables, Values, Constraints = P
         if len(Assignment) == len(Variables):
             return Assignment
-        var = arb(Variables - set(Assignment.keys()))
+        var = arb(Variables - Assignment.keys())
         for value in Values:
             try:
                 if is_consistent(var, value, Assignment, Constraints):
@@ -1946,7 +1946,7 @@ command in the shell:
 Once we have done this and we have added the directory
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{export PATH="\~/opt/anaconda3/envs/ai/bin/}
+\texttt{export PATH="\symbol{126}/opt/anaconda3/envs/ai/bin/}
 \\[0.2cm]
 to the environment variable \texttt{PATH}, we can use the file shown in Figure
 \ref{fig:Brothers-and-Sisters.z3} to solve the problem.  The command to invoke \texttt{Z3} has the form
