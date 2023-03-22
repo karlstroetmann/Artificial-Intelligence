@@ -1128,10 +1128,10 @@ correctly.
     ExamDF = pd.read\_csv('exam-iq.csv')
     X      = np.array(ExamDF[['Hours','IQ']])
     Y      = np.array(ExamDF['Pass'], dtype=float)
-    model  = lm.LogisticRegression(C=10000, tol=1e-6, solver='newton-cg')
+    model  = lm.LogisticRegression(C=10\_000, tol=1e-6, solver='newton-cg')
     M      = model.fit(X, Y)
     \(\vartheta_0\)     = M.intercept\_[0]
-    \(\vartheta_1, \vartheta_2\) = M.coef\_[0]
+    \(\vartheta_1, \vartheta_2\)  = M.coef\_[0]
     errors = np.sum(np.abs(Y - model.predict(X)))
     print((len(Y) - errors) / len(Y))
 \end{Verbatim}
