@@ -1,26 +1,21 @@
 \chapter{Introduction}
 
 \section{What is Artificial Intelligence?}
-Before we start to dive into the subject of
-\href{https://en.wikipedia.org/wiki/Artificial_intelligence}{Artificial Intelligence} (usually abbreviated as
-AI) we should ask ourselves what we mean by the phrase ``\blue{artificial intelligence}''.
-According to the Oxford Dictionary of English, \index{artificial intelligence, definition}
-\blue{artificial intelligence} is:
+\section{Understanding Artificial Intelligence}
+As we embark on exploring \href{https://en.wikipedia.org/wiki/Artificial_intelligence}{Artificial Intelligence}
+(AI), it is crucial to define what the term ``\blue{artificial intelligence}'' encompasses. The Oxford
+Dictionary of English offers this definition \index{artificial intelligence, definition} of \blue{artificial
+  intelligence}: 
 \begin{quote}
-  \colorbox{sepia}{\textsl{The theory and development of computer systems able to perform tasks normally}} \linebreak
-  \colorbox{sepia}{\textsl{requiring human intelligence, such as visual perception, speech recognition,}}  \linebreak
-  \colorbox{sepia}{\textsl{decision-making, and translation between languages.}} 
+\colorbox{sepia}{\textsl{The theory and development of computer systems capable of performing tasks that}} \linebreak
+\colorbox{sepia}{\textsl{typically require human intelligence, including visual perception, speech recognition,}} \linebreak
+\colorbox{sepia}{\textsl{decision-making, and language translation.}}
 \end{quote}
-There have been two competitive approaches to machine learning.  The first approach is based on
-\blue{symbolic logic} and is known as \blue{symbolic AI}.  \index{symbolic AI}
-Typical tasks addressed with this approach were the development of automatic theorem provers, programs to
-perform \blue{symbolic integration}, or programs to play chess like
-\href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue}.
-In the beginning, this approach was the dominant paradigm in AI.
-The second approach is known as \blue{machine learning}.  Arthur Samuel defined machine learning as
-``the field of study that gives computers the ability to learn without being
-explicitly programmed'' \cite{samuel:1959}. \index{machine learning, definition}
-Machine learning is mostly responsible for the recent hype in AI.
+Artificial Intelligence has evolved through two primary approaches. The first, known as \blue{symbolic AI}, focuses on \blue{symbolic logic}. \index{symbolic AI} This approach led to the creation of automatic theorem provers, \blue{symbolic integration} systems, and chess-playing programs like \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue}. Initially, symbolic AI was the predominant paradigm in the field.
+
+The second approach, \blue{machine learning}, was defined by Arthur Samuel as ``the field of study that enables
+computers to learn without explicit programming'' \cite{samuel:1959}. \index{machine learning, definition} This
+approach has primarily fueled the recent hype in AI. 
 
 \section{Overview}
 This lecture consists of two parts.
@@ -29,17 +24,17 @@ This lecture consists of two parts.
       The common theme of symbolic AI is \blue{declarative programming}.  
       The main idea of declarative programming is that we start with a \blue{formal problem specification}.
       This problem specification is a concise description of the problem that is to be solved, which is
-      then fed into an \blue{automatic problem solver} that returns a solution of the problem.  Originally, 
+      then fed into a \blue{problem solver} that returns a solution of the problem.  Originally, 
       \href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming} was a very general
       approach to problem-solving.  The idea was that in order to solve a problem, the problem would first be
-      formulated as a logic formula and an
-      \href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem prover} would then be
+      formulated as a logic formula and then some kind of
+      \href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem prover} would be
       able to solve the problem.  The programming language \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}
       was based on that paradigm.  Unfortunately, the idea of declarative programming has
       turned out to be unsuitable as a general problem-solving framework for two reasons:
       \begin{enumerate}
       \item First, it is very difficult to specify practical problems completely in a logical framework.
-      \item Second, even in those cases where it is feasible to completely specify a problem via logic formulae,
+      \item Second, even in those cases where it is feasible to completely specify a problem via logic firmulas,
             automatic theorem proving is, in general, not powerful enough to automatically find a solution. 
       \end{enumerate}
       However, there are a number of domains where the approach of declarative programming has turned out to be
@@ -81,34 +76,19 @@ This lecture consists of two parts.
         it's now possible to automate many tasks that once required human intelligence.} 
       \end{minipage}}}}
       \end{center}
-      In order to temper the hype about ChatGPT a bit, I would like to share the following conversation that I
-      recently had with ChatGPT.
-      \begin{description}
-       \item[Q:] I have as many brothers as I have sisters.  My sister has twice as many brothers as she has
-                 sisters.  How many children does my father have?  
-       \item[A:] It is not possible to determine the number of children your father has based on the
-                 information provided. Additional information is needed.        
-       \item[Q:] What information do you need to proceed?
-       \item[A:] I would need to know the number of brothers and sisters you have in order to determine the
-                 number of children your father has.  
-       \item[Q:] You can find these numbers if you convert the information I have given into two equations,
-                 where $b$ is the number of boys and $g$ is the number of girls.  You can then solve this
-                 system of equations.    
-       \item[A:] Sure, using the information you've provided, we can set up the following system of equations:
-                \begin{enumerate}[(a)]
-                \item $b + g = bs$ (the number of brothers is equal to the number of sisters)
-                \item $b = 2gs$ (your sister has twice as many brothers as she has sisters)
-
-                      To find the number of children your father has, we can substitute the second equation into
-                      the first equation: 
-                \item $b + g = bs$
-                \item $2gs + g = gs$
-                \item $2gs + g = g (b + g)$
-                \item $2gs + g = g^2$
-                \end{enumerate}
-                then we can solve for g and find the total number of children.
-      \end{description}
-      As you can see for yourself, ChatGPT doesn't get any closer to solving this problem.
+      I started to use Chat\textsc{Gpt} at the beginning of 2023.  My early experiments with the version 3.5
+      were rather unsatisfactory.  However, in the summer of 2023 I switched to the paid subscription of
+      Chat\textsc{Gpt} and started to use the version 4.0.  As a result, my perception of Chat\textsc{Gpt}
+      changed fundamentally.  I am now using this new version on a daily basis both for coding purposes and to
+      improve my lecture notes.  However, I have recently run into availabilty problems.  At the moment,
+      Chat\textsc{Gpt} 4.0 is veeeery slow and only allows at most 40 questions every 3 hours.
+      In times of high demands, Open\textsc{Ai} seems to reduce the number of 40 questions every 3 hours
+      arbitrarily. 
+      
+      Nevertheless, I recommend the professional version of Chat\textsc{Gpt} to every student for the 
+      following reason:  Five years from now the use of language model will be as common place as the use of a
+      search engine like Google is today.  If you want to survive in the future world, you should understand
+      the capabilities of large language models and have some experience in using them.  
       
       It is fair to say that currently, machine learning is the hottest topic in computer science.
       Among others, we discuss the following algorithms:
@@ -139,38 +119,50 @@ This lecture consists of two parts.
 The main sources of these lecture notes are the following:
 \begin{enumerate}
 \item A course on artificial intelligence that was offered on the \textsc{edX} platform.  The course
-      materials are available at  
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \href{http://ai.berkeley.edu/home.html}{http://ai.berkeley.edu/home.html}.
-\item The book
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \href{https://www.amazon.de/Artificial-Intelligence-Modern-Approach-Global/dp/1292401133/}{Introduction to Artificial Intelligence}
-      \\[0.2cm]
+      materials are available at \href{http://ai.berkeley.edu/home.html}{http://ai.berkeley.edu/home.html}.
+\item The book \href{https://www.amazon.de/Artificial-Intelligence-Modern-Approach-Global/dp/1292401133/}{
+       Introduction to Artificial Intelligence}
       written by Stuart Russell and Peter Norvig \cite{russell:2020}.
-\item A course on artificial intelligence that is offered on \href{https://www.udacity.com}{Udacity}.  The title of the
-      course is
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \href{https://www.udacity.com/course/intro-to-artificial-intelligence--cs271}{Intro to Artificial Intelligence}
-      \\[0.2cm]
-      and the course is given by \href{https://en.wikipedia.org/wiki/Peter_Norvig}{Peter Norvig}, who is
-      director of research at Google and \href{https://en.wikipedia.org/wiki/Sebastian_Thrun}{Sebastian Thrun},
-      who is the chairman of \href{https://www.udacity.com}{Udacity}.
+\item The course \href{https://www.udacity.com/course/intro-to-artificial-intelligence--cs271}{
+      Intro to Artificial Intelligence} course on artificial intelligence that is offered on the
+      platform \href{https://www.udacity.com}{Udacity}.  
 \end{enumerate}
 When it comes to the exam, you should be fine if you have mastered the material that is covered in my
 lecture notes.  Hence, there is no need to buy any book or take any other course.
+\pagebreak
 
 \remark
-The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.10.
-The file 
-\\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/ai.sh}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/ai.sh}
-\\[0.2cm]
-contains a list of commands that can be used to create the \textsl{Python} environment that I have used to test
-the notebooks presented in my lectures.  
+The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.12.
+I am using Python 3.12 because of the recent changes to Python's type system.
+I have created the Python environment that I am using for these lecture notes via the bash commands shown in
+Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = bg,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{bash}
+    conda create -y -n ai python=3.12 
+    conda activate ai
+    conda install -c anaconda -y graphviz ply seaborn scikit-learn 
+    conda install -c conda-forge -y jupyter python-graphviz matplotlib 
+    conda install -c conda-forge -y jupyter memory_profiler autograd 
+    pip install ipycanvas
+    pip install chess 
+    pip install z3-solver  
+\end{minted}
+\vspace*{-0.3cm}
+\caption{Bash command to set up an Anaconda environment for Python.}
+\label{fig:ai.sh}
+\end{figure}
+
+
 
 %%% Local Variables:
 %%% mode: latex
