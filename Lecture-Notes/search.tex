@@ -13,11 +13,17 @@ After that, we introduce various algorithms for solving search problems.  In par
 \item \blue{breadth first search},
 \item \blue{depth first search},
 \item \blue{iterative deepening},
-\item \blue{bidirectional breadth first search},
+\item \blue{bidirectional breadth first search}.
+
+      These algorithms work on any search problem.  If we have a \blue{heuristic} that estimates how many steps
+      it takes to solve the given search problem, then a solution can be found much faster.
+      The following algorithms make use of a heuristic:
+      
 \item \blue{$\mathrm{A}^*$ search} and \blue{bidirectional $\mathrm{A}^*$ search},
 \item \blue{iterative deepening $\mathrm{A}^*$ search}, and
 \item \blue{$\mathrm{A}^*$-$\mathrm{IDA}^*$ search}.
 \end{enumerate}
+We proceed to define the notion of a search problem.
 
 \begin{Definition}[Search Problem]
   A \blue{search problem} \index{search problem} is a tuple of the form
@@ -50,7 +56,7 @@ After that, we introduce various algorithms for solving search problems.  In par
   \item \texttt{goal} is the \blue{goal state}, hence $\mathtt{goal} \in Q$.
         \index{goal state}
     
-        Sometimes, instead of a single state $\texttt{goal}$ there is a set of states $\texttt{Goals}$.
+        Sometimes, instead of a single state $\texttt{goal}$ there is a set of states $\texttt{Goals}$.  
   \end{enumerate}
   A \blue{path} \index{path} is a list $[s_1, \cdots, s_n]$ such that $s_{i+1} \in \mathtt{next\_states}(s_i)$ for all $i \in
   \{1,\cdots,n-1\}$.
@@ -79,7 +85,7 @@ After that, we introduce various algorithms for solving search problems.  In par
 
 \remark
 In the literature, a \blue{state} is often called a \blue{node}.  \index{node}
-In these lecture notes, I will sometimes refer to states as nodes.  \eoxs
+In these lecture notes, I will also sometimes refer to states as nodes.  \eoxs
 
 \example
 We illustrate the notion of a search problem with the following example, which is also known as the
