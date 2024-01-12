@@ -15,7 +15,7 @@ After that, we introduce various algorithms for solving search problems.  In par
 \item \blue{iterative deepening},
 \item \blue{bidirectional breadth first search}.
 
-      These algorithms work on any search problem.  If we have a \blue{heuristic} that estimates how many steps
+      The algorithms mentioned work on any search problem.  If we have a \blue{heuristic} that estimates how many steps
       it takes to solve the given search problem, then a solution can be found much faster.
       The following algorithms make use of a heuristic:
       
@@ -237,7 +237,7 @@ define the set of states as follows:
              }
 \end{verbatim}
 However, in general the set of states is not needed by the algorithms solving search problems and in many cases
-this set is so big that it would be impossible to compute and store it.  Hence, in practice the set of states is only an
+this set is so big that it would be impossible to store it.  Hence, in practice the set of states is only an
 abstract notion that is needed in order to specify the function \texttt{next\_states}, but it is not implemented.
 
 Figure \ref{fig:missionaries.pdf} shows a graphical representation of the transition relation of the
