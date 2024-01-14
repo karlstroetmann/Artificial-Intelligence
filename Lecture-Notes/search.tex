@@ -426,7 +426,7 @@ states that have been visited in the set $\texttt{Visited}$.  Once a state has b
 the set $\texttt{Visited}$,  it will never be revisited again.
 Furthermore, in order to keep track of the path leading to the goal, we utilize a dictionary called
 $\texttt{Parent}$.  For every state $s$ that is in $\texttt{Frontier}$, $\mathtt{Parent}[s]$ is the state that
-caused $s$ to be added to the set $\texttt{Frontier}$, i.e.~for all states $s\in\mathtt{Frontier}$ 
+has caused $s$ to be added to the set $\texttt{Frontier}$, i.e.~for all states $s\in\mathtt{Frontier}$ 
 we have 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -482,6 +482,10 @@ Next, we discuss the implementation of the function \texttt{search}:
 \begin{enumerate}
 \item $\texttt{Frontier}$ is the set of all those states that have been encountered but whose
       neighbours have not yet been explored.  Initially, it contains the state $\texttt{start}$.
+
+      After the $n^\textrm{th}$ iteration of the \texttt{while} loop, every state $s$ in the set
+      \texttt{Frontier} has a distance of $n$ from the node \texttt{start}, i.e.~there is a path of length $n$
+      leading from \texttt{start} to $s$.
 \item $\texttt{Visited}$ is the set of all those states, all of whose neighbours have already been
       added to the set $\texttt{Frontier}$ in the last iteration of the \texttt{while} loop.  In order to avoid
       infinite loops, these states must not be visited again.
@@ -493,8 +497,8 @@ Next, we discuss the implementation of the function \texttt{search}:
       When doing this, we keep track of the path leading to a new state $\texttt{ns}$ by storing its
       parent in the dictionary $\texttt{Parent}$.
 \item If the new state happens to be the state $\texttt{goal}$, we return a path leading from
-      $\texttt{start}$ to $\texttt{goal}$.  The function $\texttt{path\_to}()$ is shown in Figure
-      \ref{fig:pathTo.stlx} on page \pageref{fig:pathTo.stlx}.
+      $\texttt{start}$ to $\texttt{goal}$ by calling the function \texttt{path\_to}.  This function is shown in Figure
+      \ref{fig:pathTo.py} on page \pageref{fig:pathTo.py}.
 \item After we have collected all successors of states in $\texttt{Frontier}$, the states
       in the set $\texttt{Frontier}$ have been visited and are therefore added to the set
       $\texttt{Visited}$, while the set $\texttt{Frontier}$ is updated to $\texttt{NewFrontier}$.
@@ -511,7 +515,7 @@ Next, we discuss the implementation of the function \texttt{search}:
 \end{python3code}
 \vspace*{-0.3cm}
 \caption{The function $\texttt{path\_to}$.}
-\label{fig:pathTo.stlx}
+\label{fig:pathTo.py}
 \end{figure}
 The function call $\mathtt{path\_to}(\mathtt{state}, \mathtt{Parent})$ constructs a path reaching
 from $\texttt{start}$ to $\texttt{state}$ in reverse by looking up the parent states.  It uses the fact that
@@ -521,7 +525,8 @@ If we try breadth first search to solve the missionaries and cannibals problem, 
 the solution shown in Figure \ref{fig:missionaries.solution}.  15 nodes had to be expanded to find
 this solution.  To keep this in perspective, we note that Figure \ref{fig:missionaries.pdf} shows
 that the entire state space contains 16 states.  Therefore, with the exception of one state, we have
-inspected all the states.  This is a typical behaviour for breadth first search.
+inspected all the states.  If the search problem is difficult, then this is a typical behaviour of breadth
+first search. 
 
 \begin{figure}[!ht]
 \centering
@@ -563,10 +568,10 @@ inspected all the states.  This is a typical behaviour for breadth first search.
 \label{fig:missionaries.solution}
 \end{figure}
 
-Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes about 2 seconds to solve
+Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes about $1.2$ seconds to solve
 this problem on my computer\footnote{
-  I happen to own an iMac from 2017.  This iMac is equipped with 32 Gigabytes of main memory and a
-  quad core 3.4 GHz ``Intel Core i5'' processor.  I suspect this to be the I5-7500 (Kaby Lake) processor.
+  My computer is a Mac Studio from 2022.  This iMac is equipped with 64 Gigabytes of main memory and an
+  Apple M1 Max processor.
 }, while 181,439 states are touched.  
 Again, we see that breadth first search touches nearly all the states reachable from the start state.
 If we measure the memory consumption, we discover that the program uses about 90 megabytes of memory.
