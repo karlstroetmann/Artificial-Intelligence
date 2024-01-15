@@ -6,7 +6,7 @@ we implement an algorithm that can solve a whole class of problems.  Then, in or
 falls within this class, we just have to specify the problem, which is usually much easier than writing a
 program that solves the given problem.  In this chapter, this idea is illustrated via \blue{search problems}.
 First, we define the notion of a \blue{search problem} formally.  This notion is then illustrated with two
-examples.  We start with the \blue{missionaries and cannibals problem}.  Next, we use the 
+examples.  We start with the \blue{missionaries and cannibals puzzle}.  Next, we use the 
 \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle} as our running example. \index{sliding puzzle}
 After that, we introduce various algorithms for solving search problems.  In particular, we present
 \begin{enumerate}
@@ -89,7 +89,7 @@ In these lecture notes, I will also sometimes refer to states as nodes.  \eoxs
 
 \example
 We illustrate the notion of a search problem with the following example, which is also known as the
-\href{https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem}{missionaries and cannibals problem}:
+\href{https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem}{missionaries and cannibals puzzle}:
 \index{missionaries and cannibals}
 Three missionaries and three infidels have to cross a river that runs from the north to the south.
 Initially, both the missionaries and the infidels are on the western shore.  There is just one small boat 
@@ -140,7 +140,7 @@ of the problem.
 \label{fig:missionaries.stlx}
 \end{figure}
 \noindent
-Figure \ref{fig:missionaries.stlx} shows a formalization of the missionaries and cannibals problem
+Figure \ref{fig:missionaries.stlx} shows a formalization of the missionaries and cannibals puzzle
 as a search problem.  We discuss this formalization line by line.
 \begin{enumerate}
 \item Line 1 defines the auxiliary function \texttt{problem}.
@@ -250,13 +250,37 @@ is a solution involving just 11 crossings of the river.
 \begin{figure}[!ht]
   \centering
   \framebox{\epsfig{file=Figures/missionare.pdf,scale=0.5}}
-  \caption{A graphical representation of the missionaries and cannibals problem.}
+  \caption{A graphical representation of the missionaries and cannibals puzzle.}
   \label{fig:missionaries.pdf}
 \end{figure}
 
 
+\exercise
+The \emph{Three Thieves Puzzle} is similar to the \emph{Missionaries and Cannibals Puzzle}.  Three greedy
+thieves have cross a river.  Each of the thieves has a bag of gold coins.
+\begin{enumerate}
+\item Aaron has 1,000 gold coins.
+\item Benjamin has 700 gold coins.
+\item Chaim has 300 gold coins.
+\end{enumerate}
+There is a boat available that can carry either two people or one person along with a bag of gold coins. The
+boat can transport two entities at a time, meaning either two thieves or one thief and a bag can cross
+together. The challenge arises if a thief, or a pair of thieves, is left with a quantity of gold greater than
+their own, they will abscond with it. 
+
+Write a program that formulates this puzzle as a search problem.  You should do this by augenting the notebook
+\ \blue{\texttt{Three-Tieves.ipynb}} \ that can be found in the github repository 
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence}{http://github.com/karlstroetmann/Artificial-Intelligence}
+\\[0.2cm]
+in the directory
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/1 Search/Three-Thieves.ipynb}{Python/1 Search/Three-Thieves.ipynb}. 
+\eox
+
+
 \section{The Sliding Puzzle}
-The missionaries and cannibals problem is rather small and therefore it is not useful when we want to compare
+The missionaries and cannibals puzzle is rather small and therefore it is not useful when we want to compare
 the efficiency of various algorithms for solving search problems.  Therefore, we will now present a problem
 that has a greater complexity:  The $3 \times 3$ sliding puzzle uses a \index{sliding puzzle}
 square board, where each side has a length of 3.  This board is subdivided into $3 \times 3 = 9$ squares of length 1.  Of
@@ -289,7 +313,7 @@ In order to get a feeling for the complexity of the sliding puzzle, you can chec
 \hspace*{1.3cm}
 \href{https://www.helpfulgames.com/subjects/brain-training/sliding-puzzle.html}{https://www.helpfulgames.com/subjects/brain-training/sliding-puzzle.html}.
 \\[0.2cm]
-The sliding puzzle is much more complex than the missionaries and cannibals problem because the
+The sliding puzzle is much more complex than the missionaries and cannibals puzzle because the
 state space is much larger.  For the case of the $3 \times 3$ sliding puzzle, there are 9 squares
 that can be positioned in $9!$ different ways.  It turns out that only half of these positions are
 reachable from a given start state.  Therefore, the effective number of states for the $3 \times 3$
@@ -521,7 +545,7 @@ The function call $\mathtt{path\_to}(\mathtt{state}, \mathtt{Parent})$ construct
 from $\texttt{start}$ to $\texttt{state}$ in reverse by looking up the parent states.  It uses the fact that
 only the start state is its own parent.
 
-If we try breadth first search to solve the missionaries and cannibals problem, we obtain
+If we try breadth first search to solve the missionaries and cannibals puzzle, we obtain
 the solution shown in Figure \ref{fig:missionaries.solution}.  15 nodes had to be expanded to find
 this solution.  To keep this in perspective, we note that Figure \ref{fig:missionaries.pdf} shows
 that the entire state space contains 16 states.  Therefore, with the exception of one state, we have
@@ -564,7 +588,7 @@ first search.
                        |~~~~~|       MMM   KKK   B
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{A solution of the missionaries and cannibals problem.}
+\caption{A solution of the missionaries and cannibals puzzle.}
 \label{fig:missionaries.solution}
 \end{figure}
 
