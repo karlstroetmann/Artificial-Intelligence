@@ -121,7 +121,7 @@ suffice. Therefore, purchasing additional books or enrolling in other courses is
 
 \remark
 The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.11.
-I have created the Python environment that I am using for these lecture notes via the bash commands shown in
+I have created the Python environment that I am using for these lecture notes via the shell commands shown in
 Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
 
 \begin{figure}[!ht]
@@ -137,7 +137,7 @@ Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
                  ]{bash}
     conda create -y -n ai python=3.11 jupyter
     conda activate ai
-    conda install -c anaconda -y graphviz ply seaborn scikit-learn 
+    conda install -c anaconda -y nbclassic graphviz ply seaborn scikit-learn 
     conda install -c conda-forge -y python-graphviz matplotlib memory_profiler
     conda install -c conda-forge -y autograd ipycanvas 
     pip install nb_mypy
