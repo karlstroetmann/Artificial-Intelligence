@@ -718,9 +718,9 @@ breadth first search to depth first search:
             for ns in next_states(state):
                 if ns not in Parent:
                     Parent[ns] = state
-                    Stack.append(ns)
                     if ns == goal:
                         return path_to(goal, Parent)
+                    Stack.append(ns)
 
     def path_to(state, Parent):
        Path = [state]
@@ -828,7 +828,7 @@ The implementation of $\texttt{dfs}$ works as follows:
       $\texttt{dfs}$ that the list $\texttt{Path}$ is a path connecting $\texttt{start}$ with $\texttt{state}$.
 \item We still have to avoid running in circles.  In the recursive version of depth first search,
       this is achieved by checking that the state $\texttt{ns}$ is not already a member of the set $\texttt{PathSet}$.  In the
-      non-recursive version of depth first search, we had used the set $\texttt{Parent}$ instead.
+      non-recursive version of depth first search, we had used the dictionary $\texttt{Parent}$ instead.
       The current implementation no longer has a need for the dictionary $\texttt{Parent}$.  This is very
       fortunate since it reduces the memory requirements of depth first search considerably.
 \item If one of the recursive calls of $\texttt{dfs}$ returns a list, this list is a solution to our
@@ -841,7 +841,7 @@ The implementation of $\texttt{dfs}$ works as follows:
 \item Note that the recursive invocation of $\texttt{dfs}$ returns $\mathtt{None}$ if the end of the
       \texttt{for} loop is reached and no solution has been returned so far.  
 \end{enumerate}
-Unfortunately, due to a bug in \textsl{Python} \texttt{3.10}, the \textsl{Python} kernel just dies
+Unfortunately, due to a bug in \textsl{Python} \texttt{3.11}, the \textsl{Python} kernel just dies
 when trying to solve the $3 \times 3$ sliding puzzle.  With \textsl{Python} \texttt{3.8} it took 297 milliseconds 
 on my computer to find a solution.  The memory consumption was back to 50 megabytes.  Furthermore, the
 solution had a length of $20,923$ steps, which explains the high memory consumption.  
