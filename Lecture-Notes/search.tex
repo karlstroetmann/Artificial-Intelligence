@@ -819,10 +819,16 @@ The implementation of $\texttt{dfs}$ works as follows:
       every state $\texttt{ns}$.  Note that we have to change $\texttt{Path}$ to the list
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{Path + [ns]}
+      \texttt{Path + [ ns ]}
       \\[0.2cm]
       when we call the function $\texttt{dfs}$ recursively.  This way, we retain the invariant of
       $\texttt{dfs}$ that the list $\texttt{Path}$ is a path connecting $\texttt{start}$ with $\texttt{state}$.
+\item In the same spirit we have to change \texttt{PathSet} to the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{PathSet | \{ ns \}}
+      \\[0.2cm]
+      since we have to maintain the invariant that \texttt{PathSet} is the set of all nodes in \texttt{Path}.
 \item We still have to avoid running in circles.  In the recursive version of depth first search,
       this is achieved by checking that the state $\texttt{ns}$ is not already a member of the set $\texttt{PathSet}$.  In the
       non-recursive version of depth first search, we had used the dictionary $\texttt{Parent}$ instead.
@@ -832,9 +838,6 @@ The implementation of $\texttt{dfs}$ works as follows:
       search problem and hence it is returned.  However, if instead 
       $\texttt{None}$ is returned, the \texttt{for} loop needs to carry on and test the other
       successors of $\texttt{state}$.
-\item If the search was unsuccessful, we have to remove the state $\texttt{ns}$ from the $\texttt{PathSet}$
-      in order to maintain the invariant that $\texttt{PathSet}$ is the set of all elements in the list
-      $\texttt{Path}$.
 \item Note that the recursive invocation of $\texttt{dfs}$ returns $\mathtt{None}$ if the end of the
       \texttt{for} loop is reached and no solution has been returned so far.  
 \end{enumerate}
@@ -858,30 +861,24 @@ implements this strategy.  We proceed to discuss the details of this program.
 \begin{figure}[!ht]
 \centering
 \begin{python3code}
-    def search(start, goal, next_states):
-        limit = 1
-        while True:
-            Path = dls(start, goal, next_states, [start], { start }, limit)
-            if Path is not None:
-                return Path
-            limit += 1
-    
-    def dls(state, goal, next_states, Path, PathSet, limit):
-        if state == goal:
+def search(start, goal, next_states):
+    limit = 1
+    while True:
+        Path = dls(start, goal, next_states, [start], { start }, limit)
+        if Path is not None:
             return Path
-        if len(Path) == limit:
-            return None
-        for ns in next_states(state):
-            if ns not in PathSet:
-                Path   .append(ns)
-                PathSet.add(ns)
-                Result = dls(ns, goal, next_states, Path, PathSet, limit)
-                if Result:
-                    return Result
-                else:
-                    Path   .pop()
-                    PathSet.remove(ns)
+        limit += 1
+
+def dls(state, goal, next_states, Path, PathSet, limit):
+    if state == goal:
+        return Path
+    if len(Path) == limit:
         return None
+    for ns in next_states(state):
+        if ns not in PathSet:
+            Result = dls(ns, goal, next_states, Path+[ns], PathSet|{ns}, limit)
+            if Result:
+                return Result
 \end{python3code}
 \vspace*{-0.3cm}
 \caption{Iterative deepening implemented in \textsl{Python}.}
@@ -925,7 +922,7 @@ about 7 minutes.  There are two reasons for the long computation time:
       Therefore, if the solution is found at a depth of $d+1$, we will explore at most $2^{d+1}$ states to find
       the solution if we would do depth first search with a depth limit of $d+1$.  If, instead, we use
       iterative deepening, we have wastefully explored an additional number of $2^{d+1} -1$ states.  Hence, we
-      will visit only twice the number of states with iterative deepening than we would have visited with depth
+      will visit only about twice the number of states with iterative deepening than we would have visited with depth
       limited search with the correct depth limit.
 \item Given a state $s$ that is reachable from the $\texttt{start}$, there often are a huge number of
       different paths that lead from $\texttt{start}$ to $s$.  The version of iterative deepening presented in
@@ -1024,7 +1021,7 @@ $\ds n! \sim \sqrt{2 \cdot \pi \cdot n\,} \cdot \Bigl(\frac{n}{e}\Bigr)^n$.
 If there is no solution, the implementation of iterative deepening that is shown in Figure
 \ref{fig:Iterative-Deepening.ipynb} does not terminate.  The reason is that the function $\texttt{dls}$ does not
 distinguish between the following two reasons for failure:
-\begin{enumerate}
+\begin{enumerate}[(a)]
 \item It can fail to find a solution because the depth limit is reached.
 \item It can also fail because it has exhausted all possible paths without hitting the depth limit.
 \end{enumerate}
