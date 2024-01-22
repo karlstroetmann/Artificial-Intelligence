@@ -1634,46 +1634,35 @@ found is optimal \cite{hart:1972}.
                   xrightmargin  = 0.0cm,
                 ]{python3}
     def search(start, goal, next_states, heuristic):
-        estimate  = heuristic(start, goal)
-        ParentA   = { start: start };      ParentB   = { goal : goal  }
-        DistanceA = { start: 0 };          DistanceB = { goal : 0 }
-        EstimateA = { start: estimate };   EstimateB = { goal : estimate }
-        FrontierA = Set();                 FrontierB = Set()
-        FrontierA.insert( (estimate, start) )
-        FrontierB.insert( (estimate, goal ) )
-        while FrontierA and FrontierB:
-            guessA, stateA = FrontierA.pop()
-            guessB, stateB = FrontierB.pop()
-            stateADist = DistanceA[stateA]
-            stateBDist = DistanceB[stateB]
-            if guessA <= guessB:
-                FrontierB.insert( (guessB, stateB) )
-                for ns in next_states(stateA):
-                    oldEstimate = EstimateA.get(ns, None)
-                    newEstimate = stateADist + 1 + heuristic(ns, goal)
-                    if oldEstimate is None or newEstimate < oldEstimate:
-                        ParentA  [ns] = stateA
-                        DistanceA[ns] = stateADist + 1
-                        EstimateA[ns] = newEstimate
-                        FrontierA.insert( (newEstimate, ns) )
-                        if oldEstimate is not None:
-                            FrontierA.delete( (oldEstimate, ns) )
-                    if DistanceB.get(ns, None) is not None:
-                        return combinePaths(ns, ParentA, ParentB)
+        VisitedA = {}
+        VisitedB = {}
+        PrioQueueA = [ (heuristic(start, goal), [start]) ]
+        PrioQueueB = [ (heuristic(goal, start), [goal ]) ]
+        while PrioQueueA and PrioQueueB:
+            a, PathA = heapq.heappop(PrioQueueA)
+            b, PathB = heapq.heappop(PrioQueueB)
+            if a <= b:
+                heapq.heappush(PrioQueueB, (b, PathB))
+                for Result in search_os(PrioQueueA, PathA, goal,
+                                        VisitedA, VisitedB, next_states, heuristic):
+                    return Result
             else:
-                FrontierA.insert( (guessA, stateA) )
-                for ns in next_states(stateB):
-                    oldEstimate = EstimateB.get(ns, None)
-                    newEstimate = stateBDist + 1 + heuristic(start, ns)
-                    if oldEstimate is None or newEstimate < oldEstimate:
-                        ParentB  [ns] = stateB
-                        DistanceB[ns] = stateBDist + 1
-                        EstimateB[ns] = newEstimate
-                        FrontierB.insert( (newEstimate, ns) )
-                        if oldEstimate is not None:
-                            FrontierB.delete( (oldEstimate, ns) )
-                    if DistanceA.get(ns, None) is not None:
-                        return combinePaths(ns, ParentA, ParentB)                    
+                heapq.heappush(PrioQueueA, (a, PathA))
+                for Result in search_os(PrioQueueB, PathB, start,
+                                        VisitedB, VisitedA, next_states, heuristic):
+                    return Result[::-1]
+    
+    def search_os(PQ, Path, goal, VisitedA, VisitedB, next_states, heuristic):
+        state = Path[-1]
+        if state in VisitedA:
+            return
+        if state in VisitedB:
+            yield Path[:-1] + VisitedB[state][::-1]
+        for ns in next_states(state):           
+            if ns not in VisitedA:
+                prio = len(Path) + 1 + heuristic(ns, goal)
+                heapq.heappush(PQ, (prio, Path + [ns]))
+        VisitedA[state] = Path
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Bidirectional $\mathrm{A}^*$ search.}
