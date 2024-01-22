@@ -1084,14 +1084,14 @@ demonstrate, how the conventional search algorithm has to use a lot more space t
             \draw (8,0) -- (8,4);
 
             \foreach \r in {1.1,2.2,...,4.4}{
-                \draw[gray!50, line width = 0.5pt] (1,2) circle (\r cm);
+                \draw[black!50, line width = 0.5pt] (1,2) circle (\r cm);
             }
-            \draw[green!50, line width = 0.5pt] (1,2) circle (5.5 cm);
+            \draw[blue!50, line width = 0.5pt] (1,2) circle (5.5 cm);
 
             \draw (1,2) circle (0.5cm) node (A) {start};
             \draw (7,2) circle (0.5cm) node (B) {goal};
 
-            \draw[<->, green, thick] (A) to node[above, midway] {$d$} (B); 
+            \draw[<->, blue, thick] (A) to node[above, midway] {$d$} (B); 
         \end{tikzpicture}
         \caption{Conventional search}
         \label{fig:area-conventional-search.tikz}
@@ -1104,20 +1104,20 @@ demonstrate, how the conventional search algorithm has to use a lot more space t
             \draw (8,0) -- (8,4);
 
             \foreach \r in {1,2}{
-                \draw[gray!50, line width = 0.5pt] (1,2) circle (\r cm);
+                \draw[black!50, line width = 0.5pt] (1,2) circle (\r cm);
             }
-            \draw[green!50, line width = 0.5pt] (1,2) circle (3 cm);
+            \draw[blue!50, line width = 0.5pt] (1,2) circle (3 cm);
 
             \foreach \r in {1,2}{
-                \draw[gray!50, line width = 0.5pt] (7,2) circle (\r cm);
+                \draw[black!50, line width = 0.5pt] (7,2) circle (\r cm);
             }
-            \draw[green!50, line width = 0.5pt] (7,2) circle (3 cm);
+            \draw[blue!50, line width = 0.5pt] (7,2) circle (3 cm);
 
             \draw (1,2) circle (0.5cm) node (A) {start};
             \draw (7,2) circle (0.5cm) node (B) {goal};
 
-            \draw[<->, green, thick] (A) to node[above, midway] {$\frac{d}{2}$} (4,2); 
-            \draw[<->, green, thick] (B) to node[above, midway] {$\frac{d}{2}$} (4,2); 
+            \draw[<->, blue, thick] (A) to node[above, midway] {$\frac{d}{2}$} (4,2); 
+            \draw[<->, blue, thick] (B) to node[above, midway] {$\frac{d}{2}$} (4,2); 
         \end{tikzpicture}
         \caption{Bidirectional search}
         \label{fig:area-bidirectional-search.tikz}
@@ -1136,12 +1136,16 @@ def search(start, goal, next_states):
     FrontierB = { goal }
     ParentB   = { goal: goal } 
     while FrontierA and FrontierB:
-        for Path in bfs_os(FrontierA, ParentA, ParentB, next_states, False):
+        for Path in bfs_one_step(FrontierA, ParentA, ParentB, next_states):
             return Path
-        for Path in bfs_os(FrontierB, ParentB, ParentA, next_states, True):
-            return Path
+        for Path in bfs_one_step(FrontierB, ParentB, ParentA, next_states):
+            return Path[::-1]
 
-def bfs_os(Frontier, ParentA, ParentB, next_states, flip: bool):
+def bfs_one_step(Frontier: set[State], 
+                 ParentA: dict[State, State], 
+                 ParentB: dict[State, State], 
+                 next_states: NxtStFct
+                ) -> Generator[list[State], None, None]:
     NewFrontier = set()
     for s in Frontier:
         for ns in next_states(s):
@@ -1149,13 +1153,9 @@ def bfs_os(Frontier, ParentA, ParentB, next_states, flip: bool):
                 NewFrontier |= { ns }
                 ParentA[ns]  = s
                 if ns in ParentB:
-                    if flip:
-                        Result = combinePaths(ns, ParentB, ParentA)
-                    else:
-                        Result = combinePaths(ns, ParentA, ParentB)
-                    yield Result
+                    yield combinePaths(ns, ParentA, ParentB)
     Frontier.clear()
-    Frontier.update(NewFrontier)  
+    Frontier.update(NewFrontier)
 \end{python3code}
 \vspace*{-0.3cm}
 \caption{Bidirectional breadth first search.}
@@ -1177,16 +1177,39 @@ Let us discuss the details of the implementation.
       to be added to the set $\texttt{FrontierA}$.  Similarly, for every state $s$ that is in $\texttt{FrontierB}$,
       $\mathtt{ParentB}[s]$ is the state that caused $s$ to be added to the set $\texttt{FrontierB}$.
 \item The bidirectional search keeps running for as long as both sets $\texttt{FrontierA}$ and
-      $\texttt{FrontierB}$ are non-empty and a path has not yet been found.
-\item The \texttt{while} loop first computes those states that can be reached from $\texttt{FrontierA}$ and have not been
-      visited from $\texttt{start}$.  If a state $\texttt{ns}$ is a neighbour of a state $\texttt{s}$ from the set
-      $\texttt{FrontierA}$ and the state $\texttt{ns}$ has already been encountered during the search that started
-      from $\texttt{goal}$, then a path leading from $\texttt{start}$ to $\texttt{goal}$ has been found and this path
-      is returned.  The function \texttt{combinePaths} that computes this path by combining the path that leads
-      from $\texttt{start}$ to $\texttt{ns}$ and then from $\texttt{ns}$ to $\texttt{goal}$ is shown in Figure
-      \ref{fig:combine-paths.stlx} on page \pageref{fig:combine-paths.stlx}.
-\item Next, the \texttt{while} loop performs the same computation with the role of the states $\texttt{start}$
-      and $\texttt{goal}$ exchanged. 
+      $\texttt{FrontierB}$ are non-empty and a path has not yet been found. 
+\item The \texttt{for}-loop in line 7 first computes those states that can be reached from $\texttt{FrontierA}$ and have not been
+      visited from $\texttt{start}$.  The function
+      \texttt{bfs\_os} is a \blue{generator} that tries to compute a path that connects \texttt{start} with
+      goal.  If such a path is found, the generator \blue{yields} this path which is then returned in line 8.
+
+      The details of the generator \texttt{bfs\_os} are discussed below.
+\item Similarly, the \texttt{for}-loop in line 9 tries to find a path that connects \texttt{goal} with
+      \texttt{start} by trying to expand states in \texttt{FrontierB}.
+\item The function \texttt{bfs\_os} takes five arguments:
+      \begin{enumerate}[(a)]
+      \item \texttt{Frontier} is the frontier of states that result from a breadth first search
+            that originates in a state $p$ where $p$ is either equal to \texttt{start} or to \texttt{goal}.
+      \item \texttt{ParentA} is a dictionary.  For every state $q$ that is discovered in the breadth first
+            search originating in $p$, $\mathtt{ParentA}[q]$ is a state that satisfies
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $q \in \mathtt{next\_states}(\mathtt{ParentA}[q])$.
+      \item \texttt{ParentB} is a dictionary that is similar to \texttt{ParentA} but that instead contains
+            as keys the states from the opposite search, i.e. if $p = \mathtt{start}$, then \texttt{ParentB}
+            contains the states as keys that have been found while searching from \texttt{goal} and if instead
+             $p = \mathtt{goal}$, then \texttt{ParentB} contains the states as keys that have been found while
+             searching from \texttt{goal}.
+      \item For every state $s$, we have that $\texttt{next\_states}(s)$ is the set of states that can be
+            reached in one step from $s$.
+      \end{enumerate}
+      The function \texttt{bfs\_os} is a \blue{generator}, i.e.~it does not return a result but rather
+      it \blue{yields} a result when we iterate over it.  A result is only yielded when the function finds a
+      state \texttt{ns} that is both reachable from the state \texttt{start} and the state \texttt{goal}.
+
+      Otherwise, the function just updates the set \texttt{Frontier} to contain those states that can be
+      reached in one step from the previous version of the set \texttt{Frontier}.  Hence, the function
+      \texttt{bfs\_os} performs one iteration of breadth first search.
 \end{enumerate}
 On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 128
 milliseconds and uses 4 megabytes.  However, bidirectional breadth first search is still not able to solve the
