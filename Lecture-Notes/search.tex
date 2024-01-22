@@ -1130,30 +1130,32 @@ demonstrate, how the conventional search algorithm has to use a lot more space t
 \begin{figure}[!ht]
 \centering
 \begin{python3code}
-    def search(start, goal, next_states):        
-        FrontierA = { start }
-        ParentA   = { start: start}
-        FrontierB = { goal }
-        ParentB   = { goal: goal} 
-        while FrontierA and FrontierB:
-            NewFrontier = set()
-            for s in FrontierA:
-                for ns in next_states(s):
-                    if ns not in ParentA:
-                        NewFrontier |= { ns }
-                        ParentA[ns]  = s
-                        if ns in ParentB:
-                            return combinePaths(ns, ParentA, ParentB)
-            FrontierA   = NewFrontier
-            NewFrontier = set()
-            for s in FrontierB:
-                for ns in next_states(s):
-                    if ns not in ParentB:
-                        NewFrontier |= { ns }
-                        ParentB[ns]  = s
-                        if ns in ParentA:
-                            return combinePaths(ns, ParentA, ParentB)
-            FrontierB = NewFrontier
+def search(start, goal, next_states):        
+    FrontierA = { start }
+    ParentA   = { start: start }
+    FrontierB = { goal }
+    ParentB   = { goal: goal } 
+    while FrontierA and FrontierB:
+        for Path in bfs_os(FrontierA, ParentA, ParentB, next_states, False):
+            return Path
+        for Path in bfs_os(FrontierB, ParentB, ParentA, next_states, True):
+            return Path
+
+def bfs_os(Frontier, ParentA, ParentB, next_states, flip: bool):
+    NewFrontier = set()
+    for s in Frontier:
+        for ns in next_states(s):
+            if ns not in ParentA:
+                NewFrontier |= { ns }
+                ParentA[ns]  = s
+                if ns in ParentB:
+                    if flip:
+                        Result = combinePaths(ns, ParentB, ParentA)
+                    else:
+                        Result = combinePaths(ns, ParentA, ParentB)
+                    yield Result
+    Frontier.clear()
+    Frontier.update(NewFrontier)  
 \end{python3code}
 \vspace*{-0.3cm}
 \caption{Bidirectional breadth first search.}
@@ -1619,7 +1621,7 @@ found is optimal \cite{hart:1972}.
   the search is successful and, furthermore, the solution that is computed is a shortest path leading from 
   start to goal. 
 \end{Theorem}
-
+\pagebreak
 
 \section{Bidirectional $\mathrm{A}^*$ Search}
 \begin{figure}[!ht]
@@ -1718,6 +1720,7 @@ does not find the shortest path.
 \caption{A start state and a goal state for the $4 \times 4$ sliding puzzle.}
 \label{fig:start-goal.stlx}
 \end{figure}
+\pagebreak
 
 
 \section{Iterative Deepening $\mathrm{A}^*$ Search \label{sec:ida-star-search}}
