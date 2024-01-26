@@ -1,70 +1,44 @@
 \chapter{Solving Constraint Satisfaction Problems}
-In this chapter we discuss various algorithms for solving 
+In this chapter, we delve into a variety of algorithms designed for solving 
 \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problems}.
-In a \blue{constraint satisfaction problem} we are given a set of \blue{formulas} and search for \blue{values}
-that can be 
-assigned to the \blue{variables} occurring in these formulas so that all of the formulas evaluate as true.
-Constraint satisfaction problems can be seen as a refinement of the search problems discussed in the previous
-chapter:  In a search problem, the states are abstract and therefore have no structure that can be exploited to
-guide the search, while in a \blue{constraint satisfaction problem}, the states have a structure, as these
-states are \blue{variable assignments}.  This structure can be exploited to guide the search.  This chapter is
-structured as follows: 
+In a \blue{constraint satisfaction problem}, we are presented with a set of \blue{formulas}, and our objective
+is to find \blue{values} that can be assigned to the \blue{variables} in these formulas, ensuring all formulas
+evaluate to true. Constraint satisfaction problems represent a more refined version of the search problems
+addressed in the previous chapter. Unlike search problems, where states are abstract and lack exploitable
+structure for guiding the search, \blue{constraint satisfaction problems} feature structured states in the form
+of \blue{variable assignments}.  This structure can be leveraged to direct the search process more effectively.
+
+This chapter is organized as follows:
 \begin{enumerate}[(a)]
-\item The first section defines the notion of a constraint satisfaction problem.  In order to illustrate this
-      notion, we present two examples: \blue{map colouring} and the \blue{eight queens puzzle}.  After that, we discuss
-      applications of constraint satisfaction problems. 
-\item The simplest algorithm to solve a constraint satisfaction problem is via \blue{brute force search}.
-      The idea behind \emph{brute force search} is to test all possible \blue{variable assignments}.
-\item In most cases, the search space is so large that it is not feasible to enumerate all variable assignments.
-      \blue{Backtracking search} improves on brute force search by mixing the generation
-      of variable assignments with the testing of the constraints.  This approach
-      improves the performance of the brute search algorithm drastically.
-\item Backtracking search can be refined by using both \blue{constraint propagation} and 
-      the \blue{most restricted variable} heuristic.
-\item Furthermore, checking the \blue{consistency} of the values assigned to different variables
-      can reduce the size of the search space considerably. 
-\item \blue{Local search} is a completely different approach to solve
-      constraint satisfaction problems.  This approach is especially useful if the constraint satisfaction
-      problem is huge, but not complicated.
-\item Finally, we discuss the theorem prover \href{https://microsoft.github.io/z3guide/}{\texttt{Z3}}, which
-      can be used as an industrial strength \blue{constraint solver}.  Here, a \emph{constraint solver} is a
-      piece of software that takes a \emph{constraint satisfaction problem} as input and returns a \emph{solution} of
-      this problem.
+\item The initial section introduces the concept of a constraint satisfaction problem. To elucidate this concept, we explore two examples: \blue{map colouring} and the \blue{eight queens puzzle}. Subsequently, we examine various applications of constraint satisfaction problems.
+\item The most basic algorithm for addressing a constraint satisfaction problem is \blue{brute force search}. The principle of \emph{brute force search} involves examining every possible \blue{variable assignment}.
+\item Often, the search space is so vast that enumerating all variable assignments becomes impractical. \blue{Backtracking search} enhances brute force search by intertwining the generation of variable assignments with the evaluation of constraints, significantly boosting the efficiency of the search.
+\item Backtracking search can be further refined through the integration of \blue{constraint propagation} and the application of the \blue{most restricted variable} heuristic.
+\item Additionally, verifying the \blue{consistency} of values assigned to different variables can substantially reduce the search space.
+\item \blue{Local search} presents an alternative methodology for solving constraint satisfaction problems, particularly beneficial for large but uncomplicated problems.
+\item Lastly, we discuss the \href{https://microsoft.github.io/z3guide/}{\texttt{Z3}} theorem prover, an industrial-grade \blue{constraint solver}. Here, a \emph{constraint solver} is defined as software that accepts a \emph{constraint satisfaction problem} as input and produces a \emph{solution} for the problem.
 \end{enumerate}
-When we have finished our discussion of constraint satisfaction problems, we will have implemented a
-constraint solver that is able to solve instances of the most difficult
-\href{https://en.wikipedia.org/wiki/Sudoku}{Sudoku} puzzles in seconds.
+
+Upon concluding our exploration of constraint satisfaction problems, we will have developed a constraint solver capable of resolving the most challenging \href{https://en.wikipedia.org/wiki/Sudoku}{Sudoku} puzzles in mere seconds.
 
 \section[Formal Definition of \textsc{Csp}s]{Formal Definition of Constraint Satisfaction Problems}
-Formally, we define a 
-\href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problem} as a triple
+Formally, a 
+\href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{constraint satisfaction problem} is defined as a triple:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{P} := \langle \texttt{Vars}, \texttt{Values}, \texttt{Constraints} \rangle$
 \\[0.2cm]
 where \index{constraint satisfaction problem}
 \begin{enumerate}[(a)]
-\item $\texttt{Vars}$ is a set of strings which serve as \blue{variables},
-\item $\texttt{Values}$ is a set of \blue{values} that can be assigned to the variables in $\texttt{Vars}$.
-\item $\texttt{Constraints}$ is a set of formulas from \blue{first order logic}.  Each of these formulas is
-      called a \blue{constraint} of $\mathcal{P}$.
-
-      In order to be able to interpret these formulas, we need a \blue{first order structure} $\mathcal{S} = \langle \mathcal{U}, \mathcal{J} \rangle$.  
-      Here, $\mathcal{U}$ is the \blue{universe} of $\mathcal{S}$ and we will assume that this
-      universe is identical to the set $\texttt{Values}$, that is we have
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\mathcal{U} = \texttt{Values}$.
-      \\[0.2cm]
-      The second component $\mathcal{J}$ defines the
-      \blue{interpretations} of the function symbols and predicate symbols that are used in the formulas\
-      defining the constraints.  In the following we assume that these interpretations are understood from the
-      context of the constraint satisfaction problem $\mathcal{P}$ and hence need not be specified explicitly.
-      Later, when we discuss examples of constraint 
-      satisfaction problems, both the function symbols and the predicate symbols will be interpreted
-      by functions written in \textsl{Python}.
+\item $\texttt{Vars}$ represents a set of strings, functioning as \blue{variables}.
+\item $\texttt{Values}$ denotes a set of \blue{values} that can be assigned to the variables in $\texttt{Vars}$.
+\item $\texttt{Constraints}$ is a collection of formulas derived from \blue{first order logic}, each termed a
+      \blue{constraint} of $\mathcal{P}$. To evaluate these formulas, an \blue{interpretation} of the function and
+      predicate symbols appearing in these constraints is essential. To avoid excessive formalization, we presume
+      these interpretations are implicitly understood. In the provided examples, these interpretations will
+      be given through functions implemented in \textsl{Python}. 
 \end{enumerate}
-In the following, the abbreviation \blue{\textsc{Csp}} is short for \blue{constraint satisfaction problem}.
+In subsequent sections, the abbreviation \blue{\textsc{Csp}} refers to \blue{constraint satisfaction problem}.
 Given a \textsc{Csp}
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -75,26 +49,24 @@ a \blue{variable assignment} for $\mathcal{P}$ is a function \index{variable ass
 \hspace*{1.3cm}
 $A: \texttt{Vars} \rightarrow \texttt{Values}$
 \\[0.2cm]
-that maps variables to values.  A variable assignment $A$ is a \blue{solution} \index{solution of a \textsc{Csp}}
-of the \textsc{Csp} $\mathcal{P}$  
-if, given the assignment $A$, all constraints of $\mathcal{P}$ are satisfied, i.e.~we have
+that maps variables to values. A variable assignment $A$ is a \blue{solution} \index{solution of a \textsc{Csp}}
+to $\mathcal{P}$ if, under $A$, all constraints are fulfilled, that is:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\texttt{eval}(f, A) = \texttt{true}$ \quad for all $f \in \texttt{Constraints}$.
+$\texttt{eval}(f, A) = \texttt{true}$ \quad for every $f \in \texttt{Constraints}$.
 \\[0.2cm]
-Finally, a \blue{partial variable assignment} $B$ for $\mathcal{P}$ is a function \index{partial variable assignment}
+Moreover, a \blue{partial variable assignment} $B$ for $\mathcal{P}$ is a function \index{partial variable assignment}
 \\[0.2cm]
 \hspace*{1.3cm}
-$B: \texttt{Vars} \rightarrow \texttt{Values} \cup \{ \Omega \}$ \quad where $\Omega$ denotes the undefined value.
+$B: \texttt{Vars} \rightarrow \texttt{Values} \cup \{ \Omega \}$, with $\Omega$ symbolizing the undefined value.
 \\[0.2cm]
-Hence, a partial variable assignment does not assign values to all variables.  Instead, it assigns values only
-to a subset of the set $\texttt{Vars}$.  The \blue{domain} $\texttt{dom}(B)$ of a partial variable assignment $B$ is the
-set of those variables that are assigned a value different from $\Omega$, i.e.~we define
+Therefore, a partial variable assignment does not assign values to all variables, but only to a subset of $\texttt{Vars}$. The \blue{domain} $\texttt{dom}(B)$ of a partial variable assignment $B$ is defined as the set of variables assigned a value different from $\Omega$, namely:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{dom}(B) := \bigl\{ x \in \texttt{Vars} \mid B(x) \not= \Omega \bigr\}$.
 \\[0.2cm]
-We illustrate the definitions given so far by presenting two examples.
+The concepts delineated thus far will be explained through two examples.
+
 
 
 \begin{figure}[!ht]
