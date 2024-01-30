@@ -1071,8 +1071,9 @@ states in breadth first search, while we only have to explore
 $2 \cdot \bigl(2^{\frac{40}{2}+1} - 1\bigr) = 4,194,302 $
 \\[0.2cm]
 states with bidirectional breadth first search.  While it is certainly feasible to keep four million states in memory,
-keeping two trillion states in memory is impossible on most devices.  The \myFig{example-area-usage-of-search.tikz} should
-demonstrate, how the conventional search algorithm has to use a lot more space than the bidirectional approach.
+keeping two trillion states in memory is impossible on most devices.  The
+\myFig{example-area-usage-of-search.tikz} demonstrates that the conventional search algorithm has to use a lot
+more space than the bidirectional approach. 
 
 \begin{figure}[!ht]
     \centering
@@ -1180,13 +1181,14 @@ Let us discuss the details of the implementation.
       $\texttt{FrontierB}$ are non-empty and a path has not yet been found. 
 \item The \texttt{for}-loop in line 7 first computes those states that can be reached from $\texttt{FrontierA}$ and have not been
       visited from $\texttt{start}$.  The function
-      \texttt{bfs\_os} is a \blue{generator} that tries to compute a path that connects \texttt{start} with
-      goal.  If such a path is found, the generator \blue{yields} this path which is then returned in line 8.
+      \texttt{bfs\_one\_step} is a \blue{generator} that tries to compute a path that connects \texttt{start} with
+      \texttt{goal}.  If such a path is found, the generator \blue{yields} this path which is then returned in
+      line 8. 
 
-      The details of the generator \texttt{bfs\_os} are discussed below.
+      The details of the generator \texttt{bfs\_one\_step} are discussed below.
 \item Similarly, the \texttt{for}-loop in line 9 tries to find a path that connects \texttt{goal} with
       \texttt{start} by trying to expand states in \texttt{FrontierB}.
-\item The function \texttt{bfs\_os} takes five arguments:
+\item The function \texttt{bfs\_one\_step} takes five arguments:
       \begin{enumerate}[(a)]
       \item \texttt{Frontier} is the frontier of states that result from a breadth first search
             that originates in a state $p$ where $p$ is either equal to \texttt{start} or to \texttt{goal}.
@@ -1194,27 +1196,29 @@ Let us discuss the details of the implementation.
             search originating in $p$, $\mathtt{ParentA}[q]$ is a state that satisfies
             \\[0.2cm]
             \hspace*{1.3cm}
-            $q \in \mathtt{next\_states}(\mathtt{ParentA}[q])$.
+            $q \in \mathtt{next\_states}(\mathtt{ParentA}[q])$,
+            \\[0.2cm]
+            i.e.~$\texttt{ParentA}[q]$ is the state that lead to the state $q$.
       \item \texttt{ParentB} is a dictionary that is similar to \texttt{ParentA} but that instead contains
             as keys the states from the opposite search, i.e. if $p = \mathtt{start}$, then \texttt{ParentB}
             contains the states as keys that have been found while searching from \texttt{goal} and if instead
              $p = \mathtt{goal}$, then \texttt{ParentB} contains the states as keys that have been found while
-             searching from \texttt{goal}.
+             searching from \texttt{start}.
       \item For every state $s$, we have that $\texttt{next\_states}(s)$ is the set of states that can be
             reached in one step from $s$.
       \end{enumerate}
-      The function \texttt{bfs\_os} is a \blue{generator}, i.e.~it does not return a result but rather
+      The function \texttt{bfs\_one\_step} is a \blue{generator}, i.e.~it does not return a result but rather
       it \blue{yields} a result when we iterate over it.  A result is only yielded when the function finds a
       state \texttt{ns} that is both reachable from the state \texttt{start} and the state \texttt{goal}.
 
       Otherwise, the function just updates the set \texttt{Frontier} to contain those states that can be
       reached in one step from the previous version of the set \texttt{Frontier}.  Hence, the function
-      \texttt{bfs\_os} performs one iteration of breadth first search.
+      \texttt{bfs\_one\_step} performs one iteration of breadth first search.
 \end{enumerate}
 On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 128
 milliseconds and uses 4 megabytes.  However, bidirectional breadth first search is still not able to solve the
 more interesting cases of the $4 \times 4$ sliding puzzle since the portion of the search space that needs to
-be computed is just too big to fit into memory. 
+be computed is still too big to fit into memory. 
 
 \begin{figure}[!ht]
 \centering
