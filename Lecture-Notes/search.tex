@@ -1246,7 +1246,6 @@ problem, she will usually develop an intuition that certain states are more favo
 they seem to be closer to the solution.  In order to formalise this procedure, we next define the notion of a
 \blue{search heuristic}. \index{search heuristic}
 
-
 \begin{Definition}[Search Heuristic]
 Given a search problem
 \\[0.2cm]
@@ -1295,7 +1294,7 @@ that visits $s_2$ first.  Hence, we have the inequality
 \hspace*{1.3cm}
 $h(s_1) \leq 1 + h(s_2)$.
 \\[0.2cm]
-The \myFig{demonstration-heuristic.tikz} demonstrates this equation.
+The \myFig{demonstration-heuristic.tikz} demonstrates this inequality.
 
 \begin{figure}[!ht]
     \centering
@@ -1507,7 +1506,7 @@ We need only two functions from the module \texttt{heapq}:
                   xrightmargin  = 0.8cm,
                 ]{python3}
     def search(start, goal, next_states, heuristic):
-        Visited = set()
+        Visited   = set()
         PrioQueue = [ (heuristic(start, goal), [start]) ]
         while PrioQueue:
             _, Path = heapq.heappop(PrioQueue)
@@ -1551,8 +1550,8 @@ $\texttt{heuristic}$.  The details of the implementation are as follows:
       \\[0.2cm] 
       i.e.~\texttt{estimate} is the estimated distance between this \texttt{state} and \texttt{goal} and hence
       an estimate of the number of steps needed to complete \texttt{Path} into a solution.  This ensures,
-      that the best path, i.e.~the path whose last state is nearest to the \texttt{goal} is at the
-      beginning of the set \texttt{PrioQueue}.
+      that the path whose last state is nearest to the \texttt{goal} is at the beginning of the set
+      \texttt{PrioQueue}. 
 \item As long as \texttt{PrioQueue} is not empty, we take the \texttt{Path} from the beginning of this
       priority queue and remove it from the queue.  The state at the end of \texttt{Path} is named \texttt{state}.
 
@@ -1582,7 +1581,7 @@ only takes into account the distance from \( s \) to the
 \texttt{goal} state. Crucially, it neglects the distance from the \texttt{start} state to \( s \). In
 contrast, the \blue{\(\mathrm{A}^*\) search algorithm} incorporates both the distance from \texttt{start} to
 \(s \) and the estimated distance from \( s \) to the \texttt{goal}. As a result, when the heuristic employed
-by the A\(^*\) search algorithm is consistent, it is assured to find the shortest path. 
+by the A\(^*\) search algorithm is admissible, it is assured to find the shortest path. 
 
 Specifically, in the context of a given state \( s \), the function \( g(s) \) calculates the length of the
 path from \texttt{start} to \( s \), and \( h(s) \) provides a heuristic estimate of the distance from \( s \)
@@ -1638,17 +1637,65 @@ in 1972 \cite{hart:1972}.
 
 When we run $\mathrm{A}^*$ search on the $3 \times 3$ sliding puzzle, it takes about $0.1$ seconds to solve the instance
 shown in \myFig{8-puzzle.pdf} and visits 6614 states.
-Furthermore, the good news about $\mathrm{A}^*$ search is that, provided the heuristic is consistent, the path which is
+Furthermore, the good news about $\mathrm{A}^*$ search is that, provided the heuristic is admissible, the path which is
 found is optimal \cite{hart:1972}.
 
 \begin{Theorem}[Completeness and Optimality of $\mathrm{A}^*$ Search] \hspace*{\fill} \linebreak
   If $\mathcal{P} = \langle Q, \mathtt{next\_states}, \mathtt{start}, \mathtt{goal}\rangle$ is a search problem   and 
-  $h: Q \rightarrow \mathbb{R}$ is a consistent heuristic for $\mathcal{P}$,
+  $h: Q \rightarrow \mathbb{R}$ is a admissible heuristic for $\mathcal{P}$,
   then $\mathrm{A}^*$ search is both complete and optimal, i.e. if there is a path from start to goal, then
   the search is successful and, furthermore, the solution that is computed is a shortest path leading from 
   start to goal. 
 \end{Theorem}
-\pagebreak
+
+\proof
+To simplify the notation of the proof we agree to use the following notation.
+If $P$ is a path that is an element of \texttt{PrioQueue} and $s$ is the last state of the path $P$,
+i.e.~$P[-1] = s$,  then we say that $s \in \mathtt{PrioQueue}$, although it really is the path $P$ that is an
+element of \texttt{PrioQueue}.  Furthermore, we denote the length of $P$ with $g(s)$. Finally, we define
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(s) := g(s) + h(s)$  \quad for all the states $s \in \mathtt{PrioQueue}$. 
+\\[0.2cm]
+Therefore, $f(s)$ computes the priority of a state $s \in \mathtt{PrioQueue}$.
+
+Next, the proof of our claim proceeds indirect.  We assume that the path $P_1 = [s_0, s_1, \cdots, s_n]$ that
+is computed by $A^*$ search is not the shortest path.  Then there is a path $P_2 = [t_0, t_1, \cdots, t_m]$
+leading from \texttt{start} to \texttt{goal} such that $P_2$ is shorter than $P_1$, i.e.~we must have $m < n$. 
+We claim that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(t_i) \leq m$  \quad for all $i \in \{0, \cdots, m\}$.
+\\[0.2cm]
+The reasoning is as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[t]{lclr}
+  f(t_i) & = & g(t_i) + h(t_i)  \\[0.2cm] 
+         & = & i + h(t_i)     & \mbox{since $g(t_i) = \texttt{len}([t_0, \cdots, t_i]) = i$}  \\[0.2cm]
+         & \leq & i + (m - i) & \mbox{since $h(t_i) \leq \texttt{len}([t_i, \cdots, t_m]) = m-i$} \\[0.2cm]
+         & = & m                       
+\end{array}
+$
+\\[0.2cm]
+However, for the path $P_1$ we know that
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(s_n) = g(s_n) + h(s_n) = n + 0 = n > m$.
+\\[0.2cm]
+Since \texttt{PrioQueue} is a priority queue, we only remove the path $P_1$ from \texttt{PrioQueue} when all
+paths with are higher priority have already been removed and the corresponding end notes have been
+expanded.  But as $n > m$ this means that all paths
+\\[0.2cm]
+\hspace*{1.3cm}
+$[t_0]$, $[t_0,t_1]$, $\cdots$, $[t_0, \cdots, t_m]$ 
+\\[0.2cm]
+have already been removed from \texttt{PrioQueue} before $P_1$ is removed.  But then $A^*$ search would have
+already found the shortest path from \texttt{start} to \texttt{goal} and hence the path $P_1$ would never be
+removed from \texttt{PrioQueue}.   This shows that $A^*$ search can't return a path that is not a shortest path.
+\qed
+
 
 \section{Bidirectional $\mathrm{A}^*$ Search}
 \begin{figure}[!ht]
@@ -1689,7 +1736,9 @@ found is optimal \cite{hart:1972}.
             yield Path[:-1] + VisitedB[state][::-1]
         for ns in next_states(state):           
             if ns not in VisitedA:
-                prio = len(Path) + 1 + heuristic(ns, goal)
+                prio1 = len(Path) + heuristic(ns, goal)
+                prio2 = 2 * len(Path)
+                prio  = max(prio1, prio2)
                 heapq.heappush(PQ, (prio, Path + [ns]))
         VisitedA[state] = Path
 \end{minted}
@@ -1711,13 +1760,17 @@ $\mathrm{A}^*$ search starting from $\texttt{goal}$ depending on the estimated t
 \item Once the total estimated distance of a path starting from $\texttt{goal}$ is less than the best total
       estimated distance of a path starting from $\texttt{start}$, we switch and remove states from $\texttt{FrontierB}$.
 \end{enumerate}
+There is one more twist, as the computation of the priority is a bit more involved.  This is necessary to
+guarantee that the shortest path is computed.
+    
 When we run bidirectional $\mathrm{A}^*$ search for the $3 \times 3$ sliding puzzle shown in
-\myFig{8-puzzle.pdf}, the program takes 150 milliseconds and uses only $2,963$ states.  Therefore, I have tried
-to solve the $4 \times 4$ sliding puzzle shown in \myFig{start-goal.stlx} using
-bidirectional $\mathrm{A}^*$ search.  A solution of $40$ steps was found in $1.3$ seconds.
-Only $17,626$ states had to be processed to compute this solution!  As the shortest path connecting
-\texttt{start} and \texttt{goal} has a length of 36 steps, this shows that bidirectional $\mathrm{A}^*$ search
-does not find the shortest path.
+\myFig{8-puzzle.pdf}, the program takes 150 milliseconds and uses $10,554$ states.  I have also
+used bidirectional $A^*$ search to solve the $4 \times 4$ sliding puzzle shown in \myFig{start-goal.stlx}.  A
+solution of $36$ steps was found in $2$ seconds. 
+A total $77,870$ states had to be processed to compute this solution.
+This shows that, counter-intuitively, bidirectional $A^*$ search uses more memory than unidirectional $A^*$
+search.  Hence, in general, it not worth the trouble and we should stick with unidirectional $A^*$ search.
+
 
 
 
@@ -1817,7 +1870,7 @@ shows an implementation of \textsc{ida} search.  We proceed to discuss this prog
             estimate is optimistic, i.e.~the \texttt{heuristic} has to be \blue{admissible}.
 
             Note that this is different from A$^*$ search. A$^*$ search requires that the \texttt{heuristic} is 
-            \blue{consistent}.
+            \blue{admissible}.
      \end{enumerate}
 \item The function \texttt{search} initializes \texttt{limit} to be an estimate of the distance
       between \texttt{start} and \texttt{goal}.  As we assume that the function \texttt{heuristic} is
