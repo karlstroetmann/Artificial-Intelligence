@@ -10,11 +10,20 @@ of \blue{variable assignments}.  This structure can be leveraged to direct the s
 
 This chapter is organized as follows:
 \begin{enumerate}[(a)]
-\item The initial section introduces the concept of a constraint satisfaction problem. To elucidate this concept, we explore two examples: \blue{map colouring} and the \blue{eight queens puzzle}. Subsequently, we examine various applications of constraint satisfaction problems.
-\item The most basic algorithm for addressing a constraint satisfaction problem is \blue{brute force search}. The principle of \emph{brute force search} involves examining every possible \blue{variable assignment}.
-\item Often, the search space is so vast that enumerating all variable assignments becomes impractical. \blue{Backtracking search} enhances brute force search by intertwining the generation of variable assignments with the evaluation of constraints, significantly boosting the efficiency of the search.
-\item Backtracking search can be further refined through the integration of \blue{constraint propagation} and the application of the \blue{most restricted variable} heuristic.
-\item Additionally, verifying the \blue{consistency} of values assigned to different variables can substantially reduce the search space.
+\item The initial section introduces the concept of a constraint satisfaction problem. To elucidate this
+  concept, we explore two examples: \blue{map colouring} and the \blue{eight queens puzzle}. Subsequently, we
+  examine various applications of constraint satisfaction problems. 
+\item The most basic algorithm for addressing a constraint satisfaction problem is \blue{brute force
+    search}. The principle of \emph{brute force search} involves examining every possible \blue{variable
+    assignment}. 
+\item Often, the search space is so vast that enumerating all variable assignments becomes
+  impractical. \blue{Backtracking search} enhances brute force search by intertwining the generation of
+  variable assignments with the evaluation of constraints, significantly boosting the efficiency of the
+  search. 
+\item Backtracking search can be further refined through the integration of \blue{constraint propagation} and
+  the application of the \blue{most restricted variable} heuristic. 
+\item Additionally, verifying the \blue{consistency} of values assigned to different variables can
+  substantially reduce the search space. 
 \item \blue{Local search} presents an alternative methodology for solving constraint satisfaction problems, particularly beneficial for large but uncomplicated problems.
 \item Lastly, we discuss the \href{https://microsoft.github.io/z3guide/}{\texttt{Z3}} theorem prover, an industrial-grade \blue{constraint solver}. Here, a \emph{constraint solver} is defined as software that accepts a \emph{constraint satisfaction problem} as input and produces a \emph{solution} for the problem.
 \end{enumerate}
@@ -65,7 +74,7 @@ Therefore, a partial variable assignment does not assign values to all variables
 \hspace*{1.3cm}
 $\texttt{dom}(B) := \bigl\{ x \in \texttt{Vars} \mid B(x) \not= \Omega \bigr\}$.
 \\[0.2cm]
-The concepts delineated thus far will be explained through two examples.
+The concepts delineated thus far will be explained through three examples.
 
 
 
@@ -282,6 +291,132 @@ was one of the main ideas incorporated in the programming language
 \href{https://en.wikipedia.org/wiki/Prolog}{Prolog}.  While \blue{Prolog} could not live up to its promises
 as a viable general purpose programming language, constraint programming has proved to be very useful in a
 number of domains.  
+
+\subsection{Example: The Zebra Problem}
+The following puzzle is known as the \href{https://en.wikipedia.org/wiki/Zebra_Puzzle}{Zebra Puzzle} and was featured in the magazine \textit{Life International} on December 17, 1962. It presents a series of clues pertaining to the occupants of five distinct houses, challenging the solver to deduce specific details about them. The puzzle is structured as follows:
+
+\begin{enumerate}
+    \item There are five houses.
+    \item The Englishman lives in the red house.
+    \item The Spaniard owns the dog.
+    \item Coffee is drunk in the green house.
+    \item The Ukrainian drinks tea.
+    \item The green house is immediately to the right of the ivory house.
+    \item The Old Gold smoker owns snails.
+    \item Kools are smoked in the yellow house.
+    \item Milk is drunk in the middle house.
+    \item The Norwegian lives in the first house.
+    \item The man who smokes Chesterfields lives in the house next to the man with the fox.
+    \item Kools are smoked in the house next to the house where the horse is kept.
+    \item The Lucky Strike smoker drinks orange juice.
+    \item The Japanese smokes Parliaments.
+    \item The Norwegian lives next to the blue house.
+    \item Each of the five houses is painted a unique color.
+    \item The residents of the five houses each have a distinct nationality.
+    \item A different pet is kept in each house.
+    \item The beverages consumed in the various houses are all unique.
+    \item A distinct brand of cigarettes is smoked in each house.
+\end{enumerate}
+
+The objective of the Zebra Puzzle is to answer the following two questions:
+\begin{enumerate}
+    \item Who drinks water?
+    \item Who owns the zebra?
+\end{enumerate}
+
+Next, we formulate the zebra puzzle as a constraint satisfaction problem.  To this end, we first
+define the set of variables:
+
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    Nations = { 'English', 'Spanish', 'Ukrainian', 'Norwegian', 'Japanese' }
+    Drinks  = { 'Coffee' , 'Tea', 'Milk', 'OrangeJuice', 'Water' }
+    Pets    = { 'Dog', 'Snails', 'Horse', 'Fox', 'Zebra' }
+    Brands  = { 'LuckyStrike', 'Parliaments', 'Kools', 'Chesterfields', 'OldGold' }
+    Colours = { 'Red', 'Green', 'Ivory', 'Yellow', 'Blue' }
+    Variables = Nations | Drinks | Pets | Brands | Colours
+\end{minted}
+
+\noindent
+Then, we define the set of values as:
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = last,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.0cm,
+                xrightmargin  = 0.0cm,
+              ]{python3}
+    Values = { 1, 2, 3, 4, 5 }
+\end{minted}
+The interpretation of the variables and their values should be obvious: For example, if the variable
+\texttt{English} has the value $1$, the this would imply that the Englishman lives in the first house. 
+
+In order to write down the last 5 constraints we implement the auxiliary function $\texttt{allDifferent}(V)$
+which takes a set of variables $V$ as input and returns a set of formulas expressing that the values of the
+variables in $V$ are all different.
+\begin{minted}[ frame         = lines, 
+                 framesep      = 0.3cm, 
+                 firstnumber   = 1,
+                 bgcolor       = bg,
+                 numbers       = left,
+                 numbersep     = -0.2cm,
+                 xleftmargin   = 0.8cm,
+                 xrightmargin  = 0.8cm,
+               ]{python3}
+def allDifferent(Variables: set[str]) -> set[str]:
+    return { f'{x} != {y}' for x in Variables
+                           for y in Variables 
+                           if x < y 
+           }
+\end{minted}
+For example, using the function \texttt{allDifferent} we can express the fact that all five houses are painted
+in a different color via the formula
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{allDifferent(Nations)}.
+\\[0.2cm]
+Using the function \texttt{allDifferent}, we can define the set of all constraints as follows:
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = bg,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
+    Constraints = { 'English       == Red',          
+                    'Spanish       == Dog',          
+                    'Coffee        == Green',        
+                    'Ukrainian     == Tea',          
+                    'Green         == Ivory + 1',                         
+                    'OldGold       == Snails',       
+                    'Kools         == Yellow',       
+                    'Milk          == 3',            
+                    'Norwegian     == 1',            
+                    'abs(Chesterfields - Fox) == 1',                         
+                    'abs(Kools - Horse) == 1',       
+                    'LuckyStrike   == OrangeJuice',  
+                    'Japanese      == Parliaments',  
+                    'abs(Norwegian - Blue) == 1'     
+                  }
+    Constraints |= allDifferent(Nations)
+    Constraints |= allDifferent(Drinks)
+    Constraints |= allDifferent(Pets)
+    Constraints |= allDifferent(Brands)
+    Constraints |= allDifferent(Colours)
+\end{minted}
+We will soon develop a solver that is able to solve the resulting constraint satisfaction problem.
+
 
 \subsection{Applications}
 Besides the toy problems discussed so far, there are a number of industrial applications of constraint
