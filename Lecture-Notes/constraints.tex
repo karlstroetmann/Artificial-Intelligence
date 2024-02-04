@@ -1648,7 +1648,7 @@ Finally, \texttt{backtrack\_search} is called to solve the remaining constraint 
 means of both \blue{backtracking} and \blue{constraint propagation}. 
 
 
-\section{Local Search}
+\section{Local Search$^*$}
 There is another approach to solve constraint satisfaction problems.  This approach is known as
 \blue{local search}.  The basic idea is simple: Given as constraint satisfaction problem 
 $\mathcal{C}$ of the form 
@@ -1887,7 +1887,7 @@ The following is a simple text problem from my old $8^{\textrm{th}}$ grade math 
 \textsl{
   \begin{itemize}
   \item I have as many brothers as I have sisters.
-  \item My sister has twice as many brothers as she has sisters.
+  \item My oldest sister has twice as many brothers as she has sisters.
   \item How many children does my father have?
   \end{itemize}}
 \noindent
@@ -1902,14 +1902,18 @@ We can now infer the number of children.
 If we denote the number of \blue{boys} with the variable $b$ and the number of \blue{girls} with
 $g$, the problem statements are equivalent to the following two equations:
 \begin{enumerate}[(a)]
-\item $b - 1 = g$.
-\item $2 \cdot (g - 1) = b$.
+\item $b - 1 = g$, \quad since I am not my own brother.
+\item $2 \cdot (g - 1) = b$ \quad as my sister is not my own sister.
 \end{enumerate}
+By the way, from the problem statement it is clear that I must be male, since otherwise
+my oldest sister would as many  brothers as I have and hence she would have as many brothers as I have
+sisters in contrast to the second statement.
+
 Before we can start to solve this problem, we have to install \texttt{Z3} via \texttt{pip} using the following
 command in the shell:  
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{pip install z3}
+\texttt{pip install z3-solver}
 \\[0.2cm]
 Once we have done this and we have added the directory
 \\[0.2cm]
@@ -2298,7 +2302,7 @@ that has been found.
 \begin{enumerate}
 \item In line 1 we define the dictionary \texttt{Environment}  which will serve as the local environment for
       the functions \texttt{exec} and \texttt{eval} below.
-\item We import everything form the package \texttt{z3} into this environment in line 45.
+\item We import everything form the package \texttt{z3} into this environment in line 3.
 \item Then we declare that the strings from the set \texttt{Variable} represent \texttt{Z3} bit-vector
       variables of length $4$.   
 \item We create a solver object in line 6 and add the constraints to this solver in the following two lines.
@@ -2311,7 +2315,7 @@ that has been found.
 
       This dictionary is then returned.
 \end{enumerate}
-
+\pagebreak
 
 
 \begin{table}[h]
