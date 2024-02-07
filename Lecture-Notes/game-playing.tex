@@ -270,7 +270,7 @@ the game is drawn.  In this section we present two different implementations of 
       difference whether we take the utility of the state for the player ``$\textts{X}$'' or for the player
       ``$\textts{O}$'': If the game is finished for  ``$\textts{X}$'', then it is also finished for ``$\textts{O}$'' and vice versa.
 \end{enumerate}
-The implementation shown so far has one important drawback: Every state needs 256 bytes in memory.
+The implementation shown so far has one important drawback: Every state needs 706 bytes in memory.
 This can be checked using the \textsl{Python} function \textts{sys.getsizeof}.
 Therefore, we show a leaner implementation next.
 
@@ -278,7 +278,7 @@ Therefore, we show a leaner implementation next.
 If we have to reduce the memory requirements of the states, then we can store the states as integers.  The
 first nine bits of these integers store the position of the \textts{X}es, while the next nine bits store the
 positions of the \textts{O}s.  This kind of representation where a state is coded as a series of bit in an
-integer is known as a \blue{bitboard} \index{bitboard}.  This is much more efficient than storing states as
+integer is known as a \blue{bitboard}\index{bitboard}.  This is much more efficient than storing states as
 tuples of tuples of characters.  \myFig{Tic-Tac-Toe-Bitboard.ipynb} shows an implementation of tic-tac-toe that
 is based on a \href{https://en.wikipedia.org/wiki/Bitboard}{bitboard}.  We proceed to discuss the details of
 this implementation.
