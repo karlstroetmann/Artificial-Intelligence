@@ -3,13 +3,14 @@ One major breakthrough for the field of artificial intelligence happened in 1997
 \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue} was able to beat the World Chess
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
 While \blue{Deep Blue} \index{deep blue} was based on special hardware, according to the
-\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 11th
-of February 2023, the chess program \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs
-on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3530.  
+\href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 2nd
+of February 2024, the best version of the chess program
+\href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs 
+on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3634.  
 To compare, according to the
-\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of February 2023, the current 
+\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of February 2024, the current 
 World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
-2852.  If two players differ by more than 400 in their ELO ranking, the lower ranked player does not stand a
+2830.  If two players differ by more than 400 in their ELO ranking, the lower ranked player does not stand a
 chance to win or even draw against the higher ranked player. Hence, Magnus Carlsen wouldn't stand a chance to
 win or draw a game against Stockfish.  In 2017, at the  
 \href{https://en.wikipedia.org/wiki/Future_of_Go_Summit}{Future of Go Summit},  the computer program
@@ -66,12 +67,12 @@ where the components are interpreted as follows:
       Here, $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} := \{ \textts{true}, \textts{false} \}$.
   
       Using the function $\textts{finished}$, we define the set $\textts{TerminalStates}$ as the set of those
-      states such that the game has finished,  i.e.~we define \index{terminal state}
+      states such that the game is finished,  i.e.~we define \index{terminal state}
       \\[0.2cm]
       \hspace*{1.3cm}
       $\textts{TerminalStates} := \{ s \in \textts{States} \mid \textts{finished}(s) \}$.
 \item $\textts{utility}$ is a function that takes a state $s$ such that $s \in \textts{TerminalStates}$ as its argument.  It returns 
-      the \blue{value} that the game has for the first player, i.e. for $\textts{Players}[1]$.  In general, a
+      the \blue{value} that the game has for the first player.  In general, a
       value is a real number,  but in all of our examples, this value will be an element from the set
       $\{-1, 0, +1\}$.  If $\textts{utility}(s) = -1$,  
       then the first player has lost the game, if $\textts{utility}(s) = 1$, then the first player has won the
@@ -90,7 +91,7 @@ then the game is called a \blue{zero sum game} \index{zero sum game} if $\textts
 and only if $\textts{B}$ has lost the game and vice versa.
 Games like \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}, 
 \href{https://en.wikipedia.org/wiki/Chess}{chess}, and
-\href{https://en.wikipedia.org/wiki/Draughts}{draughts} are two person zero sum games.
+\href{https://en.wikipedia.org/wiki/Checkers}{Checkers} are two person zero sum games.
 We proceed to discuss a simple example.
 
 \section{Tic-Tac-Toe}
