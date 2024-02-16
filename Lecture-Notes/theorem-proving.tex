@@ -1,82 +1,77 @@
 \chapter{Equational Theorem Proving}
-Mathematics, and in particular mathematical theorem proving is clearly related to the concept of intelligence.
-\blue{Automatic theorem proving} is the branch of artificial intelligence that investigates the use of
-artificial intelligence in mathematics.  The topic of \emph{automatic theorem proving} can easily fill more
-than one book.  For reasons of time we will restrict this chapter to deal with \blue{equational theorem proving}.  In
-\emph{equational theorem proving} \index{equational theorem proving} we are given a set of axioms that are
-equations and we ask, which other equations can be derived from these axioms.  For example, a \blue{group}
-$\mathcal{G}$ \index{group} is defined as a triple of the form
+Mathematics, particularly the field of mathematical theorem proving, is intrinsically linked to the notion of intelligence. \textcolor{blue}{Automatic theorem proving} represents a significant branch of artificial intelligence dedicated to the application of AI techniques within mathematics. The domain of \emph{automatic theorem proving} is extensive enough to warrant several volumes. However, due to time constraints, this chapter will focus exclusively on \textcolor{blue}{equational theorem proving}. In \emph{equational theorem proving}, we start with a collection of axioms, which are expressed as equations, and seek to determine which additional equations can be inferred from these axioms. As an illustration, consider a \textcolor{blue}{group} $\mathcal{G}$, defined as a quadruple:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{G} = \langle G, e, \cdot, i \rangle$
+$\mathcal{G} = \langle G, e, \circ, i \rangle$
 \\[0.2cm]
-such that
+subject to the following conditions:
 \begin{itemize}
-\item $G$ is a set.  The elements of this set are called \blue{group elements}. \index{group element}
-\item $e \in G$,
-
-      i.e.~$e$ is an element of $G$.  For reasons that will soon become obvious, $e$ is called the
-      \blue{left-neutral element}.\index{left-neutral element} 
-\item $\cdot: G \times G \rightarrow G$,
-
-      i.e.~$\cdot$ is a function mapping pairs of group elements to group elements.  The function $\cdot$ is
-      called the \blue{multiplication} of the group $\mathcal{G}$. 
-\item $i: G \rightarrow G$,
-
-      i.e.~$i$ is a function mapping group elements to group elements.  For any group element $x \in G$ the
-      element $i(x)$ is called the \blue{left-inverse} \index{left-inverse} of $x$. 
-\item Furthermore, the following \blue{group axioms} \index{group axioms} have to be satisfied:
-      \begin{enumerate}
-      \item $e \cdot x = x$, 
-      \item $i(x) \cdot x = e$, 
-      \item $(x \cdot y) \cdot z = x \cdot (y \cdot z)$.
+    \item $G$ is a set, whose elements are referred to as \textcolor{blue}{group elements}.
+    \item $e \in G$, signifying that $e$ is an element of $G$. This element, $e$, is known as the
+          \textcolor{blue}{left-neutral element} due to reasons that will be clarified subsequently. 
+    \item $\circ: G \times G \rightarrow G$, indicating that $\circ$ is a binary operation on $G$ that maps
+          pairs of group elements to a group element. This operation is termed the \textcolor{blue}{multiplication}
+          of the group $\mathcal{G}$. 
+    \item $i: G \rightarrow G$, denoting that $i$ is a unary operation on $G$ mapping each group element to
+          another group element. For any element $x \in G$, the result $i(x)$ is known as the
+          \textcolor{blue}{left-inverse} of $x$. 
+    \item The set $G$, along with the operations defined, must satisfy the \textcolor{blue}{group axioms}:  
+      \begin{enumerate}[(a)]
+          \item $e \circ x = x$ for all $x \in G$,
+          \item $i(x) \circ x = e$ for all $x \in G$,
+          \item $(x \circ y) \circ z = x \circ (y \circ z)$ for all $x, y, z \in G$.
       \end{enumerate}
 \end{itemize}
 In \href{https://en.wikipedia.org/wiki/Abstract_algebra}{abstract algebra}, it is shown that these axioms imply
 the equation 
 \\[0.2cm]
 \hspace*{1.3cm}
-$x \cdot i(x) = e$, \quad i.e.~the left inverse of any group element $x$ is also a right inverse of $x$.
+$x \circ i(x) = e$, \quad i.e.~the left inverse of any group element $x$ is also a right inverse of $x$.
 \\[0.2cm]
 A possible proof runs as follows:
 $$
 \begin{array}{lcll}
-  x \cdot i(x) & = & e \cdot \bigl(x \cdot i(x)\bigr) & \mbox{because $e$ is left-neutral} \\
-               & = & \Bigl(i\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr)\Bigr) \cdot \bigl(x \cdot i(x)\bigr)
-                   & \mbox{because $i\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr) = e$} \\
-               & = & i\bigl(x \cdot i(x)\bigr) \cdot \Bigl(\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr)\Bigr)
+  x \circ i(x) & = & e \circ \bigl(x \circ i(x)\bigr) & \mbox{because $e$ is left-neutral} \\
+               & = & \Bigl(i\bigl(x \circ i(x)\bigr) \circ \bigl(x \circ i(x)\bigr)\Bigr) \circ \bigl(x \circ i(x)\bigr)
+                   & \mbox{because $i\bigl(x \circ i(x)\bigr) \circ \bigl(x \circ i(x)\bigr) = e$} \\
+               & = & i\bigl(x \circ i(x)\bigr) \circ \Bigl(\bigl(x \circ i(x)\bigr) \circ \bigl(x \circ i(x)\bigr)\Bigr)
                    &  \mbox{associativity} \\
-               & = & i\bigl(x \cdot i(x)\bigr) \cdot \biggl(x \cdot \Bigl(i(x) \cdot \bigl(x \cdot i(x)\bigr)\Bigr)\biggr) 
+               & = & i\bigl(x \circ i(x)\bigr) \circ \biggl(x \circ \Bigl(i(x) \circ \bigl(x \circ i(x)\bigr)\Bigr)\biggr) 
                    &  \mbox{associativity} \\
-               & = & i\bigl(x \cdot i(x)\bigr) \cdot \biggl(x \cdot \Bigl(\bigl(i(x) \cdot x\bigr) \cdot i(x)\Bigr)\biggr) 
+               & = & i\bigl(x \circ i(x)\bigr) \circ \biggl(x \circ \Bigl(\bigl(i(x) \circ x\bigr) \circ i(x)\Bigr)\biggr) 
                    &  \mbox{associativity} \\
-               & = & i\bigl(x \cdot i(x)\bigr) \cdot \Bigl(x \cdot \bigl(e \cdot i(x)\bigr)\Bigr) 
-                   &  \mbox{because $i(x) \cdot x = e$} \\
-               & = & i\bigl(x \cdot i(x)\bigr) \cdot \bigl(x \cdot i(x)\bigr) 
-                   &  \mbox{because $e \cdot i(x) = i(x)$} \\
+               & = & i\bigl(x \circ i(x)\bigr) \circ \Bigl(x \circ \bigl(e \circ i(x)\bigr)\Bigr) 
+                   &  \mbox{because $i(x) \circ x = e$} \\
+               & = & i\bigl(x \circ i(x)\bigr) \circ \bigl(x \circ i(x)\bigr) 
+                   &  \mbox{because $e \circ i(x) = i(x)$} \\
                & = & e 
-                   & \mbox{because $i(z) \cdot z = e$ where $z = x \cdot i(x)$.}
+                   & \mbox{because $i(z) \circ z = e$ where $z = x \circ i(x)$.}
 \end{array}
 $$
-Obviously, it is not trivial to come up with proofs of this kind.  Fortunately, there is a systematic approach to
-solve this and similar equational problems: In this chapter, we present an algorithm
-that can automatically find equational proofs of the kind shown above.  This algorithm is known as the
-\href{https://en.wikipedia.org/wiki/Knuth–Bendix_completion_algorithm}{Knuth-Bendix completion algorithm}.  It
-was discovered by Donald E. Knuth and Peter B. Bendix \cite{knuth:1970}.
 
-The rest of this chapter is structured as follows.
+The formulation of proofs for such equations is far from straightforward. However, a systematic method exists
+for addressing these and related equational challenges. In this chapter, we introduce an algorithm capable of
+autonomously generating equational proofs similar to those discussed earlier. This algorithm is recognized as
+the \href{https://en.wikipedia.org/wiki/Knuth-Bendix_completion_algorithm}{Knuth-Bendix completion algorithm},
+a significant contribution by Donald E. Knuth and Peter B. Bendix \cite{knuth:1970}. 
+
+The structure of this chapter is organized as follows:
 \begin{enumerate}
-\item In the next section, we will formally introduce \blue{equational proofs} and \blue{term rewriting}.
-\item After that, we discuss abstract properties of relations.  For example, we introduce the notion of 
-      \blue{confluence} and prove the \blue{Church-Rosser} theorem and \blue{Newman's lemma}.
-\item The third section discusses term orderings and introduces the \blue{Knuth-Bendix ordering}.
-\item The last section presents the \blue{Knuth-Bendix completion algorithm}      
+\item Initially, we will formally define \textcolor{blue}{equational proofs} and \textcolor{blue}{term
+      rewriting}, setting the foundation for subsequent discussions. 
+\item Subsequently, we explore abstract properties of relations, introducing essential concepts such as
+      \textcolor{blue}{confluence} and providing proofs for the \textcolor{blue}{Church-Rosser theorem} and
+      \textcolor{blue}{Newman's lemma}. 
+\item The third section delves into term orderings, including the introduction of the
+      \textcolor{blue}{Knuth-Bendix ordering}, which plays a pivotal role in the algorithm's process. 
+\item The final section is dedicated to a detailed presentation of the \textcolor{blue}{Knuth-Bendix completion
+      algorithm}, illustrating its application and significance in automatic theorem proving. 
 \end{enumerate}
 
 \section{Equational Proofs}
 This section defines the notion of an \blue{equational proof} precisely and discusses how equational proofs can
-be carried out via term rewriting.  In order to do this, we have to define a number of more elementary notions
-like \blue{functions symbols}, \blue{variables}, \blue{terms}, \blue{substitutions}, et cetera.  We begin with
+be carried out via \blue{term rewriting}.  In order to do this, we have to define a number of more elementary
+notions like \blue{functions symbols}, \blue{variables}, \blue{terms}, and \blue{substitutions}.  We begin with 
 the notion of a signature.
 
 \begin{Definition}[Signature]
@@ -97,16 +92,15 @@ the notion of a signature.
   \item We have $\mathcal{V} \cap \mathcal{F} = \{\}$, i.e.~variables are different from function symbols. \eoxs
   \end{enumerate}
 \end{Definition}
-\pagebreak
 
 \example
 The signature of \blue{group theory} $\Sigma_G$ can be defined as follows:
 \begin{enumerate}[(a)]
 \item $\mathcal{V} := \{ w, x, y, z \}$,
-\item $\mathcal{F} := \{ e, i, \cdot \}$,
-\item $\textsl{arity} := \{ e \mapsto 0, i \mapsto 1, \cdot \mapsto 2 \}$,
+\item $\mathcal{F} := \{ e, i, \circ \}$,
+\item $\textsl{arity} := \{ e \mapsto 0, i \mapsto 1, \circ \mapsto 2 \}$,
   
-      i.e.~$e$ is a constant symbol, $i$ is a unary function symbol, and $\cdot$ is a binary function symbol.
+      i.e.~$e$ is a constant symbol, $i$ is a unary function symbol, and $\circ$ is a binary function symbol.
 \item $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$. \eoxs
 \end{enumerate}
 
@@ -134,8 +128,8 @@ Given the signature $\Sigma_G$ defined above, we have the following:
   
       because every variable is a $\Sigma_{G}$-term.
 \item $e \in \mathcal{T}_{\Sigma_G}$.
-\item $\cdot(e,x) \in \mathcal{T}_{\Sigma_G}$.
-\item $\cdot\bigl(\cdot(x,y),z\bigr) \in \mathcal{T}_{\Sigma_G}$.
+\item $\circ(e,x) \in \mathcal{T}_{\Sigma_G}$.
+\item $\circ\bigl(\circ(x,y),z\bigr) \in \mathcal{T}_{\Sigma_G}$.
 \end{enumerate}
 
 \remark
@@ -145,10 +139,10 @@ result in an ambiguity because either $t_1$ or $t_2$ is also written in infix no
 to resolve the ambiguity.  For example, we will write
 \\[0.2cm]
 \hspace*{1.3cm}
-$(x \cdot y) \cdot z$ \quad instead of \quad $\cdot\bigl(\cdot(x,y),z\bigr) \in \mathcal{T}_{\Sigma_G}$.  
+$(x \circ y) \circ z$ \quad instead of \quad $\circ\bigl(\circ(x,y),z\bigr) \in \mathcal{T}_{\Sigma_G}$.  
 \\[0.2cm]
-Note that we cannot write the term $\cdot\bigl(\cdot(x,y),z\bigr)$ as $x \cdot y \cdot z$ because that notation
-is ambiguous, since it can be interpreted as either $(x \cdot y) \cdot z$ or $x \cdot (y \cdot z)$.
+Note that we cannot write the term $\circ\bigl(\circ(x,y),z\bigr)$ as $x \circ y \circ z$ because that notation
+is ambiguous, since it can be interpreted as either $(x \circ y) \circ z$ or $x \circ (y \circ z)$.
 \eoxs
 
 \begin{Definition}[$\Sigma$-Equation]
@@ -191,18 +185,19 @@ is defined next.  \eoxs
         $f$.
 
         If $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, then the function $\mathcal{J}(f)$ is 
-        usually written more concisely as $f^\textfrak{A}$. \eoxs
+        usually written more concisely as $f^\textfrak{A}$. 
   \end{enumerate}
+  The set of all $\Sigma$-algebras is written as $\mathtt{Alg}(\Sigma)$. \eoxs
 \end{Definition}
 
 \example
 In this example we construct a $\Sigma_G$-algebra where $\Sigma_G$ is the signature of group theory defined
-earlier.  We define $G := \{ 0, 1 \}$ and define the interpretations $\mathcal{J}(f)$ for $f \in \{e, i, \cdot
+earlier.  We define $G := \{ 0, 1 \}$ and define the interpretations $\mathcal{J}(f)$ for $f \in \{e, i, \circ
 \}$ as follows:
 \begin{enumerate}
 \item $\mathcal{J}(e) := 0$.
 \item $\mathcal{J}(i) := \bigl\{ 0 \mapsto 0, 1 \mapsto 1 \bigr\}$.
-\item $\mathcal{J}(\cdot) = \bigl\{ \pair(0,0) \mapsto 0,
+\item $\mathcal{J}(\circ) := \bigl\{ \pair(0,0) \mapsto 0,
                                     \pair(0,1) \mapsto 1,
                                     \pair(1,0) \mapsto 1,
                                     \pair(1,1) \mapsto 0
@@ -210,11 +205,26 @@ earlier.  We define $G := \{ 0, 1 \}$ and define the interpretations $\mathcal{J
 \end{enumerate}
 Then $\textfrak{G} = \pair(G, \mathcal{J})$ is a $\Sigma_G$-algebra.  \eoxs
 
-\begin{Definition}[Valid Equation]
+\remark
+Alternatively, we could have given the interpretation of the multiplication symbol $\circ$ as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{J}(\circ)(x, y) := (x + y) \;\texttt{\%}\; 2$.
+
+\begin{Definition}[Variable Assignment] \hspace*{\fill} \linebreak
+  If $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is a signature and $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, then a
+  \blue{variable assignment}\index{variable assignment} is a function of the form
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $I: \mathcal{V}  \rightarrow A$
+  \\[0.2cm]
+  that is the variable assignment $I$ maps every variable $v \in \mathcal{V}$ to a value in the set $A$.
+  
+\end{Definition}
+
+\begin{Definition}[Evaluation, Valid Equation] \hspace*{\fill} \linebreak
   If $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is a signature,
-  $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, and $I$ is a \blue{variable
-    assignment}\index{variable assignment}, i.e.~$I$
-  is a mapping of the form $I:\mathcal{V} \rightarrow A$,
+  $\textfrak{A} = \pair(A, \mathcal{J})$ is a $\Sigma$-algebra, and $I$ is a \blue{variable assignment}\index{variable assignment}, 
   then we can \blue{evaluate} $\Sigma$-terms in $\textfrak{A}$ as follows:
   \begin{enumerate}
   \item $\texttt{eval}(x, I) := I(x)$ \quad for all $x \in \mathcal{V}$.
@@ -238,22 +248,27 @@ Then $\textfrak{G} = \pair(G, \mathcal{J})$ is a $\Sigma_G$-algebra.  \eoxs
 \example
 Continuing the previous example we have the following:
 \begin{enumerate}
-\item $\textfrak{G} \models e \cdot x \approx x$,
-\item $\textfrak{G} \models i(x) \cdot x \approx e$,
-\item $\textfrak{G} \models (x \cdot y) \cdot z \approx x \cdot (y \cdot z)$. \eoxs
+\item $\textfrak{G} \models e \circ x \approx x$,
+\item $\textfrak{G} \models i(x) \circ x \approx e$,
+\item $\textfrak{G} \models (x \circ y) \circ z \approx x \circ (y \circ z)$. \eoxs
 \end{enumerate}
 
 \begin{Definition}[$E$-Variety]
   Assume that $\Sigma$ is a signature and $E$ is a set of $\Sigma$-equations.  The collection of all
   $\Sigma$-structures that satisfy every equation from $E$ is called the \blue{$E$-variety}\index{$E$-variety}.
-  To put it differently, the $\Sigma$-structure $\textfrak{A}$ is a member of the \blue{$E$-variety} iff
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\texttt{Variety}(E) := \bigl\{ \textfrak{A}\in \mathtt{Alg}(\Sigma) \bigm| 
+                             \forall (s \approx t) \in E: \textfrak{A} \models s \approx t \bigr\}$.
+  \\[0.2cm]
+  To put it differently, the $\Sigma$-structure $\textfrak{A}$ is a member of $\mathtt{Variety}(E)$ iff
   \\[0.2cm]
   \hspace*{1.3cm}
   $\textfrak{A} \models s \approx t$ \quad for every equation $s \approx t$ in $E$. \eoxs
 \end{Definition}
 
 \example
-Define $E := \bigl\{ e \cdot x = x, i(x) \cdot x = e, (x \cdot y) \cdot z = x \cdot (y \cdot z) \bigr\}$.
+Define $E := \bigl\{ e \circ x = x, i(x) \circ x = e, (x \circ y) \circ z = x \circ (y \circ z) \bigr\}$.
 This set of equations defines the variety of \blue{groups}.  You can check that the $\Sigma_G$-algebra
 $\textfrak{G}$ is a member of this variety and hence it is a group.  
 \eoxs
@@ -266,7 +281,7 @@ the equations in $E$.  This notion is defined below.
   Then the equation $s \approx t$ is a \blue{logical consequence} of $E$ iff we have
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\textfrak{A} \models s \approx t$ \quad for every $\Sigma$-algebra $\textfrak{A}$ that is a member of the $E$-variety.
+  $\textfrak{A} \models s \approx t$ \quad for every $\textfrak{A} \in \mathtt{Variety}(E)$.
   \\[0.2cm]
   If $s \approx t$ is a logical consequence of the set of equations $E$, then this is written as
   \\[0.2cm]
@@ -278,11 +293,12 @@ the equations in $E$.  This notion is defined below.
 \end{Definition}
 
 \example
-If we define $E := \bigl\{ e \cdot x = x, i(x) \cdot x = e, (x \cdot y) \cdot z = x \cdot (y \cdot z) \bigr\}$,
+In the introduction of this chapter we have already seen that if we define
+$E := \bigl\{ e \circ x = x, i(x) \circ x = e, (x \circ y) \circ z = x \circ (y \circ z) \bigr\}$,
 then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$E \models x \cdot i(x) \approx e$.  \eox
+$E \models x \circ i(x) \approx e$.  \eox
 
 The notion $E \models s \approx t$ is a \blue{semantic notion}.  We cannot hope to implement this notion directly
 because if a set of equations $E$ and a possible logical consequence $s \approx t$ is given, there are, in
@@ -301,7 +317,7 @@ $E \models s \approx t$ \quad if and only if \quad $E \vdash s \approx t$.
 In this subsection we assume a signature $\Sigma$ and a set of $\Sigma$-equations $E$ to be given.  
 Our goal is to define the provability notion $E \vdash s \approx t$, which is read as \blue{$E$ proves $s \approx t$}.
 However, in order to do this we first need to define 
-the notion of a substitution.
+the notion of a \blue{substitution}.
 
 \begin{Definition}[$\Sigma$-Substitution]
   Assume that a signature $\Sigma = \langle \mathcal{V}, \mathcal{F}, \textsl{arity} \rangle$ is given.
@@ -315,7 +331,10 @@ the notion of a substitution.
   then we use the following notation:
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\sigma = \{ x_1 \mapsto t_1, \cdots, x_n \mapsto t_n \}$.   \eoxs
+  $\sigma = \{ x_1 \mapsto t_1, \cdots, x_n \mapsto t_n \}$.
+  \\[0.2cm]
+  The set of all $\Sigma$-Substitutions is denoted as $\mathtt{Subst}(\Sigma)$.
+  \eoxs
 \end{Definition}
 
 A substitution $\sigma = \{ x_1 \mapsto t_1, \cdots, x_n \mapsto t_n \}$ can be \blue{applied} to a term $t$
@@ -327,27 +346,36 @@ by induction on $t$:
 \item $c \sigma = c$ \quad for every constant $c \in \mathcal{F}$.
 \item $f(t_1, \cdots, t_n) \sigma := f\bigl(t_1\sigma, \cdots, t_n\sigma\bigr)$.
 \end{enumerate}
-Now we are ready to formally define the notion $E \vdash s \approx t$.  This notion is defined inductively.
-\begin{enumerate}
-\item $E \vdash s \approx t$ \quad for every $\Sigma$-equations $(s \approx t) \in E$. \hspace*{\fill} (\blue{Axioms})
-\item $E \vdash s \approx s$ \quad for every $\Sigma$-term $s$. \hspace*{\fill} (\blue{Reflexivity})
-\item If $E \vdash s \approx t$, then $E \vdash t \approx s$.  \hspace*{\fill} (\blue{Symmetry})
-\item If $E \vdash r \approx s$ and $E \vdash s \approx t$, then $E \vdash r \approx t$.  
-      \hspace*{\fill} (\blue{Transitivity})
-\item If $\textsl{arity}(f) = n$ and $E \vdash s_i \approx t_i$ for all $i \in \{1,\cdots,n\}$, \\
-      then $E \vdash f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
-      \hspace*{\fill} (\blue{Congruence})
-\item If $E \vdash s \approx t$ and $\sigma$ is a $\Sigma$-substitution, then $E \vdash s\sigma \approx t\sigma$.
-      \hspace*{\fill} (\blue{Stability})
-\end{enumerate}
-The definition of $E \vdash s \approx t$ that has been given above is due to 
-\href{https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz}{Gottfried Wilhelm Leibniz}.
+
+\begin{Definition}[$E \vdash s \approx t$] \hspace*{\fill} \linebreak
+  Given a signature $\Sigma$ and a set of $\Sigma$-equations $E$, the notion
+  $E \vdash s \approx t$ is defined inductively.
+  \begin{enumerate}
+  \item $E \vdash s \approx t$ \quad for every $\Sigma$-equations $(s \approx t) \in E$. \hspace*{\fill} (\blue{Axioms})
+  \item $E \vdash s \approx s$ \quad for every $\Sigma$-term $s$. \hspace*{\fill} (\blue{Reflexivity})
+  \item If $E \vdash s \approx t$, then $E \vdash t \approx s$.  \hspace*{\fill} (\blue{Symmetry})
+  \item If $E \vdash r \approx s$ and $E \vdash s \approx t$, then $E \vdash r \approx t$.  
+        \hspace*{\fill} (\blue{Transitivity})
+  \item If $\textsl{arity}(f) = n$ and $E \vdash s_i \approx t_i$ for all $i \in \{1,\cdots,n\}$, \\
+        then $E \vdash f(s_1,\cdots,s_n) \approx f(t_1,\cdots,t_n)$.
+        \hspace*{\fill} (\blue{Congruence})
+  \item If $E \vdash s \approx t$ and $\sigma$ is a $\Sigma$-substitution, then $E \vdash s\sigma \approx
+  t\sigma$. 
+        \hspace*{\fill} (\blue{Stability})
+  \end{enumerate}
+  We read $E \vdash s \approx t$ as \blue{\mbox{$E$ proves $s \approx t$}}.
+  \eoxs
+\end{Definition}
+The definition of $E \vdash s \approx t$ given above is due to 
+\href{https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz}{Gottfried Wilhelm}
+\href{https://leibniz.com/en/keks-original}{Leibniz}.
 
 \subsection{Equational Proofs}
-It turns out that, although it is possible to implement the notion $E \models s \approx t$ directly, it is more
-efficient to refine this notion a little bit.  To this end we need to introduce the notion of a \blue{position} $u$
-in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given position, and the notion of
-\blue{replacing} a subterm at a given position by another term.  We define these notions next.
+It turns out that, although it is possible to implement the notion $E \vdash \approx t$ directly, it is much
+more efficient to refine this notion a little bit.  To this end we need to introduce the notion of a
+\blue{position} $u$ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given position,
+and the notion of \blue{replacing} a subterm at a given position by another term.  We define these notions
+next. 
 
 \begin{Definition}[Positions of a Term $t$, $\Pos(t)$] \hspace*{\fill} \\
   Given a term $t$ the set of all \blue{positions} of $t$ is written as $\Pos(t)$ and is defined by
@@ -369,7 +397,6 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
   \item $f(t_1,\cdots,t_n)/\bigl([i]+u\bigr) := t_i/u$.  \eoxs
   \end{enumerate}
 \end{Definition}
-\pagebreak
 
 \begin{Definition}[Subterm Replacement, \mbox{$t[u \mapsto s]$}] \hspace*{\fill} \\
   Given a term $t$, a position $u \in \Pos(t)$, and a term $s$, the expression
@@ -383,22 +410,22 @@ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given p
 \end{Definition}
   
 \example
-Define $t := (x \cdot y) \cdot z$.  Then we have
+Define $t := (x \circ y) \circ z$.  Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\Pos\bigl((x \cdot y) \cdot z\bigr) = \bigl\{ [\;], [1], [1,1], [1,2], [2]\bigr\}$.
+$\Pos\bigl((x \circ y) \circ z\bigr) = \bigl\{ [\;], [1], [1,1], [1,2], [2]\bigr\}$.
 \\[0.2cm]
 Furthermore, we have the following:
 \begin{enumerate}
 
-\item $\bigl((x \cdot y) \cdot z\bigr)/[\;] = (x \cdot y) \cdot z$,
-\item $\bigl((x \cdot y) \cdot z\bigr)/[1] = x \cdot y$, and
-\item $\bigl((x \cdot y) \cdot z\bigr)/[1,2] = y$.
+\item $\bigl((x \circ y) \circ z\bigr)/[\;] = (x \circ y) \circ z$,
+\item $\bigl((x \circ y) \circ z\bigr)/[1] = x \circ y$, and
+\item $\bigl((x \circ y) \circ z\bigr)/[1,2] = y$.
 \end{enumerate}
 We also have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl((x \cdot y) \cdot z\bigr)\bigl[[1] \mapsto y \cdot x\bigr] = (y \cdot x) \cdot z$. \eox
+$\bigl((x \circ y) \circ z\bigr)\bigl[[1] \mapsto y \circ x\bigr] = (y \circ x) \circ z$. \eox
 
 \begin{Definition}[$\leftrightarrow_E$]
   Given a set of $\Sigma$-equations $E$ and two $\Sigma$-terms $s$ and $t$ we define that
@@ -419,14 +446,14 @@ furthermore, $s$ contains the subterm $l\sigma$ and $t$ results from $s$ by repl
 with the subterm $r\sigma$. 
 
 \example
-If we have $E = \bigl\{ i(x) \cdot x \approx e \bigr\}$ then
+If we have $E = \bigl\{ i(x) \circ x \approx e \bigr\}$ then
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl(i(a) \cdot a\bigr) \cdot b \;\leftrightarrow_E\; e \cdot b$
+$\bigl(i(a) \circ a\bigr) \circ b \;\leftrightarrow_E\; e \circ b$
 \\[0.2cm]
-because the right hand side $e \cdot b$ results from the left hand side $\bigl(i(a) \cdot a\bigr) \cdot b$ by
-replacing the subterm $i(a) \cdot a$ that occurs at position $[1]$ by the term $e$.
-This is possible because the equation $i(x) \cdot x \approx e$ tells us that $i(a) \cdot a$ is equal to $e$.
+because the right hand side $e \circ b$ results from the left hand side $\bigl(i(a) \circ a\bigr) \circ b$ by
+replacing the subterm $i(a) \circ a$ that occurs at position $[1]$ by the term $e$.
+This is possible because the equation $i(x) \circ x \approx e$ tells us that $i(a) \circ a$ is equal to $e$.
 \eod
 
 Next, we define the relation $\leftrightarrow_E^*$ as the \blue{reflexive and transitive closure} of the relation
@@ -442,24 +469,29 @@ $\leftrightarrow_E$.
 \end{Definition}
 
 \noindent
-Given this definition it is now possible to show the following:
-\\[0.2cm]
-\hspace*{1.3cm}
-$E \vdash s \approx t$ \quad if and only if \quad $s \leftrightarrow_E^* t$.
-\\[0.2cm]
-For each of the two directions that has to be proven, the proof can be done by a straightforward but lengthy
+Given this definition it is now possible to show the following theorem.
+
+\begin{Theorem}
+  If $E$ is a set of equations and $s \approx t$ is an equation, then we have
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $E \vdash s \approx t$ \quad if and only if \quad $s \leftrightarrow_E^* t$.
+\end{Theorem}
+For each of the two directions that has to be proven, the proof can be done by a straightforward, but tedious
 induction. 
 
 \subsection{Proofs via Rewriting}
-Implementing the relation $\leftrightarrow_E$ is rather inefficient because every equation from $E$ can
-be used in two different ways:  If $E$ contains the equation $l \approx r$ we can use this equation from left to right
-to replace a subterm of the form $l\sigma$ by the term $r\sigma$, or we can use this equation from right to left by
-replacing a subterm of the form $r\sigma$ by $l\sigma$.  Additionally, unless we have derived the equation we
-want to prove, we don't know when to stop our proof efforts. It was the brilliant idea of Donald E.~Knuth and
-Peter B.~Bendix \cite{knuth:1970} who
-realized that, provided the equations can be ordered in a way such that the left hand side is always more
-complex than the right hand side, then it is possible to use these equations only in one direction, if certain
-additional equations are added to $E$ in this process.  To proceed, we need the following definition.
+The implementation of the relation $\leftrightarrow_E$ remains inefficient due to the dual utility of each
+equation within $E$. Specifically, for an equation $l \approx r$ contained in $E$, it can be applied in two
+directions: one can replace a subterm matching $l\sigma$ with $r\sigma$ utilizing the equation from left to
+right, or conversely, substitute a subterm resembling $r\sigma$ with $l\sigma$ by applying the equation from
+right to left. Furthermore, in the absence of the specific equation we aim to prove, determining the cessation
+point for our proof endeavors becomes ambiguous. The seminal insight of Donald E.~Knuth and Peter B.~Bendix
+\cite{knuth:1970} was recognizing that if the equations could be sequenced such that the left-hand side is
+consistently more complex than the right-hand side, then it would be feasible to apply these equations in a
+singular direction by incorporating certain supplementary equations into $E$ throughout this procedure. This
+approach necessitates the subsequent definition. 
+
 
 \begin{Definition}[Rewrite Order] \hspace*{\fill} \\
   A binary relation $\prec \;\subseteq\; \mathcal{T}_\Sigma \times \mathcal{T}_\Sigma$ is a
@@ -496,9 +528,10 @@ additional equations are added to $E$ in this process.  To proceed, we need the 
   This means that all equations in $E$ are ordered such that the right hand side is smaller than the left
   hand side w.r.t.~$\prec$.    \eod
 \end{Definition}
-Later we will see an example of a rewrite order.  For now, we just assume that 
-the relation $\prec$ is a rewrite order w.r.t.~a given set of equations $R$.  The equations in $R$ will now be called
-\blue{rewrite rules}.  We proceed to define the relation $\rightarrow_R$ on $\mathcal{T}_\Sigma$.
+As we progress, we will examine a specific example of a rewrite order. At this juncture, it is assumed that the
+relation $\prec$ qualifies as a rewrite order with respect to a designated set of equations $R$. The equations
+contained within $R$ are henceforth referred to as \textcolor{blue}{rewrite rules}. We will now move on to
+define the relation $\rightarrow_R$ on the set $\mathcal{T}_\Sigma$. 
 
 \begin{Definition}[Rewrite Relation $\rightarrow_R$] \hspace*{\fill} \\
   Given a set of rewrite rules $R$ and two $\Sigma$-terms $s$ and $t$ we define that
@@ -512,7 +545,12 @@ the relation $\prec$ is a rewrite order w.r.t.~a given set of equations $R$.  Th
   \item $t = s[u \mapsto r\sigma]$. \eox
   \end{enumerate}
 \end{Definition}
-Similar to the definition of $\leftrightarrow_E^*$  we now define $\rightarrow_R^*$ as the reflexive and transitive closure of $\rightarrow_R$.
+
+To put it differently, we have $s \rightarrow_R t$ if there is a rewrite rule $l \approx r$ in $R$ and the left hand
+side $l$ of this rewrite rule matches a subterm $s/u$ of $s$ via a substitution $\sigma$.  If replacing this
+subterm by $r\sigma$ results in $t$, then $s$ rewrites to $t$.
+
+Similar to the definition of $\leftrightarrow_E^*$  we next define $\rightarrow_R^*$ as the reflexive and transitive closure of $\rightarrow_R$.
 \begin{Definition}[$\rightarrow_R^*$]
   For $\Sigma$-terms $s$ and $t$ the notion $s \rightarrow_R^* t$ is defined inductively as follows:
   \begin{enumerate}
@@ -523,9 +561,9 @@ Similar to the definition of $\leftrightarrow_E^*$  we now define $\rightarrow_R
   \end{enumerate}
 \end{Definition}
 
-\begin{Definition}[Normal Form]
-  A $\Sigma$-term $s$ is in \blue{normal form} if there is no $\Sigma$-term $t$ such that $s \rightarrow_R t$,
-  i.e.~the term $s$ cannot be simplified anymore by rewriting. \eod
+\begin{Definition}[Normal Form] \hspace*{\fill} \\
+  A $\Sigma$-term $s$ is in \blue{normal form} w.r.t.~a rewrite relation $\rightarrow_R$ iff there is no
+  $\Sigma$-term $t$ such that $s \rightarrow_R t$, i.e.~the term $s$ cannot be simplified anymore by rewriting. \eod
 \end{Definition}
 The basic idea of a \blue{rewrite proof} of an equation $s \approx t$ is now the following:
 \begin{enumerate}
@@ -542,58 +580,82 @@ The basic idea of a \blue{rewrite proof} of an equation $s \approx t$ is now the
       \\[0.2cm]
       \hspace*{1.3cm}
       $s \leftrightarrow_E t \quad \Leftrightarrow \quad \widehat{s} = \widehat{t}$.
-\end{enumerate}
-This way, we can reduce the question whether $s \leftrightarrow_E^* t$ holds to the computation of normal
-forms.  The latter can often be done quite efficiently.  The rest of this chapter proceeds as follows:
+    \end{enumerate}
+By this method, the question of whether $s \leftrightarrow_E^* t$ holds can be simplified to the computation of
+normal forms, which is often achievable with high efficiency. The subsequent sections of this chapter are
+structured as follows: 
 \begin{enumerate}[(a)]
-\item In the next section we discuss the notion of  \blue{confluence} and prove a theorem that can be used
-      to show that a relation is confluent.
-\item After that we discuss rewrite orderings in more detail.  In particular, we present the \blue{Knuth-Bendix order},
-      which is the rewrite order that we use later to construct a number of confluent term rewriting systems.
-\item Then, we present the \blue{Knuth-Bendix completion algorithm} that can enrich a set of equation so that
-      the rewrite relation $\rightarrow_R$ becomes confluent.
-\item Finally, we present an implementation of the Knuth-Bendix completion algorithm.  
+\item The forthcoming section explores the concept of \textcolor{blue}{confluence} and establishes a theorem
+      instrumental in demonstrating the confluence of a relation. 
+\item Subsequently, we delve into rewrite orderings more comprehensively. Specifically, we examine the
+      \textcolor{blue}{Knuth-Bendix order}, the designated rewrite order that facilitates the construction of
+      several confluent term rewriting systems. 
+\item Thereafter, we introduce the \textcolor{blue}{Knuth-Bendix completion algorithm}, a methodology capable
+      of augmenting a set of equations to ensure the rewrite relation $\rightarrow_R$ is made confluent. 
+\item Finally, an implementation of the Knuth-Bendix completion algorithm is detailed.
 \end{enumerate}
 
+
 \section{Confluence}
-In this section we assume that a binary relation $\rightarrow$ is given on a set $M$, i.e.~we have
-$\rightarrow \;\subseteq\; M \times M$.  Instead of writing $(a, b) \in\; \rightarrow$ we use infix notation and write
+In this section we assume that a binary relation $\rightarrow$ is given on a set $M$, that is we have
+$\rightarrow \,\;\subseteq\, M \!\times\! M$.  Instead of writing $(a, b) \in\; \rightarrow$ we use infix notation and write
 $a \rightarrow b$.  Furthermore, we assume that $\rightarrow$ is \blue{well-founded},
 i.e.~there is no infinite sequence $(x_n)_{n\in\mathbb{N}}$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
 $s_n \rightarrow s_{n+1}$ \quad holds for all $n\in\mathbb{N}$.
 \\[0.2cm]
-We denote the \blue{equivalence relation} generated by $\rightarrow$ as $\stackrel{_*}{\leftrightarrow}$ and the reflexive and
-transitive closure of $\rightarrow$ is written as $\stackrel{_*}{\rightarrow}$.
+We denote the \blue{equivalence relation} generated by $\rightarrow$ as $\leftrightarrow^*$ and the reflexive and
+transitive closure of $\rightarrow$ is written as $\rightarrow^*$.
 
 \begin{Definition}[Confluence] 
   The relation $\rightarrow \;\subseteq\; M \times M$ is \blue{confluent} iff the following holds:
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\forall a, b, c \in M: \bigl(a \stackrel{_*}{\rightarrow} b \;\wedge\; a \stackrel{_*}{\rightarrow}c \quad\Rightarrow\quad
-   \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
+  $\forall a, b, c \in M: \bigl(a \rightarrow^* b \;\wedge\; a \rightarrow^*c \quad\Rightarrow\quad
+   \exists d \in M: (b \rightarrow^* d \;\wedge\; c \rightarrow^* d)\bigr)
   $ \eox
 \end{Definition}
-The next theorem shows that confluence is all we need to reduce the relation $\stackrel{_*}{\leftrightarrow}$
-to the relation $\stackrel{_*}{\rightarrow}$. 
+
+\noindent
+Figure \ref{fig:confluence.tikz} shows a diagram picturing the notion of confluence.
+Here, the relation $\rightarrow^*$ is denoted by a snakelike arrow.
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \node (a)   at (2,4)  [circle] {$a$};
+        \node (b)   at (0,2)  [circle] {$b$};
+        \node (c)   at (4,2)  [circle] {$c$};
+        \node (d)   at (2,0)  [circle] {$d$};
+
+        \draw[->, thick, draw=brown, decorate, decoration=snake] (a) to (b);
+        \draw[->, thick, draw=brown, decorate, decoration=snake] (a) to (c);
+        \draw[->, thick, draw=blue,  decorate, decoration=snake] (b) to (d);
+        \draw[->, thick, draw=blue,  decorate, decoration=snake] (c) to (d);
+    \end{tikzpicture}
+    \caption{Confluence}
+    \label{fig:confluence.tikz}
+\end{figure}
+
+The next theorem shows that confluence is all we need to reduce the relation $\leftrightarrow^*$
+to the relation $\rightarrow^*$. 
 
 \begin{Theorem}[Church-Rosser]
   If the relation $\rightarrow \;\subseteq\; M \times M$ is confluent, then we have
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\forall a, b \in M:\bigl( a \stackrel{_*}{\leftrightarrow} b \;\Leftrightarrow\;
-   \exists c \in M: (a \stackrel{_*}{\rightarrow} c \;\wedge b \stackrel{_*}{\rightarrow} c)\bigr)$.
+  $\forall a, b \in M:\bigl( a \leftrightarrow^* b \;\Leftrightarrow\;
+   \exists c \in M: (a \rightarrow^* c \;\wedge b \rightarrow^* c)\bigr)$.
  \end{Theorem}
 
  \proof
-If $a \stackrel{_*}{\leftrightarrow} b$ then there is a finite sequence $(s_k)_{k\in \{0,\cdots,n\}}$ such that
+If $a \leftrightarrow^* b$ then there is a finite sequence $(s_k)_{k\in \{0,\cdots,n\}}$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
 $a = s_0 \leftrightarrow s_1 \leftrightarrow \cdots \leftrightarrow s_{n-1} \leftrightarrow s_n = b$.
 \\[0.2cm]
-We prove by induction on $n$ that there is an element $c \in M$ such that both $a \stackrel{_*}{\rightarrow} c$ and
-$b \stackrel{_*}{\rightarrow} c$ holds.
+We prove by induction on $n$ that there is an element $c \in M$ such that both $a \rightarrow^* c$ and
+$b \rightarrow^* c$ holds.
 \begin{description}
 \item[Base Case:] $n = 0$.
   
@@ -604,7 +666,7 @@ $b \stackrel{_*}{\rightarrow} c$ holds.
       By induction hypotheses we know that there exists a $d \in M$ such that
       \\[0.2cm]
       \hspace*{1.3cm}
-      $a \stackrel{_*}{\rightarrow} d$ \quad and \quad $s_{n} \stackrel{_*}{\rightarrow} d$ 
+      $a \rightarrow^* d$ \quad and \quad $s_{n} \rightarrow^* d$ 
       \\[0.2cm]
       hold.  Furthermore, we either have
       \\[0.2cm]
@@ -615,18 +677,18 @@ $b \stackrel{_*}{\rightarrow} c$ holds.
       \begin{enumerate}
       \item Case: $s_n \rightarrow b$.
 
-        Since we also have $s_{n} \stackrel{_*}{\rightarrow} d$, the confluence of the relation $\rightarrow$ shows that
+        Since we also have $s_{n} \rightarrow^* d$, the confluence of the relation $\rightarrow$ shows that
         there is an element $c \in M$ such 
         \\[0.2cm]
         \hspace*{1.3cm}
-        $b \stackrel{_*}{\rightarrow} c$ \quad and \quad $d \stackrel{_*}{\rightarrow} c$ 
+        $b \rightarrow^* c$ \quad and \quad $d \rightarrow^* c$ 
         \\[0.2cm]
-        holds.  From $a \stackrel{_*}{\rightarrow} d$ and $d \stackrel{_*}{\rightarrow} c$ we have that $a \stackrel{_*}{\rightarrow} c$.  Since we already
-        know that $b \stackrel{_*}{\rightarrow} c$, the proof is complete in this case. 
+        holds.  From $a \rightarrow^* d$ and $d \rightarrow^* c$ we have that $a \rightarrow^* c$.  Since we already
+        know that $b \rightarrow^* c$, the proof is complete in this case. 
       \item Case: $b \rightarrow s_n$.
 
-        Since we have $b \rightarrow s_n$ and $s_n \stackrel{_*}{\rightarrow} d$, we can conclude
-        $b \stackrel{_*}{\rightarrow} d$.  Since we also have $a \stackrel{_*}{\rightarrow} d$, the proof is
+        Since we have $b \rightarrow s_n$ and $s_n \rightarrow^* d$, we can conclude
+        $b \rightarrow^* d$.  Since we also have $a \rightarrow^* d$, the proof is
         complete if we define $c := d$.  \qed
       \end{enumerate}
 \end{description}
@@ -639,10 +701,29 @@ to guarantee confluence.
   \\[0.2cm]
   \hspace*{1.3cm}
   $\forall a, b, c \in M: \bigl(a \rightarrow b \;\wedge\; a \rightarrow c \quad\Rightarrow\quad
-   \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
+   \exists d \in M: (b \rightarrow^* d \;\wedge\; c \rightarrow^* d)\bigr)
   $  \eox
 \end{Definition}
-\pagebreak
+
+\noindent
+Figure \ref{fig:local-confluence.tikz} shows a diagram picturing the notion of local confluence.
+Here, the relation $\rightarrow^*$ is denoted by a snakelike arrow.
+\begin{figure}[!ht]
+    \centering
+    \begin{tikzpicture}
+        \node (a)   at (2,4)  [circle] {$a$};
+        \node (b)   at (0,2)  [circle] {$b$};
+        \node (c)   at (4,2)  [circle] {$c$};
+        \node (d)   at (2,0)  [circle] {$d$};
+
+        \draw[->, thick, draw=brown] (a) to (b);
+        \draw[->, thick, draw=brown] (a) to (c);
+        \draw[->, thick, draw=blue,  decorate, decoration=snake] (b) to (d);
+        \draw[->, thick, draw=blue,  decorate, decoration=snake] (c) to (d);
+    \end{tikzpicture}
+    \caption{Local Confluence}
+    \label{fig:local-confluence.tikz}
+\end{figure}
 
 \begin{Theorem}[\href{https://en.wikipedia.org/wiki/Transfinite_induction}{Transfinite Induction}]
   \hspace*{\fill} \index{transfinite induction}\\
@@ -650,18 +731,18 @@ to guarantee confluence.
   If we have that
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\forall b \in M: \bigl( a \stackrel{_+}{\rightarrow} b \;\Rightarrow\; F(b)\bigr) \;\Rightarrow\; F(a)$ holds for all $a \in M$, \hspace*{\fill} (TI)
+  $\forall b \in M: \bigl( a \rightarrow^+ b \;\Rightarrow\; F(b)\bigr) \;\Rightarrow\; F(a)$ holds for all $a \in M$, \hspace*{\fill} (TI)
   \\[0.2cm]
   then we can conclude that $\forall a \in M: F(a)$ holds.
 \end{Theorem}
 
 \proof
-Above, $\stackrel{_+}{\rightarrow}$ denotes the transitive closure of $\rightarrow$.  We call $b$ a \blue{successor} of $a$
-if $a \stackrel{_+}{\rightarrow} b$ holds.  The proof principle of transfinite induction is correct for a well-founded
+Above, $\rightarrow^+$ denotes the transitive closure of $\rightarrow$.  We call $b$ a \blue{successor} of $a$
+if $a \rightarrow^+ b$ holds.  The proof principle of transfinite induction is correct for a well-founded
 relation because, first, if $a$ has no successors $b$, then the premise of (TI) which is
 \\[0.2cm]
 \hspace*{1.3cm}
-$\forall b \in M: \bigl( a \stackrel{_+}{\rightarrow} b \Rightarrow F(b)\bigr)$
+$\forall b \in M: \bigl( a \rightarrow^+ b \Rightarrow F(b)\bigr)$
 \\[0.2cm]
 is vacuously true and hence by (TI) we know that $F(a)$ has to be true for all $a \in M$ that have no
 successors.  Now assume $F(a)$ were false for some $a \in M$.  Then there must be a successor $a_1$ of $a$ such
@@ -669,7 +750,7 @@ that $F(a_1)$ is false because otherwise $F(a)$ would be true.  But then there m
 $a_1$ such that $F(a_2)$ is false.  Proceeding in this way we can construct an infinite sequence
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \stackrel{_+}{\rightarrow} a_1 \stackrel{_+}{\rightarrow} a_2 \stackrel{_+}{\rightarrow} \cdots \stackrel{_+}{\rightarrow} a_n \stackrel{_+}{\rightarrow} a_{n+1} \rightarrow
+$a \rightarrow^+ a_1 \rightarrow^+ a_2 \rightarrow^+ \cdots \rightarrow^+ a_n \rightarrow^+ a_{n+1} \rightarrow
 \cdots
 $
 \\[0.2cm]
@@ -685,8 +766,8 @@ such that $F(a)$ is false. \qed
 Given any $a \in M$, we define the following formula:
 \\[0.2cm]
 \hspace*{1.3cm}
-$F(a) \;:=\; \forall b, c \in M: \bigl(a \stackrel{_*}{\rightarrow} b \;\wedge\; a \stackrel{_*}{\rightarrow}c \quad\Rightarrow\quad
- \exists d \in M: (b \stackrel{_*}{\rightarrow} d \;\wedge\; c \stackrel{_*}{\rightarrow} d)\bigr)
+$F(a) \;:=\; \forall b, c \in M: \bigl(a \rightarrow^* b \;\wedge\; a \rightarrow^*c \quad\Rightarrow\quad
+ \exists d \in M: (b \rightarrow^* d \;\wedge\; c \rightarrow^* d)\bigr)
 $
 \\[0.2cm]
 We  prove that $F(a)$ holds for all $a \in M$ by transfinite induction.
@@ -694,71 +775,71 @@ Therefore, in order to prove $F(a)$ we may assume that $F(b)$ already holds for 
 So let us assume that we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \stackrel{_*}{\rightarrow} b$ \quad and \quad $a \stackrel{_*}{\rightarrow} c$.
+$a \rightarrow^* b$ \quad and \quad $a \rightarrow^* c$.
 \\[0.2cm]
-We have to find an element $d \in M$ such that both $b \stackrel{_*}{\rightarrow} d$ and $c \stackrel{_*}{\rightarrow} d$ holds.
-Now since $a \stackrel{_*}{\rightarrow} b$, either $a = b$ or there is an element $b_1$ such that
-\\[0.2cm]
-\hspace*{1.3cm}
-$a \rightarrow b_1 \stackrel{_*}{\rightarrow} b$
-\\[0.2cm]
-holds.  If $a = b$ we can define $d := c$ and because of $a \stackrel{_*}{\rightarrow} c$ we would then have both
+We have to find an element $d \in M$ such that both $b \rightarrow^* d$ and $c \rightarrow^* d$ holds.
+Now since $a \rightarrow^* b$, either $a = b$ or there is an element $b_1$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
-$b \stackrel{_*}{\rightarrow} d$ \quad and \quad $c \stackrel{_*}{\rightarrow} d$
+$a \rightarrow b_1 \rightarrow^* b$
 \\[0.2cm]
-and therefore, in the case $a = b$, we are done.  Similarly, since $a \stackrel{_*}{\rightarrow} c$ we either have
+holds.  If $a = b$ we can define $d := c$ and because of $a \rightarrow^* c$ we would then have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$b \rightarrow^* d$ \quad and \quad $c \rightarrow^* d$
+\\[0.2cm]
+and therefore, in the case $a = b$, we are done.  Similarly, since $a \rightarrow^* c$ we either have
 $a = c$ or there is an element $c_1$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \rightarrow c_1 \stackrel{_*}{\rightarrow} c$
+$a \rightarrow c_1 \rightarrow^* c$
 \\[0.2cm]
-holds.  If $a = c$ we can define $d := b$ and because of $a \stackrel{_*}{\rightarrow} b$ we would then have both
+holds.  If $a = c$ we can define $d := b$ and because of $a \rightarrow^* b$ we would then have both
 \\[0.2cm]
 \hspace*{1.3cm}
-$b \stackrel{_*}{\rightarrow} d$ \quad and \quad $c \stackrel{_*}{\rightarrow} d$
+$b \rightarrow^* d$ \quad and \quad $c \rightarrow^* d$
 \\[0.2cm]
 and are done again.  Now the case that is left is the following:
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \rightarrow b_1 \stackrel{_*}{\rightarrow} b$ \quad and \quad $a \rightarrow c_1 \stackrel{_*}{\rightarrow} c$.
+$a \rightarrow b_1 \rightarrow^* b$ \quad and \quad $a \rightarrow c_1 \rightarrow^* c$.
 \\[0.2cm]
 Since $\rightarrow$ is locally confluent and we have both $a \rightarrow b_1$ and  $a \rightarrow c_1$ 
 there exists an element $d_1$ such that we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$b_1 \stackrel{_*}{\rightarrow} d_1$ \quad and \quad $c_1 \stackrel{_*}{\rightarrow} d_1$.
+$b_1 \rightarrow^* d_1$ \quad and \quad $c_1 \rightarrow^* d_1$.
 \\[0.2cm]
 Now as $b_1$ is a successor of $a$ and we have both
 \\[0.2cm]
 \hspace*{1.3cm}
-$b_1 \stackrel{_*}{\rightarrow} b$ \quad and \quad $b_1 \stackrel{_*}{\rightarrow} d_1$,
+$b_1 \rightarrow^* b$ \quad and \quad $b_1 \rightarrow^* d_1$,
 \\[0.2cm]
 our induction hypotheses tells us that there is an element $d_2$ such that we have both
 \\[0.2cm]
 \hspace*{1.3cm}
-$b \stackrel{_*}{\rightarrow} d_2$ \quad and \quad $d_1 \stackrel{_*}{\rightarrow} d_2$.
+$b \rightarrow^* d_2$ \quad and \quad $d_1 \rightarrow^* d_2$.
 \\[0.2cm]
-Now we have $c_1 \stackrel{_*}{\rightarrow} d_1$ and $d_1 \stackrel{_*}{\rightarrow} d_2$, which implies
-\\[0.2cm]
-\hspace*{1.3cm}
-$c_1 \stackrel{_*}{\rightarrow} d_2$
-\\[0.2cm]
-As we also have $c_1 \stackrel{_*}{\rightarrow} c$ we have both
+Now we have $c_1 \rightarrow^* d_1$ and $d_1 \rightarrow^* d_2$, which implies
 \\[0.2cm]
 \hspace*{1.3cm}
-$c_1 \stackrel{_*}{\rightarrow} d_2$ \quad and \quad $c_1 \stackrel{_*}{\rightarrow} c$.
+$c_1 \rightarrow^* d_2$
+\\[0.2cm]
+As we also have $c_1 \rightarrow^* c$ we have both
+\\[0.2cm]
+\hspace*{1.3cm}
+$c_1 \rightarrow^* d_2$ \quad and \quad $c_1 \rightarrow^* c$.
 \\[0.2cm]
 Since $c_1$ is a successor of $a$, the induction hypotheses tells us that there is an element $d$ such that we
 have both
 \\[0.2cm]
 \hspace*{1.3cm}
-$d_2 \stackrel{_*}{\rightarrow} d$ \quad and \quad $c \stackrel{_*}{\rightarrow} d$.
+$d_2 \rightarrow^* d$ \quad and \quad $c \rightarrow^* d$.
 \\[0.2cm]
-As we have $b \stackrel{_*}{\rightarrow} d_2$ and $d_2 \stackrel{_*}{\rightarrow} d$ we can conclude $b \stackrel{_*}{\rightarrow} d$.  Hence we have
+As we have $b \rightarrow^* d_2$ and $d_2 \rightarrow^* d$ we can conclude $b \rightarrow^* d$.  Hence we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$b \stackrel{_*}{\rightarrow} d$ \quad  and \quad $c \stackrel{_*}{\rightarrow} d$
+$b \rightarrow^* d$ \quad  and \quad $c \rightarrow^* d$
 \\[0.2cm]
 and the proof is complete.  Figure \ref{fig:newman.pdf} on page \pageref{fig:newman.pdf} shows how the
 different elements are related and conveys the idea of the proof in a concise way. \qed
@@ -1111,40 +1192,40 @@ $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce th
 
 \example
 The following example assumes the signature $\Sigma_G$ from group theory as given.
-We start with the two equations $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(w) \cdot w \approx e$.
-Then $u = [1]$ is a position in the term $(x \cdot y) \cdot z$ and we have
+We start with the two equations $(x \circ y) \circ z \approx x \circ (y \circ z)$ and $i(w) \circ w \approx e$.
+Then $u = [1]$ is a position in the term $(x \circ y) \circ z$ and we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl((x \cdot y) \cdot z\bigr)/[1] = x \cdot y$, which is not a variable.
+$\bigl((x \circ y) \circ z\bigr)/[1] = x \circ y$, which is not a variable.
 \\[0.2cm]
-The term $x \cdot y$ can be unified with the term $i(w) \cdot w$ and we have
+The term $x \circ y$ can be unified with the term $i(w) \circ w$ and we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mu := \texttt{mgu}\bigl(x \cdot y, i(w) \cdot w\bigr) = \{ x \mapsto i(w),\; y \mapsto w \}$.
+$\mu := \texttt{mgu}\bigl(x \circ y, i(w) \circ w\bigr) = \{ x \mapsto i(w),\; y \mapsto w \}$.
 \\[0.2cm]
 Therefore we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl((x \cdot y) \cdot z\bigr)\mu = \bigl(i(w) \cdot w\bigr) \cdot z$
+$\bigl((x \circ y) \circ z\bigr)\mu = \bigl(i(w) \circ w\bigr) \circ z$
 \\[0.2cm]
-and the latter term can be rewritten by the equation $i(w) \cdot w \approx e$ into the term $e \cdot t$,
+and the latter term can be rewritten by the equation $i(w) \circ w \approx e$ into the term $e \circ z$,
 i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl(i(w) \cdot w\bigr) \cdot z \rightarrow_{\{ i(w) \cdot w \approx e\}} e \cdot z$.
+$\bigl(i(w) \circ w\bigr) \circ z \rightarrow_{\{ i(w) \circ w \approx e\}} e \circ z$.
 \\[0.2cm]
-Furthermore, the same term $\bigl(i(w) \cdot w\bigr) \cdot z$ can be rewritten by the equation
-$(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ into the term $i(w) \cdot (w \cdot z)$:  
+Furthermore, the same term $\bigl(i(w) \circ w\bigr) \circ z$ can be rewritten by the equation
+$(x \circ y) \circ z \approx x \circ (y \circ z)$ into the term $i(w) \circ (w \circ z)$:  
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl(i(w) \cdot w\bigr) \cdot z \rightarrow_{\{ (x \cdot y) \cdot z \approx x \cdot (y \cdot z)\}} i(w) \cdot (w \cdot z)$.
+$\bigl(i(w) \circ w\bigr) \circ z \rightarrow_{\{ (x \circ y) \circ z \approx x \circ (y \circ z)\}} i(w) \circ (w \circ z)$.
 \\[0.2cm]
 Therefore, the pair
 \\[0.2cm]
 \hspace*{1.3cm}
-$\bigl\langle e \cdot z,\; i(w) \cdot (w \cdot z) \bigr\rangle$
+$\bigl\langle e \circ z,\; i(w) \circ (w \circ z) \bigr\rangle$
 \\[0.2cm]
-is a critical pair of the two equations  $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$ and $i(w) \cdot w \approx e$.
+is a critical pair of the two equations  $(x \circ y) \circ z \approx x \circ (y \circ z)$ and $i(w) \circ w \approx e$.
 \eox
 
 \remark
@@ -1160,16 +1241,16 @@ $R \models s \approx t$. \eox
   $t$ such that $t$ is in $R$-normal form and we have both
   \\[0.2cm]
   \hspace*{1.3cm}
-  $s_1 \stackrel{_*}{\rightarrow}_R t$ \quad and \quad   $s_2 \stackrel{_*}{\rightarrow}_R t$.  
+  $s_1 \rightarrow^*_R t$ \quad and \quad   $s_2 \rightarrow^*_R t$.  
 \end{Definition}
 
 \begin{Theorem}[Knuth-Bendix]
   If $R$ is a set of rewrite equations such that all critical pairs between equations from $R$ are confluent,
-  then the rewrite relation $\stackrel{_*}{\rightarrow}_R$ is confluent and hence the question, whether $R \models s \approx t$
+  then the rewrite relation $\rightarrow^*_R$ is confluent and hence the question, whether $R \models s \approx t$
   can be decided by rewriting both $s$ and $t$ into normal forms $\widehat{s}$ and $\widehat{t}$:
   \\[0.2cm]
   \hspace*{1.3cm}
-  $s \stackrel{_*}{\rightarrow}_R \widehat{s}$ \quad and \quad  $t \stackrel{_*}{\rightarrow}_R \widehat{t}$ 
+  $s \rightarrow^*_R \widehat{s}$ \quad and \quad  $t \rightarrow^*_R \widehat{t}$ 
   \\[0.2cm]
   Then we have
   \\[0.2cm]
@@ -1195,7 +1276,7 @@ from $\widehat{R}$ are confluent.
       into rewrite rules.
 \item Compute all critical pairs that can be build from equations in $R$.
       \begin{enumerate}
-      \item If all critical pairs are confluent, then the rewrite relation $\stackrel{_*}{\rightarrow}_R$ is confluent
+      \item If all critical pairs are confluent, then the rewrite relation $\rightarrow^*_R$ is confluent
             and the algorithm is successful.
       \item If we have found a critical pair $\langle s, t \rangle$ that is not confluent,
             we orient the equation $s \approx t$ into a rewrite rule.  If this is impossible, the algorithm fails.
@@ -1219,169 +1300,168 @@ My GitHub repository contains the Jupyter notebook
 \\[0.2cm]
 which contains an implementation of the Knuth-Bendix algorithm.  It also contains a number of equational
 theories $E$ where the Knuth-Bendix algorithm is successful.
-\pagebreak
 
 \example
 We test the Knuth-Bendix algorithm with the axioms of group theory.  These axioms are the following:
 \begin{enumerate}[(a)]
-\item $1 \cdot x \approx x$,
-\item $i(x) \cdot x \approx 1$, and
-\item $(x \cdot y) \cdot z \approx x \cdot (y \cdot z)$.
+\item $1 \circ x \approx x$,
+\item $i(x) \circ x \approx 1$, and
+\item $(x \circ y) \circ z \approx x \circ (y \circ z)$.
 \end{enumerate}
 It is obvious how these equations can be oriented into rewrite rules.  The resulting rules are:
 \begin{itemize}
-\item $1 \cdot x \rightarrow x$,
-\item $i(x) \cdot x \rightarrow 1$, and
-\item $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$.
+\item $1 \circ x \rightarrow x$,
+\item $i(x) \circ x \rightarrow 1$, and
+\item $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$.
 \end{itemize}
-From $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$ and  $i(a) \cdot a \rightarrow 1$ we conclude
+From $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$ and  $i(a) \circ a \rightarrow 1$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$(i(a) \cdot a) \cdot z \rightarrow i(a) \cdot (a \cdot z)$ \quad and \quad
-$(i(a) \cdot a) \cdot z \rightarrow 1 \cdot z$
+$(i(a) \circ a) \circ z \rightarrow i(a) \circ (a \circ z)$ \quad and \quad
+$(i(a) \circ a) \circ z \rightarrow 1 \circ z$
 \\[0.2cm]
 Hence we have found the new rewrite rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$i(a) \cdot (a \cdot z) \rightarrow z$.
+$i(a) \circ (a \circ z) \rightarrow z$.
 \\[0.2cm]
-From $i(a) \cdot (a \cdot z) \rightarrow z$ and $i(x) \cdot x$ we conclude
+From $i(a) \circ (a \circ z) \rightarrow z$ and $i(x) \circ x$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$i(i(x)) \cdot (i(x) \cdot x) \rightarrow x$ \quad and \quad
-$i(i(x)) \cdot (i(x) \cdot x) \rightarrow i(i(x)) \cdot 1$. 
+$i(i(x)) \circ (i(x) \circ x) \rightarrow x$ \quad and \quad
+$i(i(x)) \circ (i(x) \circ x) \rightarrow i(i(x)) \circ 1$. 
 \\[0.2cm]
 Hence we have found the new rewrite rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$i(i(x)) \cdot 1 \rightarrow x$.
+$i(i(x)) \circ 1 \rightarrow x$.
 \\[0.2cm]
-From $i(x) \cdot (x \cdot y) \rightarrow y$ and $i(a) \cdot (a \cdot b) \rightarrow b$ we conclude
+From $i(x) \circ (x \circ y) \rightarrow y$ and $i(a) \circ (a \circ b) \rightarrow b$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$i\bigl(i(a)\bigr) \cdot \bigl(i(a) \cdot (a \cdot b)\bigr) \rightarrow a \cdot b $ \quad and \quad
-$i\bigl(i(a)\bigr) \cdot \bigl(i(a) \cdot (a \cdot b)\bigr) \rightarrow i\bigl(i(a)\bigr) \cdot b$.
+$i\bigl(i(a)\bigr) \circ \bigl(i(a) \circ (a \circ b)\bigr) \rightarrow a \circ b $ \quad and \quad
+$i\bigl(i(a)\bigr) \circ \bigl(i(a) \circ (a \circ b)\bigr) \rightarrow i\bigl(i(a)\bigr) \circ b$.
 \\[0.2cm]
 Hence we have found the new rewrite rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$i\bigl(i(a)\bigr) \cdot b \rightarrow a \cdot b$
+$i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$
 \\[0.2cm]
-From $i\bigl(i(a)\bigr) \cdot b \rightarrow a \cdot b$ and $i(i(x)) \cdot 1 \rightarrow x$ we conclude
+From $i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$ and $i(i(x)) \circ 1 \rightarrow x$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$i\bigl(i(a)\bigr) \cdot 1 \rightarrow a \cdot 1$ \quad and \quad
-$i\bigl(i(a)\bigr) \cdot 1 \rightarrow a$
+$i\bigl(i(a)\bigr) \circ 1 \rightarrow a \circ 1$ \quad and \quad
+$i\bigl(i(a)\bigr) \circ 1 \rightarrow a$
 \\[0.2cm]
 Hence we have found the new rewrite rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \cdot 1 \rightarrow a$.
+$a \circ 1 \rightarrow a$.
 \\[0.2cm]
-At this point, the rewrite rule $i\bigl(i(x)\bigr) \cdot 1 \rightarrow x$ is simplified into the rule
+At this point, the rewrite rule $i\bigl(i(x)\bigr) \circ 1 \rightarrow x$ is simplified into the rule
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(x)\bigr) \rightarrow x$.
 \\[0.2cm]
-From $i(x) \cdot (x \cdot y) \rightarrow y$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
+From $i(x) \circ (x \circ y) \rightarrow y$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$i\bigl(i(a)\bigr) \cdot \bigl(i(a)\cdot y\bigr) \rightarrow y$ \quad and \quad
-$i\bigl(i(a)\bigr) \cdot \bigl(i(a)\cdot y\bigr) \rightarrow a \cdot \bigl(i(a) \cdot y\bigr)$.
+$i\bigl(i(a)\bigr) \circ \bigl(i(a)\circ y\bigr) \rightarrow y$ \quad and \quad
+$i\bigl(i(a)\bigr) \circ \bigl(i(a)\circ y\bigr) \rightarrow a \circ \bigl(i(a) \circ y\bigr)$.
 \\[0.2cm]
 Hence we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \cdot \bigl(i(a) \cdot y\bigr) \rightarrow y$.
+$a \circ \bigl(i(a) \circ y\bigr) \rightarrow y$.
 \\[0.2cm]
-From $i(x) \cdot x \rightarrow 1$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
+From $i(x) \circ x \rightarrow 1$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$i\bigl(i(a)\bigr) \cdot i(a) \rightarrow 1$ \quad and \quad
-$i\bigl(i(a)\bigr) \cdot i(a) \rightarrow a \cdot i(a)$.
+$i\bigl(i(a)\bigr) \circ i(a) \rightarrow 1$ \quad and \quad
+$i\bigl(i(a)\bigr) \circ i(a) \rightarrow a \circ i(a)$.
 \\[0.2cm]
 Hence we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \cdot i(a) \rightarrow 1$.
+$a \circ i(a) \rightarrow 1$.
 \\[0.2cm]
-From $a \cdot i(a) \rightarrow 1$ and $1 \cdot x \rightarrow x$ we conclude
+From $a \circ i(a) \rightarrow 1$ and $1 \circ x \rightarrow x$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$1 \cdot i(1) \rightarrow 1$ \quad and \quad $1 \cdot i(1) \rightarrow i(1)$.
+$1 \circ i(1) \rightarrow 1$ \quad and \quad $1 \circ i(1) \rightarrow i(1)$.
 \\[0.2cm]
 Hence we have shown
 \\[0.2cm]
 \hspace*{1.3cm}
 $i(1) \rightarrow 1$.
 \\[0.2cm]
-From $a \cdot i(a) \rightarrow 1$ and $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$ and we conclude
+From $a \circ i(a) \rightarrow 1$ and $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$ and we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$(x \cdot y) \cdot i\bigl(x \cdot y) \rightarrow 1$ \quad and \quad
-$(x \cdot y) \cdot i\bigl(x \cdot y) \rightarrow x \cdot \bigl(y \cdot i(x \cdot y)\bigr)$.
+$(x \circ y) \circ i\bigl(x \circ y) \rightarrow 1$ \quad and \quad
+$(x \circ y) \circ i\bigl(x \circ y) \rightarrow x \circ \bigl(y \circ i(x \circ y)\bigr)$.
 \\[0.2cm]
 Hence we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$x \cdot \bigl(y \cdot i(x \cdot y)\bigr) \rightarrow 1$.
+$x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$.
 \\[0.2cm]
-From $a \cdot \bigl(i(a) \cdot b\bigr) \rightarrow b$ and
-$x \cdot \bigl(y \cdot i(x \cdot y)\bigr) \rightarrow 1$ we conclude
+From $a \circ \bigl(i(a) \circ b\bigr) \rightarrow b$ and
+$x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \cdot \Bigl(i(a) \cdot \Bigl(y \cdot i\bigl(i(a)\cdot y\bigr)\Bigr)\Bigr) \rightarrow y \cdot i\bigl(i(a)\cdot y\bigr)$
+$a \circ \Bigl(i(a) \circ \Bigl(y \circ i\bigl(i(a)\circ y\bigr)\Bigr)\Bigr) \rightarrow y \circ i\bigl(i(a)\circ y\bigr)$
 \quad und \quad
-$a \cdot \Bigl(i(a) \cdot \Bigl(y \cdot i\bigl(i(a)\cdot y\bigr)\Bigr)\Bigr) \rightarrow a \cdot 1$
+$a \circ \Bigl(i(a) \circ \Bigl(y \circ i\bigl(i(a)\circ y\bigr)\Bigr)\Bigr) \rightarrow a \circ 1$
 \quad and \quad
 \\[0.2cm]
-As we already know that $a \cdot 1 \rightarrow a$ we have found the new rule
+As we already know that $a \circ 1 \rightarrow a$ we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$y \cdot i\bigl(i(a)\cdot y\bigr) \rightarrow a$.
+$y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$.
 \\[0.2cm]
-From $y \cdot i\bigl(i(a)\cdot y\bigr) \rightarrow a$ and $i\bigl(i(x)\bigr) \rightarrow x$ we conclude
+From $y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$ and $i\bigl(i(x)\bigr) \rightarrow x$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$y \cdot i\Bigl(i\bigl(i(x)\bigr)\cdot y\Bigr) \rightarrow i(x)$ \quad and \quad
-$y \cdot i\Bigl(i\bigl(i(x)\bigr)\cdot y\Bigr) \rightarrow y \cdot i(x \cdot y)$.
+$y \circ i\Bigl(i\bigl(i(x)\bigr)\circ y\Bigr) \rightarrow i(x)$ \quad and \quad
+$y \circ i\Bigl(i\bigl(i(x)\bigr)\circ y\Bigr) \rightarrow y \circ i(x \circ y)$.
 \\[0.2cm]
 Hence we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$y \cdot i(x \cdot y) \rightarrow i(x)$.
+$y \circ i(x \circ y) \rightarrow i(x)$.
 \\[0.2cm]
-From $i(a) \cdot (a \cdot b) \rightarrow b$ and $y \cdot i(x \cdot y) \rightarrow i(x)$ we conclude
+From $i(a) \circ (a \circ b) \rightarrow b$ and $y \circ i(x \circ y) \rightarrow i(x)$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
-$i(a) \cdot \Bigl(a \cdot i\bigl(x \cdot a\bigr)\Bigr) \rightarrow i(x \cdot a)$ \quad and \quad
-$i(a) \cdot \Bigl(a \cdot i\bigl(x \cdot a\bigr)\Bigr) \rightarrow i(a) \cdot i(x)$.
+$i(a) \circ \Bigl(a \circ i\bigl(x \circ a\bigr)\Bigr) \rightarrow i(x \circ a)$ \quad and \quad
+$i(a) \circ \Bigl(a \circ i\bigl(x \circ a\bigr)\Bigr) \rightarrow i(a) \circ i(x)$.
 \\[0.2cm]
 Hence we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$i(x \cdot a) \rightarrow i(a) \cdot i(x)$.
+$i(x \circ a) \rightarrow i(a) \circ i(x)$.
 \\[0.2cm]
 This last rule makes the rules
 \\[0.2cm]
 \hspace*{1.3cm}
-$y \cdot i(x \cdot y) \rightarrow i(x)$, \quad
-$y \cdot i\bigl(i(a)\cdot y\bigr) \rightarrow a$, \quad and \quad
-$x \cdot \bigl(y \cdot i(x \cdot y)\bigr) \rightarrow 1$
+$y \circ i(x \circ y) \rightarrow i(x)$, \quad
+$y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$, \quad and \quad
+$x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$
 \\[0.2cm]
-redundant as all of these rules can be simplified to an identity using the rule $i(x \cdot a) \rightarrow i(a) \cdot i(x)$.
+redundant as all of these rules can be simplified to an identity using the rule $i(x \circ a) \rightarrow i(a) \circ i(x)$.
 Therefore, we have found the following set of rewrite rules.
 \begin{enumerate}
-\item $1 \cdot x \rightarrow x$,
-\item $i(x) \cdot x \rightarrow 1$, 
-\item $(x \cdot y) \cdot z \rightarrow x \cdot (y \cdot z)$,
-\item $i(a) \cdot (a \cdot z) \rightarrow z$.
-\item $a \cdot 1 \rightarrow a$,
+\item $1 \circ x \rightarrow x$,
+\item $i(x) \circ x \rightarrow 1$, 
+\item $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$,
+\item $i(a) \circ (a \circ z) \rightarrow z$.
+\item $a \circ 1 \rightarrow a$,
 \item $i(1) \rightarrow 1$,
 \item $i\bigl(i(x)\bigr) \rightarrow x$,
-\item $a \cdot i(a) \rightarrow 1$,
-\item $a \cdot \bigl(i(a) \cdot y\bigr) \rightarrow y$,
-\item $i(x \cdot a) \rightarrow i(a) \cdot i(x)$.
+\item $a \circ i(a) \rightarrow 1$,
+\item $a \circ \bigl(i(a) \circ y\bigr) \rightarrow y$,
+\item $i(x \circ a) \rightarrow i(a) \circ i(x)$.
 \end{enumerate}
 It can be shown that all critical pairs resulting from these rules can be simplified to identities.  Hence this
 set is a confluent set of rewrite rules for group theory.  Therefore, the validity of any equation $s \approx t$
@@ -1394,20 +1474,20 @@ are identical.
 A \blue{quasi-group} is a structure
 \\[0.2cm]
 \hspace*{1.3cm}
-$ \mathcal{G} = \langle G, \cdot, /, \backslash \rangle$
+$ \mathcal{G} = \langle G, \circ, /, \backslash \rangle$
 \\[0.2cm]
 such that
 \begin{enumerate}
 \item $G$ is a non-empty set,
-\item $\cdot: G \times G \rightarrow G$,
+\item $\circ: G \times G \rightarrow G$,
 \item $/: G \times G \rightarrow G$,
 \item $\backslash: G \times G \rightarrow G$.
 \item Furthermore, the following axioms have to be satisfied:
       \begin{enumerate}
-      \item $x \cdot (x \backslash y) = y$,
-      \item $(x / y) \cdot y = x$,
-      \item $x \backslash (x \cdot y) = y$,
-      \item $(x \cdot y) /y = x$.
+      \item $x \circ (x \backslash y) = y$,
+      \item $(x / y) \circ y = x$,
+      \item $x \backslash (x \circ y) = y$,
+      \item $(x \circ y) /y = x$.
       \end{enumerate}  
 \end{enumerate}
 Compute the set of all non-trivial critical pairs from these equations.
