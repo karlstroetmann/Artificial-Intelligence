@@ -1302,30 +1302,37 @@ which contains an implementation of the Knuth-Bendix algorithm.  It also contain
 theories $E$ where the Knuth-Bendix algorithm is successful.
 
 \example
-We test the Knuth-Bendix algorithm with the axioms of group theory.  These axioms are the following:
+We test the Knuth-Bendix algorithm with the axioms of group theory.  Denoting the neutral element as $1$ and
+the multiplication as $\circ$, the axioms are:
 \begin{enumerate}[(a)]
 \item $1 \circ x \approx x$,
 \item $i(x) \circ x \approx 1$, and
 \item $(x \circ y) \circ z \approx x \circ (y \circ z)$.
 \end{enumerate}
-It is obvious how these equations can be oriented into rewrite rules.  The resulting rules are:
+Using the Knuth-Bendix ordering described previous, we can turn these equations into rewrite rules as follows: 
 \begin{itemize}
 \item $1 \circ x \rightarrow x$,
 \item $i(x) \circ x \rightarrow 1$, and
 \item $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$.
 \end{itemize}
-From $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$ and  $i(a) \circ a \rightarrow 1$ we conclude
+By taking the rewrite rule $(x \circ y) \circ z \to x \circ (y \circ z)$ and superposing the rewrite rule
+$i(a) \circ a \to 1$ at position $[1]$, utilizing the most general unifier $[x \mapsto i(a), y \mapsto a]$, we deduce 
+the following relationships: 
 \\[0.2cm]
 \hspace*{1.3cm}
-$(i(a) \circ a) \circ z \rightarrow i(a) \circ (a \circ z)$ \quad and \quad
-$(i(a) \circ a) \circ z \rightarrow 1 \circ z$
+$(i(a) \circ a) \circ z \to i(a) \circ (a \circ z)$ \quad and \quad
 \\[0.2cm]
-Hence we have found the new rewrite rule
+\hspace*{1.3cm}
+$(i(a) \circ a) \circ z \to 1 \circ z$.
+\\[0.2cm]
+As $1 \circ z$ can be rewritten to $z$ and  $z \prec i(a) \circ (a \circ z)$ in the Knuth-Bendix ordering, we have found the
+new rewrite rule 
 \\[0.2cm]
 \hspace*{1.3cm}
 $i(a) \circ (a \circ z) \rightarrow z$.
 \\[0.2cm]
-From $i(a) \circ (a \circ z) \rightarrow z$ and $i(x) \circ x$ we conclude
+By taking the rewrite rule $i(a) \circ (a \circ z) \rightarrow z$ and superposing the rewrite rule  $i(x) \circ x \rightarrow 1$ at
+position $[2]$ using the most general unifier $[a \mapsto i(x), z \mapsto x]$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i(i(x)) \circ (i(x) \circ x) \rightarrow x$ \quad and \quad
@@ -1336,7 +1343,8 @@ Hence we have found the new rewrite rule
 \hspace*{1.3cm}
 $i(i(x)) \circ 1 \rightarrow x$.
 \\[0.2cm]
-From $i(x) \circ (x \circ y) \rightarrow y$ and $i(a) \circ (a \circ b) \rightarrow b$ we conclude
+By taking the rewrite rule $i(x) \circ (x \circ y) \rightarrow y$ and superposing the rewrite rule $i(a) \circ (a \circ b) \rightarrow b$
+at position $[2]$ using the most general unifier $[x \mapsto i(a), y \mapsto a \circ b]$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ \bigl(i(a) \circ (a \circ b)\bigr) \rightarrow a \circ b $ \quad and \quad
@@ -1347,7 +1355,8 @@ Hence we have found the new rewrite rule
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$
 \\[0.2cm]
-From $i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$ and $i(i(x)) \circ 1 \rightarrow x$ we conclude
+By taking the rewrite rule $i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$ and superposing the rewrite rule $i(i(x)) \circ 1 \rightarrow x$ at position $[]$
+using the most general unifier $[x \mapsto a, b \mapsto 1]$ we conclude  
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ 1 \rightarrow a \circ 1$ \quad and \quad
@@ -1363,7 +1372,8 @@ At this point, the rewrite rule $i\bigl(i(x)\bigr) \circ 1 \rightarrow x$ is sim
 \hspace*{1.3cm}
 $i\bigl(i(x)\bigr) \rightarrow x$.
 \\[0.2cm]
-From $i(x) \circ (x \circ y) \rightarrow y$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
+By taking the rewrite rule $i(x) \circ (x \circ y) \rightarrow y$ and superposing the rewrite rule $i\bigl(i(a)\bigr) \rightarrow a$
+at position $[1]$ using the most general unifier $[x \mapsto i(a)]$, we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ \bigl(i(a)\circ y\bigr) \rightarrow y$ \quad and \quad
@@ -1374,7 +1384,8 @@ Hence we have found the new rule
 \hspace*{1.3cm}
 $a \circ \bigl(i(a) \circ y\bigr) \rightarrow y$.
 \\[0.2cm]
-From $i(x) \circ x \rightarrow 1$ and $i\bigl(i(a)\bigr) \rightarrow a$ we conclude
+By taking the rewrite rule $i(x) \circ x \rightarrow 1$ and superposing the rewrite rule $i\bigl(i(a)\bigr) \rightarrow a$ at position
+$[1]$ using the most general unifier $[x \mapsto i(a)]$ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ i(a) \rightarrow 1$ \quad and \quad
@@ -1385,7 +1396,8 @@ Hence we have found the new rule
 \hspace*{1.3cm}
 $a \circ i(a) \rightarrow 1$.
 \\[0.2cm]
-From $a \circ i(a) \rightarrow 1$ and $1 \circ x \rightarrow x$ we conclude
+By taking the rewrite rule $a \circ i(a) \rightarrow 1$ and superposing the rewrite rule $1 \circ x \rightarrow x$ at position $[]$ using
+the most general unifier $[a \mapsto 1, x \mapsto i(1)]$, we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $1 \circ i(1) \rightarrow 1$ \quad and \quad $1 \circ i(1) \rightarrow i(1)$.
@@ -1395,7 +1407,9 @@ Hence we have shown
 \hspace*{1.3cm}
 $i(1) \rightarrow 1$.
 \\[0.2cm]
-From $a \circ i(a) \rightarrow 1$ and $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$ and we conclude
+By taking the rewrite rule $a \circ i(a) \rightarrow 1$ and superposing the rewrite rule $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$
+at position $[]$ using the most general unifier $[a \mapsto x \circ y]$,
+ we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $(x \circ y) \circ i\bigl(x \circ y) \rightarrow 1$ \quad and \quad
@@ -1406,21 +1420,24 @@ Hence we have found the new rule
 \hspace*{1.3cm}
 $x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$.
 \\[0.2cm]
-From $a \circ \bigl(i(a) \circ b\bigr) \rightarrow b$ and
-$x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$ we conclude
+By taking the rewrite rule $a \circ \bigl(i(a) \circ b\bigr) \rightarrow b$ and superposing the rewrite rule 
+$x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$ at position $[2]$ using the most general unifier
+$[x \mapsto i(a), b \mapsto y \circ i(i(a) \circ y)]$, we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $a \circ \Bigl(i(a) \circ \Bigl(y \circ i\bigl(i(a)\circ y\bigr)\Bigr)\Bigr) \rightarrow y \circ i\bigl(i(a)\circ y\bigr)$
-\quad und \quad
-$a \circ \Bigl(i(a) \circ \Bigl(y \circ i\bigl(i(a)\circ y\bigr)\Bigr)\Bigr) \rightarrow a \circ 1$
 \quad and \quad
+$a \circ \Bigl(i(a) \circ \Bigl(y \circ i\bigl(i(a)\circ y\bigr)\Bigr)\Bigr) \rightarrow a \circ 1$.
 \\[0.2cm]
 As we already know that $a \circ 1 \rightarrow a$ we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
 $y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$.
 \\[0.2cm]
-From $y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$ and $i\bigl(i(x)\bigr) \rightarrow x$ we conclude
+By taking the rewrite rule $y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$ and superposing the rewrite rule $i\bigl(i(x)\bigr)
+\rightarrow x$ at
+position $[2, 1, 1]$ using the most general unifier $[a \mapsto i(x)]$, 
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $y \circ i\Bigl(i\bigl(i(x)\bigr)\circ y\Bigr) \rightarrow i(x)$ \quad and \quad
@@ -1431,7 +1448,8 @@ Hence we have found the new rule
 \hspace*{1.3cm}
 $y \circ i(x \circ y) \rightarrow i(x)$.
 \\[0.2cm]
-From $i(a) \circ (a \circ b) \rightarrow b$ and $y \circ i(x \circ y) \rightarrow i(x)$ we conclude
+By taking the rewrite rule  $i(a) \circ (a \circ b) \rightarrow b$ and superposing the rewrite rule $y \circ i(x \circ y) \rightarrow i(x)$
+at the position $[2]$ using the most general unifier $[y \mapsto a, b \mapsto i(x \circ a)]$, we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i(a) \circ \Bigl(a \circ i\bigl(x \circ a\bigr)\Bigr) \rightarrow i(x \circ a)$ \quad and \quad
