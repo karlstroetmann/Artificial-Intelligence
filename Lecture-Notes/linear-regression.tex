@@ -484,26 +484,17 @@ to solve this exercise.
 
 \section{General Linear Regression}
 \index{general linear regression}
-In practise, it is rarely the case that a given observed variable $y$ only depends on a single variable $x$.
-To take the example of the fuel consumption of a car further, in general we would expect that the fuel consumption
-of a car depends not only on the engine displacement of the car but is also related to the other parameters.
-For example, it seems reasonable to assume that the mass of the car should influence its fuel consumption.
-To be able to model this kind of behaviour,  we present the theory of   
-\href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
-In a \blue{general regression problem} we are given a list of $m$ pairs of the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$ 
-where $\mathbf{x}^{(i)} \in \mathbb{R}^p$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1,\cdots,m\}$.  The
-number $p$ is called the number of \blue{features}, while the pairs are called the \blue{training examples}. 
-\index{training example}
-Our goal is to compute a linear function 
+In practice, it is uncommon for an observed variable $y$ to depend solely on a single variable $x$. Taking the example of a car's fuel consumption further, it is generally anticipated that the fuel consumption depends not only on the car's engine displacement but also on various other parameters. For instance, it is plausible to assume that the car's mass significantly influences its fuel consumption. To model such complex relationships, we introduce the theory of \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
+
+In the context of a \blue{general regression problem}, we are provided with a list of $m$ pairs in the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$, where $\mathbf{x}^{(i)} \in \mathbb{R}^p$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1, \ldots, m\}$. The term $p$ denotes the number of \blue{features}, and the pairs are referred to as the \blue{training examples}. Our objective is to compute a linear function
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds F:\mathbb{R}^p \rightarrow \mathbb{R}$
-\\[0.2cm]  
-such that $F\bigl(\mathbf{x}^{(i)}\bigr)$ approximates  $y^{(i)}$ as precisely as posssible
-for all $i\in\{1,\cdots,m\}$, i.e.~we want to have
+\\[0.2cm]
+such that $F\bigl(\mathbf{x}^{(i)}\bigr)$ approximates $y^{(i)}$ as accurately as possible for all $i \in \{1, \ldots, m\}$; that is, we aim to achieve
 \\[0.2cm]
 \hspace*{1.3cm}
-$F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ \quad for all $i\in\{1,\cdots,m\}$.
+$F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ \quad for all $i \in \{1, \ldots, m\}$.
 \\[0.2cm]
 In order to make the notation $F\bigl(\mathbf{x}^{(i)}\bigr) \approx y^{(i)}$ more precise, we
 define the \blue{mean squared error} \index{mean squared error} \index{MSE}
