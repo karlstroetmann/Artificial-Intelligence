@@ -19,7 +19,11 @@ a car engine relates to its \blue{fuel consumption}.  One approach to understand
 appropriate laws of physics and chemistry.  However, due to our lack of understanding of the underlying theory,
 this is not an option for us.  Instead, we follow a \blue{statistical approach} and collect data from a large number
 of cars.  For these cars, we compare their engine displacement with the corresponding fuel consumption.  This
-way, we will collect a set of $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
+way, we will collect a set of $m$ \blue{observations} of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$ 
+\\[0.2cm]
 where $x_i$ is the engine displacement of the engine in the $i$-th car, while $y_i$ is the fuel consumption of the
 $i$-th car.  We call $x$ the \blue{independent variable}, \index{independent variable} while $y$ is the 
 \blue{dependent variable}.  \index{dependent variable} We define the vectors $\mathbf{x}$ and $\mathbf{y}$ as follows:
@@ -29,39 +33,42 @@ $\mathbf{x} := \langle x_1, \cdots, x_m \rangle^\top$ \quad and \quad
 $\mathbf{y} := \langle y_1, \cdots, y_m \rangle^\top$.
 \\[0.2cm]
 Here, the postfix operator $^\top$ is interpreted as the
-\href{https://en.wikipedia.org/wiki/Transpose}{transposition operator}, \index{transposition operator}
-i.e.~$\mathbf{x}$ and $\mathbf{y}$ are considered to be column vectors.  By using the transposition operator we are
-able to write these vectors in a single line.
+\href{https://en.wikipedia.org/wiki/Transpose}{transposition operator}, \index{transposition operator}.
+The reason is that $\mathbf{x}$ and $\mathbf{y}$ are be column vectors, but writing them as column vectors
+would take to much space.  By using the transposition operator we are able to write these vectors in a single 
+line. 
 
 In linear regression, we use a \blue{linear model} \index{linear model}
-and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via a linear
+and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via an
 equation of the form
 \\[0.2cm]
 \hspace*{1.3cm}
 $y_i = \vartheta_1 \cdot x_i + \vartheta_0$.
 \\[0.2cm]
-We do not expect this equation to hold exactly.  The reason is that there are many other factors besides the
-engine displacement that influence the fuel consumption.  For example, both the weight of a car and its 
-\href{https://en.wikipedia.org/wiki/Automotive_aerodynamics}{aerodynamics} certainly influence the fuel consumption.  
+We do not assume that this equation will hold precisely. This is because numerous factors, in addition to
+engine displacement, affect fuel consumption. For instance, the \blue{weight} of a car and its
+\href{https://en.wikipedia.org/wiki/Automotive_aerodynamics}{aerodynamics} undoubtedly play significant roles
+in determining fuel consumption. 
 We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the 
 \blue{\underline{m}ean \underline{s}quared \underline{e}rror}, \index{mean squared error} which is defined as 
 \begin{equation}
   \label{eq:mse}
  \mathtt{MSE}(\vartheta_0, \vartheta_1) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(\vartheta_1 \cdot x_i + \vartheta_0 - y_i\bigr)^2,
 \end{equation}
-is minimized.  It can be shown that the solution to this minimization problem is given as follows:
+is minimized.  It can be shown (and you will do so in an exercise) that the solution to this minimization
+problem is given as follows: 
 \begin{equation}
   \label{eq:theta0}
   \ds \vartheta_1 = r_{x,y} \cdot \frac{\,s_y\,}{s_x} \quad \mbox{and} \quad
       \vartheta_0 = \bar{\mathbf{y}} - \vartheta_1 \cdot \bar{\mathbf{x}}.
 \end{equation}
-This solution makes use of the values $r_{x,y}$, $s_x$, and $s_y$.  In order to define these values, we first
-define the \blue{sample mean values} \index{sample mean value}
-$\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ of $\mathbf{x}$ and $\mathbf{y}$ respectively, i.e.~we have 
+This solution utilizes the values $r_{x,y}$, $s_x$, and $s_y$. To define these values, we initially establish
+the \blue{sample mean values} \index{sample mean value} $\bar{\mathbf{x}}$ and $\bar{\mathbf{y}}$ for the
+vectors $\mathbf{x}$ and $\mathbf{y}$ respectively. Specifically, we calculate 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \bar{\mathbf{x}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m x_i$ \quad and \quad
-$\ds \bar{\mathbf{y}} = \frac{1}{m} \cdot \sum\limits_{i=1}^m y_i$.
+$\ds \bar{\mathbf{x}} = \frac{1}{m} \cdot \sum_{i=1}^m x_i$ \quad and \quad
+$\ds \bar{\mathbf{y}} = \frac{1}{m} \cdot \sum_{i=1}^m y_i$.
 \\[0.2cm]
 Furthermore, $s_x$ and $s_y$ are the \href{https://en.wikipedia.org/wiki/Standard_deviation#Sample_standard_deviation}{corrected sample standard deviations} \index{corrected sample standard deviation}
 of $\mathbf{x}$ and $\mathbf{y}$, i.e.~we have
@@ -111,23 +118,23 @@ $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ is minimal, then these partial derivati
 \eox
 
 \subsection{Assessing the Quality of Linear Regression}
-Assume that we have been given a set of $m$ observations of the form $\langle x_1, y_1\rangle, \cdots, \langle x_m, y_m\rangle$  
-and that we have calculated the parameters $\vartheta_0$ and $\vartheta_1$ according to Equation
-\ref{eq:theta0} and Equation \ref{eq:theta1}.  Provided that not all $x_i$ have the same value, these
-formulae will return two numbers for $\vartheta_0$ and $\vartheta_1$ that define a linear model for
-$\mathbf{y}$ in terms of $\mathbf{x}$.  However, at the moment we still lack a number that tells us how good
-this linear model really is.  In order to judge the quality of the linear model given by 
+Assuming we are provided with a set of $m$ observations in the form $\langle x_1, y_1\rangle, \ldots, \langle
+x_m, y_m\rangle$, and that we have calculated the parameters $\vartheta_0$ and $\vartheta_1$ as per Equation
+\ref{eq:theta0} and Equation \ref{eq:theta1}, these formulae will yield values for $\vartheta_0$ and
+$\vartheta_1$, assuming the $x_i$ values are not identical. These values define a linear model for $\mathbf{y}$
+as a function of $\mathbf{x}$. Yet, to assess the effectiveness of this linear model, we require a metric that
+quantifies its accuracy. To evaluate the quality of the linear model represented by 
 \\[0.2cm]
 \hspace*{1.3cm}
-$y = \vartheta_0 + \vartheta_1 \cdot x$
+$y = \vartheta_0 + \vartheta_1 \cdot x$,
 \\[0.2cm]
-we can compute the mean squared error according to Equation \ref{eq:mse}.  However, the mean squared error 
-is an absolute number that, by itself, is difficult to interpret.  The reason is that the variable $\mathbf{y}$ might be
-inherently noisy and we have to relate this noise to the mean squared error.  Now the noise contained in $\mathbf{y}$
-can be measured by the \blue{sample variance} \index{sample variance} of $\mathbf{y}$ and is given by the formula
+we can calculate the mean squared error using Equation \ref{eq:mse}. However, the mean squared error alone may
+not provide a complete picture due to its absolute nature and the potential inherent noise within
+$\mathbf{y}$. To contextualize this noise relative to the mean squared error, we measure the noise within
+$\mathbf{y}$ through the \blue{sample variance} \index{sample variance}, calculated as follows: 
 \begin{equation}
   \label{eq:var}
-  \mathtt{Var}(y) := \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \bigl(y_i - \bar{y}\bigr)^2.
+  \mathtt{Var}(y) := \frac{1}{m-1} \cdot \sum_{i=1}^m (y_i - \bar{y})^2.
 \end{equation}
 If we compare this formula to the formula for the mean squared error
 \\[0.2cm]
@@ -201,7 +208,7 @@ to what extent the value of the variable $y$ is \blue{determined} by the value o
 \subsection{Putting the Theory to the Test}
 In order to get a better feeling for linear regression, we want to test it to investigate the factors that
 determine the fuel consumption of cars.  \myFig{cars.csv} shows the head of the data file 
-``\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/SetlX/cars.csv}{\texttt{cars.csv}}''
+``\href{https://www.statlearning.com/s/Auto.csv}{\texttt{Auto.csv}}''
 which I have adapted from the file
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1143,7 +1150,7 @@ $\bar{\lambda}$.  It is important to keep the test set untouched while searching
 \label{fig:sqrt-6ridge.pdf}
 \end{figure}
 
-\pagebreak
+
 
 
 \exercise
@@ -1166,7 +1173,7 @@ prey to a \href{https://en.wikipedia.org/wiki/The_Texas_Chain_Saw_Massacre}{chai
 \end{enumerate}
 Try to derive a model that estimates the volume of the trees from the diameter and the height.
 \eox
-\pagebreak
+
 
 \exercise
 The file ``\texttt{nba.csv}'', which is available at
