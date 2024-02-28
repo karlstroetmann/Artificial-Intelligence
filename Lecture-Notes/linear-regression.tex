@@ -484,7 +484,11 @@ to solve this exercise.
 
 \section{General Linear Regression}
 \index{general linear regression}
-In practice, it is uncommon for an observed variable $y$ to depend solely on a single variable $x$. Taking the example of a car's fuel consumption further, it is generally anticipated that the fuel consumption depends not only on the car's engine displacement but also on various other parameters. For instance, it is plausible to assume that the car's mass significantly influences its fuel consumption. To model such complex relationships, we introduce the theory of \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}.
+In practice, it is uncommon for an observed variable $y$ to depend solely on a single variable $x$. Taking the
+example of a car's fuel consumption further, it is generally anticipated that the fuel consumption depends not
+only on the car's engine displacement but also on various other parameters. For instance, it is plausible to 
+assume that the car's mass has a  significant influences on its fuel consumption. To model such complex
+relationships, we introduce the theory of \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}. 
 
 In the context of a \blue{general regression problem}, we are provided with a list of $m$ pairs in the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$, where $\mathbf{x}^{(i)} \in \mathbb{R}^p$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1, \ldots, m\}$. The term $p$ denotes the number of \blue{features}, and the pairs are referred to as the \blue{training examples}. Our objective is to compute a linear function
 \\[0.2cm]
@@ -761,7 +765,9 @@ Using the results from the previous section, i.e.~
 \\[0.2cm]
 \hspace*{1.3cm}
 $\nabla \bigl(\mathbf{x} \mapsto \mathbf{x}^\top \cdot C \cdot \mathbf{x}\bigr) = 2 \cdot C \cdot \mathbf{x}$
-\quad provided that $C^\top = C$ \quad and \quad
+\quad provided that $C^\top = C$ \quad and
+\\[0.2cm]
+\hspace*{1.3cm}
 $\nabla \bigl(\mathbf{x} \mapsto \mathbf{b}^\top \cdot A \cdot \mathbf{x}\bigr) = A^\top \cdot \mathbf{b}$,
 \\[0.2cm]
 we can now compute the gradient of $\mathtt{MSE}(\mathbf{w})$ with respect to

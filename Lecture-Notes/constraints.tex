@@ -1214,7 +1214,7 @@ it with the Zebra Puzzle described in a previous exercise.  It solves this puzzl
 compare, the backtracking algorithm shown in the previous section takes roughly 10 seconds to solve this
 puzzle.
 
-\section{Consistency Checking \label{sec:consistency}}
+\section{Consistency Checking$^*$\label{sec:consistency}}
 So far, the constraints in the constraints satisfaction problems discussed are either \blue{unary constraints} 
 or \blue{binary constraints}:  A \blue{unary} constraint is a constraint $\texttt{f}$
 such that the formula $\texttt{f}$ contains only one variable, while a \blue{binary} constraint
@@ -1898,16 +1898,17 @@ However, in order to solve this puzzle we need two additional assumptions.
 \end{enumerate}
 Strangely, in my old math book these assumptions are not mentioned.
 
-We can now infer the number of children.
+In order to infer the number of children we first have to determine whether I am male or female.
+If I were female, I would have as many brothers as my sister has.  Now if my sister would have twice as many
+brother, this could only be true if I had no brothers.  But then I would not have any sisters either and this
+contradicts the fact that I have an oldest sister.  This contradiction shows that I have to be male.
+
 If we denote the number of \blue{boys} with the variable $b$ and the number of \blue{girls} with
 $g$, the problem statements are equivalent to the following two equations:
 \begin{enumerate}[(a)]
 \item $b - 1 = g$, \quad since I am not my own brother.
 \item $2 \cdot (g - 1) = b$ \quad as my sister is not my own sister.
 \end{enumerate}
-By the way, from the problem statement it is clear that I must be male, since otherwise
-my oldest sister would as many  brothers as I have and hence she would have as many brothers as I have
-sisters in contrast to the second statement.
 
 Before we can start to solve this problem, we have to install \texttt{Z3} via \texttt{pip} using the following
 command in the shell:  
