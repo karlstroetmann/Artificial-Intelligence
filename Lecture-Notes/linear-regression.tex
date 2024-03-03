@@ -1131,10 +1131,10 @@ The regularization parameter $\lambda$ is a so called \blue{hyper parameter} \in
  that is usually determined by
 \href{https://en.wikipedia.org/wiki/Cross-validation_(statistics)}{cross  validation}.  This sound complicated,
 but actually is very simple:  We split the training set into $k$ parts.  Then we remove one of these parts and
-train the model on the remaining $k-1$ parts.  We use the removed part to try to find the best value for our
-hyper parameter by trial and error.  We do this for all of the $k$ parts.  In each case we might find a sightly
-different optimal value $\lambda_k$.  Finally, we take the mean $\bar{\lambda}$ of all values $\lambda_k$ that
-we have found in our $k$ experiments.
+train the model on the remaining $k-1$ parts.  If the training set is small, $k$ will be either $2$ or $3$. We
+use the removed part to try to find the best value for our hyper parameter by trial and error.  We do this for
+all of the $k$ parts.  In each case we might find a sightly different optimal value $\lambda_k$.  Finally, we
+take the mean $\bar{\lambda}$ of all values $\lambda_k$ that we have found in our $k$ experiments.
 Following that we use the complete training set one last time to find a model that uses the value
 $\bar{\lambda}$.  It is important to keep the test set untouched while searching for the best value of $\lambda$.
 

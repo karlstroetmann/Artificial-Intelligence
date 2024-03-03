@@ -9,7 +9,7 @@ the email is likely to be spam.  For example, a possible feature would be the nu
 ``\texttt{pharmacy}'' in the text of the email.
 
 Another famous example of classification is \blue{character recognition}.  In character recognition, the
-input is an image depicting a character.  This image is usually coded as a vector of grey values.  The task is
+input is an image depicting a character.  This image is usually coded as a vector of gray values.  The task is
 then to recognize the letter shown.  While spam detection is a \blue{binary} classification problem, character
 recognition is a \blue{multi-class} classification problem, since there are 26 different characters.
 
@@ -192,7 +192,7 @@ from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we defin
 
 \subsection{Applications of Classification}
 Besides spam detection, there are many other classification problems that can be solved using machine learning.  To give
-just one more example, imagine a general practitioner that receives a patient and examines her symptoms.  In this case,
+just one more example, imagine a doctor that receives a patient and examines her symptoms.  In this case,
 the symptoms can be seen as the features of the patient.  For example, these features could be
 \begin{enumerate}[(a)]
 \item body temperature,
@@ -202,7 +202,7 @@ the symptoms can be seen as the features of the patient.  For example, these fea
 \item breathing difficulties,
 \item age,
 \end{enumerate}
-to name but a few of the possible features.  Based on these symptoms, the general practitioner would then decide on an
+to name but a few of the possible features.  Based on these symptoms, the doctor would then decide on an
 illness, i.e.~the set of classes for the classification problem would be
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -322,8 +322,8 @@ $\mathbf{x}_{n+1} := \mathbf{x}_n + \alpha \cdot \nabla f(\mathbf{x}_n)$ \quad f
 \\[0.2cm]
 Here, $\alpha$ is called the \blue{step size} and is also known as the \blue{learning rate}.  It determines by how
 much we move in the direction of the gradient.  In practise, it is best to adapt the step size dynamically
-during the iterations.  Figure \ref{fig:gradient-ascent.py} on page \pageref{fig:gradient-ascent.py} shows
-how this is done. 
+during the iterations.  The Python function shown in Figure \ref{fig:gradient-ascent.py} on page
+\pageref{fig:gradient-ascent.py} demonstrates how this is done. 
 The function \texttt{findMaximum} takes four arguments:
 \begin{enumerate}
 \item $\texttt{f}$ is the function that is to be maximized.  It is assumed that \texttt{f} takes a vector
@@ -331,9 +331,8 @@ The function \texttt{findMaximum} takes four arguments:
       $1$.  In that case the input to $f$ is a real number.
 \item $\texttt{gradF}$ is the gradient of \texttt{f}.  It takes a vector
       $\texttt{x}\in \mathbb{R}^n$ as its input and returns the vector $\nabla \mathtt{f}(\mathtt{x})$.
-\item $\texttt{start}$ is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  In
-      practise, we will often use $\mathbf{0} \in \mathbb{R}^n$ as the start vector.
-\item $\texttt{eps}$ is the precision that we need for the maximum.  We will have to say more on how \texttt{eps}
+\item $\texttt{start}$ is a vector from $\mathbb{R}^n$ that is used as the value of $\mathbf{x}_0$.  
+\item $\texttt{eps}$ is the precision that we want to obtain when locating the maximum.  We will have to say more on how \texttt{eps}
       is related to the precision later.  As we are using double precision floating point arithmetic, 
       it won't make sense to use a value for \texttt{eps} that is smaller than $10^{-15}$.
 \end{enumerate}
@@ -395,7 +394,6 @@ Next, let us discuss the implementation of gradient ascent.
         x     = start
         fx    = f(x)
         alpha = 1.0
-        cnt   = 1  # number of iterations
         while True:
             xOld, fOld = x, fx
             x  += alpha * gradF(x)
@@ -408,7 +406,6 @@ Next, let us discuss the implementation of gradient ascent.
                 alpha *= 1.2
             if abs(fx - fOld) <= abs(fx) * eps:
                 return x, fx
-            cnt += 1                  
 \end{minted}
 
 \caption{The gradient ascent algorithm.}
