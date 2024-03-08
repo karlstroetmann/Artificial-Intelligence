@@ -3,18 +3,14 @@ In this chapter, we discuss \href{https://en.wikipedia.org/wiki/Artificial_neura
 Many of the most visible breakthroughs in artificial intelligence have been achieved through the use of neural
 networks: 
 \begin{enumerate}
-\item The current system used by Google to \href{https://translate.google.com}{automatically translate} web
-      pages is called 
-      ``\href{https://en.wikipedia.org/wiki/Google_Neural_Machine_Translation}{Google Neural Machine Translation}''
-      and, as the name suggests, is based on neural networks. 
-\item \href{https://www.deepl.com/translator}{DeepL} is another translator that is based on neural networks.      
+\item \href{https://www.deepl.com/translator}{DeepL} is a language translator that is based on neural networks.      
 \item \href{https://en.wikipedia.org/wiki/AlphaGo}{AlphaGo} uses neural networks together with tree search
       \cite{silver:2016}.  It has \href{https://en.wikipedia.org/wiki/AlphaGo_versus_Ke_Jie}{beaten} 
       the world champion \href{https://en.wikipedia.org/wiki/Ke_Jie}{Ke Jie} in the game of
-      \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}. AlphaGo has been succeeded by
-      \href{https://en.wikipedia.org/wiki/AlphaZero}{AlphaZero}, which is even stronger than AlphaGo.
+      \href{https://en.wikipedia.org/wiki/Go_(game)}{Go}.
 \item \blue{Image recognition} is best done via neural networks.
 \item \href{https://en.wikipedia.org/wiki/Autonomous_car}{Autonomous driving} makes heavy use of neural networks.
+\item \href{https://chat.openai.com/}{ChatGPT} is a large language model that is based on a gigantic neural network.
 \end{enumerate}
 The list given above is far from being complete.  In this chapter, we will only discuss 
 \href{https://en.wikipedia.org/wiki/Feedforward_neural_network}{feedforward neural networks}.  Although recently both 
@@ -32,7 +28,8 @@ networks.
 
 We proceed to give an overview of the content of this chapter.
 \begin{enumerate}
-\item We start with the definition of \blue{feed forward} neural networks and discuss their \blue{topology}.
+\item We start with the definition of a fully connected \blue{feed forward} neural networks and discuss their
+  \blue{topology}. 
 \item We introduce \blue{forward propagation}, which is the way a neural network computes its predictions.
 \item Similarly to our treatment of logistic regression, we define a cost function that measure the quality of
       the predictions of a neural network on a training set.  In order to minimize this cost function using
@@ -42,11 +39,12 @@ We proceed to give an overview of the content of this chapter.
       \blue{gradient descent}.  This improved version is known as \blue{stochastic gradient descent}.
 \item After having covered the theory, we implement a simple neural network that is able to recognize
       \blue{handwritten digits}.
-\item Finally, we discuss \href{https://www.tensorflow.org}{TensorFlow}, which is an open source software
-      library for machine learning in general and neural networks in particular.
+\item Finally, we discuss \href{https://en.wikipedia.org/wiki/Automatic_differentiation}{automatic
+      differentiation}, which is the backbone of state-of-the-art machine learning platforms like
+      \href{https://pytorch.org/}{PyTorch} or \href{https://www.tensorflow.org/}{TensorFlow}.
 \end{enumerate}
 
-\section{Feedforward Neural Networks}
+\section{Feed Forward Neural Networks}
 A neural network is built from \blue{neurons}.  Neural networks are inspired by biological 
 \href{https://en.wikipedia.org/wiki/Neuron}{neurons}.  However, in order to understand artificial neural
 networks it is not necessary to know how biological neurons work and it is definitely not necessary to
@@ -61,21 +59,21 @@ Conceptually, a neuron is a function that maps an input vector $\mathbf{x} \in \
 $\mathbb{R}$ of the real numbers.  This function is defined as follows: 
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathbf{x} \mapsto a(\mathbf{x} \cdot \mathbf{w} + b)$.
+$\ds \mathbf{x} \mapsto f(\mathbf{x} \cdot \mathbf{w} + b)$.
 \\[0.2cm]
 Here, $a$ is called the \blue{activation function}.  \index{activation function} In our applications, we will
 use the sigmoid function as our activation function.  This function has been defined previously in Definition
 \ref{def:sigmoid} on page \pageref{def:sigmoid} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds a(t) := S(t) = \frac{1}{1 + \exp(-t)}$.
+$\ds f(t) := S(t) := \frac{1}{1 + \exp(-t)}$.
 \\[0.2cm]
 Another useful activation function is the so called
 \href{https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}{ReLU function}, \index{ReLU function}
 which is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$a(t) = \max(0, x)$.
+$f(t) := \mathtt{ReLU}(t) := \max(0, x)$.
 \\[0.2cm]
 The abbreviation ReLU is short for \blue{rectified linear unit}. \index{rectified linear unit}
 The function modelling the neuron can be written more explicitly using index notation.  If
@@ -91,10 +89,11 @@ $\mathbf{x} = \langle x_1, \cdots, x_m \rangle^\top$
 is the input vector, and $b\in \mathbb{R}$ is the \blue{bias}, \index{bias} then we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \mathbf{x} \mapsto S\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$.
+$\ds \mathbf{x} \mapsto f\left(\biggl(\sum\limits_{i=1}^m x_i \cdot w_i\biggr) + b\right)$, \quad where $f$ is
+the activation function.
 \\[0.2cm]
-If we compare this function to a similar function appearing in the last chapter, you will notice 
-that a single neuron works just like a classifier in logistic regression.  The only difference is that the bias $b$
+If we use the sigmoid function as the activation function, then 
+a single neuron works just like a classifier in logistic regression.  The only difference is that the bias $b$
 is now explicit in our notation.  In logistic regression, we had assumed that the first component $x_1$ of our
 feature vector $\mathbf{x}$ was always equal to $1$.  This assumption enabled us to incorporate the bias $b$ into the
 weight vector $\mathbf{w}$.
@@ -108,7 +107,7 @@ weight vector $\mathbf{w}$.
   \label{fig:nn1.pdf}
 \end{figure}
 
-A \blue{feedforward neural network} \index{feed forward neural network} is a layered network of neurons.
+A \blue{feed forward neural network} \index{feed forward neural network} is a layered network of neurons.
 Formally, the \blue{topology} \index{topology} of a neural network is 
 given by a number $L \in \mathbb{N}$ and a list $[m(1), \cdots, m(L)]$ of $L$ natural numbers.  The number
 $L$ is called the \blue{number of layers} \index{number of layers} and for $l \in \{2,\cdots,L\}$ the number $m(l)$ is the number of
@@ -174,7 +173,7 @@ in layer $l$ is denoted as $a_j^{(l)}$ and is defined recursively as follows:
       \begin{equation}
          \label{eq:FF2}
          a_j^{(l)}(\mathbf{x}) := 
-             S\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a_k^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
+             f\left(\Biggl(\sum\limits_{k=1}^{m(l-1)} w_{j,k}^{(l)}\cdot a_k^{(l-1)}(\mathbf{x})\Biggr) + b_{j}^{(l)}\right) 
         \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
        \tag{FF2}
 \end{equation}
@@ -192,7 +191,7 @@ Using vector notation, the \blue{feed forward equations} \index{feed forward equ
   \tag{FF1v} \\ 
   \label{eq:FF2v}
   \mathbf{a}^{(l)}(\mathbf{x}) & := 
-  S\Bigl( W^{(l)} \cdot \mathbf{a}^{(l-1)}(\mathbf{x}) + \mathbf{b}^{(l)}\Bigr)
+  f\Bigl( W^{(l)} \cdot \mathbf{a}^{(l-1)}(\mathbf{x}) + \mathbf{b}^{(l)}\Bigr)
   \quad \mbox{for all $l \in \{2, \cdots, L\}$}.
   \tag{FF2v}
 \end{align}
@@ -216,8 +215,8 @@ through the neural network:
       vector $\mathbf{a}^{(2)}$ according to the formula
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathbf{a}^{(2)}(\mathbf{x}) := S\bigl(W^{(2)} \cdot \mathbf{a}^{(1)}(\mathbf{x}) + \mathbf{b}^{(2)}\bigr) = 
-                                        S\bigl(W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}\bigr)
+      $\mathbf{a}^{(2)}(\mathbf{x}) := f\bigl(W^{(2)} \cdot \mathbf{a}^{(1)}(\mathbf{x}) + \mathbf{b}^{(2)}\bigr) = 
+                                        f\bigl(W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}\bigr)
       $.
 \item The second layer of neurons, which is the third layer of nodes,  is activated and computes the activation
       vector $\mathbf{a}^{(3)}(\mathbf{x})$ according to the formula
@@ -231,7 +230,7 @@ through the neural network:
       \hspace*{1.3cm}
       $\mathbf{o}(\mathbf{x}) := \mathbf{a}^{(L)}(\mathbf{x})$
       \\[0.2cm]
-      has been computed.  As long as we use the sigmoid function as our activation function, every neuron of
+      has been computed.  If we use the sigmoid function as our activation function $f$, every neuron of
       the neural network performs logistic regression. 
 \end{enumerate}
 Next, we assume that we have $n$ \blue{training examples} 
@@ -284,7 +283,7 @@ As the notation
 \hspace*{1.3cm}
 $C_{\mathbf{x}, \mathbf{y}}\Bigr(W^{(2)}, \cdots, W^{(L)}, \mathbf{b}^{(2)}, \cdots, \mathbf{b}^{(L)}\Bigr)$
 \\[0.2cm]
-is far too heavy, we will abbreviate this term as $C_{\mathbf{x}, \mathbf{y}}$ in the following
+is still far too heavy, we will abbreviate this term as $C_{\mathbf{x}, \mathbf{y}}$ in the following
 discussion of the backpropagation algorithm.  Similarly, we abbreviate the quadratic error cost function as $C$.
 Our goal is to choose the weight matrices $W^{(l)}$ and the bias vectors $\mathbf{b}^{(l)}$ such that the
 quadratic error cost function $C$ is minimized.  We will use a variation of
@@ -304,13 +303,18 @@ There are three reasons for the recent success of neural networks.
 \begin{enumerate}
 \item The computing power that is available today has vastly increased in the last 20 years.
       For example, today the
-      \href{https://www.nvidia.com/en-us/geforce/graphics-cards/30-series/rtx-3090/}{NVIDIA RTX 3090}
-      graphic card offers 35 teraflops in single precision performance. It needs a power supply that
-      outputs 750 watt. Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which
+      \href{https://www.nvidia.com/de-de/geforce/graphics-cards/40-series/rtx-4090/}{NVIDIA RTX 4090}
+      graphic card offers 83 teraflops in single precision performance. It needs a power supply that
+      outputs 450 watt. Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which
       was the most powerful supercomputer in 2000: According to the article
       ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
       it  offered a performance of 7.2 teraflops and needed 6 megawatt to operate.  The cost to build ASCI
-      White was about $110,000,000\,\symbol{36}$.   To compare, the NVIDIA RTX 3090 costs $1,\!499\,\symbol{36}$.
+      White was about $110,000,000\,\symbol{36}$.   To compare, the \textsc{Nvidia} RTX 4090 costs $1,\!799\,\symbol{36}$.
+
+      The \textsc{Nvidia} RTX 4090 is a consumer graphics card.  There are so called \blue{Tensor Core GPUs}
+      like the \textsc{Nvidia} H100 NFL that are at least one order of magnitude which can achieve more than a
+      petaflop when performing single precision matrix multiplications.  Furthermore, these card can be bundled
+      in clusters.  However, a single \textsc{Nvidia} H100 card can cost up to $40,000\, \$$.
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} \index{backpropagation} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
@@ -325,21 +329,23 @@ cost function $C$ with respect to the weights $w_{j,k}^{(l)}$ and the biases $b_
 proceed to compute these partial derivatives, we need to define some auxiliary variables. 
 
 \subsection{Definition of some Auxiliary Variables}
-We start by defining the auxiliary variables $z_j^{(l)}$.
- The expressions $z_j^{(l)}$  are defined as the inputs of the activation function $S$ of the $j$-th neuron in
- layer $l$:
+We start by defining the auxiliary variables $z_j^{(l)}$.  The expressions $z_j^{(l)}$  are defined as the
+inputs of the activation function $f$ of the $j$-th neuron in layer $l$:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds z_j^{(l)} := \left(\sum\limits_{k=1}^{m(l-1)}  w_{j,k}^{(l)} \cdot a_k^{(l-1)}\right) + b_j^{(l)}$
 \quad for all  $j \in \{1, \cdots, m(l)\}$ and $l \in \{2,\cdots,L\}$.
 \\[0.2cm]
 Of course, the term  $a_k^{(l-1)}$ really is a function of the input vector $\mathbf{x}$.  However, it is better to suppress
-this dependence in the notation since otherwise the formulas get too cluttered.
-Essentially, $z_j^{(l)}$ is the input to the sigmoid function when the activation $a_j^{(l)}$ is computed,
+this dependence in the notation since otherwise the formulas get too cluttered.  The point is that we want to
+compute the partial derivative of the cost function w.r.t.~the weights and biases and for this purpose the
+input vector is a constant.
+
+Essentially, $z_j^{(l)}$ is the input to the activation function when the activation $a_j^{(l)}$ is computed,
 i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$a_j^{(l)} = S\Bigl(z_j^{(l)}\Bigr)$.
+$a_j^{(l)} = f\Bigl(z_j^{(l)}\Bigr)$.
 \\[0.2cm]
 Later, we will see that the partial derivatives of the cost function $C_{\mathbf{x}, \mathbf{y}}$ with respect to both the weights
 $w_{j,k}^{(l)}$ and the biases $b_j^{(l)}$ can be computed easily if we first compute the partial derivatives
@@ -412,27 +418,22 @@ Now we are ready to state the \blue{backpropagation equations}.  \index{backprop
 The first of these four equations reads as follows:
 \begin{equation}
   \label{eq:BP1}
-  \varepsilon^{(L)}_j = \bigl(a_j^{(L)} - y_j\bigr) \cdot S'\bigl(z_j^{(L)}\bigr)
+  \varepsilon^{(L)}_j = \bigl(a_j^{(L)} - y_j\bigr) \cdot f'\bigl(z_j^{(L)}\bigr)
  \quad \mbox{for all $j \in \{1, \cdots, m(L)\}$,}
   \tag{BP1}
 \end{equation}
-where $S'(x)$ denotes the derivative of the sigmoid function.  We have shown in Chapter
-\ref{chapter:classification} that this derivative satisfies the equation
-\\[0.2cm]
-\hspace*{1.3cm}
-$S'(t) = \bigl(1 - S(t)\bigr) \cdot S(t)$.
-\\[0.2cm]
+where $f'(x)$ denotes the derivative of the activation function.  
 The equation (\ref{eq:BP1}) can also be written in vectorized form using the Hadamard product:
 \begin{equation}
   \label{eq:BP1s}
-\boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)  
+\boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot f'\bigl(\mathbf{z}^{(L)}\bigr)  
 \tag{BP1v}
 \end{equation}
-Here, we have \blue{vectorized} the application of the function $S'$ to the vector $\mathbf{z}^{(L)}$, i.e.~the
-expression $S'\bigl(\mathbf{z}^{(L)}\bigr)$ is defined as follows:
+Here, we have \blue{vectorized} the application of the function $f'$ to the vector $\mathbf{z}^{(L)}$, i.e.~the
+expression $f'\bigl(\mathbf{z}^{(L)}\bigr)$ is defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$ S'\left(
+$ f'\left(
   \begin{array}[c]{c}
    z_1^{(L)}      \\
    \vdots       \\
@@ -440,9 +441,9 @@ $ S'\left(
   \end{array}
   \right) := \left(
   \begin{array}[c]{c}
-   S'\bigl(z_1^{(L)}\bigr)      \\
+   f'\bigl(z_1^{(L)}\bigr)      \\
    \vdots       \\
-   S'\bigl(z_{m(L)}^{(L)}\bigr)
+   f'\bigl(z_{m(L)}^{(L)}\bigr)
   \end{array}
   \right)
 $.
@@ -451,14 +452,14 @@ The next equation computes $\varepsilon_j^{(l)}$ for $l < L$.
 \begin{equation}
   \label{eq:BP2}
   \varepsilon^{(l)}_j = \sum\limits_{i=1}^{m(l+1)} w_{i,j}^{(l+1)} \cdot \varepsilon^{(l+1)}_i \cdot
-  S'\bigl(z^{(l)}_j\bigr) \quad \mbox{for all $j \in \{1, \cdots, m(l)\}$ and $l \in \{2, \cdots, L-1\}$}.
+  f'\bigl(z^{(l)}_j\bigr) \quad \mbox{for all $j \in \{1, \cdots, m(l)\}$ and $l \in \{2, \cdots, L-1\}$}.
   \tag{BP2}
 \end{equation}
 This equation is more succinct in vectorized notation:
 \begin{equation}
   \label{eq:BP2v}
   \boldsymbol{\varepsilon}^{(l)} = \Bigl(\bigl(W^{(l+1)}\bigr)^\top \cdot \boldsymbol{\varepsilon}^{(l+1)}\Bigr) \odot
-  S'\bigl(\mathbf{z}^{(l)}\bigr) \quad \mbox{for all $l \in \{2, \cdots, L-1\}$}.
+  f'\bigl(\mathbf{z}^{(l)}\bigr) \quad \mbox{for all $l \in \{2, \cdots, L-1\}$}.
   \tag{BP2v}
 \end{equation}
 Note that this equation computes the error in layer $l$ for $l < L$ in terms
@@ -506,18 +507,18 @@ Here, the expression $\boldsymbol{\varepsilon}^{(l)} \cdot \bigl(\mathbf{a}^{(l-
 product of the column vector $\boldsymbol{\varepsilon}^{(l)}$ that is regarded as an $m(l) \times 1$ matrix and the
 row vector $\bigl(\mathbf{a}^{(l-1)}\bigr)^\top$ that is regarded as an $1 \times m(l-1)$ matrix.
 
-As the backpropagation equations \index{backpropagation equations} are at the very core of the theory of neural
-networks, we highlight the vectorized form of these equations:
+As the backpropagation equations \index{backpropagation equations} are at the very core of the theory of
+fully connected feed-forward neural networks, we highlight the vectorized form of these equations:
 \\[0.2cm]
 \hspace*{0.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
 \begin{minipage}[h]{0.92\linewidth}
 $
 \begin{array}[h]{llr}
-  \ds \boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot S'\bigl(\mathbf{z}^{(L)}\bigr)
+  \ds \boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot f'\bigl(\mathbf{z}^{(L)}\bigr)
      & & \mbox{\hspace*{3.2cm}(BP1v)}  \\[0.2cm]
   \ds \boldsymbol{\varepsilon}^{(l)} = \Bigl(\bigl(W^{(l+1)}\bigr)^\top \cdot \boldsymbol{\varepsilon}^{(l+1)}\Bigr) \odot
-  S'\bigl(\mathbf{z}^{(l)}\bigr) & \mbox{for all $l \in \{2, \cdots, L-1\}$} &
+  f'\bigl(\mathbf{z}^{(l)}\bigr) & \mbox{for all $l \in \{2, \cdots, L-1\}$} &
   \mbox{(BP2v)}  \\[0.3cm]
   \ds \nabla_{\mathbf{b}^{(l)}} C_{\mathbf{x}, \mathbf{y}} = \boldsymbol{\varepsilon}^{(l)}
   & \mbox{for all $l \in \{2, \cdots,L\}$}
@@ -551,8 +552,7 @@ versions of these equations since this is more efficient for two reasons:
 
 \subsection{A Proof of the Backpropagation Equations}
 Next, we are going to prove the backpropagation equations.  Although the proof is a bit tedious, it should be
-accessible: We only need the \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} from calculus and the 
-\href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{chain rule} from
+accessible: We only need the \href{https://en.wikipedia.org/wiki/Chain_rule#Multivariable_case}{chain rule} from
 \href{https://en.wikipedia.org/wiki/Multivariable_calculus}{multivariable calculus}. \index{chain rule}
 
 Let us start with the proof of equations \ref{eq:BP1}.
@@ -572,7 +572,8 @@ in terms of the activation $\mathbf{a}^{(L)}(\mathbf{x})$ as
 \hspace*{1.3cm}
 $\ds C_{\mathbf{x}, \mathbf{y}} = \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2$
 \\[0.2cm]
-and we have $\mathbf{a}^{(L)}(\mathbf{x}) = S\bigl(\mathbf{z}^{(L)}\bigr)$, the chain rule of calculus tells us that $\varepsilon_j^{(L)}$ 
+and we have $\mathbf{a}^{(L)}(\mathbf{x}) = f\bigl(\mathbf{z}^{(L)}\bigr)$, the
+\href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} of calculus tells us that $\varepsilon_j^{(L)}$  
 can be computed as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -586,23 +587,23 @@ $
       \sum\limits_{i=1}^{m(L)} \Bigl(a_i^{(L)}(\mathbf{x}) - y_i\Bigr)^2
       \\[0.5cm]
 & = & \ds \frac{1}{2} \cdot \frac{\partial \quad}{\partial z_j^{(L)}} 
-      \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr)^2
+      \sum\limits_{i=1}^{m(L)} \Bigl(f\bigl(z_i^{(L)}\bigr) - y_i\Bigr)^2
       \\[0.5cm]
 & = & \ds \frac{1}{2} \cdot
-      \sum\limits_{i=1}^{m(L)} 2 \cdot \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
-      \frac{\partial \quad}{\partial z_j^{(L)}}S\bigl(z_i^{(L)}\bigr)
+      \sum\limits_{i=1}^{m(L)} 2 \cdot \Bigl(f\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
+      \frac{\partial \quad}{\partial z_j^{(L)}}f\bigl(z_i^{(L)}\bigr)
       \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
-      S'\bigl(z_i^{(L)}\bigr) \cdot \frac{\partial z_i^{(L)}}{\partial z_j^{(L)}}
+& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(f\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
+      f'\bigl(z_i^{(L)}\bigr) \cdot \frac{\partial z_i^{(L)}}{\partial z_j^{(L)}}
 
       \\[0.5cm]
-& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(S\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
-      S'\bigl(z_i^{(L)}\bigr) \cdot \delta_{i,j}
+& = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(f\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
+      f'\bigl(z_i^{(L)}\bigr) \cdot \delta_{i,j}
       & \mbox{$\delta_{i,j}$ denotes the \href{https://en.wikipedia.org/wiki/Kronecker\_delta}{Kronecker delta}}
       \\[0.5cm]
-& = & \ds \Bigl(S\bigl(z_j^{(L)}\bigr) - y_j\Bigr) \cdot S'\bigl(z_j^{(L)}\bigr) 
+& = & \ds \Bigl(f\bigl(z_j^{(L)}\bigr) - y_j\Bigr) \cdot f'\bigl(z_j^{(L)}\bigr) 
       \\[0.5cm]
-& = & \ds \Bigl(a_j^{(L)} - y_j\Bigr) \cdot S'\bigl(z_j^{(L)}\bigr) 
+& = & \ds \Bigl(a_j^{(L)} - y_j\Bigr) \cdot f'\bigl(z_j^{(L)}\bigr) 
 \end{array}
 $
 \\[0.2cm]
@@ -654,7 +655,7 @@ $
 In order to proceed, we have to remember the definition of $z_i^{(l+1)}$.  We have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_i^{(l+1)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l+1)} \cdot S\bigl(z_k^{(l)}\bigr)\right) + b_i^{(l+1)}$
+$\ds z_i^{(l+1)} = \left(\sum\limits_{k=1}^{m(l)} w_{i,k}^{(l+1)} \cdot f\bigl(z_k^{(l)}\bigr)\right) + b_i^{(l+1)}$
 \\[0.2cm]
 Therefore, the partial derivatives $\ds\frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}$ 
 can be computed as follows:
@@ -664,12 +665,12 @@ $
 \begin{array}{lcl}
       \ds \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}} 
 & = & \ds \sum\limits_{k=1}^{m(l)} 
-      w_{i,k}^{(l+1)} \cdot S'\bigl(z_k^{(l)}\bigr) \cdot \frac{\partial z_k^{(l)}}{\partial z_j^{(l)}} 
+      w_{i,k}^{(l+1)} \cdot f'\bigl(z_k^{(l)}\bigr) \cdot \frac{\partial z_k^{(l)}}{\partial z_j^{(l)}} 
       \\[0.5cm]
 & = & \ds \sum\limits_{k=1}^{m(l)} 
-      w_{i,k}^{(l+1)} \cdot S'\bigl(z_k^{(l)}\bigr) \cdot \delta_{k,j}
+      w_{i,k}^{(l+1)} \cdot f'\bigl(z_k^{(l)}\bigr) \cdot \delta_{k,j}
       \\[0.5cm]
-& = & \ds w_{i,j}^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr) 
+& = & \ds w_{i,j}^{(l+1)} \cdot f'\bigl(z_j^{(l)}\bigr) 
 \end{array}
 $
 \\[0.2cm]
@@ -683,10 +684,10 @@ $
       \varepsilon_i^{(l+1)} \cdot \frac{\partial z_i^{(l+1)}}{\partial z_j^{(l)}}
       \\[0.5cm]
 & = & \ds \sum\limits_{i=1}^{m(l+1)} 
-      \varepsilon_i^{(l+1)} \cdot w_{i,j}^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr) 
+      \varepsilon_i^{(l+1)} \cdot w_{i,j}^{(l+1)} \cdot f'\bigl(z_j^{(l)}\bigr) 
       \\[0.5cm]
 & = & \ds \sum\limits_{i=1}^{m(l+1)} 
-      w_{i,j}^{(l+1)} \cdot \varepsilon_i^{(l+1)} \cdot S'\bigl(z_j^{(l)}\bigr) 
+      w_{i,j}^{(l+1)} \cdot \varepsilon_i^{(l+1)} \cdot f'\bigl(z_j^{(l)}\bigr) 
 \end{array}
 $
 \\[0.2cm]
@@ -709,7 +710,7 @@ In order to proceed, we need to evaluate the partial derivative
 $\ds\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_j^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{j,i}^{(l)} \cdot S\bigl(z_i^{(l-1)}\bigr)\right) + b_j^{(l)}$.
+$\ds z_j^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{j,i}^{(l)} \cdot f\bigl(z_i^{(l-1)}\bigr)\right) + b_j^{(l)}$.
 \\[0.2cm]
 Hence we have
 \\[0.2cm]
@@ -717,9 +718,9 @@ Hence we have
 $
 \begin{array}[t]{lcl}
         \ds\frac{\partial z_j^{(l)}}{\partial w_{j,k}^{(l)}}
-  & = & \ds\sum\limits_{i=1}^{m(l)} \frac{\partial w_{j,i}^{(l)}}{\partial w_{j,k}^{(l)}} \cdot S\bigl(z_i^{(l-1)}\bigr) \\[0.5cm]
-  & = & \ds\sum\limits_{i=1}^{m(l)} \delta_{i,k}\cdot S\bigl(z_i^{(l-1)}\bigr) \\[0.4cm]
-  & = & S\bigl(z_k^{(l-1)}\bigr) = a_k^{(l-1)}.
+  & = & \ds\sum\limits_{i=1}^{m(l)} \frac{\partial w_{j,i}^{(l)}}{\partial w_{j,k}^{(l)}} \cdot f\bigl(z_i^{(l-1)}\bigr) \\[0.5cm]
+  & = & \ds\sum\limits_{i=1}^{m(l)} \delta_{i,k}\cdot f\bigl(z_i^{(l-1)}\bigr) \\[0.4cm]
+  & = & f\bigl(z_k^{(l-1)}\bigr) = a_k^{(l-1)}.
 \end{array}
 $
 \\[0.2cm]
