@@ -627,15 +627,17 @@ $h(\mathbf{x}) := f\bigl(g(\mathbf{x})\bigr)$ \quad for all $\mathbf{x} \in \mat
 \\[0.2cm]
 then the partial derivative of $h$ with respect to $x_j$ satisfies
 \\[0.2cm]
-\hspace*{1.3cm}
-$\ds \frac{\partial h}{\partial x_j} = 
- \sum\limits_{i=1}^k \frac{\partial f}{\partial y_i} \cdot \frac{\partial g_i}{\partial x_j}
-$.
+\hspace*{0.3cm}
+\colorbox{red}{\framebox{\colorbox{orange}{
+\begin{minipage}[h]{0.92\linewidth}
+  $$ \frac{\partial h}{\partial x_j} = 
+     \sum\limits_{i=1}^k \frac{\partial f}{\partial y_i} \cdot \frac{\partial g_i}{\partial x_j}
+  $$
+\end{minipage}}}}
 \\[0.2cm]
 
-
-
-We have
+\noindent
+We proceed to prove the equation (BP2). We have
 \\[0.2cm]
 \hspace*{1.3cm}
 $
@@ -693,7 +695,7 @@ $
 \\[0.2cm]
 Therefore, we have now proven equation (\ref{eq:BP2}).  
 
-We proceed to prove equation (\ref{eq:BP4}).  
+We prove equation (\ref{eq:BP4}) next.  
 According to the chain rule we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -758,6 +760,8 @@ $.
 In practical applications of neural networks, the number $n$ of training examples is usually big.  For example, 
 when we later develop a neural network to classify handwritten digits, we will have $50,000$ training examples.  More
 ambitious projects that use neural networks to recognize objects in images use millions of training examples.
+For example \href{https://www.image-net.org/download.php}{ImageNet}, which is a set of labelled images
+collected for the purpose of training neural networks for image recognition, contain about 14 million images.
 When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a
 bias vector $b^{(l)}$ we have to compute the sums 
 \\[0.2cm]
@@ -767,7 +771,8 @@ $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{
 $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial b_{j}^{(l)}}$
 \\[0.2cm]
 over all training examples in order to perform a single step of gradient descent.  If $n$ is large, this is
-computationally costly.  Note that these sums can be regarded as computing average values.  In 
+very costly w.r.t.~the necessary computational resources.  In order to reduce the computational costs, we note
+that these sums can be regarded as computing average values.  In  
 \href{https://en.wikipedia.org/wiki/Stochastic_gradient_descent}{stochastic gradient descent},
 \index{stochastic gradient descent}
 we approximate these sums by randomly choosing a small subset of the training examples.  In
