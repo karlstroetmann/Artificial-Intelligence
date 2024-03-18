@@ -1,5 +1,12 @@
 \chapter{Equational Theorem Proving}
-Mathematics, particularly the field of mathematical theorem proving, is intrinsically linked to the notion of intelligence. \textcolor{blue}{Automatic theorem proving} represents a significant branch of artificial intelligence dedicated to the application of AI techniques within mathematics. The domain of \emph{automatic theorem proving} is extensive enough to warrant several volumes. However, due to time constraints, this chapter will focus exclusively on \textcolor{blue}{equational theorem proving}. In \emph{equational theorem proving}, we start with a collection of axioms, which are expressed as equations, and seek to determine which additional equations can be inferred from these axioms. As an illustration, consider a \textcolor{blue}{group} $\mathcal{G}$, defined as a quadruple:
+Mathematics, particularly the field of mathematical theorem proving, is intrinsically linked to the notion of
+intelligence. \textcolor{blue}{Automatic theorem proving} represents a significant branch of artificial
+intelligence dedicated to the application of AI techniques within mathematics. The domain of \emph{automatic
+  theorem proving} is extensive enough to warrant several volumes. However, due to time constraints, this
+chapter will focus exclusively on \textcolor{blue}{equational theorem proving}. In \emph{equational theorem
+  proving}, we start with a collection of axioms, which are expressed as equations, and seek to determine which
+additional equations can be inferred from these axioms. As an illustration, consider a \textcolor{blue}{group}
+$\mathcal{G}$, defined as a quadruple: 
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{G} = \langle G, e, \circ, i \rangle$
@@ -485,9 +492,9 @@ The implementation of the relation $\leftrightarrow_E$ remains inefficient due t
 equation within $E$. Specifically, for an equation $l \approx r$ contained in $E$, it can be applied in two
 directions: one can replace a subterm matching $l\sigma$ with $r\sigma$ utilizing the equation from left to
 right, or conversely, substitute a subterm resembling $r\sigma$ with $l\sigma$ by applying the equation from
-right to left. Furthermore, in the absence of the specific equation we aim to prove, determining the cessation
-point for our proof endeavors becomes ambiguous. The seminal insight of Donald E.~Knuth and Peter B.~Bendix
-\cite{knuth:1970} was recognizing that if the equations could be sequenced such that the left-hand side is
+right to left.  
+The seminal insight of Donald E.~Knuth and Peter B.~Bendix
+\cite{knuth:1970} was recognizing that if the equations could be ordered such that the left-hand side is
 consistently more complex than the right-hand side, then it would be feasible to apply these equations in a
 singular direction by incorporating certain supplementary equations into $E$ throughout this procedure. This
 approach necessitates the subsequent definition. 
