@@ -1,16 +1,4 @@
 \chapter{Introduction}
-
-\section{What is Artificial Intelligence?}
-\section{Understanding Artificial Intelligence}
-As we embark on exploring \href{https://en.wikipedia.org/wiki/Artificial_intelligence}{Artificial Intelligence}
-(AI), it is crucial to define what the term ``\blue{artificial intelligence}'' encompasses. The Oxford
-Dictionary of English offers this definition \index{artificial intelligence, definition} of \blue{artificial
-  intelligence}: 
-\begin{quote}
-\colorbox{sepia}{\textsl{The theory and development of computer systems capable of performing tasks that}} \linebreak
-\colorbox{sepia}{\textsl{typically require human intelligence, including visual perception, speech recognition,}} \linebreak
-\colorbox{sepia}{\textsl{decision-making, and language translation.}}
-\end{quote}
 Artificial Intelligence has evolved through two primary approaches. The first, known as \blue{symbolic AI}, focuses on \blue{symbolic logic}. \index{symbolic AI} This approach led to the creation of automatic theorem provers, \blue{symbolic integration} systems, and chess-playing programs like \href{https://en.wikipedia.org/wiki/Deep_Blue_(chess_computer)}{Deep Blue}. Initially, symbolic AI was the predominant paradigm in the field.
 
 The second approach, \blue{machine learning}, was defined by Arthur Samuel as ``the field of study that enables
@@ -18,90 +6,42 @@ computers to learn without explicit programming'' \cite{samuel:1959}. \index{mac
 approach has primarily fueled the recent hype in AI. 
 
 \section{Overview}
-This lecture is structured into two principal parts:
+This lecture discusses only symbolic AI, as machine learning is part of the module \blue{data mining}.  
+It emphasizes \textcolor{blue}{declarative programming}. The core principle of declarative programming
+involves starting with a \textcolor{blue}{formal problem 
+specification}, a succinct description of the issue at hand. This specification is then processed by a
+\textcolor{blue}{problem solver} to produce a solution. Originally,
+\href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming} adopted a broad
+approach to problem-solving, where problems were framed as logical formulas and tackled using
+\href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem provers}. The
+programming language \href{https://en.wikipedia.org/wiki/Prolog}{Prolog} is based on this
+paradigm. However, this approach has proven to be less effective as a universal problem-solving framework
+for two reasons: 
 \begin{enumerate}
-\item The first part focuses on symbolic AI, emphasizing \textcolor{blue}{declarative programming}. The
-      core principle of declarative programming involves starting with a \textcolor{blue}{formal problem
-        specification}, a succinct description of the issue at hand. This specification is then processed by a
-      \textcolor{blue}{problem solver} to produce a solution. Originally,
-      \href{https://en.wikipedia.org/wiki/Declarative_programming}{declarative programming} adopted a broad
-      approach to problem-solving, where problems were framed as logical formulas and tackled using
-      \href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem provers}. The
-      programming language \href{https://en.wikipedia.org/wiki/Prolog}{Prolog} is based on this
-      paradigm. However, this approach has proven to be less effective as a universal problem-solving framework
-      for two reasons: 
-      \begin{enumerate}
-      \item It is often challenging to fully articulate practical problems within a logical framework.
-      \item In cases where it is possible to completely define a problem using logical formulas, automatic
-             theorem proving generally lacks the capability to autonomously find solutions. 
-      \end{enumerate}
-      Despite these limitations, declarative programming has proven valuable in several domains, which we will
-      explore, demonstrating its application in solving various types of problems: 
-      \begin{enumerate}
-      \item \textcolor{blue}{Search problems}, where the objective is to find a path within a graph. A classic
-            instance is the \href{https://en.wikipedia.org/wiki/15_puzzle}{fifteen puzzle}. We will examine several
-            advanced algorithms designed to resolve such search problems. 
-      \item \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{Constraint satisfaction
-            problems} hold significant practical relevance. Currently, highly efficient constraint solvers exist,
-            capable of addressing various practical constraint satisfaction problems. We will delve into different
-            strategies for solving these problems and discuss \href{https://github.com/Z3Prover/z3}{Z3}, a
-            leading-edge automatic theorem prover and constraint solver developed by
-            \href{https://www.microsoft.com/en-us/research/project/z3-3/}{Microsoft}. 
-      \item \textcolor{blue}{Games}, such as \href{https://en.wikipedia.org/wiki/Chess}{chess} or
-            \href{https://en.wikipedia.org/wiki/checkers}{checkers}, can be defined using a declarative
-            approach. We will cover several techniques enabling computers to devise optimal strategies for these
-            adversarial games. 
-      \end{enumerate}
-      We will also discuss \textcolor{blue}{automatic theorem proving}. Having previously covered
+\item It is often challenging to fully articulate practical problems within a logical framework.
+\item In cases where it is possible to completely define a problem using logical formulas, automatic
+       theorem proving generally lacks the capability to autonomously find solutions. 
+\end{enumerate}
+Despite these limitations, declarative programming has proven valuable in several domains, which we will
+explore, demonstrating its application in solving various types of problems: 
+\begin{enumerate}
+\item \textcolor{blue}{Search problems}, where the objective is to find a path within a graph. A classic
+      instance is the \href{https://en.wikipedia.org/wiki/15_puzzle}{fifteen puzzle}. We will examine several
+      advanced algorithms designed to resolve such search problems. 
+\item \href{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}{Constraint satisfaction
+      problems} hold significant practical relevance. Currently, highly efficient constraint solvers exist,
+      capable of addressing various practical constraint satisfaction problems. We will delve into different
+      strategies for solving these problems and discuss \href{https://github.com/Z3Prover/z3}{Z3}, a
+      leading-edge automatic theorem prover and constraint solver developed by
+      \href{https://www.microsoft.com/en-us/research/project/z3-3/}{Microsoft}. 
+\item \textcolor{blue}{Games}, such as \href{https://en.wikipedia.org/wiki/Chess}{chess} or
+      \href{https://en.wikipedia.org/wiki/checkers}{checkers}, can be defined using a declarative
+      approach. We will cover several techniques enabling computers to devise optimal strategies for these
+      adversarial games. 
+\item Finally, we discuss \textcolor{blue}{automatic theorem proving}. Having previously covered
       \textcolor{blue}{resolution theorem proving} in our lecture on
       \href{https://github.com/karlstroetmann/Logic}{logic}, we will now turn our attention to
       \textcolor{blue}{equational theorem proving} in the final chapter of this first part. 
-\item The second part of this lecture delves into \textcolor{blue}{machine learning}. In recent years, several
-      advancements in machine learning have garnered significant attention in the media, with the latest buzz
-      surrounding \href{https://openai.com/blog/chatgpt/}{\chat}. \chat\ describes itself as follows: 
-      \begin{center}
-         \colorbox{blue}{\framebox{\colorbox{sepia}{
-         \begin{minipage}{15cm}
-           \textsl{ChatGPT is a large language model created by OpenAI. It uses advanced machine learning
-             techniques like deep learning and neural networks to produce text that closely resembles human
-             writing. Capable of answering questions, composing essays, and performing a broad spectrum of
-             natural language tasks, ChatGPT has been fine-tuned on a vast dataset, enabling it to respond to a
-             diverse range of subjects. It's engineered to be a robust tool for automated content creation,
-             customer service, and other areas where natural language processing is essential. With such a
-             sophisticated language model, numerous tasks traditionally requiring human intelligence can now be
-             automated.} 
-         \end{minipage}}}}
-      \end{center}
-      My initial experiences with \chat\ 3.5 in early 2023 were rather unsatisfactory. However,
-      after upgrading to the paid subscription of \chat\ 4.0 in summer 2023, my view of \chat\
-      transformed dramatically. I now use \chat\ 4.0 on a daily basis for coding and enhancing my lecture notes,
-      although I've encountered some accessibility issues lately, with \chat\ 4.0 being quite slow
-      and limited to 40 queries every 3 hours. During peak demand, Open\textsc{Ai} seems to further restrict
-      this limit arbitrarily. 
-
-      Despite these limitations, I recommend the professional version of Chat\textsc{Gpt} to all students for
-      the following reason: In five years, using language models will be as commonplace as using search engines
-      like Google today. To thrive in the future, it's essential to understand and have experience with large
-      language models. 
-
-      Currently, machine learning is arguably the most exciting field in computer science. We will explore
-      various algorithms, including: 
-      \begin{enumerate}
-      \item \textcolor{blue}{Linear regression}, a foundational machine learning algorithm. Given data pairs
-             $\langle \mathbf{x}_i, y_i \rangle$ where $i \in \{1,\cdots,N\}$, $\mathbf{x}_i \in \mathbb{R}^m$, and
-             $y_i \in \mathbb{R}$, the goal is to approximate an unknown function
-             $f:\mathbb{R}^m \rightarrow
-             \mathbb{R}$ such that $y_i \approx f(\mathbf{x}_i)$. Linear regression assumes this function $f$
-             to be linear, and we will explore its surprisingly effective practical applications. 
-       \item In \textcolor{blue}{classification problems}, we again deal with $N$ data pairs
-             $\langle \mathbf{x}_i, y_i \rangle$, with $\mathbf{x}_i \in \mathbb{R}^m$ and $y_i \in \mathbb{B}$, where
-             $\mathbb{B}$ represents Boolean values. The objective is to find a function
-             $f:\mathbb{R}^m \rightarrow \mathbb{B}$ that satisfies $y_i = f(\mathbf{x}_i)$ for most $i\in\{1,\cdots,N\}$. We will
-             discuss \textcolor{blue}{logistic regression}, \textcolor{blue}{support vector machines}, and
-             \textcolor{blue}{naive Bayes classifiers} as solutions to such problems. 
-       \item Lastly, we will examine neural networks, including a practical application where we construct a
-             network capable of digit recognition. 
-       \end{enumerate}
 \end{enumerate}
 
 \section{Literature}
@@ -120,7 +60,7 @@ For exam preparation, a thorough understanding of the material covered in these 
 suffice. Therefore, purchasing additional books or enrolling in other courses is certainly not necessary.
 
 \remark
-The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.11.
+The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.12.
 I have created the Python environment that I am using for these lecture notes via the shell commands shown in
 Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
 
@@ -135,20 +75,30 @@ Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
                  xleftmargin   = 0.3cm,
                  xrightmargin  = 0.3cm,
                  ]{bash}
-    conda create -y -n ai python=3.11 jupyter
+    conda create -y -n ai python=3.12
     conda activate ai
-    conda install -c anaconda -y nbclassic graphviz ply seaborn scikit-learn 
-    conda install -c conda-forge -y python-graphviz matplotlib memory_profiler
-    conda install -c conda-forge -y autograd ipycanvas 
+    pip install --upgrade pip
+    pip install notebook jupyterlab
+    pip install nbclassic
+    conda install -c anaconda -y graphviz ply seaborn scikit-learn 
+    conda install -c conda-forge -y python-graphviz matplotlib ipycanvas 
     pip install nb_mypy
-    pip install chess 
     pip install z3-solver
+    pip install git+https://github.com/reclinarka/problem_visuals
+    pip install git+https://github.com/reclinarka/chess-problem-visuals
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Bash commands to set up an Anaconda environment for Python.}
 \label{fig:ai.sh}
 \end{figure}
 
+When starting \textsl{Jupyter notebooks} you should take care to use the following command:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{jupyter nbclassic}
+\\[0.2cm]
+This command uses the classic version of \textsl{Jupyter notebooks}.  There are lots of incompatibilites with
+tne new \textsl{Jupyter notebooks} of version $7.x$ and I have found that new version $7.x$ do not work for me.
 
 
 %%% Local Variables:

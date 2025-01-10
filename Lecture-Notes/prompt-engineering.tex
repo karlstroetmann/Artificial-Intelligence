@@ -1,0 +1,172 @@
+\chapter{Prompt Engineering}
+One of the properies that clearly distinguishes humans from aninmals is the fact that humans have developed
+highly sophisticated languages.  Therefore the understanding of human language is clearly one of the most
+important goals of artificial intelligence.  It is obvious now that LLMs (large language models) like
+\href{https://gemini.google.com/}{Gemini} or \href{https://chat.openai.com/}{ChatGPT} have achieved a degree of
+human language understanding that makes them useful tools in practice.  Therefore this last chapter, which
+is work in progress, discusses the question how these tools can be used most efficiently.
+
+\section{A Motivating Example}
+In my observation, the quality of answers computed by LLMs varies greatly with the quality of the input that is
+given to these LLMs.  This input is commonly known as a \blue{prompt}.  To stress this point I want to give
+one introductory example.  Let us assume that we want to solve the following puzzle with the help of a large language model:
+
+\begin{center}
+\colorbox{green}{\framebox{\colorbox{orange}{{\begin{minipage}{0.9\linewidth}
+  I have as many brothers as I have sisters, but my sister has twice as many brothers as she has sisters.  How
+  many children does my father have?  
+\end{minipage}}}}}
+\end{center}
+
+
+If we blindly use this text as a prompt for  \textsl{Gemini Advanced} we will get the following reponse:
+
+\begin{center}
+\colorbox{red}{\framebox{\colorbox{sepia}{{\begin{minipage}{0.9\linewidth}
+\begin{itemize}
+\item Here's how to solve this puzzle. Let's break it down:
+\item \textbf{Statement 1}: "I have as many brothers as I have sisters"
+  
+      This means you are one of several siblings with an equal number of boys and girls.
+\item \textbf{Statement 2}: "My sister has twice as many brothers as she has sisters"
+
+      This implies that your sister is one of the girls from the first statement. To have twice as many
+      brothers as sisters, she m ust have one sister (herself).
+
+\item \textbf{Calculation}: To figure out the total number of children, consider all the siblings:
+  \begin{enumerate}
+  \item You and your sister (from statement 1) = 2 children
+  \item Your sister's brothers (from statement 2): She has twice as many brothers as sisters (1), so she has 2 brothers.
+  \end{enumerate}
+  Therefore, your father has a total of 4 children (you, your sister, and her 2 brothers).
+\end{itemize}
+\end{minipage}}}}}
+\end{center}
+
+Obviously, this answer is mostly garbage.  How can we improve this response?  First, we should give all the
+information that there is to the LLM.  When I tell you that I have as many brothers as sisters, then you know that I am
+male.  Gemini has no such knowledge.  Although the fact that I am male can be concluded from the puzzle, this
+complicates the puzzle unnecessarily.  Furthermore, we can use several \blue{prompt patterns} to improve
+the answer.
+\begin{enumerate}
+\item We can ask Gemini to, first, provide two different formalisations of the problem and then, secondly, to
+      prompt us and let us choose with choose the most appropriate formalisation.
+\item We can also ask Gemini to verify its solution and to explain the solution step by step.
+\end{enumerate}
+
+If we proceed along these lines, the prompt takes the following form:
+\begin{center}
+  \colorbox{green}{\framebox{\colorbox{orange}{{\begin{minipage}{0.9\linewidth}
+            In the following, I will ask you to solve text problems.  Before proceeding to solve the problem,
+            you should provide two different formalisations and should then ask me to choose from them. You
+            should then solve the problem with the chosen approach and verify your solution.  If the
+            verification fails, you should try the alternative approach. 
+            
+            I am male and I have as many brothers as I have sisters, but my sister has twice as many brothers as she has
+            sisters.  How  many children does my father have?  
+\end{minipage}}}}}
+\end{center}
+
+If I use this prompt, Gemini's first response provides two formalisations:
+
+\begin{center}
+  \colorbox{red}{\framebox{\colorbox{sepia}{{\begin{minipage}{0.9\linewidth}
+            Here are two ways we can set up equations to represent the information in this word problem:
+
+            \begin{description}
+            \item[Formalisation 1:] \hspace*{\fill} \\
+                \vspace*{-0.8cm}
+              
+                \begin{itemize}
+                \item Let $b$ represent the number of brothers in the family (including the speaker).
+                \item Let $s$ represent the number of sisters in the family.
+              \end{itemize}
+            \item[Formalisation 2:] \hspace*{\fill} \\
+              \vspace*{-0.8cm}
+              
+              \begin{itemize}
+              \item Let $x$ represent the total number of boys in the family.
+              \item Let $y$ represent the total number of girls in the family.
+              \end{itemize}
+
+            \item[Which formalisation would you like to use to solve the problem?]
+\end{description}
+\end{minipage}}}}}
+\end{center}
+
+I have chosen the second formalisation, since the statement 
+\\[0.2cm]
+\hspace*{1.3cm}
+``Let $b$ represent the number of brothers in the family (including the speaker).''
+\\[0.2cm]
+from the first formalisation is clearly problematic since I am not my own
+brother.  After choosing the second formalisation I got the following response:
+
+\begin{center}
+  \colorbox{red}{\framebox{\colorbox{sepia}{{\begin{minipage}{0.9\linewidth}
+            \begin{itemize}
+            \item[] Excellent! Here's how we can solve the problem using the second formalisation:
+            \item \textbf{Setting up the equations:}
+            \item \textbf{Speaker's perspective:}
+                   Since the speaker is male, he has $(x - 1)$ brothers. He has
+                   $y$ sisters. We're told these quantities are equal: 
+                   \\[0.2cm]
+                   \hspace*{1.3cm}
+                   $x - 1 = y$
+            \item \textbf{Sister's perspective:}
+                   She has $x$ brothers and $(y - 1)$ sisters. She has twice as many brothers as sisters:
+                   \\[0.2cm]
+                   \hspace*{1.3cm}
+                   $x = 2(y - 1)$
+            \item \textbf{Solving the equations}:
+              \begin{enumerate}
+              \item \textbf{Substitute}: We can substitute the value of $x$ from the second equation into the first:
+              \item $2(y - 1) - 1 = y$
+              \item $2y - 2 - 1 = y$
+              \item $y = 3$
+            \item \textbf{Find} $x$:  Now, substitute the value of $y$ back into either of the original
+                   equations. Let's use the first one: 
+            \item $x - 1 = 3$
+            \item $x = 4$
+          \end{enumerate}
+          \item \textbf{Solution}:
+
+            The family has 4 sons $(x)$ and 3 daughters $(y)$.
+
+            
+          \item \textbf{Verification}: 
+            Let's check if this solution fits the original statements:
+            \begin{enumerate}
+            \item \textbf{Speaker's perspective}: The speaker has 3 brothers and 3 sisters, satisfying the condition.
+            \item \textbf{Sister's Perspective}: The sister has 4 brothers and 2 sisters, satisfying the
+                  condition of having twice as many brothers as sisters. 
+            \item \textbf{Since the solution fits both perspectives, it's validated}.
+
+           \end{enumerate}
+         \item \textbf{Therefore, the father has 7 children.}
+         \end{itemize}
+\end{minipage}}}}}
+\end{center}
+
+This time Gemini has solved the problem correctly and, furthermore, it has given a clear explanation of the solution.
+Therefore, the second answer is much better that the first one.  This example shows the necessity for us to craft high
+quality prompts.  In this respect, LLMs are very similar to the rest of computer programs.  The follow the same
+principle:
+\begin{center}
+  \colorbox{red}{\framebox{\colorbox{bg}{{
+  Garbage in, garbage out!}}}}
+\end{center}
+
+My last prompt did use several \blue{prompt design patterns}.  We will discuss some of these in the next section.
+
+\section{Prompt Design Patterns}
+As there are \blue{Software Design Patterns} in software engineering, there are \blue{prompt design patterns}
+in prompt engineering.  I have taken these patterns from the text book
+\textsl{Prompt Design Patterns: Mastering the Art and Science of Prompt Engineering} by Yi Zhou \cite{zhou:2023}
+and the article by Jules White et.~al.~\cite{white:2023}, which introduces a catalogue of prompt design patterns.
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "artificial-intelligence"
+%%% End:
