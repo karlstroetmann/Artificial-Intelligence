@@ -6,7 +6,9 @@ we implement an algorithm that can solve a whole class of problems.  Then, in or
 falls within this class, we just have to specify the problem, which is usually much easier than writing a
 program that solves the given problem.  In this chapter, this idea is illustrated via \blue{search problems}.
 First, we define the notion of a \blue{search problem} formally.  This notion is then illustrated with two
-examples.  We start with the \blue{missionaries and cannibals puzzle}.  Next, we use the 
+examples.  We start with the
+\href{https://en.wikipedia.org/wiki/Missionaries_and_cannibals_problem}{missionaries and cannibals puzzle}.
+Next, we use the  
 \href{https://en.wikipedia.org/wiki/15_puzzle}{sliding puzzle} as our running example. \index{sliding puzzle}
 After that, we introduce various algorithms for solving search problems.  In particular, we present
 \begin{enumerate}
@@ -110,12 +112,9 @@ of the problem.
 
 \begin{figure}[!ht]
 \centering
-\begin{python3code}         
-    def problem(m, i):
-        return 0 < m < i
-
-    def no_problem(m, i): 
-        return not problem(m, i) and not problem(3 - m, 3 - i)
+\begin{python3code}
+    def no_problem(m: int, i: int) -> bool: 
+        return m == 0 or m == 3 or m == i
 
     def next_states(state):
         m, i, b = state
@@ -143,23 +142,17 @@ of the problem.
 Figure \ref{fig:missionaries.stlx} shows a formalization of the missionaries and cannibals puzzle
 as a search problem.  We discuss this formalization line by line.
 \begin{enumerate}
-\item Line 1 defines the auxiliary function \texttt{problem}.
-
-      If $m$ is the number of missionaries on a given shore, while $i$ is the number of infidels on
-      that same shore, then $\texttt{problem}(m, i)$ is \texttt{True} iff the missionaries have a problem on that
-      shore.  There is a problem if the number of missionaries is greater than $0$ but less than the number of
-      infidels. 
-\item Line 4 defines the auxiliary function \texttt{no\_problem}.
+\item Line 1 defines the auxiliary function \texttt{no\_problem}.
 
       If $m$ is the number of missionaries on the western shore and $i$ is the number of infidels on
       that shore, then the expression $\texttt{no\_problem}(m, i)$ is \texttt{True}, if there is no problem
-      for the missionaries on either shore.
-
-      The implementation of this function uses the fact that if $m$ is the number of missionaries on
-      the western shore, then $3-m$ is the number of missionaries on the eastern shore.  Similarly,
-      if $i$ is the number of infidels on the western shore, then the number of infidels on the
-      eastern shore is $3 - i$.
-\item Lines 7 to 20 define the function \texttt{next\_states}.  A state $s$ is represented as a triple of
+      for the missionaries on either shore.  There are three cases where there is no problem:
+      \begin{enumerate}[(a)]
+      \item all missionaries are on the left  shore, i.e.~$m=3$, or 
+      \item all missionaries are on the right shore, i.e.~$m=0$, or
+      \item the number of missionaries is the same as the number of infidels, i.e.~$m=i$.
+      \end{enumerate}
+\item Lines 4 to 17 define the function \texttt{next\_states}.  A state $s$ is represented as a triple of
       the form
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -168,8 +161,8 @@ as a search problem.  We discuss this formalization line by line.
       Here $m$, $i$, and $b$ are, respectively, the number of missionaries, the number of infidels, and the number
       of boats on the western shore. 
       \begin{enumerate}[(a)]
-      \item Line 8 extracts the components $m$, $i$, and $b$ from the state $s$.
-      \item Line 9 checks whether the boat is on the western shore.
+      \item Line 5 extracts the components $m$, $i$, and $b$ from the state $s$.
+      \item Line 6 checks whether the boat is on the western shore.
       \item If this is the case,  then the states reachable from the given state $s$ are those
             states where $\texttt{mb}$ missionaries and $\texttt{ib}$ infidels cross the river.
             After $\texttt{mb}$ missionaries and $\texttt{ib}$ infidels have crossed the river and
@@ -259,14 +252,14 @@ is a solution involving just 11 crossings of the river.
 The \emph{Three Thieves Puzzle} is similar to the \emph{Missionaries and Cannibals Puzzle}.  Three greedy
 thieves have cross a river.  Each of the thieves has a bag of gold coins.
 \begin{enumerate}
-\item Aaron has 1,000 gold coins.
+\item Ariel has 1,000 gold coins.
 \item Benjamin has 700 gold coins.
-\item Chaim has 300 gold coins.
+\item Claude has 300 gold coins.
 \end{enumerate}
 There is a boat available that can carry either two people or one person along with a bag of gold coins. The
 boat can transport two entities at a time, meaning either two thieves or one thief and a bag can cross
-together. The challenge arises if a thief, or a pair of thieves, is left with a quantity of gold greater than
-their own, they will abscond with it. 
+together. A problem arises if a thief, or a pair of thieves, is left with a quantity of gold greater than
+their own, since then they will take the money and run away with it. 
 
 Write a program that formulates this puzzle as a search problem.  You should do this by augenting the notebook
 \ \blue{\texttt{Three-Tieves.ipynb}} \ that can be found in the github repository 
@@ -322,7 +315,7 @@ sliding puzzle is
 \hspace*{1.3cm}
 $9! / 2 = 181,440$.
 \\[0.2cm]
-This is already a big number, but $181,440$ states can still be stored on a modern computer.  However, the
+This is already a big number, but $181,440$ states can easily be stored on a modern computer.  However, the
 $4 \times 4$ sliding puzzle has
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -841,10 +834,9 @@ The implementation of $\texttt{dfs}$ works as follows:
 \item Note that the recursive invocation of $\texttt{dfs}$ returns $\mathtt{None}$ if the end of the
       \texttt{for} loop is reached and no solution has been returned so far.  
 \end{enumerate}
-Unfortunately, due to a bug in \textsl{Python} \texttt{3.11}, the \textsl{Python} kernel just dies
-when trying to solve the $3 \times 3$ sliding puzzle.  With \textsl{Python} \texttt{3.8} it took 297 milliseconds 
-on my computer to find a solution.  The memory consumption was back to 50 megabytes.  Furthermore, the
-solution had a length of $20,923$ steps, which explains the high memory consumption.  
+Unfortunately, due to a bug in \textsl{Python} \texttt{3.12}, the \textsl{Python} kernel just dies
+when trying to solve the $3 \times 3$ sliding puzzle.  This is due to the fact that the path gets very long and
+hence the recursion limit is exceeded.
 
 \section{Iterative Deepening}
 The fact that the stack-based version of depth first search took less than one second to find a solution is very
@@ -906,7 +898,7 @@ However, when we run this program to solve the $3 \times 3$ sliding puzzle, the 
 about 7 minutes.  There are two reasons for the long computation time:
 \begin{enumerate}
 \item First, it is quite wasteful to run the search for a depth limit of $1$, $2$, $3$, $\cdots$ all the way up
-      to $31$.  Essentially, all the computations done with a limit less than $32$ are wasted. However,
+      to $32$.  Essentially, all the computations done with a limit less than $32$ are wasted. However,
       this process is not as wasteful as we might first expect.  To see this, assume that the number of states
       reached is doubled\footnote{
         When we run breadth first search for the sliding puzzle, we can observe that at least at the beginning
@@ -1137,16 +1129,12 @@ def search(start, goal, next_states):
     FrontierB = { goal }
     ParentB   = { goal: goal } 
     while FrontierA and FrontierB:
-        for Path in bfs_one_step(FrontierA, ParentA, ParentB, next_states):
+        if Path := bfs_one_step(FrontierA, ParentA, ParentB, next_states):
             return Path
-        for Path in bfs_one_step(FrontierB, ParentB, ParentA, next_states):
+        if Path := bfs_one_step(FrontierB, ParentB, ParentA, next_states):
             return Path[::-1]
 
-def bfs_one_step(Frontier: set[State], 
-                 ParentA: dict[State, State], 
-                 ParentB: dict[State, State], 
-                 next_states: NxtStFct
-                ) -> Generator[list[State], None, None]:
+def bfs_one_step(Frontier, ParentA, ParentB, next_states):
     NewFrontier = set()
     for s in Frontier:
         for ns in next_states(s):
@@ -1154,7 +1142,7 @@ def bfs_one_step(Frontier: set[State],
                 NewFrontier |= { ns }
                 ParentA[ns]  = s
                 if ns in ParentB:
-                    yield combinePaths(ns, ParentA, ParentB)
+                    return combinePaths(ns, ParentA, ParentB)
     Frontier.clear()
     Frontier.update(NewFrontier)
 \end{python3code}
@@ -1179,16 +1167,14 @@ Let us discuss the details of the implementation.
       $\mathtt{ParentB}[s]$ is the state that caused $s$ to be added to the set $\texttt{FrontierB}$.
 \item The bidirectional search keeps running for as long as both sets $\texttt{FrontierA}$ and
       $\texttt{FrontierB}$ are non-empty and a path has not yet been found. 
-\item The \texttt{for}-loop in line 7 first computes those states that can be reached from $\texttt{FrontierA}$ and have not been
-      visited from $\texttt{start}$.  The function
-      \texttt{bfs\_one\_step} is a \blue{generator} that tries to compute a path that connects \texttt{start} with
-      \texttt{goal}.  If such a path is found, the generator \blue{yields} this path which is then returned in
+\item In line 7, the function \texttt{bfs\_one\_step} tries to compute a path that connects \texttt{start} with
+      \texttt{goal}.  If such a path is found, this path which is then returned in
       line 8. 
 
-      The details of the generator \texttt{bfs\_one\_step} are discussed below.
-\item Similarly, the \texttt{for}-loop in line 9 tries to find a path that connects \texttt{goal} with
+      The details of the function \texttt{bfs\_one\_step} are discussed below.
+\item Similarly, the function \texttt{bfs\_one\_step} in line 9 tries to find a path that connects \texttt{goal} with
       \texttt{start} by trying to expand states in \texttt{FrontierB}.
-\item The function \texttt{bfs\_one\_step} takes five arguments:
+\item The function \texttt{bfs\_one\_step} takes four arguments:
       \begin{enumerate}[(a)]
       \item \texttt{Frontier} is the frontier of states that result from a breadth first search
             that originates in a state $p$ where $p$ is either equal to \texttt{start} or to \texttt{goal}.
@@ -1207,15 +1193,12 @@ Let us discuss the details of the implementation.
       \item For every state $s$, we have that $\texttt{next\_states}(s)$ is the set of states that can be
             reached in one step from $s$.
       \end{enumerate}
-      The function \texttt{bfs\_one\_step} is a \blue{generator}, i.e.~it does not return a result but rather
-      it \blue{yields} a result when we iterate over it.  A result is only yielded when the function finds a
-      state \texttt{ns} that is both reachable from the state \texttt{start} and the state \texttt{goal}.
-
-      Otherwise, the function just updates the set \texttt{Frontier} to contain those states that can be
+      The function \texttt{bfs\_one\_step} either returns a path or \texttt{None}.  In the latter case, the
+      function just the set \texttt{Frontier} to contain those states that can be 
       reached in one step from the previous version of the set \texttt{Frontier}.  Hence, the function
       \texttt{bfs\_one\_step} performs one iteration of breadth first search.
 \end{enumerate}
-On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 128
+On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 81
 milliseconds and uses 4 megabytes.  However, bidirectional breadth first search is still not able to solve the
 more interesting cases of the $4 \times 4$ sliding puzzle since the portion of the search space that needs to
 be computed is still too big to fit into memory. 

@@ -10,4 +10,5 @@ pip install nb_mypy
 pip install z3-solver
 pip install git+https://github.com/reclinarka/problem_visuals
 pip install git+https://github.com/reclinarka/chess-problem-visuals
+pip install memory_profiler
 # start notebook with jupyter nbclassic
