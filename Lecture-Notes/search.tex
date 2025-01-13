@@ -461,7 +461,7 @@ $s \in \mathtt{next\_states}(\mathtt{Parent}[s])$.
             NewFrontier = set()
             for s in Frontier:
                 for ns in next_states(s):
-                    if ns not in Visited and ns not in Frontier:
+                    if ns not in Visited:
                         NewFrontier.add(ns)
                         Parent[ns] = s
                         if ns == goal:
