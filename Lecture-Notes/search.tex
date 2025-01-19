@@ -631,7 +631,7 @@ The fact that breadth first search is both complete and the path returned is opt
 satisfying.  However, breadth first search still has a big downside that makes it unusable for
 many problems:  If the $\texttt{goal}$ is far from the $\texttt{start}$, breadth first search will use
 a lot of memory because it will store a large part of the state space in the set
-$\texttt{Visited}$.  In many cases, the state space is so big that this is not possible.  For example, it is
+$\texttt{Visited}$.  In many cases, the state space is so big that this is impossible.  For example, it is
 impossible to solve the more interesting cases of the $4 \times 4$ sliding puzzle using breadth first search.
 
 \subsection{A Queue Based Implementation of Breadth First Search}
@@ -688,17 +688,10 @@ previous implementation.  Furthermore, only 76 megabytes of memory are used for 
 \section{Depth First Search}
 To overcome the memory limitations of breadth first search, the
 \href{https://en.wikipedia.org/wiki/Depth-first_search}{depth first search} algorithm \index{depth first search}
-has been developed.  Depth first search is abbreviated as \textsc{Dfs}.  There are two ideas involved when going from
-breadth first search to depth first search:
-\begin{enumerate}
-\item In order to save memory, \textsc{Dfs} removes the set \texttt{Visited} of \textsc{Bfs}.
-\item While \textsc{Bfs} ensures that every state is visited by implementing the \texttt{Frontier} as a queue,
-      \textsc{Dfs} replaces this queue by a stack.  This way, \textsc{dfs} tries to get as far away from the state
-      \texttt{start} as early as possible.  In order to prevent loops, we still have the parent dictionary.
-
-      Since a stack can be implemented as an ordinary \textsl{Python} list, we don't need the module
-      \texttt{deque} anymore. 
-\end{enumerate}
+has been developed.  Depth first search is abbreviated as \textsc{Dfs}.
+While \textsc{Bfs} ensures that every state is visited by implementing the \texttt{Frontier} as a queue,
+\textsc{Dfs} replaces this queue by a \href{https://en.wikipedia.org/wiki/Stack_(abstract_data_type)}{stack}.  This way, \textsc{Dfs} tries to get as far away from the state
+\texttt{start} as early as possible.  In order to prevent the search from looping, we still have the parent dictionary.
 
 \begin{figure}[!ht]
 \centering
@@ -728,7 +721,10 @@ breadth first search to depth first search:
 \end{figure}
 \FloatBarrier
 
-The resulting algorithm is shown in Figure
+Since a stack can be implemented as an ordinary \textsl{Python} list, we don't need the module
+\texttt{deque} anymore.  The idea is that the top of the stack is at the end of this list.
+Therefore, when we \texttt{pop} an element from the stack, it is removed from the end of the list, while we can
+push an element onto the stack by using the method \texttt{append}.  The resulting algorithm is shown in Figure
 \ref{fig:Depth-First-Search-Stack.ipynb} on page \pageref{fig:Depth-First-Search-Stack.ipynb}.  Basically, in this
 implementation, a path is searched to its end before trying an alternative.  This way, we might be able to find a
 $\texttt{goal}$ that is far away from $\texttt{start}$ without exploring the whole state space.
@@ -745,7 +741,7 @@ The implementation of  \texttt{search} works as follows:
 \item Initially, \texttt{Stack} only contains the state \texttt{start}.
 \item As long as \texttt{Stack} is not empty, the \texttt{state} on top of \texttt{Stack} is replaced by all
       states that can be reached in one step from \texttt{state}.  However, in order to prevent depth first search
-      to run in circles, only those states \texttt{ns} from the set \texttt{next\_states(state)} are appended to
+      from running in circles, only those states \texttt{ns} from the set \texttt{next\_states(state)} are appended to
       \texttt{Stack} that have not been encountered previously.  This is checked by testing 
       whether \texttt{ns} is in the domain of \texttt{Parent}.
 \item When the \texttt{goal} is reached,  a path leading from \texttt{start} to \texttt{goal} is returned.
@@ -836,7 +832,7 @@ The implementation of $\texttt{dfs}$ works as follows:
 \end{enumerate}
 Unfortunately, due to a bug in \textsl{Python} \texttt{3.12}, the \textsl{Python} kernel just dies
 when trying to solve the $3 \times 3$ sliding puzzle.  This is due to the fact that the path gets very long and
-hence the recursion limit is exceeded.
+the garbage collector is not reclaiming the memory.
 
 \section{Iterative Deepening}
 The fact that the stack-based version of depth first search took less than one second to find a solution is very
@@ -848,7 +844,12 @@ solution.  The answer to this question leads to an algorithm that is known as
   limit} $d$.  This limit enforces that a solution has at most a length of $d$.  If no solution is found at a
 depth of $d$, the new depth $d+1$ can be tried next and the process can be continued until a solution is found.
 The program shown in Figure \ref{fig:Iterative-Deepening.ipynb} on page \pageref{fig:Iterative-Deepening.ipynb}
-implements this strategy.  We proceed to discuss the details of this program.
+implements this strategy.
+There is one simplification that we can apply: As the search will always find the shortest path, there is no
+need to keep the dictionary \texttt{PathSet} around.  Instead of checking whether a node is a member of
+\texttt{PathSet}, we can just check whether it is a member of the list \texttt{Path}.  This works, because
+searching in a small list does not take much more time than searching in a small set.
+We proceed to discuss the details of the implementation.
 
 \begin{figure}[!ht]
 \centering
@@ -856,19 +857,19 @@ implements this strategy.  We proceed to discuss the details of this program.
 def search(start, goal, next_states):
     limit = 1
     while True:
-        Path = dls(start, goal, next_states, [start], { start }, limit)
+        Path = dls(start, goal, next_states, [start], limit)
         if Path is not None:
             return Path
         limit += 1
 
-def dls(state, goal, next_states, Path, PathSet, limit):
+def dls(state, goal, next_states, Path, limit):
     if state == goal:
         return Path
     if len(Path) == limit:
         return None
     for ns in next_states(state):
-        if ns not in PathSet:
-            Result = dls(ns, goal, next_states, Path+[ns], PathSet|{ns}, limit)
+        if ns not in Path:
+            Result = dls(ns, goal, next_states, Path + [ns], limit)
             if Result:
                 return Result
 \end{python3code}
@@ -889,7 +890,8 @@ def dls(state, goal, next_states, Path, PathSet, limit):
       of $\texttt{limit}$ but does not end in $\texttt{goal}$, the function returns \texttt{None} instead of
       trying to extend this $\texttt{Path}$.  Otherwise, the implementation is the same as the recursive
       implementation of depth first search that was shown in \myFig{Depth-First-Search.ipynb}
-      and that has been discussed in the previous section.
+      and that has been discussed in the previous section.  The only difference is that we no longer need to
+      use the set \texttt{PathSet}.
 
 \end{enumerate}
 The nice thing about the program presented in this section is the fact that it uses only 136 kilobytes of
@@ -1036,9 +1038,16 @@ from $\texttt{start}$ is roughly
 \\[0.2cm]
 At least this is true in the beginning of the search.  As the size of
 the memory that is needed is the most constraining factor when searching, it is important to cut down this
-size.  One simple idea is to start searching both from the node $\texttt{start}$ and the node $\texttt{goal}$
+size.  If the search problem is \blue{symmetrical}, i.e.~if we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \in \mathtt{next\_states}(y) \;\Leftrightarrow\; y \in \mathtt{next\_states}(x)$,
+\\[0.2cm]
+then a simple idea is to start searching both from the node $\texttt{start}$ and the node $\texttt{goal}$
 simultaneously.  This approach is known as \blue{bidirectional search}.  \index{bidirectional search}
-The justification is that the path starting from $\texttt{start}$ and the
+All of the search problems that we have encountered so far are symmetrical.
+
+The justification for bidirectional search is that the path starting from $\texttt{start}$ and the
 path starting from $\texttt{goal}$ will meet in the middle and hence they will both have a size of approximately
 $d/2$.  If this is the case, only
 \\[0.2cm]
@@ -1133,18 +1142,6 @@ def search(start, goal, next_states):
             return Path
         if Path := bfs_one_step(FrontierB, ParentB, ParentA, next_states):
             return Path[::-1]
-
-def bfs_one_step(Frontier, ParentA, ParentB, next_states):
-    NewFrontier = set()
-    for s in Frontier:
-        for ns in next_states(s):
-            if ns not in ParentA:
-                NewFrontier |= { ns }
-                ParentA[ns]  = s
-                if ns in ParentB:
-                    return combinePaths(ns, ParentA, ParentB)
-    Frontier.clear()
-    Frontier.update(NewFrontier)
 \end{python3code}
 \vspace*{-0.3cm}
 \caption{Bidirectional breadth first search.}
@@ -1174,6 +1171,32 @@ Let us discuss the details of the implementation.
       The details of the function \texttt{bfs\_one\_step} are discussed below.
 \item Similarly, the function \texttt{bfs\_one\_step} in line 9 tries to find a path that connects \texttt{goal} with
       \texttt{start} by trying to expand states in \texttt{FrontierB}.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{python3code}
+def bfs_one_step(Frontier, ParentA, ParentB, next_states):
+    NewFrontier = set()
+    for s in Frontier:
+        for ns in next_states(s):
+            if ns not in ParentA:
+                NewFrontier |= { ns }
+                ParentA[ns]  = s
+                if ns in ParentB:
+                    return combinePaths(ns, ParentA, ParentB)
+    Frontier.clear()
+    Frontier.update(NewFrontier)
+\end{python3code}
+\vspace*{-0.3cm}
+\caption{The function \texttt{bfs\_one\_step}.}
+\label{fig:Bidirectional-BFS.ipynb-2}
+\end{figure}
+
+\noindent
+The function \texttt{bfs\_one\_step} is shown in Figure \ref{fig:Bidirectional-BFS.ipynb-2} on page
+\pageref{fig:Bidirectional-BFS.ipynb-2}.
+\begin{enumerate}
 \item The function \texttt{bfs\_one\_step} takes four arguments:
       \begin{enumerate}[(a)]
       \item \texttt{Frontier} is the frontier of states that result from a breadth first search
@@ -1197,11 +1220,24 @@ Let us discuss the details of the implementation.
       function just the set \texttt{Frontier} to contain those states that can be 
       reached in one step from the previous version of the set \texttt{Frontier}.  Hence, the function
       \texttt{bfs\_one\_step} performs one iteration of breadth first search.
+\item The set \texttt{NewFrontier} is initialized as the empty set in line 2.
+\item Next, we iterate over all states \texttt{s} in the set \texttt{Frontier}.
+\item For every state \texttt{ns} that is reachable from the state \texttt{s} in one step and that has not
+      already been visited, we add \texttt{ns} to the set \texttt{NewFrontier} in line 6 and record its
+      parent in line 7.
+\item If the state \texttt{ns} has already been reached in the search starting from \texttt{goal} and hence has
+      a parent node in \texttt{ParentB}, we have found a path from start to goal.  Hence, We combine the path that
+      leads from \texttt{start} to \texttt{ns} with the path leading from \texttt{goal} to \texttt{ns} in line 9.
+\item It is important to note that the function \texttt{bfs\_one\_step} does not only return a path, it also
+      has a side effect: If no path has been found, then the set \texttt{Frontier} is updated to contain those
+      states that have been found in the current iteration.
 \end{enumerate}
-On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 81
-milliseconds and uses 4 megabytes.  However, bidirectional breadth first search is still not able to solve the
-more interesting cases of the $4 \times 4$ sliding puzzle since the portion of the search space that needs to
-be computed is still too big to fit into memory. 
+Finally, Figure \ref{fig:combine-paths.stlx} on page \pageref{fig:combine-paths.stlx} show the function
+\texttt{combinePaths} that takes a \texttt{state} that is reachable from both \texttt{start} and \texttt{goal}.
+It computes the path from \texttt{start} to the node \texttt{state} in line 2, the path from \texttt{goal} to
+the node \texttt{state} in line 3 and then combines these paths by first reversing the second path and
+appending it to the first path.  When combining the paths, we have to take care to remove the last state from
+the first path \texttt{Path1}, since otherwise the node \texttt{state} would occur twice in the resulting path.
 
 \begin{figure}[!ht]
 \centering
@@ -1215,6 +1251,10 @@ be computed is still too big to fit into memory.
 \caption{Combining two paths.}
 \label{fig:combine-paths.stlx}
 \end{figure}
+On my computer, bidirectional breadth first search solves the $3 \times 3$ sliding puzzle in 81
+milliseconds and uses 4 megabytes.  However, bidirectional breadth first search is still not able to solve the
+more interesting cases of the $4 \times 4$ sliding puzzle since the portion of the search space that needs to
+be computed is still too big to fit into memory. 
 
 \section{Best First Search}
 Up to now, all the search algorithms we have discussed have been essentially blind.  Given a state $s$ and
@@ -1262,7 +1302,7 @@ $h(\mathtt{goal}) = 0$ \quad and \quad $h(s_1) \leq 1 + h(s_2)$ \quad for all $s
 \end{Definition}
 
 Let us explain the idea behind the notion of \blue{consistency}.  First, if we are already at the goal, the heuristic
-should notice this and therefore we need to have $h(\mathtt{goal}) = 0$.  Secondly, assume we are at the state
+should notice this fact and therefore we need to have $h(\mathtt{goal}) = 0$.  Secondly, assume we are at the state
 $s_1$ and $s_2$ is a neighbour of $s_1$, i.e.~we have that
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1292,7 +1332,7 @@ The \myFig{demonstration-heuristic.tikz} demonstrates this inequality.
         \draw[->, thick, draw=blue, decorate, decoration=snake]    (s2)    to                node[midway,above] {$h(s_2)$} (goal);
         \draw[->, thick, draw=blue, decorate, decoration=snake]    (s1)    to[bend right=30] node[midway,above] {$h(s_1)$} (goal);
     \end{tikzpicture}
-    \caption{Visual demonstration of a heuristic function}
+    \caption{Explanation of the inequality $h(s_1) \leq 1 + h(s_2)$.}
     \label{fig:demonstration-heuristic.tikz}
 \end{figure}
 
@@ -1335,7 +1375,7 @@ This claim is shown by induction on $k$.
 
 It is natural to ask whether the last theorem can be reversed, i.e.~whether every admissible heuristic is also
 consistent.  The answer to this question is negative since there are
-some \emph{\color{red}contorted} heuristics that are admissible but that fail to be consistent.  However, in
+some \emph{\color{red}contorted}\, heuristics that are admissible but that fail to be consistent.  However, in
 practice it turns out that most 
 admissible heuristics are also consistent.  Therefore, when we construct consistent heuristics later, we will
 start with admissible heuristics, since these are easy to find.  We will then have to check that these
@@ -1494,10 +1534,10 @@ We need only two functions from the module \texttt{heapq}:
         while PrioQueue:
             _, Path = heapq.heappop(PrioQueue)
             state   = Path[-1]
-            if state in Visited:
-                continue
             if state == goal:
                 return Path
+            if state in Visited:
+                continue
             for ns in next_states(state):           
                 if ns not in Visited:
                     prio = heuristic(ns, goal)
@@ -1516,7 +1556,7 @@ Later, when solving the sliding puzzle, we will use the Manhattan distance to se
 $\texttt{heuristic}$.  The details of the implementation are as follows:
 \begin{enumerate}
 \item The Variable \texttt{Visited} collects all states that have been \blue{visited}.  A node $n$ counts as
-      \blue{visited} when all of its neighbours have inspected in line 11.
+      \blue{visited} when all of its neighbours have been inspected in line 11.
 \item The variable \texttt{PrioQueue} serves as a priority queue.  This priority queue is initialized as a
       list containing the pair $\langle d, [\mathtt{start}] \rangle$, where $d$ is the estimated distance of a path
       leading from \texttt{start} to \texttt{goal}.  In \texttt{PrioQueue} we store the paths 
@@ -1535,8 +1575,10 @@ $\texttt{heuristic}$.  The details of the implementation are as follows:
       an estimate of the number of steps needed to complete \texttt{Path} into a solution.  This ensures,
       that the path whose last state is nearest to the \texttt{goal} is at the beginning of the set
       \texttt{PrioQueue}. 
-\item As long as \texttt{PrioQueue} is not empty, we take the \texttt{Path} from the beginning of this
-      priority queue and remove it from the queue.  The state at the end of \texttt{Path} is named \texttt{state}.
+\item As long as \texttt{PrioQueue} is not empty, we take the \texttt{Path} from the top of this
+      priority queue and remove it from the queue.  This is then the path with the highest priority.
+      If the state at the end of \texttt{Path} is named \texttt{state}, then \texttt{state} is, according to
+      our heuristic, the state nearest to the \texttt{goal} among all states in the priority queue. 
 
       The function $\texttt{heappop}(\mathtt{PrioQueue})$ returns the smallest pair from 
       \texttt{PrioQueue} and, furthermore, this pair is removed from \texttt{PrioQueue}.
@@ -1545,11 +1587,11 @@ $\texttt{heuristic}$.  The details of the implementation are as follows:
       visited.  The paths leading to these nodes are pushed on the priority queue.
 \item Finally, we mark \texttt{state} as \blue{visited} by adding it to the set \texttt{Visited}.
 \end{enumerate}
-Best first search solves the instance of the $3 \times 3$ puzzle shown in \myFig{8-puzzle.pdf} in less than a
+Best first search solves the instance of the $3 \times 3$ puzzle shown in \myFig{8-puzzle.pdf} in less than 3
 millisecond and visits only 87 different states while solving the puzzle.  However, the solution that is found
 takes 49 steps.  While the length of this solution is not as ridiculous as the length of the solution found by
 depth first search,  this length is far from being optimal.  Best first search is able to solve the
-$4 \times 4$ puzzle shown in \myFig{start-goal.stlx} in less than second.  It visits 8224 different states in
+$4 \times 4$ puzzle shown in \myFig{start-goal.stlx} in less than a second.  It visits 8224 different states in
 order to find the solution.  Unfortunately, the solution that is found has a length of 492 steps, while the
 optimal solution only needs 36 steps.
 
@@ -1668,7 +1710,7 @@ However, for the path $P_1$ we know that
 $f(s_n) = g(s_n) + h(s_n) = n + 0 = n > m$.
 \\[0.2cm]
 Since \texttt{PrioQueue} is a priority queue, we only remove the path $P_1$ from \texttt{PrioQueue} when all
-paths with are higher priority have already been removed and the corresponding end notes have been
+paths with a higher priority have already been removed and the corresponding end notes have been
 expanded.  But as $n > m$ this means that all paths
 \\[0.2cm]
 \hspace*{1.3cm}
