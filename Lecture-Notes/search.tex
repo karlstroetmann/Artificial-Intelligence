@@ -1773,7 +1773,7 @@ removed from \texttt{PrioQueue}.   This shows that $A^*$ search can't return a p
 \end{figure}
 \noindent
 When we refined breadth first search into bidirectional breadth first search were able to increase the power of
-breadth first search subsection.  We can try to do something similar with the $\mathrm{A}^*$ algorithm and develop a
+breadth first search.  We can try to do something similar with the $\mathrm{A}^*$ algorithm and develop a
 bidirectional variant of this algorithm.  \myFig{Bidirectional-A-Star-Search.ipynb} shows the resulting program.  This program
 relates to the $\mathrm{A}^*$ algorithm shown in \myFig{A-Star-Search.ipynb} as the algorithm for bidirectional
 search shown in \myFig{Bidirectional-BFS.ipynb} relates to breadth first search shown in \myFig{Breadth-First-Search.ipynb}.
@@ -1893,9 +1893,6 @@ shows an implementation of \textsc{ida} search.  We proceed to discuss this prog
             \\[0.2cm]
             computes an estimate of the distance between $s_1$ and $s_2$.  In \textsc{Ida} search it is required that this
             estimate is optimistic, i.e.~the \texttt{heuristic} has to be \blue{admissible}.
-
-            Note that this is different from A$^*$ search. A$^*$ search requires that the \texttt{heuristic} is 
-            \blue{admissible}.
      \end{enumerate}
 \item The function \texttt{search} initializes \texttt{limit} to be an estimate of the distance
       between \texttt{start} and \texttt{goal}.  As we assume that the function \texttt{heuristic} is
