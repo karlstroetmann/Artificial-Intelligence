@@ -1342,10 +1342,10 @@ The \myFig{demonstration-heuristic.tikz} demonstrates this inequality.
 
 \proof
 Assume that the heuristic $h$ is consistent.  Assume further that $s \in Q$ is some state such that there is a
-path $p$ from $s$ to the $\texttt{goal}$.  Assume this path has the form
+shortest path $P$ from $s$ to the $\texttt{goal}$.  Assume this path has the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$p = [s_n, s_{n-1}, \cdots, s_1, s_0]$, \quad where $s_n = s$ and $s_0 = \mathtt{goal}$.
+$P = [s_n, s_{n-1}, \cdots, s_1, s_0]$, \quad where $s_n = s$ and $s_0 = \mathtt{goal}$.
 \\[0.2cm]
 Then the length of the path $p$ is $n$ and we have to show that $h(s) \leq n$.  In order to prove this claim, we show
 that we have
@@ -1370,8 +1370,11 @@ This claim is shown by induction on $k$.
                          & \leq & 1 + k      & \mbox{because $h(s_k) \leq k$ by induction hypotheses.} 
              \end{array}
              $ 
-             \qed
 \end{enumerate}
+We have shown $h(s_k) \leq k$ and since this also holds for $k = n$ we know that $h(s) = h(s_n) \leq n$.  Since $P$
+is a shortest path we know that the state $s$ has the distance $n$ from the state $\texttt{goal}$.  Hence the
+heuristic $h$ underestimates this distance and is therefore admissible.
+\qed
 
 It is natural to ask whether the last theorem can be reversed, i.e.~whether every admissible heuristic is also
 consistent.  The answer to this question is negative since there are
