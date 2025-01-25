@@ -1622,7 +1622,7 @@ expressed as
 The intricacies of the \(\mathrm{A}^*\) algorithm are detailed in \myFig{A-Star-Search.ipynb}.  When we compare
 this implementation with the implementation of best first search shown in Figure
 \ref{fig:Best-First-Search.ipynb} on page \pageref{fig:Best-First-Search.ipynb} we realize that these figure
-differ on in line 13 where the priority of a path is computed.  With A$^*$ search, the priority of a path $P$
+differ only in line 13 where the priority of a path is computed.  With A$^*$ search, the priority of a path $P$
 ending in state $s$ is the length of the path plus the estimated distance of the state $s$ to the
 \texttt{goal}.  The fact that we have to add $1$ to $\mathtt{len}(\mathtt{Path})$ is due to the fact that
 \texttt{Path} only leads to \texttt{state} and we need the length of the path that leads to \texttt{ns}.
@@ -1738,20 +1738,20 @@ removed from \texttt{PrioQueue}.   This shows that $A^*$ search can't return a p
                   xrightmargin  = 0.0cm,
                 ]{python3}
     def search(start, goal, next_states, heuristic):
-        VisitedA = {}
-        VisitedB = {}
+        VisitedA   = {}
+        VisitedB   = {}
         PrioQueueA = [ (heuristic(start, goal), [start]) ]
         PrioQueueB = [ (heuristic(goal, start), [goal ]) ]
         while PrioQueueA and PrioQueueB:
-            a, PathA = heapq.heappop(PrioQueueA)
-            b, PathB = heapq.heappop(PrioQueueB)
+            a, PathA = PrioQueueA[0]
+            b, PathB = PrioQueueB[0]
             if a <= b:
-                heapq.heappush(PrioQueueB, (b, PathB))
+                heapq.heappop(PrioQueueA)
                 for Result in search_os(PrioQueueA, PathA, goal,
                                         VisitedA, VisitedB, next_states, heuristic):
                     return Result
             else:
-                heapq.heappush(PrioQueueA, (a, PathA))
+                heapq.heappop(PrioQueueB)
                 for Result in search_os(PrioQueueB, PathB, start,
                                         VisitedB, VisitedA, next_states, heuristic):
                     return Result[::-1]
@@ -1759,9 +1759,9 @@ removed from \texttt{PrioQueue}.   This shows that $A^*$ search can't return a p
     def search_os(PQ, Path, goal, VisitedA, VisitedB, next_states, heuristic):
         state = Path[-1]
         if state in VisitedA:
-            return
+            return None
         if state in VisitedB:
-            yield Path[:-1] + VisitedB[state][::-1]
+            return Path[:-1] + VisitedB[state][::-1]
         for ns in next_states(state):           
             if ns not in VisitedA:
                 prio1 = len(Path) + heuristic(ns, goal)
@@ -1986,191 +1986,191 @@ We proceed to describe the implementation of the function \texttt{dl\_search}
 \end{enumerate}
 Iterative deepening $\mathrm{A}^*$ is a complete search algorithm that does find an optimal path, provided that the employed heuristic
 is optimistic.  On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}, this
-algorithm takes about $0.8$ seconds to solve the puzzle.  Only about 170 kilobytes of memory are necessary for
+algorithm takes about $1.2$ seconds to solve the puzzle.  Only about 170 kilobytes of memory are necessary for
 this search.  For the $4 \times 4$ sliding puzzle shown in Figure
 \ref{fig:start-goal.stlx}, the algorithm 
-takes about $2.5$ seconds and uses 184 kilobytes.  Although this is more than the time needed by bidirectional $\mathrm{A}^*$ search,
+takes about $1.6$ seconds and uses 184 kilobytes.  Although this is more than the time needed by bidirectional $\mathrm{A}^*$ search,
 the good news is that the $\mathrm{IDA}^*$ algorithm does not need much memory since basically only the path
 discovered so far is stored in memory.  Hence, $\mathrm{IDA}^*$ is a viable alternative if the available memory
 is not sufficient to support the bidirectional $\mathrm{A}^*$ algorithm.
 
-\section{$\mathrm{A}^*$-$\mathrm{IDA}^*$ Search}
-So far, of all the search algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
-bidirectional $\mathrm{A}^*$ search is only feasible if sufficient memory is available.   While
-$\mathrm{IDA}^*$ requires more time, its memory consumption is much lower than the memory consumption of
-bidirectional $\mathrm{A}^*$.  Hence, it is natural to try to combine the $\mathrm{A}^*$ algorithm and the
-$\mathrm{IDA}^*$ algorithm.  Concretely, the
-idea is to run an $\mathrm{A}^*$ search from the $\texttt{start}$ node until memory is more or less
-exhausted.  Then, we start $\mathrm{IDA}^*$ from the $\texttt{goal}$ node and search until we find any of the
-nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\texttt{start}$ node.
-\index{A$^*$-IDA$^*$ search}
+% \section{$\mathrm{A}^*$-$\mathrm{IDA}^*$ Search}
+% So far, of all the search algorithms we have tried, the bidirectional $\mathrm{A}^*$ search has performed best.  However,
+% bidirectional $\mathrm{A}^*$ search is only feasible if sufficient memory is available.   While
+% $\mathrm{IDA}^*$ requires more time, its memory consumption is much lower than the memory consumption of
+% bidirectional $\mathrm{A}^*$.  Hence, it is natural to try to combine the $\mathrm{A}^*$ algorithm and the
+% $\mathrm{IDA}^*$ algorithm.  Concretely, the
+% idea is to run an $\mathrm{A}^*$ search from the $\texttt{start}$ node until memory is more or less
+% exhausted.  Then, we start $\mathrm{IDA}^*$ from the $\texttt{goal}$ node and search until we find any of the
+% nodes discovered by the $\mathrm{A}^*$ search that had been started from the $\texttt{start}$ node.
+% \index{A$^*$-IDA$^*$ search}
 
 
-\begin{figure}[!ht]
-\centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]{python3}
-    def search(start, goal, next_states, heuristic, size):
-        Parent   = { start:start }
-        Distance = { start: 0 }           
-        estGoal  = heuristic(start, goal)
-        Estimate = { start: estGoal }
-        Frontier = Set()
-        Frontier.insert( (estGoal, start) )
-        while len(Distance) < size and Frontier:
-            estimate, state = Frontier.pop()
-            if state == goal:
-                return path_to(state, Parent)
-            stateDist = Distance[state]
-            for ns in next_states(state):
-                oldEstimate = Estimate.get(ns, None)
-                newEstimate = stateDist + 1 + heuristic(ns, goal)
-                if oldEstimate is None or newEstimate < oldEstimate:
-                    Distance[ns] = stateDist + 1
-                    Estimate[ns] = newEstimate
-                    Parent[ns]   = state
-                    Frontier.insert( (newEstimate, ns) )
-                    if oldEstimate is not None:
-                        Frontier.delete( (oldEstimate, ns) )
-        Path = id_search(goal, start, next_states, heuristic, Distance)
-        return path_to(Path[-1], Parent) + Path[::-1][1:]
-\end{minted}
-\vspace*{-0.3cm}
-\caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{I}.}
-\label{fig:A-Star-Ida-Star.ipynb-1}
-\end{figure}
+% \begin{figure}[!ht]
+% \centering
+% \begin{minted}[ frame         = lines,
+%                   framesep      = 0.3cm,
+%                   firstnumber   = 1,
+%                   bgcolor       = sepia,
+%                   numbers       = left,
+%                   numbersep     = -0.2cm,
+%                   xleftmargin   = 0.0cm,
+%                   xrightmargin  = 0.0cm,
+%                 ]{python3}
+%     def search(start, goal, next_states, heuristic, size):
+%         Parent   = { start:start }
+%         Distance = { start: 0 }           
+%         estGoal  = heuristic(start, goal)
+%         Estimate = { start: estGoal }
+%         Frontier = Set()
+%         Frontier.insert( (estGoal, start) )
+%         while len(Distance) < size and Frontier:
+%             estimate, state = Frontier.pop()
+%             if state == goal:
+%                 return path_to(state, Parent)
+%             stateDist = Distance[state]
+%             for ns in next_states(state):
+%                 oldEstimate = Estimate.get(ns, None)
+%                 newEstimate = stateDist + 1 + heuristic(ns, goal)
+%                 if oldEstimate is None or newEstimate < oldEstimate:
+%                     Distance[ns] = stateDist + 1
+%                     Estimate[ns] = newEstimate
+%                     Parent[ns]   = state
+%                     Frontier.insert( (newEstimate, ns) )
+%                     if oldEstimate is not None:
+%                         Frontier.delete( (oldEstimate, ns) )
+%         Path = id_search(goal, start, next_states, heuristic, Distance)
+%         return path_to(Path[-1], Parent) + Path[::-1][1:]
+% \end{minted}
+% \vspace*{-0.3cm}
+% \caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{I}.}
+% \label{fig:A-Star-Ida-Star.ipynb-1}
+% \end{figure}
 
-An implementation of the $\mathrm{A}^*$-$\mathrm{IDA}^*$ algorithm is shown in \myFig{A-Star-Ida-Star.ipynb-1}
-and \myFig{A-Star-Ida-Star.ipynb-2}.  We begin with a discussion of the function $\texttt{search}$.
-\begin{enumerate}
-\item The function $\texttt{search}$ takes 5 arguments.
-      \begin{enumerate}[(a)]
-      \item $\texttt{start}$ and $\texttt{goal}$ are states.  The function tries to find a path connecting
-            $\texttt{start}$ and $\texttt{goal}$.
-      \item $\texttt{next\_states}$ is a function that takes a state $s$ as input and computes the set of states that are
-            reachable from $s$ in one step.
-      \item $\texttt{heuristic}$ computes an \blue{estimate} of the distance between $s_1$ and $s_2$.  It is
-            assumed that this estimate is both \blue{admissible} and \blue{consistent}.
-      \item $\texttt{size}$ is the maximal number of states that the $\mathrm{A}^*$ search is allowed to
-            explore before the algorithm switches over to $\mathrm{IDA}^*$ search.
-      \end{enumerate}
-\item The basic idea behind the $\mathrm{A}^*$-$\mathrm{IDA}^*$ algorithm is to first use $\mathrm{A}^*$ search
-      to find a path from $\texttt{start}$ to $\texttt{goal}$.  If this is successfully done without visiting
-      more than $\texttt{size}$ nodes, the algorithm terminates and returns the path that has been found.
-      Otherwise, the algorithm switches over to an $\mathrm{IDA}^*$ search that starts from $\texttt{goal}$ and
-      tries to connect goal to any of the nodes that have been encountered during the $\mathrm{A}^*$ search.
-      To this end, the function $\texttt{search}$ maintains the following variables.
-      \begin{enumerate}
-      \item $\texttt{Parent}$ is a dictionary associating a parent state with those states that have already been
-            encountered during the search, i.e.~we have
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            $\texttt{Parent}[s_2] = s_1 \;\Rightarrow\; s_2 \in \texttt{next\_states}(s_1)$.
-            \\[0.2cm]
-            Once the goal has been found, this dictionary is used to compute the path from $\texttt{start}$ to
-            $\texttt{goal}$.
-      \item $\texttt{Distance}$ is a dictionary that remembers for every state $s$ that is encountered during the
-            $\mathrm{A}^*$ search the length of the shortest path from $\texttt{start}$ to $s$.
-      \item $\texttt{Estimate}$ is a dictionary.  For every state $s$ encountered in the $\mathrm{A}^*$ search, $\texttt{Estimate}[s]$
-            is an estimate of the length that a path from $\texttt{start}$ to $\texttt{goal}$ would have if it would
-            pass through the state $s$.  This estimate is calculated using the equation
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            $\texttt{Estimate}[s] = \texttt{Distance}[s] + \texttt{heuristic}(s, \texttt{goal})$.
-            \\[0.2cm]
-            Instead of recalculating this sum every time we need it, we store the sum in the dictionary
-            $\texttt{Estimate}$.
-      \item $\texttt{Frontier}$ is a \href{https://en.wikipedia.org/wiki/Priority_queue}{priority queue}.
-            The elements of $\texttt{Frontier}$ are pairs of the form
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            $(d, s)$ \quad such that \quad $d = \texttt{Estimate}[s]$,
-            \\[0.2cm]
-            i.e.~if $(d, s) \in \texttt{Frontier}$, then the state $s$ has been encountered in the $\mathrm{A}^*$ search and it is
-            estimated that a path leading from $\texttt{start}$ to $\texttt{goal}$ and passing through $s$ would have
-            a length of $d$.  This priority queue is implemented as an ordered set.
-      \end{enumerate}
-\item The $\mathrm{A}^*$ search runs exactly as discussed in section \ref{sec:a-star-search}.  The only difference is that the
-      \texttt{while} loop is terminated once the dictionary $\texttt{Distance}$ has more than $\texttt{size}$
-      entries.  If we are lucky, the $\mathrm{A}^*$ search is already able to find the $\texttt{goal}$ and the
-      algorithm terminates.
-\item Otherwise, the function $\texttt{id\_search}$ is called.  This function starts an iterative deepening
-  $\mathrm{A}^*$ search from the node $\texttt{goal}$.  This works as described in section \ref{sec:ida-star-search}.
-      This search terminates as soon as a state is found
-      that has already been encountered during the $\mathrm{A}^*$ search.  The set of these nodes is given to
-      the function $\texttt{id\_search}$ via the dictionary $\texttt{Distance}$.  The function
-      $\texttt{id\_search}$ returns a path leading from $\texttt{goal}$ to a state $s$ that is a key of the
-      dictionary $\texttt{Distance}$ and hence has been reached by the  A$^*$ search. 
-      In order to compute a path from $\texttt{start}$ to $\texttt{goal}$, we still have to compute a
-      path from $\texttt{start}$ to $s$.  This path is then combined with the path $\texttt{P}$ and the resulting path
-      is returned.
+% An implementation of the $\mathrm{A}^*$-$\mathrm{IDA}^*$ algorithm is shown in \myFig{A-Star-Ida-Star.ipynb-1}
+% and \myFig{A-Star-Ida-Star.ipynb-2}.  We begin with a discussion of the function $\texttt{search}$.
+% \begin{enumerate}
+% \item The function $\texttt{search}$ takes 5 arguments.
+%       \begin{enumerate}[(a)]
+%       \item $\texttt{start}$ and $\texttt{goal}$ are states.  The function tries to find a path connecting
+%             $\texttt{start}$ and $\texttt{goal}$.
+%       \item $\texttt{next\_states}$ is a function that takes a state $s$ as input and computes the set of states that are
+%             reachable from $s$ in one step.
+%       \item $\texttt{heuristic}$ computes an \blue{estimate} of the distance between $s_1$ and $s_2$.  It is
+%             assumed that this estimate is both \blue{admissible} and \blue{consistent}.
+%       \item $\texttt{size}$ is the maximal number of states that the $\mathrm{A}^*$ search is allowed to
+%             explore before the algorithm switches over to $\mathrm{IDA}^*$ search.
+%       \end{enumerate}
+% \item The basic idea behind the $\mathrm{A}^*$-$\mathrm{IDA}^*$ algorithm is to first use $\mathrm{A}^*$ search
+%       to find a path from $\texttt{start}$ to $\texttt{goal}$.  If this is successfully done without visiting
+%       more than $\texttt{size}$ nodes, the algorithm terminates and returns the path that has been found.
+%       Otherwise, the algorithm switches over to an $\mathrm{IDA}^*$ search that starts from $\texttt{goal}$ and
+%       tries to connect goal to any of the nodes that have been encountered during the $\mathrm{A}^*$ search.
+%       To this end, the function $\texttt{search}$ maintains the following variables.
+%       \begin{enumerate}
+%       \item $\texttt{Parent}$ is a dictionary associating a parent state with those states that have already been
+%             encountered during the search, i.e.~we have
+%             \\[0.2cm]
+%             \hspace*{1.3cm}
+%             $\texttt{Parent}[s_2] = s_1 \;\Rightarrow\; s_2 \in \texttt{next\_states}(s_1)$.
+%             \\[0.2cm]
+%             Once the goal has been found, this dictionary is used to compute the path from $\texttt{start}$ to
+%             $\texttt{goal}$.
+%       \item $\texttt{Distance}$ is a dictionary that remembers for every state $s$ that is encountered during the
+%             $\mathrm{A}^*$ search the length of the shortest path from $\texttt{start}$ to $s$.
+%       \item $\texttt{Estimate}$ is a dictionary.  For every state $s$ encountered in the $\mathrm{A}^*$ search, $\texttt{Estimate}[s]$
+%             is an estimate of the length that a path from $\texttt{start}$ to $\texttt{goal}$ would have if it would
+%             pass through the state $s$.  This estimate is calculated using the equation
+%             \\[0.2cm]
+%             \hspace*{1.3cm}
+%             $\texttt{Estimate}[s] = \texttt{Distance}[s] + \texttt{heuristic}(s, \texttt{goal})$.
+%             \\[0.2cm]
+%             Instead of recalculating this sum every time we need it, we store the sum in the dictionary
+%             $\texttt{Estimate}$.
+%       \item $\texttt{Frontier}$ is a \href{https://en.wikipedia.org/wiki/Priority_queue}{priority queue}.
+%             The elements of $\texttt{Frontier}$ are pairs of the form
+%             \\[0.2cm]
+%             \hspace*{1.3cm}
+%             $(d, s)$ \quad such that \quad $d = \texttt{Estimate}[s]$,
+%             \\[0.2cm]
+%             i.e.~if $(d, s) \in \texttt{Frontier}$, then the state $s$ has been encountered in the $\mathrm{A}^*$ search and it is
+%             estimated that a path leading from $\texttt{start}$ to $\texttt{goal}$ and passing through $s$ would have
+%             a length of $d$.  This priority queue is implemented as an ordered set.
+%       \end{enumerate}
+% \item The $\mathrm{A}^*$ search runs exactly as discussed in section \ref{sec:a-star-search}.  The only difference is that the
+%       \texttt{while} loop is terminated once the dictionary $\texttt{Distance}$ has more than $\texttt{size}$
+%       entries.  If we are lucky, the $\mathrm{A}^*$ search is already able to find the $\texttt{goal}$ and the
+%       algorithm terminates.
+% \item Otherwise, the function $\texttt{id\_search}$ is called.  This function starts an iterative deepening
+%   $\mathrm{A}^*$ search from the node $\texttt{goal}$.  This works as described in section \ref{sec:ida-star-search}.
+%       This search terminates as soon as a state is found
+%       that has already been encountered during the $\mathrm{A}^*$ search.  The set of these nodes is given to
+%       the function $\texttt{id\_search}$ via the dictionary $\texttt{Distance}$.  The function
+%       $\texttt{id\_search}$ returns a path leading from $\texttt{goal}$ to a state $s$ that is a key of the
+%       dictionary $\texttt{Distance}$ and hence has been reached by the  A$^*$ search. 
+%       In order to compute a path from $\texttt{start}$ to $\texttt{goal}$, we still have to compute a
+%       path from $\texttt{start}$ to $s$.  This path is then combined with the path $\texttt{P}$ and the resulting path
+%       is returned.
 
-      The expression \texttt{Path[::-1]} in line 24 reverses the list $\texttt{Path}$ and 
-      hence \texttt{Path[::-1]} is a path leading from the state $s$ to the state $\texttt{goal}$.
-      \texttt{Path[::-1][-1]} is the same path but without the state $s$, as this state is already included 
-      as the last state of the path returned by the expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{path\_to(Path[-1], Parent)}.
-\end{enumerate}
+%       The expression \texttt{Path[::-1]} in line 24 reverses the list $\texttt{Path}$ and 
+%       hence \texttt{Path[::-1]} is a path leading from the state $s$ to the state $\texttt{goal}$.
+%       \texttt{Path[::-1][-1]} is the same path but without the state $s$, as this state is already included 
+%       as the last state of the path returned by the expression
+%       \\[0.2cm]
+%       \hspace*{1.3cm}
+%       \texttt{path\_to(Path[-1], Parent)}.
+% \end{enumerate}
 
 
-\begin{figure}[!ht]
-\centering
-\begin{minted}[ frame         = lines,
-                  framesep      = 0.3cm,
-                  firstnumber   = 1,
-                  bgcolor       = sepia,
-                  numbers       = left,
-                  numbersep     = -0.2cm,
-                  xleftmargin   = 0.0cm,
-                  xrightmargin  = 0.0cm,
-                ]{python3}
-    def id_search(goal, start, next_states, heuristic, Distance):
-        limit = 0
-        while True:
-            Path = dl_search([goal], start, next_states, limit, heuristic, Distance)
-            if isinstance(Path, list):
-                return Path
-            limit = Path
+% \begin{figure}[!ht]
+% \centering
+% \begin{minted}[ frame         = lines,
+%                   framesep      = 0.3cm,
+%                   firstnumber   = 1,
+%                   bgcolor       = sepia,
+%                   numbers       = left,
+%                   numbersep     = -0.2cm,
+%                   xleftmargin   = 0.0cm,
+%                   xrightmargin  = 0.0cm,
+%                 ]{python3}
+%     def id_search(goal, start, next_states, heuristic, Distance):
+%         limit = 0
+%         while True:
+%             Path = dl_search([goal], start, next_states, limit, heuristic, Distance)
+%             if isinstance(Path, list):
+%                 return Path
+%             limit = Path
     
-    def dl_search(Path, start, next_states, limit, heuristic, Distance):
-        state = Path[-1]
-        total = len(Path) - 1 + heuristic(state, start)
-        if total > limit:
-            return total
-        if state in Distance:
-            return Path
-        smallest = float('Inf')
-        for ns in next_states(state):
-            if ns not in Path:
-                result = dl_search( Path + [ns], start, next_states, limit, 
-                                    heuristic, Distance
-                                  )
-                if isinstance(result, list):
-                    return result
-                smallest = min(smallest, result)
-        return smallest 
-\end{minted}
-\vspace*{-0.3cm}
-\caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{II}.}
-\label{fig:A-Star-Ida-Star.ipynb-2}
-\end{figure}
+%     def dl_search(Path, start, next_states, limit, heuristic, Distance):
+%         state = Path[-1]
+%         total = len(Path) - 1 + heuristic(state, start)
+%         if total > limit:
+%             return total
+%         if state in Distance:
+%             return Path
+%         smallest = float('Inf')
+%         for ns in next_states(state):
+%             if ns not in Path:
+%                 result = dl_search( Path + [ns], start, next_states, limit, 
+%                                     heuristic, Distance
+%                                   )
+%                 if isinstance(result, list):
+%                     return result
+%                 smallest = min(smallest, result)
+%         return smallest 
+% \end{minted}
+% \vspace*{-0.3cm}
+% \caption{The $\mathrm{A}^*$-$\mathrm{IDA}^*$ search algorithm, part \texttt{II}.}
+% \label{fig:A-Star-Ida-Star.ipynb-2}
+% \end{figure}
 
-Iterative deepening $\mathrm{A}^*$-$\mathrm{IDA}^*$ is a complete search algorithm.
-On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}, this
-algorithm takes about $0.14$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
-is allowed to visit at most $3\,000$ states, the algorithm takes less than $1.33$ seconds.
- $\mathrm{A}^*$-$\mathrm{IDA}^*$ is not optimal.  For example the solution computed for 
-the $4 \times 4$ sliding puzzle has a length of 40, while the shortest solution for the given problem only
-requires 36 steps.
+% Iterative deepening $\mathrm{A}^*$-$\mathrm{IDA}^*$ is a complete search algorithm.
+% On the instance of the $3 \times 3$ sliding puzzle shown on \myFig{8-puzzle.pdf}, this
+% algorithm takes about $0.14$ seconds to solve the puzzle.  For the $4 \times 4$ sliding puzzle, if the algorithm
+% is allowed to visit at most $3\,000$ states, the algorithm takes less than $1.33$ seconds.
+%  $\mathrm{A}^*$-$\mathrm{IDA}^*$ is not optimal.  For example the solution computed for 
+% the $4 \times 4$ sliding puzzle has a length of 40, while the shortest solution for the given problem only
+% requires 36 steps.
 
 
 \exercise
@@ -2198,7 +2198,7 @@ set $\mathtt{nextState}(L)$ would be lists of the form $L + [c]$.  If $\#L = k$,
 $k+1$ queens, where the queen in row $k+1$ has been placed in column $c$.
 A frame for solving this problem is available at
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/1
-  Search/N-Queens-Frame.ipynb}{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/1 Search/N-Queens-Frame.ipynb}.
+  Search/N-Queens-Frame.ipynb}{Artificial-Intelligence/blob/master/Python/1 Search/N-Queens-Frame.ipynb}.
 
 
 \begin{figure}[!ht]
