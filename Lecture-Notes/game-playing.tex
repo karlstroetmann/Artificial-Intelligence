@@ -4,13 +4,13 @@ One major breakthrough for the field of artificial intelligence happened in 1997
 Champion \href{https://en.wikipedia.org/wiki/Garry_Kasparov}{Garry Kasparov} by $3\sfrac{1}{2}-2\sfrac{1}{2}$.
 While \blue{Deep Blue} \index{deep blue} was based on special hardware, according to the
 \href{http://www.computerchess.org.uk/ccrl/4040/rating_list_all.html}{computer chess rating list} of the 2nd
-of February 2024, the best version of the chess program
+of January 2025, the best version of the chess program
 \href{https://en.wikipedia.org/wiki/Stockfish_(chess)}{Stockfish} runs 
-on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3634.  
+on ordinary desktop computers and has an \href{https://en.wikipedia.org/wiki/Elo_rating_system}{Elo rating} of 3642.  
 To compare, according to the
-\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of February 2024, the current 
-World Chess Champion \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
-2830.  If two players differ by more than 400 in their ELO ranking, the lower ranked player does not stand a
+\href{https://ratings.fide.com/top.phtml?list=men}{Fide} list of January 2025, the best human player (and former
+World Chess Champion) \href{https://en.wikipedia.org/wiki/Magnus_Carlsen}{Magnus Carlsen} has an Elo rating of
+2831.  If two players differ by more than 400 in their ELO ranking, the lower ranked player does not stand a
 chance to win or even draw against the higher ranked player. Hence, Magnus Carlsen wouldn't stand a chance to
 win or draw a game against Stockfish.  In 2017, at the  
 \href{https://en.wikipedia.org/wiki/Future_of_Go_Summit}{Future of Go Summit},  the computer program
@@ -38,10 +38,10 @@ This chapter is structured as follows:
 \end{enumerate}
 
 \section{Basic Definitions}
-In order to investigate how a computer can play a game we define a \blue{game} $\mathcal{G}$ as a six-tuple \index{game}
+In order to investigate how a computer can play a game we define a \blue{game} $\mathcal{G}$ as a quintuple \index{game}
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathcal{G} = \langle \textts{States}, s_0, \textts{Players}, \textts{nextStates}, \textts{finished},\textts{utility} \rangle$
+$\mathcal{G} = \langle \textts{States}, s_0, \textts{Players}, \textts{nextStates}, \textts{utility} \rangle$
 \\[0.2cm]
 where the components are interpreted as follows:
 \begin{enumerate}
@@ -58,29 +58,39 @@ where the components are interpreted as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
       $\textts{nextStates}: \textts{States} \times \textts{Players} \rightarrow 2^{\textts{States}}$.
-\item $\textts{finished}$ is a function that takes a state $s$ and decides whether the games is finished.
-      Therefore, the signature of $\textts{finished}$ is
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\textts{finished}: \textts{States} \rightarrow \mathbb{B}$.
-      \\[0.2cm]
-      Here, $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} := \{ \textts{true}, \textts{false} \}$.
-  
-      Using the function $\textts{finished}$, we define the set $\textts{TerminalStates}$ as the set of those
-      states such that the game is finished,  i.e.~we define \index{terminal state}
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\textts{TerminalStates} := \{ s \in \textts{States} \mid \textts{finished}(s) \}$.
-\item $\textts{utility}$ is a function that takes a state $s$ such that $s \in \textts{TerminalStates}$ as its argument.  It returns 
-      the \blue{value} that the game has for the first player.  In general, a
-      value is a real number,  but in all of our examples, this value will be an element from the set
+\item $\textts{utility}$ is a function that takes a state $s$ as its argument.  If the game is finished, it returns 
+      the \blue{value} that the game has for the first player.  Otherways, it returns the undefined value
+      $\Omega$.  In general, the \blue{value} of a game is a real number,  but in all of our examples, this
+      value will be an element from the set 
       $\{-1, 0, +1\}$.  If $\textts{utility}(s) = -1$,  
       then the first player has lost the game, if $\textts{utility}(s) = 1$, then the first player has won the
       game, and if $\textts{utility}(s) = 0$, then the game drawn.  Hence the signature of $\textts{utility}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\textts{utility}: \textts{TerminalStates} \rightarrow \{ -1, 0, +1\}$.
+      $\textts{utility}: \textts{States} \rightarrow \{ -1, 0, +1\} \cup \{ \Omega \}$.
 \end{enumerate}
+
+\noindent
+If $\mathcal{G} = \langle \textts{States}, s_0, \textts{Players}, \textts{nextStates}, \textts{utility}\rangle$
+is a game, we define an auxiliary function $\textts{finished}$ that takes a state $s$ and decides whether the games is finished.
+Therefore, the signature of $\textts{finished}$ is
+\\[-0.2cm]
+\hspace*{1.3cm}
+$\textts{finished}: \textts{States} \rightarrow \mathbb{B}$.
+\\[0.2cm]
+Here, $\mathbb{B}$ is the set of Boolean values, i.e.~we have $\mathbb{B} := \{ \textts{true}, \textts{false} \}$.
+The definition of $\texttt{finished}$ is as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{finished}(s) := \bigl(\mathtt{utility}(s) \not= \Omega\bigr)$.
+\\[0.2cm]
+Using the function $\textts{finished}$, we define the set $\textts{TerminalStates}$ as the set of those
+states such that the game is finished,  i.e.~we define \index{terminal state}
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textts{TerminalStates} := \{ s \in \textts{States} \mid \textts{finished}(s) \}$.
+\vspace*{0.2cm}
+
 We will only consider so called \blue{two person zero sum games}.  
 This means that the list $\textts{Players}$ has exactly two elements.  If we call these players $\textts{A}$ and $\textts{B}$, i.e.~if we have
 \\[0.2cm]
@@ -150,10 +160,7 @@ the game is drawn.  In this section we present two different implementations of 
         for Pairs in gAllLines:
             Marks = { State[row][col] for row, col in Pairs }
             if len(Marks) == 1 and  Marks != { ' ' }: 
-                if Marks == { 'X' }:
-                    return  1
-                else:
-                    return -1
+                return 1 if Marks == { 'X' } else -1
         for row in range(3):
             for col in range(3):
                 if State[row][col] == ' ': # the board is not filled
@@ -167,7 +174,6 @@ the game is drawn.  In this section we present two different implementations of 
 \end{figure}
 \myFig{Tic-Tac-Toe.ipynb} shows a \textsl{Python} implementation of tic-tac-toe.
 \index{tic-tac-toe}
-\FloatBarrier
 
 \begin{enumerate}
 \item The variable $\textts{gPlayers}$ stores the list of players.  Traditionally, we use the characters
@@ -212,7 +218,7 @@ the game is drawn.  In this section we present two different implementations of 
       The resulting states are collected in the list $\textts{Result}$ and returned.
 
       Note that we had to turn the \textts{State} into a list of list in order to manipulate it.
-      The manipulated State is then cast into a tuple of tuples.
+      The manipulated State is then cast back into a tuple of tuples.
 \item The function $\textts{utility}$ takes a $\textts{State}$ as its argument.  If the game is 
       finished in the given $\textts{State}$, it returns the value that this $\textts{State}$ has for the
       player \textts{"X"}.  If the outcome of the game is not yet decided, the value $\mathtt{None}$
@@ -250,12 +256,7 @@ the game is drawn.  In this section we present two different implementations of 
       \textts{Pairs = \{ (1, 1), (2, 2), (3, 3) \}},
       \\[0.2cm]
       then $\textts{Marks}$ is the set of marks on the falling diagonal.
-      The game is decided if all entries in a set of the form 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \textts{Marks := \{ State[row][col] : (row, col) in Pairs \}}
-      \\[0.2cm]
-      where \textts{Pairs} is a list from \textts{gAllLines} either have the value
+      The game is decided if all entries in the set \texttt{Marks} have the value
       ``$\textts{X}$'' or the value ``$\textts{O}$''.  In this case, the set \textts{Marks} has exactly one
       element which is different from the blank.  If this element is $\textts{"X"}$, then the
       game is \blue{won} by $\textts{"X"}$, otherwise the element must be $\textts{"O"}$ and hence
@@ -266,19 +267,20 @@ the game is drawn.  In this section we present two different implementations of 
       \blue{draw}. 
 \item The function $\textts{finished}$ takes a $\textts{State}$ and checks whether the game is finished.
       To this end it computes the $\textts{utility}$ of the state for the player ``$\textts{X}$''.  
-      If this $\textts{utility}$ is different from $\mathtt{None}$, then game is finished.  Note that it does make no
+      If this $\textts{utility}$ is different from $\mathtt{None}$, then the game is finished.  Note that it does make no
       difference whether we take the utility of the state for the player ``$\textts{X}$'' or for the player
       ``$\textts{O}$'': If the game is finished for  ``$\textts{X}$'', then it is also finished for ``$\textts{O}$'' and vice versa.
 \end{enumerate}
-The implementation shown so far has one important drawback: Every state needs 706 bytes in memory.
+The implementation shown so far has one important drawback: Every state needs 256 bytes in memory.
 This can be checked using the \textsl{Python} function \textts{sys.getsizeof}.
 Therefore, we show a leaner implementation next.
 
 \subsection{A Bitboard-Based Implementation of Tic-Tac-Toe}
 If we have to reduce the memory requirements of the states, then we can store the states as integers.  The
-first nine bits of these integers store the position of the \textts{X}es, while the next nine bits store the
+first nine bits of these integers store the position of the \textts{X}s, while the next nine bits store the
 positions of the \textts{O}s.  This kind of representation where a state is coded as a series of bit in an
-integer is known as a \blue{bitboard}\index{bitboard}.  This is much more efficient than storing states as
+integer is known as a \href{https://en.wikipedia.org/wiki/Bitboard}{bitboard}\index{bitboard}.  This is much
+more efficient than storing states as 
 tuples of tuples of characters.  \myFig{Tic-Tac-Toe-Bitboard.ipynb} shows an implementation of tic-tac-toe that
 is based on a \href{https://en.wikipedia.org/wiki/Bitboard}{bitboard}.  We proceed to discuss the details of
 this implementation.
@@ -303,21 +305,11 @@ this implementation.
             result |= 1 << b
         return result
 
-    set_bit = lambda n: 1 << n
-
-    def empty(state):
-        Free  = { n for n in range(9) }
-        Free -= { n for n in range(9) if state & (1 << n) != 0 }
-        Free -= { n for n in range(9) if state & (1 << (9 + n)) != 0 }
-        return Free
-
-    def next_states(state, player):
-        Empty  = empty(state)
-        Result = []
-        for n in Empty:
-            next_state = state | set_bit(player * 9 + n)
-            Result.append(next_state)
-        return Result
+    def next_states(S: State, player: int) -> list[int]:
+        Empty = { n for n in range(9) 
+                    if S & ((1 << n) | (1 << (9 + n))) == 0 
+                }
+        return  [ (S | (1 << (player * 9 + n))) for n in Empty ]               
 
     gAllLines = [ set_bits([0,1,2]), set_bits([3,4,5]), set_bits([6,7,8]), 
                   set_bits([0,3,6]), set_bits([1,4,7]), set_bits([2,5,8]), 
@@ -333,14 +325,12 @@ this implementation.
         if (state & 511) | (state >> 9) != 511: # the board is not yet filled
             return None
         return 0 # it's a draw
-    
-    finished = lambda state: utility(state) != None
 \end{minted}
 \vspace*{-0.3cm}
 \caption{Tic-Tac-Toe implemented by a bitboard.}
 \label{fig:Tic-Tac-Toe-Bitboard.ipynb}
 \end{figure}
-\FloatBarrier
+
 
 \begin{enumerate}
 \item When we use bitboards to implement tic-tac-toe it is more convenient to store the players as numbers. The
