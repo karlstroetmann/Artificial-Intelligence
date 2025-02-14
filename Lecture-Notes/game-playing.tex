@@ -479,9 +479,9 @@ different moves.  However, if we count the number of possibilities of putting 5 
 \textts{X}s on a $3 \times 3$ board, we see that there are only
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = 126$
+$\ds {9 \choose 5} = \frac{9!}{5! \cdot 4!} = \frac{9 \cdot 8 \cdot 7 \cdot 6}{1 \cdot 2 \cdot 3 \cdot 4} = 9 \cdot 2 \cdot 7 =  126$
 \\[0.2cm]
-possibilities, because we only have to count the number of ways that there are to put 5 \textts{O}s on
+possibilities, because we only have to count the number of ways there are to put 5 \textts{O}s on
 9 different positions and that number is the same as the number of subsets of five
 elements from a set of 9 elements. 
 Therefore, if we disregard the fact that some games are decided after fewer than nine moves,  there are a
@@ -535,11 +535,14 @@ than the number of possible game sequences.
       This memoized version of $f$, which is called $\mathtt{f\_memoized}$, first tries to retrieve the value
       of $f$ from the dictionary $\textts{gCache}$. 
       If this is successful, the cached value is returned.  Otherwise, the function $f$ is called
-      to compute the result.  This result is then stored in the dictionary $\textts{gCache}$ before it is returned.
-      The function $\textts{memoize}$ returns the memoized version of $f$.
+      to compute the result.  This result is then stored in the dictionary $\textts{gCache}$ before it is
+      returned, as the result of the function \texttt{f\_memoized}.
+      
+      In turn, the function $\textts{memoize}$ returns the function \texttt{f\_memoized}, which is the memoized
+      version of $f$. 
       \index{memoization}
-\item All that needs to be done is then to memoize both the function $\textts{maxValue}$ and the function
-      $\textts{minValue}$.  In this case it is not a problem that these functions share the same dictionary
+\item In order to use memoization for the minimax algorithm, all that needs to be done is to memoize both
+      the functions $\textts{maxValue}$ and $\textts{minValue}$.  These functions can share the same dictionary
       \textts{gCache} because  $\textts{maxValue}$ is only called for states where \textts{X} has to make the
       next move, while  $\textts{minValue}$ is only called for states where \textts{O} has to make the
       next move.  If this wouldn't be the case, the name of the function would have to be stored in
@@ -598,12 +601,13 @@ In order to better understand the reason for using memoization in the implementa
   Assume that
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\mathcal{G} = \langle \textts{States}, s_0, \textts{Players}, \textts{nextStates}, \textts{finished},\textts{utility} \rangle$
+  $\mathcal{G} = \langle \textts{States}, s_0, \textts{Players}, \textts{nextStates}, \textts{utility} \rangle$
   \\[0.2cm]
   is a game. Then a \blue{play of length $n$} is a list of states of the form 
-  $[s_0, s_1, \cdots, s_n]$ \quad such that
+  $[s_0, s_1, \cdots, s_n]$  such that
   \\[0.2cm]
-  \hspace*{1.3cm} $s_o = \textts{Start}$ \quad and \quad $\forall i\in\{0,\cdots,n-1\}: s_{i+1} \in \textts{nextStates}(s_i, p_i)$,
+  \hspace*{1.3cm}
+  $s_o = \textts{Start}$ \quad and \quad $\forall i\in\{0,\cdots,n-1\}: s_{i+1} \in \textts{nextStates}(s_i, p_i)$,
   \\[0.2cm]
   where the players $p_i$ are defined as follows:
   \\[0.2cm]
@@ -615,7 +619,7 @@ In order to better understand the reason for using memoization in the implementa
   \end{array}
   \right.
   $
-  \\[0.2cm]
+  \\[0.2cm] %$
   Therefore,  $p_i$ is the first element of the list $\textts{Players}$ if $i$ is even and
   $p_i$ is the second element of this list if $i$ is odd.  The \blue{game tree} of the game $\mathcal{G}$ is the set of all
   possible plays.  \eoxs 
@@ -646,7 +650,18 @@ or diagonals of three \textts{X}s.  Otherwise, the game is a draw.
 \section{Alpha-Beta Pruning}
 In this section we discuss \href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-Pruning}.
 This is a search technique that can prune large numbers of the search space and thereby increase the efficiency
-of a game playing program.  The basic idea is to provide two additional arguments to the functions
+of a game playing program.   
+
+\begin{figure}[!th]
+  \begin{center}
+  \epsfig{file=Figures/alpha-beta-pruning.pdf, scale=0.4}    
+  \end{center}
+  \caption{Example game tree showing $\alpha$-$\beta$-Pruning.
+    (Original: \href{https://commons.wikimedia.org/wiki/File:AB_pruning.svg}{Wikipedia}.)}
+\label{fig:alpha-beta-pruning.pdf}
+\end{figure}
+
+To implement this approach, the basic idea is to provide two additional arguments to the functions
 $\textts{maxValue}$ and $\textts{minValue}$.  Traditionally, these arguments are called $\blue{\alpha}$ and $\blue{\beta}$.  In order to be able to
 distinguish between the old functions $\textts{maxValue}$ and  $\textts{minValue}$ and its
 improved version, we call the improved versions  
