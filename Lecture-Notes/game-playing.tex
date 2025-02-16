@@ -648,9 +648,16 @@ or diagonals of three \textts{X}s.  Otherwise, the game is a draw.
 \end{enumerate}
 
 \section{Alpha-Beta Pruning}
-In this section we discuss \href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-Pruning}.
+In this section we discuss \href{https://en.wikipedia.org/wiki/Alpha-beta_pruning}{$\alpha$-$\beta$-pruning}.
 This is a search technique that can prune large numbers of the search space and thereby increase the efficiency
-of a game playing program.   
+of a game playing program.  Figure \ref{fig:alpha-beta-pruning.pdf} gives a first idea of what
+$\alpha$-$\beta$-pruning is about.  The figure shows the game tree of a game that is finished after four moves,
+i.e.~both players are able to make two moves, that is both players can take it in turns to make two moves.
+After the second player has made her second move, the game is decided.  Contrary to our previous definition,
+the values of the game are not just elements form the set $\{-1, 0, +1\}$ but instead are natural numbers.
+The first player, called \texttt{Max} has the goal of achieving a big number, while the second player
+\texttt{Min} has the goal to achieve a small number.
+
 
 \begin{figure}[!th]
   \begin{center}
@@ -661,7 +668,42 @@ of a game playing program.
 \label{fig:alpha-beta-pruning.pdf}
 \end{figure}
 
-To implement this approach, the basic idea is to provide two additional arguments to the functions
+If we look at the game tree in Figure \ref{fig:alpha-beta-pruning.pdf} on page
+\pageref{fig:alpha-beta-pruning.pdf} we notice that some numbers are greyed out.  The reason is that these
+numbers can not influence the result of the game.  If we would replace these numbers with any arbitrary
+numbers, the overall result of the game would not change if both players play optimally.
+\begin{enumerate}
+\item Let us first take a look at the greyed out node that is marked with a 5 in the bottom-most line.  This is the
+      result value of a move from the player \texttt{Min}.   The parent of this node is marked with a 4.  In
+      this node it is the turn of the player \texttt{Min}, who will choose the smallest possible value.  If the 5
+      would be replaced by a 0, then \texttt{Min} would choose this zero.  This would change the node of the
+      parent node, which currently is 4, to be 0.  However, this would not change the result of the game because
+      in the parent of the node that is currently marked with a 4 it is the turn of \texttt{Max} and
+      \texttt{Max} will choose the move leading to his left child because that already guarantees him the value 5.
+
+      Similarly, if the value of the greyed out node was 10 instead of 5, the player \texttt{Min} would not
+      choose this node because for her the node marked with 4 is a better choice.  Hence the value of the node
+      currently marked with a 5 is of no consequence for the overall value of the game and therefore there is no
+      need to evaluate this node at all.
+\item The situation is similar for the first node marked with a greyed out 9 in the bottom-most line, because
+      in the grandparent of this node it is the turn of the player \texttt{Max} and \texttt{Max} is already
+      guaranteed the value of 6 at this node when he chooses the move leading to its left child.
+\item At the right part of the tree we have a whole subtree that is greyed out.  The root of this subtree is
+      marked with the number 8.  Let us understand the reason this subtree does not influence the value of the
+      overall tree.
+      \begin{enumerate}[(a)]
+      \item The left sibling of the root node of the greyed out tree is marked with a 5. At the parent of this
+            node, it is the turn of the player \texttt{Min}.  As \texttt{Min} can already choose the node
+            labelled with a 5, we know that the parent node has a value that is at most five.
+      \item However, the grandparent of this node is the root of the complete tree.  In this node, it is the
+            turn of the player \texttt{Max}.  \texttt{Max} can achieve the value 6 by choosing his second child.
+            Therefore the value of this node at least 6.  
+      \item As we have already seen that the value of the rightmost child of the root node can be at most 5,
+            \texttt{Max} will never choose this child, but will choose his second child instead.
+      \end{enumerate}
+      Therefore, the subtree whoose root is marked with a greyed out 8 does not influence the outcome of the game.
+\end{enumerate}
+To implement $\alpha$-$\beta$-pruning, the basic idea is to provide two additional arguments to the functions
 $\textts{maxValue}$ and $\textts{minValue}$.  Traditionally, these arguments are called $\blue{\alpha}$ and $\blue{\beta}$.  In order to be able to
 distinguish between the old functions $\textts{maxValue}$ and  $\textts{minValue}$ and its
 improved version, we call the improved versions  
@@ -719,10 +761,9 @@ $\textts{minValue}(s) := \textts{alphaBetaMin}(s, -1, +1)$.
 $\textts{alphaBetaMin}$ that satisfies the specification given above.
 Since $\textts{alphaBetaMax}$ and $\textts{alphaBetaMin}$ are implemented as mutually recursive functions, 
 the fact that the implementations of $\textts{alphaBetaMax}$ and \textts{alphaBetaMin}
-satisfy the specifications given above can be established by computational induction.  A proof 
-can be found in the
-\href{https://pdfs.semanticscholar.org/dce2/6118156e5bc287bca2465a62e75af39c7e85.pdf}{article} by Donald 
-E.~Knuth and Ronald W.~Moore \cite{knuth:1975}. 
+satisfy the specifications given above can be established by computational induction.
+We proceed perform this proof.  The first proof of the correctness of $\alpha$-$\beta$-pruning has been given
+by Donald E.~Knuth and Ronald W.~Moore \cite{knuth:1975}.
 
 
 \begin{figure}[!ht]
@@ -751,7 +792,6 @@ def alphaBetaMin(State, alpha, beta):
 \caption{$\alpha$-$\beta$-Pruning.}
 \label{fig:Alpha-Beta-Pruning.ipynb:alphaBeta}
 \end{figure}
-\FloatBarrier
 
 \noindent
 We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$, which is shown in
@@ -777,6 +817,139 @@ We proceed to discuss the implementation of the function $\textts{alphaBetaMax}$
       After this assignment, $\texttt{alpha}$ will be at least as big as $\texttt{value}$ and according to the specification
       of $\texttt{alphaBetaMax}$ we can therefore return $\texttt{alpha}$.
 \end{enumerate}
+
+\noindent
+\textbf{Claim}: The functions \texttt{alphaBetaMax} and $\mathtt{alphaBetaMin}$ both satisfy the specification
+given previously. 
+\vspace*{0.2cm}
+
+\noindent
+\textbf{Proof}:  The proof proceeds by computational induction.  However, we will only show that
+the function \texttt{alphaBetaMax} satisfies its specification, as the proof of the correctness of the function
+\texttt{alphaBetaMin} is completely analogous to the proof of the correctness of \texttt{alphaBetaMax}.  Furthermore,
+to simplify the proof we define $\mathtt{A} := \mathtt{gPlayers}[0]$ and $\mathtt{B} := \mathtt{gPlayers}[1]$.
+\begin{enumerate}
+\item[B.C:] $S \in \mathtt{TerminalStates}$, that is $\texttt{finished}(S) = \mathtt{True}$.
+
+  In this case we have $\texttt{alphaBetaMax}(S, \alpha, \beta) = \texttt{utility}(S)$ and since in this case we also have
+  $\texttt{maxValue}(S) = \texttt{utility}(S)$ this implies
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\texttt{alphaBetaMax}(s, \alpha, \beta) = \texttt{maxValue}(S)$.   \hspace*{\fill} $(*)$
+  \\[0.2cm]
+  We have to check the three cases of our specification one by one.
+  \begin{enumerate}
+  \item $\alpha \leq \mathtt{maxValue}(S) \leq \beta$.
+
+        We have to show that $\texttt{alphaBetaMax}(s, \alpha, \beta) = \texttt{maxValue}(S)$ holds.
+        This follows immediately from $(*)$.
+  \item $\texttt{maxValue}(S) < \alpha$. Because of $(*)$ this implies
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\texttt{alphaBetaMax}(s, \alpha, \beta) < \alpha$
+        \\[0.2cm]
+        and therefore we also have $\texttt{alphaBetaMax}(S) \leq \alpha$.  
+  \item $\beta < \mathtt{maxValue}(S)$.  Because of $(*)$ this implies
+        \\[0.2cm]
+        \hspace*{1.3cm}
+        $\beta < \mathtt{alphaBetaMax}(s, \alpha, \beta)$
+        \\[0.2cm]
+        and therefore we also have $\beta \leq \mathtt{alphaBetaMax}(S, \alpha, \beta)$.
+  \end{enumerate}
+  This finishes the proof of the base case.
+\item[I.S.:] This time $S\not\in \mathtt{TerminalStates}$.  As we have to check all three cases of our
+  specification, we have to carry out a case distinction.
+  \begin{enumerate}[(a)]
+  \item $\alpha \leq \mathtt{maxValue}(S) \leq \beta$.
+
+        We have to show that in this case $\mathtt{alphaBetaMax}(S) = \mathtt{maxValue}(S)$.
+        There are two subcases.
+        \begin{enumerate}
+        \item If $\texttt{maxValue}(S) = \beta$ there has to be a node $\texttt{ns} \in \texttt{nextStates}(S,
+          A)$ such that
+              \\[0.2cm]
+              \hspace*{1.3cm}
+              $\texttt{minValue}(\mathtt{ns}) = \beta$.
+              \\[0.2cm]
+              When the \texttt{for}-loop hits this node, the
+              condition of the \texttt{if}-statement in line 6 is true and the value of this node,
+              which is $\beta$, is returned.   Therefore we have
+              \\[0.2cm]
+              \hspace*{1.3cm}
+              $\texttt{alphaBetaMax}(S, \alpha, \beta) = \beta = \texttt{maxValue}(S)$.
+        \item If $\texttt{maxValue}(S) < \beta$, then we know that for all states
+              $\texttt{ns} \in \mathtt{nextStates}(S, \mathtt{B})$ we must have 
+              \\[0.2cm]
+              \hspace*{1.3cm}
+              $\texttt{minValue}(\mathtt{ns}) < \beta$.              
+              \\[0.2cm]
+              From the specification and the induction hypothesis it the follows that
+              \\[0.2cm]
+              \hspace*{1.3cm}
+              $\texttt{alphaBetaMin}(\mathtt{ns}, \alpha, \beta) < \beta$.              
+              \\[0.2cm]
+              Furthermore, since $\alpha \leq \mathtt{maxValue}(S)$ there must exists a state
+              $\texttt{ns} \in \mathtt{nextStates}(S, \mathtt{A})$ such that
+              \\[0.2cm]
+              \hspace*{1.3cm}
+              $\alpha \leq \mathtt{minValue}(\mathtt{ns})$
+              \\[0.2cm]
+              W.l.o.g.~assume that $\mathtt{ns}$ is the node with the maximal value, i.e.~we have
+              \\[0.2cm]
+              \hspace*{1.3cm}
+              $\texttt{maxValue}(S) = \texttt{minValue}(\texttt{ns})$.
+              \\[0.2cm]
+              As we already know that $\texttt{minValue}(\texttt{ns}) < \beta$, the induction hypothesis tells us that 
+              \\[0.2cm]
+              \hspace*{1.3cm}
+              $\texttt{alphaBetaMin}(\mathtt{ns}, \alpha, \beta) = \texttt{minValue}(\mathtt{ns})$
+              \\[0.2cm]
+              Hence the value computed in the \texttt{for}-loop is equal to
+              $\mathtt{alphaBetaMin}(\mathtt{ns}, \alpha, \beta)$ and therefore we have
+              \\[0.2cm]
+              \hspace*{0.3cm}
+              $\mathtt{alphaBetaMax}(S, \alpha, \beta) = \mathtt{alphaBetaMin}(\mathtt{ns}, \alpha, \beta)
+              = \mathtt{minValue}(\mathtt{ns}) = \mathtt{maxValue}(S)$.
+        \end{enumerate}
+  \end{enumerate}
+\item $\texttt{maxValue}(S) < \alpha$
+
+  In this case we only have to show that $\mathtt{alphaBetaMax}(S, \alpha, \beta) \leq \alpha$.
+  Since $\texttt{maxValue}(S) < \alpha$ it must be the case that
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\mathtt{minValue}(\mathtt{ns}) < \alpha$ \quad for all $\mathtt{ns} \in \mathtt{nextStates}(S)$.
+  \\[0.2cm]
+  By induction hypothesis this implies
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\mathtt{alphaBetaMin}(\mathtt{ns}, \alpha, \beta) \leq \alpha$ \quad for all $\mathtt{ns} \in \mathtt{nextStates}(S)$.
+  \\[0.2cm]
+  Since the \texttt{for}-loop computes the maximum of these values it follows that
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\mathtt{alphaBetaMax}(S, \alpha, \beta) \leq \alpha$. 
+\item $\beta < \texttt{maxValue}(S)$
+
+  In this case we have to show that $\beta \leq \mathtt{alphaBetaMax}(s, \alpha, \beta)$.
+  The assumption $\beta < \texttt{maxValue}(S)$ implies that there is node
+  $\texttt{ns} \in \texttt{nextStates}(S, \texttt{A})$ such that 
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\beta < \texttt{minValue}(\texttt{ns})$.
+  \\[0.2cm]
+  By induction hypothesis we can conclude that
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\beta \leq \mathtt{alphaBetaMin}(\mathtt{ns}, \alpha, \beta)$.
+  \\[0.2cm]
+  But then this value (or another one greater or equal than $\beta$) is returned by the \texttt{if}-statement
+  in line 6 and hence we have
+  \\[0.2cm]
+  \hspace*{1.3cm}
+  $\beta \leq \mathtt{alphaBetaMax}(S, \alpha, \beta)$.
+\end{enumerate}
+As the function \texttt{alphaBetaMax} satisfies its specification in all three cases, the proof is complete. \qed
 
 \remark
 There is a nice simulator for alpha-beta-pruning available at the following web address:
