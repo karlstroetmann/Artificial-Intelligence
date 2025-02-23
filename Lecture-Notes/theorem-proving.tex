@@ -1,40 +1,43 @@
 \chapter{Equational Theorem Proving}
 Mathematics, particularly the field of mathematical theorem proving, is intrinsically linked to the notion of
-intelligence. \textcolor{blue}{Automatic theorem proving} represents a significant branch of artificial
-intelligence dedicated to the application of AI techniques within mathematics. The domain of \emph{automatic
-  theorem proving} is extensive enough to warrant several volumes. However, due to time constraints, this
-chapter will focus exclusively on \textcolor{blue}{equational theorem proving}. In \emph{equational theorem
-  proving}, we start with a collection of axioms, which are expressed as equations, and seek to determine which
-additional equations can be inferred from these axioms. As an illustration, consider a \textcolor{blue}{group}
-$\mathcal{G}$, defined as a quadruple: 
+intelligence. \textcolor{blue}{Automated theorem proving} represents a significant branch of artificial
+intelligence dedicated to the application of AI techniques within mathematics. The domain of
+\href{https://en.wikipedia.org/wiki/Automated_theorem_proving}{automated theorem proving} is extensive enough
+to warrant a book of its own.  Due to time constraints, this chapter will focus exclusively on
+\textcolor{blue}{equational theorem proving}.  In \emph{equational theorem proving}, we start with a collection
+of axioms, which are expressed as equations, and seek to determine which additional equations can be inferred
+from these axioms. As an illustration, consider a \href{https://en.wikipedia.org/wiki/Group_(mathematics)}{group}
+$\mathcal{G}$, defined as a quadruple:  
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{G} = \langle G, e, \circ, i \rangle$
 \\[0.2cm]
 subject to the following conditions:
-\begin{itemize}
+\begin{enumerate}[(a)]
     \item $G$ is a set, whose elements are referred to as \textcolor{blue}{group elements}.
-    \item $e \in G$, signifying that $e$ is an element of $G$. This element, $e$, is known as the
-          \textcolor{blue}{left-neutral element} due to reasons that will be clarified subsequently. 
+    \item $e \in G$, signifying that $e$ is an element of $G$.
+
+          The element $e$ is the \blue{neutral element} of $\mathcal{G}$.
     \item $\circ: G \times G \rightarrow G$, indicating that $\circ$ is a binary operation on $G$ that maps
           pairs of group elements to a group element. This operation is termed the \textcolor{blue}{multiplication}
           of the group $\mathcal{G}$. 
     \item $i: G \rightarrow G$, denoting that $i$ is a unary operation on $G$ mapping each group element to
-          another group element. For any element $x \in G$, the result $i(x)$ is known as the
-          \textcolor{blue}{left-inverse} of $x$. 
+          another group element. For any element $x \in G$, $i(x)$ is known as the
+          \textcolor{blue}{inverse} of $x$. 
     \item The set $G$, along with the operations defined, must satisfy the \textcolor{blue}{group axioms}:  
-      \begin{enumerate}[(a)]
+      \begin{itemize}
           \item $e \circ x = x$ for all $x \in G$,
           \item $i(x) \circ x = e$ for all $x \in G$,
           \item $(x \circ y) \circ z = x \circ (y \circ z)$ for all $x, y, z \in G$.
-      \end{enumerate}
-\end{itemize}
+      \end{itemize}
+\end{enumerate}
 In \href{https://en.wikipedia.org/wiki/Abstract_algebra}{abstract algebra}, it is shown that these axioms imply
 the equation 
 \\[0.2cm]
 \hspace*{1.3cm}
-$x \circ i(x) = e$, \quad i.e.~the left inverse of any group element $x$ is also a right inverse of $x$.
+$x \circ i(x) = e$, 
 \\[0.2cm]
+i.e.~the left inverse of any group element $x$ is also a right inverse of $x$.
 A possible proof runs as follows:
 $$
 \begin{array}{lcll}
@@ -58,9 +61,9 @@ $$
 
 The formulation of proofs for such equations is far from straightforward. However, a systematic method exists
 for addressing these and related equational challenges. In this chapter, we introduce an algorithm capable of
-autonomously generating equational proofs similar to those discussed earlier. This algorithm is recognized as
+autonomously generating equational proofs similar to those discussed earlier. This algorithm is known as
 the \href{https://en.wikipedia.org/wiki/Knuth-Bendix_completion_algorithm}{Knuth-Bendix completion algorithm},
-a significant contribution by Donald E. Knuth and Peter B. Bendix \cite{knuth:1970}. 
+a significant discovery by Donald E. Knuth and Peter B. Bendix \cite{knuth:1970}. 
 
 The structure of this chapter is organized as follows:
 \begin{enumerate}
@@ -70,9 +73,8 @@ The structure of this chapter is organized as follows:
       \textcolor{blue}{confluence} and providing proofs for the \textcolor{blue}{Church-Rosser theorem} and
       \textcolor{blue}{Newman's lemma}. 
 \item The third section delves into term orderings, including the introduction of the
-      \textcolor{blue}{Knuth-Bendix ordering}, which plays a pivotal role in the algorithm's process. 
-\item The final section is dedicated to a detailed presentation of the \textcolor{blue}{Knuth-Bendix completion
-      algorithm}, illustrating its application and significance in automatic theorem proving. 
+      \textcolor{blue}{Knuth-Bendix ordering}, which plays an important role in the algorithm. 
+\item The final section presents the \textcolor{blue}{Knuth-Bendix completion algorithm}. 
 \end{enumerate}
 
 \section{Equational Proofs}
@@ -99,6 +101,11 @@ the notion of a signature.
   \item We have $\mathcal{V} \cap \mathcal{F} = \{\}$, i.e.~variables are different from function symbols. \eoxs
   \end{enumerate}
 \end{Definition}
+
+\noindent
+\textbf{Remark}:  Compared to the definition given in the lecture on logic,
+the new definition does not include a set $\mathcal{P}$ of predicate symbols.
+\vspace*{0.2cm}
 
 \example
 The signature of \blue{group theory} $\Sigma_G$ can be defined as follows:
@@ -301,7 +308,10 @@ the equations in $E$.  This notion is defined below.
 
 \example
 In the introduction of this chapter we have already seen that if we define
+\\[0.2cm]
+\hspace*{1.3cm}
 $E := \bigl\{ e \circ x = x, i(x) \circ x = e, (x \circ y) \circ z = x \circ (y \circ z) \bigr\}$,
+\\[0.2cm]
 then we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -377,8 +387,8 @@ The definition of $E \vdash s \approx t$ given above is due to
 \href{https://en.wikipedia.org/wiki/Gottfried_Wilhelm_Leibniz}{Gottfried Wilhelm}
 \href{https://leibniz.com/en/keks-original}{Leibniz}.
 
-\subsection{Equational Proofs}
-It turns out that, although it is possible to implement the notion $E \vdash \approx t$ directly, it is much
+\subsection{Term Rewriting}
+It turns out that, although it is possible to implement the notion $E \vdash s \approx t$ directly, it is much
 more efficient to refine this notion a little bit.  To this end we need to introduce the notion of a
 \blue{position} $u$ in a term $t$, the notion of the \blue{subterm} of a given term $t$ at a given position,
 and the notion of \blue{replacing} a subterm at a given position by another term.  We define these notions
@@ -487,18 +497,17 @@ Given this definition it is now possible to show the following theorem.
 For each of the two directions that has to be proven, the proof can be done by a straightforward, but tedious
 induction. 
 
-\subsection{Proofs via Rewriting}
+\subsection{Proofs via Term Rewriting}
 The implementation of the relation $\leftrightarrow_E$ remains inefficient due to the dual utility of each
 equation within $E$. Specifically, for an equation $l \approx r$ contained in $E$, it can be applied in two
-directions: one can replace a subterm matching $l\sigma$ with $r\sigma$ utilizing the equation from left to
+directions: we can replace a subterm matching $l\sigma$ with $r\sigma$ utilizing the equation from left to
 right, or conversely, substitute a subterm resembling $r\sigma$ with $l\sigma$ by applying the equation from
 right to left.  
 The seminal insight of Donald E.~Knuth and Peter B.~Bendix
-\cite{knuth:1970} was recognizing that if the equations could be ordered such that the left-hand side is
+\cite{knuth:1970} was to recognize that if the equations could be ordered such that the left-hand side is
 consistently more complex than the right-hand side, then it would be feasible to apply these equations in a
 singular direction by incorporating certain supplementary equations into $E$ throughout this procedure. This
 approach necessitates the subsequent definition. 
-
 
 \begin{Definition}[Rewrite Order] \hspace*{\fill} \\
   A binary relation $\prec \;\subseteq\; \mathcal{T}_\Sigma \times \mathcal{T}_\Sigma$ is a
@@ -522,7 +531,7 @@ approach necessitates the subsequent definition.
         $u \in\Pos(s)  $.
   \item The relation $\prec$ is \blue{well-founded}, i.e.~there is no infinite sequence of the form
         $(s_n)_{n\in\mathbb{N}}$ such that we have
-        \\[0.2cm]
+        \\[-0.2cm]
         \hspace*{1.3cm}
         $s_{n+1} \prec s_n$ \quad for all $n \in \mathbb{N}$. 
   \end{enumerate}
@@ -594,12 +603,12 @@ structured as follows:
 \begin{enumerate}[(a)]
 \item The forthcoming section explores the concept of \textcolor{blue}{confluence} and establishes a theorem
       instrumental in demonstrating the confluence of a relation. 
-\item Subsequently, we delve into rewrite orderings more comprehensively. Specifically, we examine the
-      \textcolor{blue}{Knuth-Bendix order}, the designated rewrite order that facilitates the construction of
+\item Subsequently, we investigate rewrite orderings. Specifically, we examine the
+      \textcolor{blue}{Knuth-Bendix ordering}, the designated rewrite ordering that facilitates the construction of
       several confluent term rewriting systems. 
 \item Thereafter, we introduce the \textcolor{blue}{Knuth-Bendix completion algorithm}, a methodology capable
       of augmenting a set of equations to ensure the rewrite relation $\rightarrow_R$ is made confluent. 
-\item Finally, an implementation of the Knuth-Bendix completion algorithm is detailed.
+\item Finally, an implementation of the Knuth-Bendix completion algorithm is given.
 \end{enumerate}
 
 
