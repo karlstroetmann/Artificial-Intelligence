@@ -436,8 +436,10 @@ Furthermore, we have the following:
 \begin{enumerate}
 
 \item $\bigl((x \circ y) \circ z\bigr)/[\;] = (x \circ y) \circ z$,
-\item $\bigl((x \circ y) \circ z\bigr)/[1] = x \circ y$, and
-\item $\bigl((x \circ y) \circ z\bigr)/[1,2] = y$.
+\item $\bigl((x \circ y) \circ z\bigr)/[1] = x \circ y$, 
+\item $\bigl((x \circ y) \circ z\bigr)/[1,1] = x$,
+\item $\bigl((x \circ y) \circ z\bigr)/[1,2] = y$,
+\item $\bigl((x \circ y) \circ z\bigr)/[2]   = z$.
 \end{enumerate}
 We also have
 \\[0.2cm]
@@ -544,10 +546,11 @@ approach necessitates the subsequent definition.
   This means that all equations in $E$ are ordered such that the right hand side is smaller than the left
   hand side w.r.t.~$\prec$.    \eod
 \end{Definition}
-As we progress, we will examine a specific example of a rewrite order. At this juncture, it is assumed that the
-relation $\prec$ qualifies as a rewrite order with respect to a designated set of equations $R$. The equations
-contained within $R$ are henceforth referred to as \textcolor{blue}{rewrite rules}. We will now move on to
-define the relation $\rightarrow_R$ on the set $\mathcal{T}_\Sigma$. 
+Later we will introduce the Knuth-Bendix order as an example of a rewrite order.
+
+In the following let us assume that a binary relation $\prec$ on terms is given and let us, furthermore, assume
+that this relation is a rewrite order with respect to a some set of equations $R$.  We will call these equations
+\textcolor{blue}{rewrite rules}.  We proceed to define the relation $\rightarrow_R$ on the set of $\Sigma$-terms $\mathcal{T}_\Sigma$. 
 
 \begin{Definition}[Rewrite Relation $\rightarrow_R$] \hspace*{\fill} \\
   Given a set of rewrite rules $R$ and two $\Sigma$-terms $s$ and $t$ we define that
@@ -587,10 +590,10 @@ The basic idea of a \blue{rewrite proof} of an equation $s \approx t$ is now the
       \\[0.2cm]
       \hspace*{1.3cm}
       $s \rightarrow_R s_1 \rightarrow_R s_2 \rightarrow_R \cdots \rightarrow_R s_m = \widehat{s}$
-\item Similarly, we rewrite $t$ using the rewrite rules from $R$ into a term $\widehat{t}$ that is in normal form:
+\item Similarly, we rewrite $t$ using the rewrite rules from $R$ into a term $\widehat{\,t\,}$ that is in normal form:
       \\[0.2cm]
       \hspace*{1.3cm}
-      $t \rightarrow_R t_1 \rightarrow_R t_2 \rightarrow_R \cdots \rightarrow_R t_n = \widehat{t}$.
+      $t \rightarrow_R t_1 \rightarrow_R t_2 \rightarrow_R \cdots \rightarrow_R t_n = \widehat{\,t\,}$.
 \item If the relation $s \rightarrow t$ is \blue{confluent} (this notion is defined in the next section),
       then we have 
       \\[0.2cm]
@@ -609,6 +612,8 @@ structured as follows:
 \item Thereafter, we introduce the \textcolor{blue}{Knuth-Bendix completion algorithm}, a methodology capable
       of augmenting a set of equations to ensure the rewrite relation $\rightarrow_R$ is made confluent. 
 \item Finally, an implementation of the Knuth-Bendix completion algorithm is given.
+\item Lastly, we apply this algorithm to the axioms of group theory and a number of theories that are related
+      to group theory.
 \end{enumerate}
 
 
@@ -628,8 +633,8 @@ transitive closure of $\rightarrow$ is written as $\rightarrow^*$.
   The relation $\rightarrow \;\subseteq\; M \times M$ is \blue{confluent} iff the following holds:
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\forall a, b, c \in M: \bigl(a \rightarrow^* b \;\wedge\; a \rightarrow^*c \quad\Rightarrow\quad
-   \exists d \in M: (b \rightarrow^* d \;\wedge\; c \rightarrow^* d)\bigr)
+  $\forall a, b, c \in M: \Bigl(a \rightarrow^* b \;\wedge\; a \rightarrow^*c \quad\Rightarrow\quad
+   \exists d \in M: \bigl(b \rightarrow^* d \;\wedge\; c \rightarrow^* d\bigr)\Bigr)
   $ \eox
 \end{Definition}
 
@@ -660,11 +665,11 @@ to the relation $\rightarrow^*$.
   If the relation $\rightarrow \;\subseteq\; M \times M$ is confluent, then we have
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\forall a, b \in M:\bigl( a \leftrightarrow^* b \;\Leftrightarrow\;
-   \exists c \in M: (a \rightarrow^* c \;\wedge b \rightarrow^* c)\bigr)$.
- \end{Theorem}
+  $\forall a, b \in M:\Bigl( a \leftrightarrow^* b \;\Leftrightarrow\;
+     \exists c \in M: \bigr(a \rightarrow^* c \;\wedge b \rightarrow^* c\bigr)\Bigr)$.
+\end{Theorem}
 
- \proof
+\proof
 If $a \leftrightarrow^* b$ then there is a finite sequence $(s_k)_{k\in \{0,\cdots,n\}}$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -716,8 +721,8 @@ to guarantee confluence.
   The relation $\rightarrow \;\subseteq\; M \times M$ is \blue{locally confluent} iff the following holds:
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\forall a, b, c \in M: \bigl(a \rightarrow b \;\wedge\; a \rightarrow c \quad\Rightarrow\quad
-   \exists d \in M: (b \rightarrow^* d \;\wedge\; c \rightarrow^* d)\bigr)
+  $\forall a, b, c \in M: \Bigl(a \rightarrow b \;\wedge\; a \rightarrow c \quad\Rightarrow\quad
+   \exists d \in M: \bigl(b \rightarrow^* d \;\wedge\; c \rightarrow^* d\bigr)\Bigr)
   $  \eox
 \end{Definition}
 
@@ -741,37 +746,75 @@ Here, the relation $\rightarrow^*$ is denoted by a snakelike arrow.
     \label{fig:local-confluence.tikz}
 \end{figure}
 
+\begin{Lemma}
+  Assume that the binary relation $\prec \;\subseteq\; M \times M$ is a well-founded partial ordering and that
+  $A \subseteq M$ is a non-empty set.  Then $A$ must have a minimal element, i.e.~there is an element $m \in A$
+  such that there is no element $n \in A$ that satisfies $n \prec m$.
+\end{Lemma}
+
+\proof
+The proof is indirect.  Assume that the set $A$ has no minimal element.  We will define an infinite sequence
+$(a_n)_{n\in\mathbb{N}}$ by induction on $n$.  This sequence will satisfy the following conditions:
+\begin{enumerate}[(a)]
+\item $a_n \in A$ \quad for all $n \in \mathbb{N}$,
+\item $a_{n+1} \prec a_n$ \quad for all $n \in \mathbb{N}$.
+\end{enumerate}
+However, the second property would contradict the fact that $\prec$ is well-founded.  Therefore, if we are able
+to construct the sequence $(a_n)_{n\in\mathbb{N}}$ with the properties stated above, then our assumption that
+$A$ has no minimal element must be wrong.
+\begin{enumerate}
+\item[B.C.:] $n=0$.
+
+             Since $A$ is not empty, there is some element $x\in A$.  We pick any such $x$ and define $a_0:=x$.
+\item[I.S.:] $n \mapsto n+1$
+
+             Since we have assumed that $A$ has no minimal element, $a_n$ is not minimal.  Therefore the set
+             \\[0.2cm]
+             \hspace*{1.3cm}
+             $B := \{ y \in A \mid y \prec a_n \}$ 
+             \\[0.2cm]
+             is not empty.  We pick an arbitrary element $y$ from this set and define
+             \\[0.2cm]
+             \hspace*{1.3cm}
+             $a_{n+1} := y$.
+             \\[0.2cm]
+             Then we have both $a_{n+1} \in A$ and $a_{n+1} \prec a_n$ and hence we have constructed
+             the sequence $(a_{n})_{n\in\mathbb{N}}$ with the properties stated above.
+\end{enumerate}
+Since the existence of this infinite decreasing sequence contradicts the well-foundednes of $\prec$, our proof
+is complete. \qed
+
 \begin{Theorem}[\href{https://en.wikipedia.org/wiki/Transfinite_induction}{Transfinite Induction}]
   \hspace*{\fill} \index{transfinite induction}\\
-  Assume the relation $\rightarrow \;\subseteq\; M \times M$ is well-founded and $F(x)$ is some formula.
+  Assume the the binary relation $\prec \;\subseteq\; M \times M$ is a well-founded partial orderings and $F(x)$ is some formula.
   If we have that
   \\[0.2cm]
   \hspace*{1.3cm}
-  $\forall b \in M: \bigl( a \rightarrow^+ b \;\Rightarrow\; F(b)\bigr) \;\Rightarrow\; F(a)$ holds for all $a \in M$, \hspace*{\fill} (TI)
+  $\forall a \in M: \Bigl(\forall b \in M: \bigl( b \prec a \;\Rightarrow\; F(b)\bigr) \;\Rightarrow\; F(a)\Bigr)$, \hspace*{\fill} (TI)
   \\[0.2cm]
-  then we can conclude that $\forall a \in M: F(a)$ holds.
+  then we can conclude that $\forall c \in M: F(c)$ holds.
 \end{Theorem}
 
 \proof
-Above, $\rightarrow^+$ denotes the transitive closure of $\rightarrow$.  We call $b$ a \blue{successor} of $a$
-if $a \rightarrow^+ b$ holds.  The proof principle of transfinite induction is correct for a well-founded
-relation because, first, if $a$ has no successors $b$, then the premise of (TI) which is
+Before we start with the proof, let us put the formula given above in words.  The formula
 \\[0.2cm]
 \hspace*{1.3cm}
-$\forall b \in M: \bigl( a \rightarrow^+ b \Rightarrow F(b)\bigr)$
+$\forall b \in M: \bigl( b \prec a \;\Rightarrow\; F(b)\bigr)$
 \\[0.2cm]
-is vacuously true and hence by (TI) we know that $F(a)$ has to be true for all $a \in M$ that have no
-successors.  Now assume $F(a)$ were false for some $a \in M$.  Then there must be a successor $a_1$ of $a$ such
-that $F(a_1)$ is false because otherwise $F(a)$ would be true.  But then there must be a successor $a_2$ of
-$a_1$ such that $F(a_2)$ is false.  Proceeding in this way we can construct an infinite sequence
+expresses that $F(b)$ holds for all $b$ smaller than $a$.  The principle of transfinite induction tells us that, if
+we are able to conclude $F(a)$ for an arbitrary $a$ from the fact that $F(b)$ holds for all $b$ that are
+strictly less than $a$, then we can conclude that $F(c)$ holds for all $c \in M$.
+
+The proof that $F(c)$ holds for all $c \in M$ is indirect.  Assume that there is an $a \in M$ such that $F(a)$
+does not hold.  By the last Lemma we may furthermore assume that this $a$ is minimal w.r.t.~the ordering
+$\prec$.  But this implies that 
 \\[0.2cm]
 \hspace*{1.3cm}
-$a \rightarrow^+ a_1 \rightarrow^+ a_2 \rightarrow^+ \cdots \rightarrow^+ a_n \rightarrow^+ a_{n+1} \rightarrow
-\cdots
-$
+$\bigl\{ b \in M \mid (b \prec a \wedge \neg F(b) \bigr\} = \emptyset$,
 \\[0.2cm]
-such that $F(a_n)$ is false.  But this would contradict the well-foundedness of the relation $\rightarrow$.  Hence there can be no $a \in M$
-such that $F(a)$ is false. \qed
+Therefore, $F(b)$ holds for all $b$ less than $a$.  By the assumption \textsf{(TI)} we can conclude that $F(a)$
+holds, contradicting the assumption that $F(a)$ does not hold.
+\qed
 
 \begin{Theorem}[\href{https://en.wikipedia.org/wiki/Newman\%27s_lemma}{Newman's Lemma}] \hspace*{\fill} \\
   If the relation $\rightarrow \;\subseteq\; M \times M$ is well-founded and locally confluent, then it is
@@ -782,13 +825,28 @@ such that $F(a)$ is false. \qed
 Given any $a \in M$, we define the following formula:
 \\[0.2cm]
 \hspace*{1.3cm}
-$F(a) \;:=\; \forall b, c \in M: \bigl(a \rightarrow^* b \;\wedge\; a \rightarrow^*c \quad\Rightarrow\quad
- \exists d \in M: (b \rightarrow^* d \;\wedge\; c \rightarrow^* d)\bigr)
+$F(a) \;:=\; \forall b, c \in M: \Bigl(a \rightarrow^* b \;\wedge\; a \rightarrow^*c \quad\Rightarrow\quad
+ \exists d \in M: \bigl(b \rightarrow^* d \;\wedge\; c \rightarrow^* d\bigr)\Bigr)
 $
 \\[0.2cm]
-We  prove that $F(a)$ holds for all $a \in M$ by transfinite induction.
-Therefore, in order to prove $F(a)$ we may assume that $F(b)$ already holds for all successors $b$ of $a$.
-So let us assume that we have
+We  prove that $F(a)$ holds for all $a \in M$ by transfinite induction.  The relation $b \prec a$
+that is needed in the proof of transfinite induction is defined as $a \rightarrow^+ b$, that is we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$b \prec a$ \quad iff $a \rightarrow^+ b$.
+\\[0.2cm]
+Here, $\rightarrow^+$ is the transitive closure of $\rightarrow$, i.e.~we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$a \rightarrow^+ b$
+\\[0.2cm]
+iff there is a finite sequence $c_0$, $c_1$, $\cdots$, $c_n$, $c_{n+1}$ such that we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$a = c_0$, \quad $c_i \rightarrow c_{i+1}$ for all $i=1, \cdots,n$, \quad and \quad $c_{n+1} = b$.
+\\[0.2cm]
+Therefore, in order to prove $F(a)$ we may assume that $F(b)$ already holds for all $b$ such that
+$a \rightarrow^+ b$.  So let us assume that we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $a \rightarrow^* b$ \quad and \quad $a \rightarrow^* c$.
@@ -867,14 +925,39 @@ different elements are related and conveys the idea of the proof in a concise wa
   \label{fig:newman.pdf}
 \end{figure}
 
+
+\exercise
+Assume that $M$ is a non-empty set and that $\prec\; \subseteq M\times M$ is a well-founded partial order on $M$.
+Define the relation $\preceq$ as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \preceq y$ \quad iff \quad $x = y \vee x \prec y$.
+\\[0.2cm]
+Furthermore, assume that $f:M \rightarrow M$ has the following property:
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(x) \preceq x$ \quad for all $x \in M$
+\\[0.2cm]
+Prove that $f$ has a \blue{fixed point}, i.e.~there is an element $z \in M$ such that $f(z) = z$.
+\eoxs
+
 \section{The Knuth-Bendix Order}
 In this section we define the \blue{Knuth-Bendix order} $\prec$ on the set $\mathcal{T}_\Sigma$ of
-$\Sigma$-terms.  In order to do so, three prerequisites need to be satisfied:
+$\Sigma$-terms.
+
+\begin{Definition}[Knuth-Bendix Order] \hspace*{\fill} \\
+  Assume $\Sigma = \langle \mathcal{V}, \mathcal{F}, \mathtt{arity}\rangle$ is a signature.
+  A Knuth-Bendix order for $\Sigma$ is a pair $\langle w, < \rangle$ such that
 \begin{enumerate}
-\item We need to assign a \blue{weight} $w(f)$ to every function symbol $f$.  These weights are 
-      natural numbers.  In addition, there must be at most one function symbol $g$ such that $w(g) = 0$.
-      Furthermore, if $w(g) = 0$, then $g$ has to be unary.
-\item We need to have a \blue{strict total order} $<$ on the set of function symbols, i.e. the following
+\item $w: \mathcal{F}\rightarrow \mathbb{N}$,
+
+      i.e.~$w$ is a function assigning a natural number to every function symbol.
+      This function $w$ is called the \blue{weight function}.  Furthermore, we must have
+      \begin{enumerate}[(a)]
+      \item There must be at most one function symbol $g$ such that $w(g) = 0$.
+      \item If $w(g) = 0$, then $g$ has to be unary, i.e.~$\mathtt{arity}(g) = 0$.
+      \end{enumerate}
+\item $<$ is a \blue{strict total order} $<$ on the set of function symbols, i.e. the following
       conditions need to be satisfied:
       \begin{enumerate}[(a)]
       \item The relation $<$ is \blue{irreflexive}, that is we have $\neg (f < f)$ for all function symbols $f$.
@@ -889,32 +972,56 @@ $\Sigma$-terms.  In order to do so, three prerequisites need to be satisfied:
       \end{enumerate}
 \item The order $<$ on the function symbols has to be \blue{admissible} with respect to the weight function
       $w$, i.e. the following condition needs to be satisfied:
-   $$ w(f) = 0 \rightarrow \forall g:  \bigl(g \not=f \rightarrow g < f\bigr). $$
+      $$ w(f) = 0 \rightarrow \forall g:  \bigl(g \not=f \rightarrow g < f\bigr). $$
       To put this in words: If the function symbol $f$ has a weight of $0$, then 
       all other function symbols $g$ have to be smaller than $f$ w.r.t.~the strict order $<$.
       Note that this implies that there can be at most one function symbol with $f$ such that $w(f) = 0$. 
-      This function symbol $f$ is then the maximum w.r.t.~the order $<$.
+      This function symbol $f$ is then the maximum w.r.t.~the order $<$. \eox
 \end{enumerate}
-Given the function $w$ that assigns a weight to all function symbols, we can define the \blue{weight} $w(t)$ of a
-$\Sigma$-term $t$ by induction on $t$.
-\begin{enumerate}
-\item $w(x) := 1$ for all variables $x$,
-\item $w\bigl(f(t_1,\cdots,t_n)\bigr) := w(f) + \sum\limits_{i=1}^n w(t_i)$.
+\end{Definition} 
+
+\example
+For the signature
+$\Sigma_g = \bigl\langle  \{ w, x, y, z \}, \{ e, i, \circ \}, \{ e \mapsto 0, i \mapsto 1, \circ \mapsto 2 \}\bigr\rangle$,
+we can define
+\begin{enumerate}[(a)]
+\item $w := \{ w(e) \mapsto 1,\; w(i) \mapsto 0,\; w(\circ) \mapsto 1 \}$
+\item The relation $<$ is defined as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $e < \circ < i$.
 \end{enumerate}
-Furthermore, we define the function
-\\[0.2cm]
-\hspace*{1.3cm}
-$\texttt{count}: \mathcal{T}_\Sigma \times \mathcal{V} \rightarrow \mathbb{N}$
-\\[0.2cm]
-that takes a term $t$ and a variable $x$ and returns the number of times that $x$ occurs in $t$.
-We define $\texttt{count}(t,x)$ by induction on $t$.
-\begin{enumerate}
-\item $\texttt{count}(x, x) := 1$ for every variable $x \in \mathcal{V}$.
-\item $\texttt{count}(y, x) := 0$ if $x \not= y$ for all variables $x,y \in \mathcal{V}$.
-\item $\texttt{count}\bigl(f(t_1,\cdots,t_n), x\bigr) := \sum\limits_{i=1}^n \texttt{count}(t_i, x)$.
-\end{enumerate}
-Now we are ready to define the \blue{Knuth-Bendix order}.  Given two terms $s$ and $t$  
-we have $s \prec t$ iff one of the following two conditions hold:
+Then $\langle w, < \rangle$ is a Knuth-Bendix order. \eox
+
+\begin{Definition}[Weight of a Term]
+  If $\Sigma$ is a signature and $\langle w, < \rangle$ is a Knuth-Bendix w.r.t.~$\Sigma$ we define the  weight
+  of a term $t \in \mathcal{T}_\Sigma$ by induction on $t$.
+  \begin{enumerate}[(a)]
+  \item $w(x) := 1$ for all variables $x$,
+  \item $w\bigl(f(t_1,\cdots,t_n)\bigr) := w(f) + \sum\limits_{i=1}^n w(t_i)$. \eox
+  \end{enumerate}
+\end{Definition}
+
+\begin{Definition}[Count]
+    If $\Sigma = \langle \mathcal{V}, \mathcal{F}, \mathtt{arity} \rangle$ is a signature, then
+    we define the function
+    \\[0.2cm]
+    \hspace*{1.3cm}
+    $\texttt{count}: \mathcal{T}_\Sigma \times \mathcal{V} \rightarrow \mathbb{N}$
+    \\[0.2cm]
+    that takes a term $t$ and a variable $x$ and returns the number of times that $x$ occurs in $t$.
+    We define $\texttt{count}(t,x)$ by induction on $t$.
+    \begin{enumerate}
+    \item $\texttt{count}(x, x) := 1$ \quad for every variable $x \in \mathcal{V}$.
+    \item $\texttt{count}(y, x) := 0$ \quad if $x \not= y$ for all variables $x,y \in \mathcal{V}$.
+    \item $\texttt{count}\bigl(f(t_1,\cdots,t_n), x\bigr) := \sum\limits_{i=1}^n \texttt{count}(t_i, x)$. \eox
+    \end{enumerate}
+\end{Definition}
+
+\begin{Definition}[$\prec_{kb}$]
+  Now we are ready to define the \blue{Knuth-Bendix ordering on terms}.
+  Assume $\Sigma$ is a signature and $\langle w, < \rangle$ is a Knuth-Bendix order.
+  Given two terms $s$ and $t$ we define $s \prec_{kb} t$ iff one of the following two conditions hold:
 \begin{enumerate}
 \item $w(s) < w(t)$ and $\texttt{count}(s, x) \leq \texttt{count}(t, x)$
        for all variables $x$ occurring in  $s$.
@@ -926,20 +1033,64 @@ we have $s \prec t$ iff one of the following two conditions hold:
       \item $s = f(s_1,\cdots,s_m)$, $t=g(t_1,\cdots,t_n)$, and $f<g$.
       \item $s = f(s_1,\cdots,s_m)$, $t=f(t_1,\cdots,t_m)$, and $[s_1,\cdots,s_m] \prec_{\textrm{lex}} [t_1,\cdots,t_m]$.
      
-            Here, $\prec_{\textrm{lex}}$ denotes the \blue{lexicographic extension} of the ordering $\prec$ to
+            Here, $\prec_{\textrm{lex}}$ denotes the \blue{lexicographic extension} of the ordering $\prec_{kb}$ to
             lists of terms.  It is defined as follows:
             $$ [x] + R_1 \prec_{\textrm{lex}} [y] + R_2 \;\stackrel{_\textrm{def}}{\Longleftrightarrow}\;
-                 x \prec y \,\vee\, \bigl(x = y \wedge R_1 \prec_{\textrm{lex}} R_2\bigr)
+                 x \prec_{kb} y \,\vee\, \bigl(x = y \wedge R_1 \prec_{\textrm{lex}} R_2\bigr)
             $$
      \end{enumerate}
+     In order to remove clutter we will write $s \prec t$ instead of $s \prec_{kb} t$. \eox
+\end{enumerate}
+\end{Definition}
+
+
+
+\example
+For the signature of group theory
+$\Sigma_G = \bigl\langle \{ w, x, y, z \}, \{ e, i, \circ \}, \{ e \mapsto 0, i \mapsto 1, \circ \mapsto 2 \}\bigr\rangle$
+we define the weight function $w$ as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$w(e) := 1$, \quad $w(\circ) := 1$, \quad and \quad $w(i) := 0$.
+\\[0.2cm]
+Furthermore, we define a strict total order on the function symbols by setting
+\\[0.2cm]
+\hspace*{1.3cm}
+$e < \circ$ \quad and \quad $\circ < i$.
+\\[0.2cm]
+Then the order $<$ is admissible with respect to the weight function because the only function symbol that has
+a weight of $0$ is the largest function symbol with respect to the order $<$.
+Furthermore, we have the following:
+\begin{enumerate}[(a)]
+\item $x \prec e \circ x$,
+
+      because $w(x) = 1$, $w(e \circ x) = 3$, and $1 < 3$.
+\item $e \prec i(x) \circ x$,
+
+      because $w(e) = 1$, $w\bigl(i(x) \circ x\bigr) = 4$, and $1 < 4$
+\item $x \circ (y \circ z) \prec (x \circ y) \circ z$
+
+      because $w\bigl((x \circ y) \circ z\bigr) = 5 = w\bigl(x \circ (y \circ z)\bigr)$ and
+      $x \prec x \circ y$, since $w(x) = 1$ and $w(x \circ y) = 3$.  
+\item $i(y) \circ i(x) \prec i(x \circ y)$
+
+      because we have the following:
+      \begin{enumerate}
+      \item $w\bigl(i(y) \circ i(x)\bigr) = 3 = w\bigl(i(x \circ y)\bigr)$, 
+      \item $\mathtt{count}\bigl(i(y) \circ i(x), x\bigr) = 1 = \mathtt{count}\bigl(i(x \circ y), x\bigr)$, 
+      \item $\mathtt{count}\bigl(i(y) \circ i(x), y\bigr) = 1 = \mathtt{count}\bigl(i(x \circ y), y\bigr)$, \quad and
+      \item $\circ < i$. \eoxs
+      \end{enumerate}
 \end{enumerate}
 
+
 \begin{Theorem}
-  The Knuth-Bendix order is a rewrite order.
+  If $\langle w, < \rangle$ is a Knuth-Bendix order, then the Knuth-Bendix ordering $\prec_{kb}$ is a rewrite order.
 \end{Theorem}
 
 Proving that the Knuth-Bendix order is a strict partial order on the set $\mathcal{T}_\Sigma$ that is stable
-and a congruence can be done via induction on the structure of the terms.  The hard part of the proof is to
+and a congruence can be done via induction on the structure of the terms.  This part of the proof is tedious,
+but straightforward.  The hard part of the proof is to
 show that the Knuth-Bendix order is well-founded.  A proof is given in the book by Franz Baader and Tobias
 Nipkow \cite{baader:1998}.
 
@@ -959,7 +1110,7 @@ To begin, we define the composition of two $\Sigma$-substitutions.
     \\[0.2cm]
     \hspace*{1.3cm}
     $\sigma\tau := \{ x_1 \mapsto s_1\tau, \cdots, x_m \mapsto s_m\tau,\; y_1 \mapsto t_1, \cdots, y_n \mapsto t_n \}$
-    \eox
+    \eoxs
 \end{Definition}
 
 \example
