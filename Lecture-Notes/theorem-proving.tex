@@ -955,7 +955,7 @@ $\Sigma$-terms.
       This function $w$ is called the \blue{weight function}.  Furthermore, we must have
       \begin{enumerate}[(a)]
       \item There must be at most one function symbol $g$ such that $w(g) = 0$.
-      \item If $w(g) = 0$, then $g$ has to be unary, i.e.~$\mathtt{arity}(g) = 0$.
+      \item If $w(g) = 0$, then $g$ has to be unary, i.e.~$\mathtt{arity}(g) = 1$.
       \end{enumerate}
 \item $<$ is a \blue{strict total order} $<$ on the set of function symbols, i.e. the following
       conditions need to be satisfied:
@@ -1067,7 +1067,7 @@ Furthermore, we have the following:
       because $w(x) = 1$, $w(e \circ x) = 3$, and $1 < 3$.
 \item $e \prec i(x) \circ x$,
 
-      because $w(e) = 1$, $w\bigl(i(x) \circ x\bigr) = 4$, and $1 < 4$
+      because $w(e) = 1$, $w\bigl(i(x) \circ x\bigr) = 3$, and $1 < 3$
 \item $x \circ (y \circ z) \prec (x \circ y) \circ z$
 
       because $w\bigl((x \circ y) \circ z\bigr) = 5 = w\bigl(x \circ (y \circ z)\bigr)$ and
