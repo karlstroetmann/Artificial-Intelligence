@@ -1330,7 +1330,7 @@ $\rightarrow_R$ is locally confluent.  To understand their idea, we introduce th
 \begin{Definition}[Critical Pair] \hspace*{\fill} \\
   \index{critical pair}
   Assume we have been given the equations $l_1 \approx r_1$ and $l_2 \approx r_2$.  These equations
-  \blue{generate} a critical pair if and only if all of the following conditions hold:
+  \blue{generate} a critical pair if and only if the following conditions hold:
   \begin{enumerate}[(a)]
   \item There exists a position $u \in \Pos(l_1)$ such that $l_1/u$ is not a variable.
   \item The subterm $l_1/u$ of $l_1$ is unifiable with $l_2$.  For the following, assume that $\mu$ is a most general unifier
@@ -1375,7 +1375,7 @@ Therefore we have
 \hspace*{1.3cm}
 $\bigl((x \circ y) \circ z\bigr)\mu = \bigl(i(w) \circ w\bigr) \circ z$
 \\[0.2cm]
-and the latter term can be rewritten by the equation $i(w) \circ w \approx e$ into the term $e \circ z$,
+and the right hand side of this equations can be rewritten by the equation $i(w) \circ w \approx e$ into the term $e \circ z$,
 i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1397,7 +1397,7 @@ is a critical pair of the two equations  $(x \circ y) \circ z \approx x \circ (y
 
 \remark
 If $\langle s, t\rangle$ is a critical pair from two equations in a set $R$, then the equation $s \approx t$
-follows from $R$, i.e.~we have
+is a logical consequence of the equations from $R$, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $R \models s \approx t$. \eox
@@ -1405,7 +1405,7 @@ $R \models s \approx t$. \eox
 
 \begin{Definition}[Confluent Critical Pair] \hspace*{\fill} \\
   A critical pair $\langle s_1, s_2\rangle$ is \blue{confluent} w.r.t.~a rewrite relation $R$ iff there is a term
-  $t$ such that $t$ is in $R$-normal form and we have both
+  $t$ such that we have both
   \\[0.2cm]
   \hspace*{1.3cm}
   $s_1 \rightarrow^*_R t$ \quad and \quad   $s_2 \rightarrow^*_R t$.  
@@ -1436,7 +1436,7 @@ from $\widehat{R}$ are confluent.
 \noindent
 \textbf{Knuth-Bendix Algorithm}:  Given a set of equations $E$ the Knuth-Bendix algorithm proceeds as follows:
 \begin{enumerate}
-\item We define suitable weight for the function symbols occurring in $E$ and order the function symbols
+\item We define a suitable Knuth-Bendix order $\langle w, < \rangle$ for the function symbols occurring in $E$
       such that every equation  $(s \approx t) \in E$ can be ordered as either $s \prec t$ or $t \prec s$.
       If this is not possible, the algorithm fails.
 \item Otherwise, call $R$ the set of oriented rewrite rules that result from orienting the equations in $E$
@@ -1445,10 +1445,17 @@ from $\widehat{R}$ are confluent.
       \begin{enumerate}
       \item If all critical pairs are confluent, then the rewrite relation $\rightarrow^*_R$ is confluent
             and the algorithm is successful.
-      \item If we have found a critical pair $\langle s, t \rangle$ that is not confluent,
-            we orient the equation $s \approx t$ into a rewrite rule.  If this is impossible, the algorithm fails.
-            Otherwise, we add the oriented equation to $R$.
-            Now the set $R$ could generate additional critical pairs.
+      \item If we have found a critical pair $\langle s, t \rangle$ that is not confluent, we use the rewrite
+            rules to simplify $s$ and $t$ into terms $\widehat{s}$ and $\widehat{t}$ that are in normal form
+            with respect to $\rightarrow_r$.
+      \item Then we try to orient the equation $\widehat{s} \approx \widehat{t}$ into a rewrite rule
+            $l \approx r$ such that $r \prec l$.
+      \item If this is impossible, the algorithm fails.
+      \item Otherwise, we add the equation $l \approx r$ to $R$:
+            \\[0.2cm]
+            \hspace*{1.3cm}
+            $R := R \cup \{ l \approx r \}$.
+      \item The newly added equation could generate additional critical pairs.
             Hence we must go back to the beginning of step 3. \eod
       \end{enumerate}
 \end{enumerate}
@@ -1463,20 +1470,27 @@ The algorithm shown above can have three different outcomes:
 My GitHub repository contains the Jupyter notebook
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/4%20Automatic%20Theorem%20Proving/Knuth-Bendix-Algorithm-KBO.ipynb}{Knuth-Bendix-Algorithm-KBO.ipynb}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/4%20Automatic%20Theorem%20Proving/1-Knuth-Bendix-Algorithm-KBO.ipynb}{1-Knuth-Bendix-Algorithm-KBO.ipynb}
 \\[0.2cm]
 which contains an implementation of the Knuth-Bendix algorithm.  It also contains a number of equational
 theories $E$ where the Knuth-Bendix algorithm is successful.
 
 \example
-We test the Knuth-Bendix algorithm with the axioms of group theory.  Denoting the neutral element as $1$ and
-the multiplication as $\circ$, the axioms are:
+We test the Knuth-Bendix algorithm with the axioms of group theory.  We extend the signature of group theory to
+contain all lowercase letters
+\\[0.2cm]
+\hspace*{1.3cm}
+$a, b, c, d, e, f, g, h, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z$ 
+\\[0.2cm]
+with the exception of $i$ as variables.
+Then we have to denote the neutral element as $1$, since $e$ is now a variable.  The multiplication is still
+denoted as $\circ$, and $i(x)$ denotes the inverse of $x$.  Then the axioms are: 
 \begin{enumerate}[(a)]
 \item $1 \circ x \approx x$,
 \item $i(x) \circ x \approx 1$, and
 \item $(x \circ y) \circ z \approx x \circ (y \circ z)$.
 \end{enumerate}
-Using the Knuth-Bendix ordering described previous, we can turn these equations into rewrite rules as follows: 
+Using the Knuth-Bendix ordering described previously, we can turn these equations into rewrite rules as follows: 
 \begin{itemize}
 \item $1 \circ x \rightarrow x$,
 \item $i(x) \circ x \rightarrow 1$, and
@@ -1499,31 +1513,48 @@ new rewrite rule
 $i(a) \circ (a \circ z) \rightarrow z$.
 \\[0.2cm]
 By taking the rewrite rule $i(a) \circ (a \circ z) \rightarrow z$ and superposing the rewrite rule  $i(x) \circ x \rightarrow 1$ at
-position $[2]$ using the most general unifier $[a \mapsto i(x), z \mapsto x]$ we conclude
+position $[2]$ using the most general unifier
 \\[0.2cm]
 \hspace*{1.3cm}
-$i(i(x)) \circ (i(x) \circ x) \rightarrow x$ \quad and \quad
-$i(i(x)) \circ (i(x) \circ x) \rightarrow i(i(x)) \circ 1$. 
+$\mathtt{mgu}\bigl(i(x) \circ x, a \circ z\bigr) = \bigl[a \mapsto i(x), z \mapsto x\bigr]$ 
+\\[0.2cm]
+we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$i\bigl(i(x)) \circ (i(x) \circ x\bigr) \rightarrow x$ \quad and \quad
+$i\bigl(i(x)\bigr) \circ \bigl(i(x) \circ x\bigr) \rightarrow i\bigr(i(x)\bigr) \circ 1$. 
 \\[0.2cm]
 Hence we have found the new rewrite rule
 \\[0.2cm]
 \hspace*{1.3cm}
 $i(i(x)) \circ 1 \rightarrow x$.
 \\[0.2cm]
-By taking the rewrite rule $i(x) \circ (x \circ y) \rightarrow y$ and superposing the rewrite rule $i(a) \circ (a \circ b) \rightarrow b$
-at position $[2]$ using the most general unifier $[x \mapsto i(a), y \mapsto a \circ b]$ we conclude
+In the next step, we build a critical pair between a rule $l \rightarrow r$ and the same rule $l \rightarrow r$. 
+However, note that we hav to rename the variables in the second instand of the rule to prevent accidental name
+clashes.  We take the rewrite rule $i(x) \circ (x \circ y) \rightarrow y$ and superposing the (renamed) rewrite rule $i(a) \circ (a \circ b) \rightarrow b$
+at position $[2]$ using the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(x \circ y, i(a) \circ (a \circ b)\bigr) = \bigl[x \mapsto i(a), y \mapsto a \circ b\bigr]$.
+\\[0.2cm]
+This gives
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ \bigl(i(a) \circ (a \circ b)\bigr) \rightarrow a \circ b $ \quad and \quad
 $i\bigl(i(a)\bigr) \circ \bigl(i(a) \circ (a \circ b)\bigr) \rightarrow i\bigl(i(a)\bigr) \circ b$.
 \\[0.2cm]
-Hence we have found the new rewrite rule
+Since $a \circ b \prec i\bigl(i(a)\bigr) \circ b$ we have found the new rewrite rule
 \\[0.2cm]
 \hspace*{1.3cm}
-$i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$
+$i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$.
 \\[0.2cm]
 By taking the rewrite rule $i\bigl(i(a)\bigr) \circ b \rightarrow a \circ b$ and superposing the rewrite rule $i(i(x)) \circ 1 \rightarrow x$ at position $[]$
-using the most general unifier $[x \mapsto a, b \mapsto 1]$ we conclude  
+using the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(i(i(a)) \circ b, i(i(x)) \circ 1\bigr) = \bigl[x \mapsto a, b \mapsto 1\bigr]$ 
+\\[0.2cm]
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ 1 \rightarrow a \circ 1$ \quad and \quad
@@ -1540,7 +1571,12 @@ At this point, the rewrite rule $i\bigl(i(x)\bigr) \circ 1 \rightarrow x$ is sim
 $i\bigl(i(x)\bigr) \rightarrow x$.
 \\[0.2cm]
 By taking the rewrite rule $i(x) \circ (x \circ y) \rightarrow y$ and superposing the rewrite rule $i\bigl(i(a)\bigr) \rightarrow a$
-at position $[1]$ using the most general unifier $[x \mapsto i(a)]$, we conclude
+at position $[1]$ using the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(i(x), i(i(a))\bigr) = \bigl[x \mapsto i(a)\bigr]$,
+\\[0.2cm]
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ \bigl(i(a)\circ y\bigr) \rightarrow y$ \quad and \quad
@@ -1552,7 +1588,12 @@ Hence we have found the new rule
 $a \circ \bigl(i(a) \circ y\bigr) \rightarrow y$.
 \\[0.2cm]
 By taking the rewrite rule $i(x) \circ x \rightarrow 1$ and superposing the rewrite rule $i\bigl(i(a)\bigr) \rightarrow a$ at position
-$[1]$ using the most general unifier $[x \mapsto i(a)]$ we conclude
+$[1]$ using the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(i(x), i(i(a))\bigr) = \bigr[x \mapsto i(a)\bigr]$
+\\[0.2cm]
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i\bigl(i(a)\bigr) \circ i(a) \rightarrow 1$ \quad and \quad
@@ -1564,7 +1605,12 @@ Hence we have found the new rule
 $a \circ i(a) \rightarrow 1$.
 \\[0.2cm]
 By taking the rewrite rule $a \circ i(a) \rightarrow 1$ and superposing the rewrite rule $1 \circ x \rightarrow x$ at position $[]$ using
-the most general unifier $[a \mapsto 1, x \mapsto i(1)]$, we conclude
+the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(a \circ i(a), 1 \circ x\bigr) = \bigl[a \mapsto 1, x \mapsto i(1)\bigr]$,
+\\[0.2cm]
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $1 \circ i(1) \rightarrow 1$ \quad and \quad $1 \circ i(1) \rightarrow i(1)$.
@@ -1574,9 +1620,15 @@ Hence we have shown
 \hspace*{1.3cm}
 $i(1) \rightarrow 1$.
 \\[0.2cm]
-By taking the rewrite rule $a \circ i(a) \rightarrow 1$ and superposing the rewrite rule $(x \circ y) \circ z \rightarrow x \circ (y \circ z)$
-at position $[]$ using the most general unifier $[a \mapsto x \circ y]$,
- we conclude
+By taking the rewrite rule $a \circ i(a) \rightarrow 1$ and superposing the rewrite rule
+$(x \circ y) \circ z \rightarrow x \circ (y \circ z)$
+at position $[]$ using the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(a \circ i(a), (x \circ y) \circ z\bigr) = \bigl[a \mapsto x \circ y, z \rightarrow i(x \circ
+y\bigr]$,
+\\[0.2cm]
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $(x \circ y) \circ i\bigl(x \circ y) \rightarrow 1$ \quad and \quad
@@ -1589,7 +1641,12 @@ $x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$.
 \\[0.2cm]
 By taking the rewrite rule $a \circ \bigl(i(a) \circ b\bigr) \rightarrow b$ and superposing the rewrite rule 
 $x \circ \bigl(y \circ i(x \circ y)\bigr) \rightarrow 1$ at position $[2]$ using the most general unifier
-$[x \mapsto i(a), b \mapsto y \circ i(i(a) \circ y)]$, we conclude
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\Bigl(i(a) \circ b, x \circ \bigl(y \circ i(x \circ y)\bigr)\Bigr) =
+\Bigl[x \mapsto i(a), b \mapsto y \circ i\bigl(i(a) \circ y\bigr)\Bigr]$, 
+\\[0.2cm]
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $a \circ \Bigl(i(a) \circ \Bigl(y \circ i\bigl(i(a)\circ y\bigr)\Bigr)\Bigr) \rightarrow y \circ i\bigl(i(a)\circ y\bigr)$
@@ -1603,7 +1660,11 @@ $y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$.
 \\[0.2cm]
 By taking the rewrite rule $y \circ i\bigl(i(a)\circ y\bigr) \rightarrow a$ and superposing the rewrite rule $i\bigl(i(x)\bigr)
 \rightarrow x$ at
-position $[2, 1, 1]$ using the most general unifier $[a \mapsto i(x)]$, 
+position $[2, 1, 1]$ using the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(i(a), i(i(x)),\bigr) = \bigl[a \mapsto i(x)\bigr]$,
+\\[0.2cm]
 we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1616,13 +1677,18 @@ Hence we have found the new rule
 $y \circ i(x \circ y) \rightarrow i(x)$.
 \\[0.2cm]
 By taking the rewrite rule  $i(a) \circ (a \circ b) \rightarrow b$ and superposing the rewrite rule $y \circ i(x \circ y) \rightarrow i(x)$
-at the position $[2]$ using the most general unifier $[y \mapsto a, b \mapsto i(x \circ a)]$, we conclude
+at the position $[2]$ using the most general unifier
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{mgu}\bigl(a \circ b, y \circ i(x \circ y)\bigr) = \bigl[y \mapsto a, b \mapsto i(x \circ a)\bigr]$, 
+\\[0.2cm]
+we conclude
 \\[0.2cm]
 \hspace*{1.3cm}
 $i(a) \circ \Bigl(a \circ i\bigl(x \circ a\bigr)\Bigr) \rightarrow i(x \circ a)$ \quad and \quad
 $i(a) \circ \Bigl(a \circ i\bigl(x \circ a\bigr)\Bigr) \rightarrow i(a) \circ i(x)$.
 \\[0.2cm]
-Hence we have found the new rule
+Since $i(a) \circ i(y) \prec i(x \circ a)$ Hence we have found the new rule
 \\[0.2cm]
 \hspace*{1.3cm}
 $i(x \circ a) \rightarrow i(a) \circ i(x)$.
