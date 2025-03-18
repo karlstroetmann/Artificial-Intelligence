@@ -338,7 +338,7 @@ entire state space in memory.
     def to_list(State):
         return [list(row) for row in State]
     def to_tuple(State):
-        tuple(tuple(row) for row in State)
+        return tuple(tuple(row) for row in State)
     def find_tile(tile, State):
         n = len(State)
         for row in range(n):
