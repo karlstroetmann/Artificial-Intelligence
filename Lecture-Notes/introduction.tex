@@ -38,10 +38,32 @@ explore, demonstrating its application in solving various types of problems:
       \href{https://en.wikipedia.org/wiki/checkers}{checkers}, can be defined using a declarative
       approach. We will cover several techniques enabling computers to devise optimal strategies for these
       adversarial games. 
-\item Finally, we discuss \textcolor{blue}{automatic theorem proving}. Having previously covered
+\item We discuss \textcolor{blue}{automatic theorem proving}. Having previously covered
       \textcolor{blue}{resolution theorem proving} in our lecture on
       \href{https://github.com/karlstroetmann/Logic}{logic}, we will now turn our attention to
       \textcolor{blue}{equational theorem proving} in the final chapter of this first part. 
+\item Next, we turn to the topic of \href{https://en.wikipedia.org/wiki/Machine_learning}{machine learning}.  
+      We start by discussing \textcolor{blue}{linear regression}, since this is one of the most machine
+      learning algorithms and is also the foundation for more advanced
+      forms of machine learning like \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} and 
+      \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
+
+      The goal of linear regression is to predict the values of unknown variables from the values of known
+      variables.  For example, given the weight and the engine displacement of a car, we want to predict its
+      fuel consumption.      
+\item The following chapter discusses
+      \href{https://en.wikipedia.org/wiki/Statistical_classification}{classification}.  A good example of
+      classification is \href{https://en.wikipedia.org/wiki/Anti-spam_techniques#Detecting_spam}{spam detection}. 
+
+      In particular, we will discuss \blue{logistic regression}, since this is needed later when discussing
+      neural networks.
+\item The we discuss discuss \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{artificial neural
+      networks}.
+\item Finally, we discuss \blue{automatic differentiation}, which is a technique for computing the gradient of
+      a function that does neither rely on numeric approximation nor does it force us to compute symbolic
+      derivatives manually.   This technique is the basis for all modern libraries for neural networks,
+      i.e.~\href{https://www.tensorflow.org}{TensorFlow} and \href{https://pytorch.org}{PyTorch} rely heavily
+      on automatic differentiation.
 \end{enumerate}
 
 \section{Literature}
@@ -60,7 +82,7 @@ For exam preparation, a thorough understanding of the material covered in these 
 suffice. Therefore, purchasing additional books or enrolling in other courses is certainly not necessary.
 
 \remark
-The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.12.
+The programs presented in these lecture notes are expected to run with the \textsl{Python} version 3.14.
 I have created the Python environment that I am using for these lecture notes via the shell commands shown in
 Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
 
@@ -75,14 +97,18 @@ Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
                  xleftmargin   = 0.3cm,
                  xrightmargin  = 0.3cm,
                  ]{bash}
-    conda create -y -n ai python=3.12
+    conda create -n ai
     conda activate ai
-    pip install --upgrade pip
-    pip install notebook jupyterlab
-    pip install nbclassic
-    conda install -c anaconda -y graphviz ply seaborn scikit-learn 
-    conda install -c conda-forge -y python-graphviz matplotlib ipycanvas 
-    pip install nb_mypy
+    conda install -y -c conda-forge python=3.14
+    conda install -y -c conda-forge jupyter nbclassic
+    conda install -y -c conda-forge graphviz
+    conda install -y -c conda-forge python-graphviz
+    conda install -y -c conda-forge numpy matplotlib seaborn
+    conda install -y -c anaconda scikit-learn 
+    conda install -y -c conda-forge ipycanvas 
+    pip install ply
+    pip install mypy
+    pip install nb-mypy
     pip install z3-solver
     pip install git+https://github.com/reclinarka/problem_visuals
     pip install git+https://github.com/reclinarka/chess-problem-visuals
@@ -92,13 +118,14 @@ Figure \ref{fig:ai.sh} on page \pageref{fig:ai.sh}.
 \label{fig:ai.sh}
 \end{figure}
 
-When starting \textsl{Jupyter notebooks} you should take care to use the following command:
+When starting \textsl{Jupyter notebooks} you should take care to use the  command
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{jupyter nbclassic}
 \\[0.2cm]
-This command uses the classic version of \textsl{Jupyter notebooks}.  There are lots of incompatibilites with
-tne new \textsl{Jupyter notebooks} of version $7.x$ and I have found that new version $7.x$ do not work for me.
+instead of the command \texttt{jupyter notebook}.  The command \texttt{jupyter nbclassic} uses the classic
+version of \textsl{Jupyter notebooks}.  There are lots of incompatibilites with 
+the new \textsl{Jupyter notebooks} of version $7.x$ and I have found that they do not work for me.
 
 
 %%% Local Variables:
