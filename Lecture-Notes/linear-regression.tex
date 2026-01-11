@@ -7,7 +7,7 @@ in this chapter, since linear regression
 is one of the most basic algorithms in machine learning.  It is also the foundation for more advanced
 forms of machine learning like \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} and 
 \href{https://en.wikipedia.org/wiki/Artificial_neural_network}{neural networks}.
-Furthermore, linear regression is surprisingly powerful.  Finally, many of the fundamental problems of machine
+Furthermore, linear regression is surprisingly versatile and powerful.  Finally, many of the fundamental problems of machine
 learning can already be illustrated with linear regression.  Therefore it is only natural that we begin our
 study of machine learning with the study of linear regression.
 
@@ -33,10 +33,11 @@ $\mathbf{x} := \langle x_1, \cdots, x_m \rangle^\top$ \quad and \quad
 $\mathbf{y} := \langle y_1, \cdots, y_m \rangle^\top$.
 \\[0.2cm]
 Here, the postfix operator $^\top$ is interpreted as the
-\href{https://en.wikipedia.org/wiki/Transpose}{transposition operator}, \index{transposition operator}.
-The reason is that $\mathbf{x}$ and $\mathbf{y}$ are be column vectors, but writing them as column vectors
+\href{https://en.wikipedia.org/wiki/Transpose}{transposition operator}\index{transposition operator}.
+The reason is that $\mathbf{x}$ and $\mathbf{y}$ are column vectors, but writing them as column vectors
 would take to much space.  By using the transposition operator we are able to write these vectors in a single 
-line. 
+line.  In these lecture notes, I will write vectors using bold face.  On the blackboard I will write $\vec{x}$
+instead of $\mathbf{x}$.
 
 In linear regression, we use a \blue{linear model} \index{linear model}
 and assume that the dependent variable $y_i$ is related to the independent variable $x_i$ via an
@@ -45,8 +46,8 @@ equation of the form
 \hspace*{1.3cm}
 $y_i = \vartheta_1 \cdot x_i + \vartheta_0$.
 \\[0.2cm]
-We do not assume that this equation will hold precisely. This is because numerous factors, in addition to
-engine displacement, affect fuel consumption. For instance, the \blue{weight} of a car and its
+We do not assume that this equation will hold precisely. This is because, in addition to
+engine displacement, numerous other factors affect fuel consumption. For instance, the \blue{weight} of a car and its
 \href{https://en.wikipedia.org/wiki/Automotive_aerodynamics}{aerodynamics} undoubtedly play significant roles
 in determining fuel consumption. 
 We want to calculate those values $\vartheta_0$ and $\vartheta_1$ such that the 
@@ -120,8 +121,8 @@ $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ is minimal, then these partial derivati
 \subsection{Assessing the Quality of Linear Regression}
 Assuming we are provided with a set of $m$ observations in the form $\langle x_1, y_1\rangle, \ldots, \langle
 x_m, y_m\rangle$, and that we have calculated the parameters $\vartheta_0$ and $\vartheta_1$ as per Equation
-\ref{eq:theta0} and Equation \ref{eq:theta1}, these formulae will yield values for $\vartheta_0$ and
-$\vartheta_1$, assuming the $x_i$ values are not identical. These values define a linear model for $\mathbf{y}$
+\ref{eq:theta0} and Equation \ref{eq:theta1}, these formulas will yield values for $\vartheta_0$ and
+$\vartheta_1$, assuming the $x_i$ values are not all the same. These values define a linear model for $\mathbf{y}$
 as a function of $\mathbf{x}$. Yet, to assess the effectiveness of this linear model, we require a metric that
 quantifies its accuracy. To evaluate the quality of the linear model represented by 
 \\[0.2cm]
@@ -176,7 +177,7 @@ model: If it is small, then our model does not explain the variation of the valu
 changes.  On the other hand, if it is near to $100\%$, then our model does a good job in explaining the 
 variation of $\mathbf{y}$ when $\mathbf{x}$ changes.
 
-Since the formulae for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
+Since the formulas for $\mathtt{Var}(\mathbf{y})$ and $\mathtt{MSE}(\vartheta_0, \vartheta_1)$ have the same
 denominator $m-1$, this denominator can be cancelled when $\mathtt{R}^2$ is computed.  To this
 end we define the \blue{total sum of squares} $\mathtt{TSS}$ \index{total sum of squares} \index{TSS} as
 \\[0.2cm]

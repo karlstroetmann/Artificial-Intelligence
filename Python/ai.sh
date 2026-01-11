@@ -1,13 +1,17 @@
 conda create -n ai
 conda activate ai
-conda install -y -c conda-forge python=3.14
-conda install -y -c conda-forge jupyter nbclassic
+conda install -y python=3.13 jupyter nbclassic
+conda install -y graphviz
+conda install -y python-graphviz
+conda install -y numpy matplotlib seaborn
+conda install -y scikit-learn 
+conda install -y -c conda-forge ipycanvas 
 pip install ply
-conda install -y -c conda-forge graphviz
-conda install -y -c conda-forge python-graphviz
 pip install mypy
 pip install nb-mypy
-conda install -y -c conda-forge numpy matplotlib seaborn
+pip install z3-solver
+pip install git+https://github.com/reclinarka/problem_visuals
+pip install git+https://github.com/reclinarka/chess-problem-visuals
 
 
 
