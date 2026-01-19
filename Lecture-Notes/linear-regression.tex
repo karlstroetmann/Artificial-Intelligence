@@ -936,219 +936,138 @@ containing a similar program is available at
  blob/master/Python/5 Linear Regression/6-Linear-Regression.ipynb}}.
 
 \section{Polynomial Regression}
-\index{polynomial regression}
-Sometimes the model of linear regression is not flexible enough.  One way to extend it is to add higher order
-features.  For example, assume that we have two features $x_1$ and $x_2$ and that there is a dependent variable
-$y$ that,  can be computed from $x_1$ and $x_2$ but that depends on $x_1$ and $x_2$ in a non-linear way.
-Then, instead of having a feature matrix that just contains $x_1$ and $x_2$ we can extend the feature matrix by
-adding non-linear features like
-\\[0.2cm]
-\hspace*{1.3cm}
-$x_1^2$, $x_2^2$, and $x_1 \cdot x_2$.
-\\[0.2cm]
-Obviously, a model that is a linear combination of $x_1$, $x_2$, $x_1^2$, $x_2^2$, and $x_1 \cdot x_2$ is much
-more powerful than a model that only depends on $x_1$ and $x_2$.  An example will make things clearer.
-Assume we have a dependent variable $y$ that can be computed from an independent variable $x_1$ via the
-equation
-\\[0.2cm]
-\hspace*{1.3cm}
-$y = \sqrt{x_1}$.
-\\[0.2cm]
-Furthermore, let us assume that in our data set there is a second independent variable $x_2$ which is strongly
-linearly correlated to $x_1$.\footnote{
-  We add this second variable in order be able to show the effect of overfitting.
-}
-In our toy example we will assume that $x_2$ is $x_1$ plus some small random noise.
-Figure \ref{fig:Polynomial-Regression.ipynb} on page \pageref{fig:Polynomial-Regression.ipynb} shows a
-\textsl{Python} script that can be used to investigate this situation.
+\label{sec:polynomial_regression}
 
+Sometimes the model of linear regression is not flexible enough to capture the underlying patterns in data. One
+effective way to extend its capabilities without changing the fundamental algorithm is to add
+\blue{higher order features}\index{higher order features}.
+In general, these are products or powers of the given features. For example, assume we have a single feature
+$x$ and a dependent variable $y$. If the relationship between $x$ and $y$ is non-linear, we can extend the
+feature matrix by adding powers of $x$, such as $x^2, x^3$, etc. 
+A model of the form:
+\[
+y = w_0 + w_1 \cdot x + w_2 \cdot x^2
+\]
+is still considered a \blue{linear model} in the context of machine learning because it is linear in terms of the parameters $w_0, w_1, w_2$, even though it describes a non-linear curve (a parabola) in terms of the feature $x$. Therefore, we can still use the \blue{normal equation} to solve for the optimal weights.
 
+\subsection{Case Study: German Civil Servant Salaries}
+To illustrate this concept, we will examine a real-world dataset: the salaries of German Federal Civil
+Servants. In Germany, state employees are paid according to a table known as the
+\href{https://oeffentlicher-dienst.info/c/t/rechner/beamte/bund?id=beamte-bund-2025&matrix=1}{Bundes-Besoldungs-Ordnung}.
+The pay grades range from A3 to A16.  Typically, the salary gaps widen as one moves up the hierarchy—the jump
+from A15 to A16 is significantly larger than the jump from A3 to A4. This suggests that a simple straight line
+(linear model) might be insufficient to predict the salary based on the grade. 
+
+\subsubsection{Data Preparation}
+First, we define our dataset manually using the official values valid from April 2025. The variable \texttt{grades\_list} contains the pay grades (3 to 16), and \texttt{salary\_list} contains the corresponding maximum monthly salaries in Euro.
 
 \begin{figure}[!ht]
 \centering
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
-                firstnumber   = 1,
-                bgcolor       = sepia,
-                numbers       = left,
-                numbersep     = -0.2cm,
-                xleftmargin   = 0.0cm,
-                xrightmargin  = 0.0cm,
-              ]{python3}
-    import numpy                as np
-    import sklearn.linear_model as lm
-    
-    N  = 20                     # number of data points
-    X1 = np.array([k for k in range(N)])
-    X2 = np.array([k + 0.2 * (np.random.rand() - 0.5) for k in range(N)])
-    Y  = np.sqrt(X1)            # Y is the square root of X1
-    X1 = np.reshape(X1, (N, 1)) # turn X1 into an N x 1 matrix
-    X2 = np.reshape(X2, (N, 1)) # turn X2 into an N x 1 matrix
-    X  = np.hstack([X1, X2])    # combine X1 and X2 into an N x 2 matrix
-        
-    from sklearn.model_selection import train_test_split
-    
-    X_train, X_test, Y_train, Y_test = \
-        train_test_split(X, Y, test_size=0.2, random_state=1)
-    
-    def linear_regression(X_train, Y_train, X_test, Y_test):
-        M = lm.LinearRegression()
-        M.fit(X_train, Y_train)
-        train_score = M.score(X_train, Y_train)
-        test_score  = M.score(X_test , Y_test)
-        return M, train_score, test_score
-    
-    M, train_score, test_score = linear_regression(X_train, Y_train, X_test, Y_test)
-    
-    from sklearn.preprocessing import PolynomialFeatures
-    
-    quadratic = PolynomialFeatures(2, include_bias=False)
-    X_train_quadratic = quadratic.fit_transform(X_train)
-    X_test_quadratic  = quadratic.fit_transform(X_test)
-    quadratic.get_feature_names(['x1', 'x2'])
-    
-    M, s1, s2 = \
-        linear_regression(X_train_quadratic, Y_train, X_test_quadratic, Y_test)
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=sepia,
+    fontsize=\footnotesize,
+    linenos
+]{python}
+# Grade (A3 to A16)
+grades_list = list(range(3, 16+1))
+
+# Maximum Monthly Salary in Euro (Bund 2025)
+salary_list = [
+    3156.42, 3267.76, 3369.46, 3526.11, 3794.62, 
+    4101.79, 4411.80, 4917.77, 5458.71, 5989.42, 
+    6620.73, 7182.11, 8081.71, 8978.48
+]
 \end{minted}
-\vspace*{-0.3cm}
-\caption{Polynomial Regression}
-\label{fig:Polynomial-Regression.ipynb}
+\caption{Data entry for German Civil Servant Salaries.}
+\label{fig:salary_data}
 \end{figure}
 
-\begin{enumerate}
-\item In line 4 we set \texttt{N} to 20.  This is the number of data points that we will generate.
-\item The vector \texttt{X1} contains the numbers form 0 up to $n-1$.
-\item The vector \texttt{X2} contains the same numbers but perturbed by some random noise.
-      The function \texttt{numpy.random.rand()} returns a $[0, 1.0]$.  Therefore, the expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{0.2 * (np.random.rand() - 0.5)}
-      \\[0.2cm]
-      is a random number in the interval $[-0.1, +0.1]$.
-\item The dependent variable \texttt{Y} is the computed as the square root of the numbers in \texttt{X1}.
-\item Next, we reshape these vectors and stack them into the design matrix \texttt{X}.
-\item In line 14, we split the data into a training set and a test set.  We will not use the test data set for
-      training, but will only use it to evaluate our results in the end.  This way we make sure that our model
-      is able to \blue{generalize} from the data it has seen.
+\subsubsection{The Linear Model (Degree 1)}
+We first attempt to model this data using simple linear regression. We construct a feature matrix $X_{linear}$ where each row consists of the grade $x$ and the constant $1$ (for the bias term).
+\[
+\mathbf{x}_{\text{linear}} = [x, 1]
+\]
+We solve for the weights using the standard linear algebra library in NumPy.
 
-      In a real world situation, this dataset would be too small to be split into a training set and a test set.
-      However, in a real world situation we would have more data and I wanted to keep this example simple.
-\item Figure \ref{fig:sqrt.pdf} on page \pageref{fig:sqrt.pdf} shows the data.  The blue dots are plotted at the
-      location $(x_1, y)$, while the yellow dots are plotted at the location $(x_2, y)$.   
-\item The function $\mathtt{linear\_regression}$ takes both the training data and the test data.
-      It uses the training data to build a linear model.  Then it uses the test data to compute the proportion
-      of explained variance.
-    \item Line 24 trains a linear model from the training data and evaluates this model with the help of the test
-      data.  The proportion of the explained variance is $93\%$ for the training set, but only $88\%$ for the
-      test set.
-  
-      Figure \ref{fig:sqrt-linear.pdf} on page \pageref{fig:sqrt-linear.pdf} shows the linear model that is
-      computed by this function.
-\item In order to improve our model, we add second order features in line 28 and line 29.  These lines augment
-      the design matrix with columns that contain $x_1^2$, $x_1 \cdot x_2$, and $x_2^2$.
-\item When we train a regression model with this new design matrix, we get an explained variance of $98\%$ 
-      on the training set and $96\%$ on the test set.
-      Figure \ref{fig:sqrt-quadratic.pdf} on page \pageref{fig:sqrt-quadratic.pdf} shows the resulting model.
-\end{enumerate}
+\begin{figure}[!ht]
+\centering
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=sepia,
+    fontsize=\footnotesize,
+    linenos
+]{python}
+import numpy as np
 
-\begin{figure}[!th]
-\epsfig{file=Figures/sqrt.pdf, scale=0.8}
-\caption{$y = \sqrt{x_1}$, $x_2 = x_1 + \mathtt{noise}$.}
-\label{fig:sqrt.pdf}
+# Construct X as a list of lists: [[x, 1], ...]
+X_linear = [[x, 1.0] for x in grades_list]
+
+# Convert to NumPy arrays
+X_linear = np.array(X_linear)
+Y        = np.array(salary_list)
+
+# Solve: (X^T * X) * w = X^T * y
+w_linear = np.linalg.solve(X_linear.T @ X_linear, X_linear.T @ Y)
+
+print(f"Linear Weights: Slope={w_linear[0]:.2f}, Intercept={w_linear[1]:.2f}")
+\end{minted}
+\caption{Implementing Simple Linear Regression.}
+\label{fig:linear_implementation}
 \end{figure}
 
+The resulting $R^2$ score for this model is approximately $0.93$. While this appears high, a visual inspection
+of Figure \ref{fig:salaries.png} on page \pageref{fig:salaries.png} reveals that the model significantly
+underestimates the salaries of top-level civil servants. The linear model cannot capture the accelerating
+growth (curvature) of the salary structure. 
 
-\begin{figure}[!th]
-\epsfig{file=Figures/sqrt-linear.pdf, scale=0.8}
-\caption{Linear Regression for $y = \sqrt{x_1}$, $x_2 = x_1 + \mathtt{noise}$.}
-\label{fig:sqrt-linear.pdf}
+\subsubsection{The Polynomial Model (Degree 2)}
+To improve the model, we introduce a \textbf{quadratic term}. We hypothesize that the salary relates to the pay
+grade via a polynomial of degree 2:
+\[
+y = w_2 \cdot x^2 + w_1 \cdot x + w_0
+\]
+To implement this, we do not need a new algorithm. We simply modify how we construct our feature matrix by providing \textbf{higher order features}. We construct a new matrix $X_{poly}$ where each row contains the square of the grade, the grade itself, and the bias constant:
+\[
+\mathbf{x}_{\text{poly}} = [x^2, x, 1]
+\]
+This time, the resulting $R^2$ score is better than $0.9999\%$.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=sepia,
+    fontsize=\footnotesize,
+    linenos
+]{python}
+# Construct X as a list of lists: [[x^2, x, 1], ...]
+X_poly = [[x**2, x, 1.0] for x in grades_list]
+
+# Convert to NumPy array
+X_poly = np.array(X_poly)
+
+# Solve using Normal Equation
+w_poly = np.linalg.solve(X_poly.T @ X_poly, X_poly.T @ Y)
+
+print(f"Poly Weights: Quad={w_poly[0]:.2f}, Lin={w_poly[1]:.2f}, Bias={w_poly[2]:.2f}")
+\end{minted}
+\caption{Implementing Polynomial Regression (Degree 2).}
+\label{fig:poly_implementation}
 \end{figure}
-
-\begin{figure}[!th]
-\epsfig{file=Figures/sqrt-quadratic.pdf, scale=0.8}
-\caption{Second Order Linear Regression for $y = \sqrt{x_1}$, $x_2 = x_1 + \mathtt{noise}$.}
-\label{fig:sqrt-quadratic.pdf}
-\end{figure}
-
-Having tried second order terms, we are tempted to go further and try all terms up to the fourth order.
-If we do this, the proportion of explained variance on the training set improves to $99.99\%$.  However, on the
-test set we get a proportion of explained variance of $96\%$ which, although an improvement, 
-is much worse than the explained variance on the training set.
-Figure \ref{fig:sqrt-4.pdf} on page \pageref{fig:sqrt-4.pdf} shows the corresponding model.
-
-If we get even bolder and try all terms up to the sixth order, 
-the proportion of explained variance on the training set improves to $100\%$.  However, on the
-test set we the proportion of explained variance drops of $86.5\%$.  This is called \blue{overfitting}:
-\index{overfitting}
-Our model is now so complex that it can essentially remember all the training examples it has seen.  However,
-it is unable to generalize from these training examples.  Figure \ref{fig:sqrt-6.pdf} on page
-\pageref{fig:sqrt-6.pdf} shows the corresponding model.  We see that regression curve gets wiggly, which is
-also an indication that we are experiencing overfitting.
-
-\begin{figure}[!th]
-\epsfig{file=Figures/sqrt-4.pdf, scale=0.8}
-\caption{Fourth Order Linear Regression for $y = \sqrt{x_1}$, $x_2 = x_1 + \mathtt{noise}$.}
-\label{fig:sqrt-4.pdf}
-\end{figure}
-
-\begin{figure}[!th]
-\epsfig{file=Figures/sqrt-6.pdf, scale=0.8}
-\caption{Sixth Order Linear Regression for $y = \sqrt{x_1}$, $x_2 = x_1 + \mathtt{noise}$.}
-\label{fig:sqrt-6.pdf}
-\end{figure}
-
-\section{Ridge Regression}
-\index{ridge regression}
-In linear regression, our goal is to minimize the mean squared error that has been defined as
-\\[0.2cm]
-\hspace*{1.3cm}
-$
-  \ds
-  \mathtt{MSE}(\mathbf{w}) =
-  \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \Bigl(\bigl(\mathbf{x}^{(i)})^\top \cdot \mathbf{w}  - y^{(i)}\Bigr)^2.
-$
-\\[0.2cm]
-The previous example has shown that sometimes minimizing the mean squared error leads to overfitting.
-One way to avoid overfitting is called \blue{ridge-regression}.  Instead of minimizing the mean squared error,
-we instead minimize the expression
-\\[0.2cm]
-\hspace*{1.3cm}
-$
-  \ds
-  \mathtt{RegMSE}(\mathbf{w}) =
-  \frac{1}{m-1} \cdot \sum\limits_{i=1}^m \Bigl(\bigl(\mathbf{x}^{(i)})^\top \cdot \mathbf{w}  - y^{(i)}\Bigr)^2
-  + \lambda \cdot \mathbf{w}^2.
-$
-\\[0.2cm]
-Here, the parameter $\lambda$ is called the \blue{regularization parameter}.  \index{regularization parameter}
-If $\lambda$ is not too small,
-then minimizing $\mathtt{RegMSE}(\mathbf{w})$ forces us to find parameters $\mathbf{w}$ that are small.  This
-prevents the model from getting to complex and this prevents over-fitting.  Figure \ref{fig:sqrt-6ridge.pdf} on
-page \pageref{fig:sqrt-6ridge.pdf} show the model we get when setting $\lambda = 0.05$.  In this case the
-proportion of explained variance is $99.97\%$
-on the training set and $99.78\%$ on the test set.  This clearly shows that the model does generalize to
-example that it has not seen.
-
-The regularization parameter $\lambda$ is a so called \blue{hyper parameter} \index{hyper parameter}
- that is usually determined by
-\href{https://en.wikipedia.org/wiki/Cross-validation_(statistics)}{cross  validation}.  This sound complicated,
-but actually is very simple:  We split the training set into $k$ parts.  Then we remove one of these parts and
-train the model on the remaining $k-1$ parts.  If the training set is small, $k$ will be either $2$ or $3$. We
-use the removed part to try to find the best value for our hyper parameter by trial and error.  We do this for
-all of the $k$ parts.  In each case we might find a sightly different optimal value $\lambda_k$.  Finally, we
-take the mean $\bar{\lambda}$ of all values $\lambda_k$ that we have found in our $k$ experiments.
-Following that we use the complete training set one last time to find a model that uses the value
-$\bar{\lambda}$.  It is important to keep the test set untouched while searching for the best value of $\lambda$.
-
-
 
 
 \begin{figure}[!th]
-\epsfig{file=Figures/sqrt-6ridge.pdf, scale=0.8}
-\caption{Sixth Order Ridge Regression for $y = \sqrt{x_1}$, $x_2 = x_1 + \mathtt{noise}$.}
-\label{fig:sqrt-6ridge.pdf}
+\epsfig{file=Figures/salaries.png, scale=0.37}
+\caption{Attempting to match salaries with a linear and a quadratic model.}
+\label{fig:salaries.png}
 \end{figure}
-
 
 
 
