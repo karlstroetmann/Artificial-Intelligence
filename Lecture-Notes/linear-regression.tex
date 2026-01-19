@@ -488,7 +488,7 @@ to solve this exercise.
 In practice, it is uncommon for an observed variable $y$ to depend solely on a single variable $x$. Taking the
 example of a car's fuel consumption further, it is generally anticipated that the fuel consumption depends not
 only on the car's engine displacement but also on various other parameters. For instance, it is plausible to 
-assume that the car's mass has a  significant influences on its fuel consumption. To model such complex
+assume that the car's mass has a  significant influence on its fuel consumption. To model such complex
 relationships, we introduce the theory of \href{https://en.wikipedia.org/wiki/Linear_regression}{general linear regression}. 
 
 In the context of a \blue{general regression problem}, we are provided with a list of $m$ pairs in the form $\langle\mathbf{x}^{(i)}, y^{(i)} \rangle$, where $\mathbf{x}^{(i)} \in \mathbb{R}^p$ and $y^{(i)} \in \mathbb{R}$ for all $i \in \{1, \ldots, m\}$. The term $p$ denotes the number of \blue{features}, and the pairs are referred to as the \blue{training examples}. Our objective is to compute a linear function
@@ -553,8 +553,9 @@ Then we have
 $F(\mathbf{x}) = \mathbf{x}^\top \cdot \mathbf{w} + b = \mathbf{x}'^\top \cdot \mathbf{w}'$.
 \\[0.2cm]
 Hence, the bias has been incorporated into the weight vector at the cost of appending the number $1$ at the end of
-input vector $\mathbf{x}$.  As we want to use this simplification, from now on we assume that the input vectors
-$\mathbf{x}^{(i)}$ have all been extended so that their last component is always $1$.  Then we can just write
+input vector $\mathbf{x}$.  This is also known as the \blue{bias trick}\index{bias trick} or
+\blue{homogenization}\index{homogenization}.  As we want to use this simplification, from now on we assume that
+the input vectors $\mathbf{x}^{(i)}$ have all been extended so that their last component is always $1$.  Then we can just write
 $\mathbf{x}$ and $\mathbf{w}$ instead of $\mathbf{x}'$ and $\mathbf{w}'$.  Using this simplification,  we define the
 function $F$ as
 \\[0.2cm]
@@ -598,9 +599,9 @@ $X \cdot \mathbf{w} - \mathbf{y} = \left(
   \end{array}
   \right) \cdot \mathbf{w} - \mathbf{y} = \left(
   \begin{array}{c}
-    \bigl(\mathbf{x}^{(1)}\bigr)^\top \cdot \mathbf{w} - y_1 \\
+    \bigl(\mathbf{x}^{(1)}\bigr)^\top \cdot \mathbf{w} - y^{(1)} \\
     \vdots                         \\
-    \bigl(\mathbf{x}^{(m)}\bigr)^\top \cdot \mathbf{w} - y_m
+    \bigl(\mathbf{x}^{(m)}\bigr)^\top \cdot \mathbf{w} - y^{(m)}
   \end{array}
   \right)
 $
