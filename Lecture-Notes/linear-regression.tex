@@ -1110,6 +1110,184 @@ contains various data about professional basket ball players.
 To what extend can you predict the weight of a player given his height and his age?
 \eox
 
+\section{Overfitting and Underfitting in Linear Regression}
+
+In machine learning, our primary goal is not merely to do well on the data we have seen (the training data),
+but to generalize to new data we have not seen (the test data). When building regression models, we often
+encounter two primary failure modes: 
+\begin{enumerate}
+\item \textbf{Underfitting (High Bias):} This occurs when the model is too simple to capture the underlying
+      structure of the data. For example, trying to fit a straight line to a parabolic curve. The model
+      performs poorly on both the training set and the test set. 
+\item \textbf{Overfitting (High Variance):} This occurs when the model is too complex relative to the
+      amount of training data. The model begins to "memorize" the random noise and fluctuations in the training
+      set rather than learning the true signal. As a result, it performs exceptionally well on the training
+      data but fails to generalize, leading to poor performance on the test set. 
+\end{enumerate}
+To illustrate these concepts, we analyze a real-world dataset using the Python library
+\texttt{scikit-learn}. The corresponding Jupyter Notebook is \texttt{9-Overfitting-SK.ipynb}. 
+
+\section{Case Study: Baseball Player Salaries}
+We utilize the \textbf{Hitters} dataset, which contains statistics for Major League Baseball players (e.g.,
+hits, runs, years in the league) and their salaries. Our objective is to predict a player's salary based on
+these statistics.  To demonstrate overfitting, we will simulate a \emph{low data} scenario where the number of
+features is high relative to the number of training examples. We will incrementally add features to our model
+and observe the divergence between training performance and test performance. 
+
+\subsection{Data Preprocessing}
+First, we load the data using \texttt{pandas}. We perform necessary cleaning steps, such as removing columns that are not useful (like row names), dropping rows with missing salary information, and converting categorical variables (like League or Division) into numerical values using One-Hot Encoding.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=sepia,
+    fontsize=\footnotesize,
+    linenos
+]{python}
+import pandas as pd
+
+# Load DataFrame and drop unrelated index column
+df = pd.read_csv("Hitters.csv")
+df = df.drop(columns=["rownames"])
+
+# Drop rows where the target 'Salary' is missing
+df = df.dropna(subset=['Salary'])
+
+# Convert categorical variables to numeric (0/1)
+df = pd.get_dummies(df, drop_first=True)
+\end{minted}
+\caption{Data loading and preprocessing.}
+\label{fig:preprocessing}
+\end{figure}
+
+\subsection{Feature Selection by Importance}
+To see the effect of model complexity clearly, we do not add features randomly. Instead, we first determine
+which features are most predictive. We calculate the correlation of every feature with the target variable
+(\texttt{Salary}) and sort them by their absolute value. 
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=sepia,
+    fontsize=\footnotesize,
+    linenos
+]{python}
+# Calculate correlation of all columns with 'Salary'
+correlations = df.corr()['Salary'].abs().sort_values(ascending=False)
+
+# Drop 'Salary' itself from the list to get feature list
+sorted_features = correlations.drop('Salary').index.tolist()
+\end{minted}
+\caption{Sorting features by correlation importance.}
+\label{fig:sorting}
+\end{figure}
+
+\subsubsection{Splitting the Data}
+We split our data into a training set and a test set using the function \texttt{train\_test\_split} from
+\texttt{scikit-learn}. 
+\begin{itemize}
+\item \textbf{Training Set:} Used to calculate the model weights. We intentionally restrict this to only
+      \textbf{50 samples} to make overfitting more likely. 
+\item \textbf{Test Set:} Used strictly for evaluation.
+\end{itemize}
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=sepia,
+    fontsize=\footnotesize,
+    linenos
+]{python}
+from sklearn.model_selection import train_test_split
+
+X = df[sorted_features]
+y = df['Salary']
+
+# Split: 50 samples for training, rest for testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=50, random_state=42)
+\end{minted}
+\caption{Creating a small training set to induce overfitting.}
+\label{fig:splitting}
+\end{figure}
+
+\subsection{The Experiment}
+We now perform an iterative experiment. We start by training a model with only the single most important
+feature. Then, we train a model with the top 2 features, then top 3, and so on, until we use all available
+features.  For each iteration, we use the \texttt{LinearRegression} class from \texttt{scikit-learn}. We use
+the \texttt{.fit()} method to train the model and the \texttt{.score()} method to calculate the $R^2$
+(coefficient of determination). 
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=sepia,
+    fontsize=\footnotesize,
+    linenos
+]{python}
+from sklearn.linear_model import LinearRegression
+
+train_scores = []
+test_scores = []
+num_features = []
+
+# Loop from k=1 to all features
+for k in range(1, len(sorted_features) + 1):
+    top_k_features = sorted_features[:k]
+    
+    # Subset the data
+    X_train_k = X_train[top_k_features]
+    X_test_k  = X_test[top_k_features]
+    
+    # Initialize and Train
+    model = LinearRegression()
+    model.fit(X_train_k, y_train)
+    
+    # Record Scores
+    train_scores.append(model.score(X_train_k, y_train))
+    test_scores.append(model.score(X_test_k, y_test))
+    num_features.append(k)
+\end{minted}
+\caption{Iteratively training models with increasing complexity.}
+\label{fig:experiment_loop}
+\end{figure}
+
+\subsection{Results and Interpretation}
+When we plot the training and test scores against the number of features, we observe a classic overfitting pattern:
+\begin{enumerate}
+\item \textbf{Training Score (Blue Line):} This score generally increases as we add more features. With enough
+      features, the model has enough degrees of freedom to fit the specific 50 data points in the training set
+      almost perfectly. 
+\item \textbf{Test Score (Red Line):} Initially, the score increases as we add relevant information (features
+      strongly correlated with salary). However, after a certain point (the "Sweet Spot"), adding more features
+      causes the test score to drop. 
+\end{enumerate}
+Figure \ref{fig:overfitting.png} on page \pageref{fig:overfitting.png} shows the results.
+The drop in the test score indicates that the model has started to overfit. The "less important" features added
+later in the loop (which have low correlation with salary) are essentially noise. The model uses these features
+to "explain" the random quirks of the small training set, which harms its ability to predict salaries for
+players in the test set. 
+
+This experiment demonstrates that \textbf{more features are not always better}. A simpler model (with fewer,
+higher-quality features) often generalizes better than a complex model. 
+
+\begin{figure}[!th]
+\epsfig{file=Figures/overfitting.png, scale=0.37}
+\caption{The effect of overfitting.}
+\label{fig:overfitting.png}
+\end{figure}
+
 
 
 %%% Local Variables:
