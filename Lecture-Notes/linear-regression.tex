@@ -950,13 +950,37 @@ y = w_0 + w_1 \cdot x + w_2 \cdot x^2
 \]
 is still considered a \blue{linear model} in the context of machine learning because it is linear in terms of the parameters $w_0, w_1, w_2$, even though it describes a non-linear curve (a parabola) in terms of the feature $x$. Therefore, we can still use the \blue{normal equation} to solve for the optimal weights.
 
+\begin{figure}[!ht]
+  \begin{center}
+    \epsfig{file=Figures/gehaltstabelle.png, scale=0.50}    
+  \end{center}
+
+\caption{Salary table for civil servants in Germany.}
+\label{fig:gehaltstabelle.png}
+\end{figure}
+
 \subsection{Case Study: German Civil Servant Salaries}
 To illustrate this concept, we will examine a real-world dataset: the salaries of German Federal Civil
 Servants. In Germany, state employees are paid according to a table known as the
 \href{https://oeffentlicher-dienst.info/c/t/rechner/beamte/bund?id=beamte-bund-2025&matrix=1}{Bundes-Besoldungs-Ordnung}.
-The pay grades range from A3 to A16.  Typically, the salary gaps widen as one moves up the hierarchy—the jump
+The pay grades range from A3 to A16.  The monthly salaries are shown in Figure \ref{fig:gehaltstabelle.png} on
+page \pageref{fig:gehaltstabelle.png}.  The columns correspond to the length of service (\emph{Dienstalter}).
+A plot of the data for a given pay grade with the highest length of service are shown in Figure \ref{fig:gehaltsplot.png}
+on page \pageref{fig:gehaltsplot.png}.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \epsfig{file=Figures/gehaltsplot.png, scale=0.32}    
+  \end{center}
+
+\caption{Salaries for civil servants w.r.t.~to pay grade.}
+\label{fig:gehaltsplot.png}
+\end{figure}
+
+Typically, the salary gaps widen as one moves up the hierarchy—the jump
 from A15 to A16 is significantly larger than the jump from A3 to A4. This suggests that a simple straight line
-(linear model) might be insufficient to predict the salary based on the grade. 
+(linear model) might be insufficient to predict the salary based on the grade.
+\pagebreak
 
 \subsubsection{Data Preparation}
 First, we define our dataset manually using the official values valid from April 2025. The variable \texttt{grades\_list} contains the pay grades (3 to 16), and \texttt{salary\_list} contains the corresponding maximum monthly salaries in Euro.
@@ -974,7 +998,7 @@ First, we define our dataset manually using the official values valid from April
 # Grade (A3 to A16)
 grades_list = list(range(3, 16+1))
 
-# Maximum Monthly Salary in Euro (Bund 2025)
+# Maximum Monthly Salary in Euro 
 salary_list = [
     3156.42, 3267.76, 3369.46, 3526.11, 3794.62, 
     4101.79, 4411.80, 4917.77, 5458.71, 5989.42, 
@@ -1035,7 +1059,7 @@ To implement this, we do not need a new algorithm. We simply modify how we const
 \[
 \mathbf{x}_{\text{poly}} = [x^2, x, 1]
 \]
-This time, the resulting $R^2$ score is better than $0.9999\%$.
+This time, the resulting $R^2$ score is better than $0.9993\%$.
 
 \begin{figure}[!ht]
 \centering
