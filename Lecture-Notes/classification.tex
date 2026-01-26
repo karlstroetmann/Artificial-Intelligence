@@ -41,13 +41,13 @@ $\mathtt{feature}: S \times \{ 1, \cdots, D \} \rightarrow \mathbb{R}$
 such that $\mathtt{feature}(o, j)$ computes the $j$-th feature and we have to be able to implement
 this function with reasonable efficiency.  In general, the values of the features are real values.
 However, there are cases where these values are just 
-Booleans.  If
+Boolean values.  If
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{feature}(o, j) \in \mathbb{B}$ \quad for all $o \in S$,
 \\[0.2cm]
 then the $j$-th feature is called a \blue{binary feature}.  \index{binary feature}
-If we encode $\mathtt{false}$ as $-1$ and $\mathtt{true}$ as
+If we encode $\mathtt{False}$ as $-1$ and $\mathtt{True}$ as
 $+1$, then the set of Boolean values $\mathbb{B}$ can be considered a subset of $\mathbb{R}$ and hence Boolean features can be considered
 as real numbers.  For example, in the case of spam detection, the first feature
 could be the occurrence of the string ``\texttt{pharmacy}''.  In this case, we would have
