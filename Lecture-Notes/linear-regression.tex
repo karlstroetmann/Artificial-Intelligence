@@ -1151,41 +1151,94 @@ encounter two primary failure modes:
 To illustrate these concepts, we analyze a real-world dataset using the Python library
 \texttt{scikit-learn}. The corresponding Jupyter Notebook is \texttt{9-Overfitting-SK.ipynb}. 
 
-\section{Case Study: Baseball Player Salaries}
 We utilize the \textbf{Hitters} dataset, which contains statistics for Major League Baseball players (e.g.,
 hits, runs, years in the league) and their salaries. Our objective is to predict a player's salary based on
 these statistics.  To demonstrate overfitting, we will simulate a \emph{low data} scenario where the number of
 features is high relative to the number of training examples. We will incrementally add features to our model
-and observe the divergence between training performance and test performance. 
+and observe the divergence between \blue{training performance} and \blue{test performance}. 
 
 \subsection{Data Preprocessing}
 First, we load the data using \texttt{pandas}. We perform necessary cleaning steps, such as removing columns that are not useful (like row names), dropping rows with missing salary information, and converting categorical variables (like League or Division) into numerical values using One-Hot Encoding.
 
 \begin{figure}[!ht]
-\centering
-\begin{minted}[
-    frame=lines,
-    framesep=2mm,
-    baselinestretch=1.2,
-    bgcolor=sepia,
-    fontsize=\footnotesize,
-    linenos
-]{python}
-import pandas as pd
-
-# Load DataFrame and drop unrelated index column
-df = pd.read_csv("Hitters.csv")
-df = df.drop(columns=["rownames"])
-
-# Drop rows where the target 'Salary' is missing
-df = df.dropna(subset=['Salary'])
-
-# Convert categorical variables to numeric (0/1)
-df = pd.get_dummies(df, drop_first=True)
+  \centering
+  \begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = 1,
+                bgcolor       = sepia,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
+    import pandas as pd
+    
+    df = pd.read_csv("Hitters.csv")
+    df = df.drop(columns=["rownames"])
+    df = df.dropna(subset=['Salary'])
+    df = pd.get_dummies(df, drop_first=True)
 \end{minted}
 \caption{Data loading and preprocessing.}
-\label{fig:preprocessing}
+\label{fig:preprocessing-hitters}
 \end{figure}
+
+We discuss the important lines of the code fragment in Figure \ref{fig:preprocessing-hitters}.
+\begin{enumerate}
+\item Line 4 creates a \blue{data frame} containing the data from the file \texttt{Hitters.csv}.
+\item Line 5 removes the column with the title ``\texttt{rownames}'' as this column contains the names of the
+      players.
+\item Line 6 removes those columns where the attribute ``\texttt{Salary}'' is missing.
+\item Line 7 is the most important line.  Some of the columns have non-numerical entries.  For example,
+      there is a column with the attribute ``\texttt{League}''.  There are two leagues in American baseball:
+      \begin{enumerate}[(a)]
+      \item The \blue{American League} is often referred to as the ``Junior Circuit''. 
+      \item The \blue{National League} was historically the first baseball league and is therefore
+            referred to as the ``Senior Circuit''.
+      \end{enumerate}
+      In the hitters dataset, the values are represented as the values ``\texttt{A}'' and ``\texttt{N}''.
+      Furthermore, there are three divisions in American baseball:
+      \begin{enumerate}
+      \item The ``\texttt{East Divison}'',
+      \item the ``\texttt{Central Divison}'',
+      \item the ``\texttt{West Divison}'' divison.
+      \end{enumerate}
+      In the hitters dataset, the values are represented as the values ``\texttt{E}'', ``\texttt{C}'', and ``\texttt{W}''.
+
+      The purpose of the method \texttt{pd.get\_dummies} is to transform these attributes into numerical
+      values.  This is done using \blue{one hot encoding}\index{one hot encoding}.  We explain how this
+      procedure works by example of the attribute ``\texttt{Divison}''.  First, for each of the three values of
+      this attribute \texttt{pd.get\_dummies} adds a column to the dataframe \texttt{df} that encodes, whether
+      the corresponding attribute is set.  Therefore the new dataframe will have three new columns with the attributes
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Divison\_E}, \texttt{Divison\_C}, and \texttt{Divison\_W}.
+      \\[0.2cm]
+      If the value of the attribute \texttt{Divison} was ``\texttt{C}'' for a player, then the values of
+      these new attributes are set to the binary values
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{0}, \texttt{1}, and \texttt{0}
+      \\[0.2cm]
+      respectively, because the player is not in the East Divison, hence $\texttt{Divison\_E} = 0$,
+      he is in the Central Divison, hence $\texttt{Divison\_C} = 1$, and he is not in the West Divison, hence
+      $\texttt{Divison\_W} = 0$.
+
+      Observe that the column ``\texttt{Divison\_E}'' is redundant.  Once we know whether a player is in the
+      West Divison or in the Central Divison, we know he can't be in the East Divison.  Similarly, if a player
+      is neither in the West Divison nor in the Central Divison, he must be in the East Divison.  Therefore,
+      the column ``\texttt{Divison\_E}'' is automatically dropped by the method \texttt{pd.get\_dummies},
+      because we have added the argument ``\texttt{drop\_first=True}'' to the call of the method
+      \texttt{df.get\_dummies}.
+
+      Actually, in the data set there is no player from the Central Divison.  Therefore, there is only one
+      divison and and hence the resulting data frame only contains the attribute \texttt{Divison\_W}.
+      I have included the discussion above only to illustrate the concept of \emph{one hot encoding}.
+      
+      The same transformation is performed for the attribute ``\texttt{League}''.  Since there are only two
+      values for this attribute, the attribute  ``\texttt{League}'' is replaced by the attribute
+      ``\texttt{League\_N}'' which is $1$ if the player is playing in the National League and $0$ if he is
+      playing in the American League.
+\end{enumerate}
 
 \subsection{Feature Selection by Importance}
 To see the effect of model complexity clearly, we do not add features randomly. Instead, we first determine
