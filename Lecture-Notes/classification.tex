@@ -122,7 +122,7 @@ this case, we have
 \hspace*{1.3cm}
 $\mathtt{model}(\mathbf{x}) = \mathtt{model}(\mathbf{x},\,\mathbf{w})$
 \\[0.2cm]
-where $\mathbf{x}$ is the vector of features, while $\mathbf{w}$ is the vector of weights.  Later, when we
+where $\mathbf{x}$ is the feature vector, while $\mathbf{w}$ is the weight vector.  Later, when we
 introduce \blue{logistic regression}, we will assume that the number of weights is one more than the number of
 features.  Then, the weights specify the relative importance of the different features. Furthermore, there will
 be a weight that is interpreted as a \blue{bias term}. \index{bias term}
@@ -142,7 +142,7 @@ hundred percent accurate would have to include the following forces:
 \item tidal forces, i.e.~the effects that the rotation of the earth has on moving objects,
 \item celestial forces, i.e.~the gravitational acceleration caused by celestial objects like the moon or the
       sun.
-\item In the case of a metallic object we have to be aware of the magnetic forces
+\item In the case of an iron object we have to be aware of the magnetic forces
       caused by the \href{https://www.britannica.com/science/geomagnetic-field}{geomagnetic field}.
 \item To be fully accurate, we might have to include corrections from relativistic physics and even quantum
       physics.   
@@ -184,7 +184,7 @@ from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we defin
       \hspace*{1.3cm}
       $X=(x_{i,j})_{i\in\{1,\cdots,N\} \atop j \in \{1,\cdots,D\}.}$
       \\[0.2cm]
-      The matrix $X$ is similar to the \blue{design matrix} that was introduced in the previous chapter.
+      The matrix $X$ is similar to the \blue{feature matrix} that was introduced in the previous chapter.
 \item $y_i := \mathtt{classify}(o_i)$ \quad for all $i \in \{1, \cdots, N\}$
 
       i.e.~$y_i$ is the class of the $i$-th object.  These number are collected into the $N$-dimensional column vector $\mathbf{y}$.
@@ -630,8 +630,9 @@ class, given its features $\mathbf{x}$ and the weights $\mathbf{w}$.  The expres
 i.e. we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{x} \cdot \mathbf{w} = \sum\limits_{i=1}^D x_i \cdot w_i$.
-\\[0.2cm] 
+$\mathbf{x} \cdot \mathbf{w} = \sum\limits_{i=1}^D x_i \cdot w_i$,
+\\[0.2cm]
+where $D$ is the number of features.
 To simplify the notation, it is assumed that $\mathbf{x}$ contains a \blue{constant feature} \index{constant feature}
 that always takes the value of $1$.
 If you see this model for the first time, you might think that it is not very general and that it can only be
@@ -753,7 +754,8 @@ $\ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot
 \quad for all $j \in \{1, \cdots, D\}$.
 \\[0.2cm]
 These are $D$ equations for the $D$ variables $w_1, \cdots, w_D$.  Due to the occurrence of the sigmoid function, these
-equations are nonlinear.  We can not solve these equations explicitly.  Nevertheless, our computation of the
+equations are nonlinear.  Unfortunately, these equations do not have a solution in closed terms.  Nevertheless,
+our computation of the 
 gradient of the log-likelihood was not in vain:  We will use the method of \blue{gradient ascent} to find
 the value of $\mathbf{w}$ that maximizes the log-likelihood.  This method has been outlined in the previous section.
 
@@ -1175,6 +1177,8 @@ logistic regression classifier with the help of the SciKit-Learn package.
       hours and has an IQ of $q$, will pass the exam, is given as 
       $$ P(Y=1|h,q) = S(\vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q) $$
       In general, the model predicts that she will pass the exam if
+      $$ S(\vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q) \geq \frac{1}{2} $$
+      and that is the case if and only if
       $$ \vartheta_0 + \vartheta_1 \cdot h + \vartheta_2 \cdot q \geq 0. $$
       This can be rewritten as follows:
       $$  q \geq -\frac{\vartheta_0 + \vartheta_1 \cdot h}{\vartheta_2}. $$
@@ -1206,9 +1210,9 @@ logistic regression classifier with the help of the SciKit-Learn package.
  \end{enumerate}
 The jupyter notebook containing the computation discussed previously can be found at my \href{https://github.com/karlstroetmann/Artificial-Intelligence}{github repository}:
 \\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Logistic-Regression-with-SciKit-Learn.ipynb}
-{Artificial-Intelligence/blob/master/Python/Logistic-Regression-with-SciKit-Learn.ipynb}
+\hspace*{0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/6 Classification/04-Logistic-Regression-with-SciKit-Learn.ipynb}
+{Artificial-Intelligence/Python/6 Classification/04-Logistic-Regression-with-SciKit-Learn.ipynb}
 
 \exercise 
 The file \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/iris.csv}{iris.csv}
@@ -1238,6 +1242,10 @@ accuracy of your model.  To this end, the function
 might be useful.  Once you have created these classifiers, proceed to implement a classifier that inputs a
 feature vector and that outputs the class of the iris flower as a string.  If you do this correctly, you can
 achieve an accuracy that exceeds $95\%$.
+
+You should also plot the data and the decision boundary.  Since we now have four features, you need to restrict
+yourself to use only two of the features.  The most important features are \emph{petal length} and \emph{petal width}.
+
 \eox
 
 \section{Polynomial Logistic Regression}
