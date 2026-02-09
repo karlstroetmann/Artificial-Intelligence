@@ -1718,9 +1718,6 @@ implementation.
         for file_name in os.listdir(directory):
             Words.update(get_common_words(directory + file_name))
         return Words
-
-    spam_counter = count_commmon_words(spam_dir_train)
-    ham__counter = count_commmon_words(ham__dir_train)
 \end{minted}
 
 \caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{I}}
@@ -1801,6 +1798,9 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
               ]{python3}
+    spam_counter = count_commmon_words(spam_dir_train)
+    ham__counter = count_commmon_words(ham__dir_train)
+                
     Spam_Probability = {}
     Ham__Probability = {}
     for w in Common_Words:
@@ -1827,7 +1827,23 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
         p_spam = math.exp(log_p_spam + alpha) * spam_prior
         p_ham  = math.exp(log_p_ham  + alpha) * ham__prior
         return p_spam / (p_spam + p_ham)
+\end{minted}
+    
+\caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{II}}
+\label{fig:Spam-Detection.ipynb-2}
+\end{figure}
 
+\begin{figure}[!ht]
+\centering
+
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                firstnumber   = last,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+              ]{python3}
     def precission_recall(spam_dir, ham_dir):
         TN = 0 # true negatives
         FP = 0 # false positives
@@ -1849,8 +1865,8 @@ The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detectio
         return precision, recall, accuracy
 \end{minted}
     
-\caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{II}}
-\label{fig:Spam-Detection.ipynb-2}
+\caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{III}}
+\label{fig:Spam-Detection.ipynb-3}
 \end{figure}
 
 
