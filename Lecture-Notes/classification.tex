@@ -90,7 +90,7 @@ Having defined the features, we next need a \blue{model} of the function \texttt
 function \texttt{classify} via the features.  This model is given by a function
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathtt{model}: \mathbb{R}^D \rightarrow C$
+$\mathtt{model}: \mathbb{R}^d \rightarrow C$
 \\[0.2cm]
 such that
 \\[0.2cm]
@@ -171,23 +171,23 @@ number of mistakes we make on the training set is minimized.
 \subsection{Notation}
 We conclude this introductory section by fixing some notation.  Let us assume that the objects $o \in S_\textsl{train}$
 are numbered 
-from $1$ to $N$, while the features are numbered from $1$ to $D$.  Then we define
+from $1$ to $n$, while the features are numbered from $1$ to $d$.  Then we define
 \begin{enumerate}
-\item $\textbf{x}_i := \langle\mathtt{feature}(o_i, 1), \cdots, \mathtt{feature}(o_i, D)\rangle^\top$ \quad for all $i \in \{1, \cdots, N\}$.
+\item $\textbf{x}_i := \langle\mathtt{feature}(o_i, 1), \cdots, \mathtt{feature}(o_i, d)\rangle^\top$ \quad for all $i \in \{1, \cdots, n\}$.
   
       i.e.~$\mathbf{x}_i$ is a $D$-dimensional column vector that collects the features of the $i$-th training object.
-\item $x_{i,j} := \mathtt{feature}(o_i, j)$ \quad for all $i \in \{1, \cdots, N\}$ and $j \in \{1, \cdots, D\}$.
+\item $x_{i,j} := \mathtt{feature}(o_i, j)$ \quad for all $i \in \{1, \cdots, n\}$ and $j \in \{1, \cdots, d\}$.
 
       i.e.~$x_{i,j}$ is the $j$-th feature of the $i$-th object.  The numbers $x_{i,j}$ are combined into the
       \blue{feature matrix} $X$, \index{feature matrix} i.e.~we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $X=(x_{i,j})_{i\in\{1,\cdots,N\} \atop j \in \{1,\cdots,D\}.}$
+      $X=(x_{i,j})_{i\in\{1,\cdots,n\} \atop j \in \{1,\cdots,d\}.}$
       \\[0.2cm]
       The matrix $X$ is similar to the \blue{feature matrix} that was introduced in the previous chapter.
-\item $y_i := \mathtt{classify}(o_i)$ \quad for all $i \in \{1, \cdots, N\}$
+\item $y_i := \mathtt{classify}(o_i)$ \quad for all $i \in \{1, \cdots, n\}$
 
-      i.e.~$y_i$ is the class of the $i$-th object.  These number are collected into the $N$-dimensional column vector $\mathbf{y}$.
+      i.e.~$y_i$ is the class of the $i$-th object.  These number are collected into the $n$-dimensional column vector $\mathbf{y}$.
 \end{enumerate}
 
 \subsection{Applications of Classification}
@@ -630,7 +630,7 @@ class, given its features $\mathbf{x}$ and the weights $\mathbf{w}$.  The expres
 i.e. we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$\mathbf{x} \cdot \mathbf{w} = \sum\limits_{i=1}^D x_i \cdot w_i$,
+$\mathbf{x} \cdot \mathbf{w} = \sum\limits_{i=1}^d x_i \cdot w_i$,
 \\[0.2cm]
 where $D$ is the number of features.
 To simplify the notation, it is assumed that $\mathbf{x}$ contains a \blue{constant feature} \index{constant feature}
@@ -664,7 +664,7 @@ $\mathbf{X} := \left(
   \begin{array}{c}
     \bigl(\mathbf{x}^{(1)}\bigr)^\top  \\
     \vdots                         \\
-    \bigl(\mathbf{x}^{(m)}\bigr)^\top
+    \bigl(\mathbf{x}^{(n)}\bigr)^\top
   \end{array}
   \right).   
 $
@@ -677,7 +677,7 @@ probabilities have to be multiplied to compute the overall likelihood $\ell(\mat
 of a given training set:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \ell(\mathbf{X},\mathbf{y},\mathbf{w}) = \prod\limits_{i=1}^N P(y_i \;|\;\mathbf{x}_i,\mathbf{w})$.
+$\ds \ell(\mathbf{X},\mathbf{y},\mathbf{w}) = \prod\limits_{i=1}^n P(y_i \;|\;\mathbf{x}_i,\mathbf{w})$.
 \\[0.2cm]
 Since it is easier to work with sums than with products, instead of maximizing the function
 $\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ we instead maximize the logarithm of
@@ -697,8 +697,8 @@ the natural logarithm of the likelihood is
 \hspace*{1.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
 $\ds \ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) = 
- \sum\limits_{i=1}^N \ln\Bigl(S\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)\Bigr) =
- \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
+ \sum\limits_{i=1}^n \ln\Bigl(S\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)\Bigr) =
+ \sum\limits_{i=1}^n L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
 $.}}}
 \\[0.2cm]
 Our goal is to choose the weights $\mathbf{w}$ such that the likelihood is maximized.  Since this is the same as maximizing the log-likelihood, we
@@ -706,7 +706,7 @@ need to determine the gradient of the log-likelihood with respect to the weights
 the partial derivatives
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ \quad for all $j\in\{1,\cdots,D\}$.
+$\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ \quad for all $j\in\{1,\cdots,d\}$.
 \\[0.2cm]
 In order to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ with respect to the
 coefficients $\mathbf{w}$ we need to compute the partial derivative of the dot product $\mathbf{x}_i \cdot
@@ -714,15 +714,15 @@ coefficients $\mathbf{w}$ we need to compute the partial derivative of the dot p
 We define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds h(\mathbf{w}) := \mathbf{x}_i \cdot \mathbf{w} = \sum\limits_{k=1}^D x_{i,k} \cdot w_k$.
+$\ds h(\mathbf{w}) := \mathbf{x}_i \cdot \mathbf{w} = \sum\limits_{k=1}^d x_{i,k} \cdot w_k$.
 \\[0.2cm]
 Then we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \frac{\partial\quad}{\partial\, w_j} h(\mathbf{w})
-   = \frac{\partial\quad}{\partial\, w_j} \sum\limits_{k=1}^D x_{i,k} \cdot w_k
-   = \sum\limits_{k=1}^D x_{i,k} \cdot \frac{\partial\quad}{\partial\, w_j} w_k
-   = \sum\limits_{k=1}^D x_{i,k} \cdot \delta_{j,k} =  x_{i,j}
+   = \frac{\partial\quad}{\partial\, w_j} \sum\limits_{k=1}^d x_{i,k} \cdot w_k
+   = \sum\limits_{k=1}^d x_{i,k} \cdot \frac{\partial\quad}{\partial\, w_j} w_k
+   = \sum\limits_{k=1}^d x_{i,k} \cdot \delta_{j,k} =  x_{i,j}
 $.
 \\[0.2cm]
 Now we are ready to compute the partial derivative of $\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w})$ with respect to $\mathbf{w}$:
@@ -732,9 +732,9 @@ $
 \begin{array}{cll}
   & \ds \frac{\partial\quad}{\partial\, w_j} \ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) \\[0.5cm]
 = & \ds \frac{\partial\quad}{\partial\, w_j} 
-    \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr) 
+    \sum\limits_{i=1}^n L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr) 
     \\[0.5cm]
-= & \ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S\bigl(-y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr),
+= & \ds\sum\limits_{i=1}^n y_i \cdot x_{i,j} \cdot  S\bigl(-y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr),
   & \mbox{since} \quad \ds \frac{\mathrm{d}L(x)}{\mathrm{d}x} = S(-x).
 \end{array}
 $
@@ -744,16 +744,16 @@ Hence, the partial derivative of the log-likelihood function is given as follows
 \hspace*{1.3cm}
 \colorbox{red}{\framebox{\colorbox{orange}{
 $\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) =
- \ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w})
+ \ds\sum\limits_{i=1}^n y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w})
 $}}} 
 \\[0.2cm]
 Next, we have to find the value of $\mathbf{w}$ such that
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w}) = 0$
-\quad for all $j \in \{1, \cdots, D\}$.
+$\ds\sum\limits_{i=1}^n y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w}) = 0$
+\quad for all $j \in \{1, \cdots, d\}$.
 \\[0.2cm]
-These are $D$ equations for the $D$ variables $w_1, \cdots, w_D$.  Due to the occurrence of the sigmoid function, these
+These are $d$ equations for the $d$ variables $w_1, \cdots, w_d$.  Due to the occurrence of the sigmoid function, these
 equations are nonlinear.  Unfortunately, these equations do not have a solution in closed terms.  Nevertheless,
 our computation of the 
 gradient of the log-likelihood was not in vain:  We will use the method of \blue{gradient ascent} to find
@@ -920,7 +920,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds \ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) = 
-           \sum\limits_{i=1}^N L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
+           \sum\limits_{i=1}^n L\bigl(y_i \cdot(\mathbf{x}_i \cdot \mathbf{w})\bigr)
       $.
       \\[0.2cm]
       Here $L$ denotes the natural logarithm of the sigmoid of the argument.
@@ -933,7 +933,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ds \frac{\partial\quad}{\partial\, w_j}\ell\ell(\mathbf{X},\mathbf{y},\mathbf{w}) =
-        \ds\sum\limits_{i=1}^N y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w})
+        \ds\sum\limits_{i=1}^n y_i \cdot x_{i,j} \cdot  S(-y_i \cdot \mathbf{x}_i \cdot \mathbf{w})
       $.
       \\[0.2cm]
       The different components of this gradient are combined into a vector.
@@ -1486,9 +1486,27 @@ observe the evidence $E$ given that $o$ has class $C$, in the following way:
 \hspace*{1.3cm}
 $\ds P(C|E) = \frac{P(E|C) \cdot P(C)}{P(E)}$.
 \\[0.2cm]
+For example, the evidence $E$ could be the fact that the email contains the string \texttt{"viagra"} and the
+class $C$ could be the class \texttt{spam}.
+
 This theorem is useful because often the conditional probability $P(E|C)$ that we observe some evidence $E$ in an object
 $o$ of class $C$ is readily available, but the conditional probability $P(C|E)$ that an object has class $C$ if
-we have observed the evidence $E$ is unknown.  In the context of machine learning the evidence $E$ is often
+we have observed the evidence $E$ is unknown.  For example, we know from experience how many spam mails contain
+the word \texttt{"viagra"} and hence can estimate the conditional probability
+\\[0.2cm]
+\hspace*{1.3cm}
+$P(\mathtt{"viagra"} \in m\,|\,\mathtt{spam})$
+\\[0.2cm]
+for a given mail $m$, 
+but we do not know the conditional probability that a given mail $m$ is \texttt{spam} if it contains the word
+\texttt{"viagra"}, i.e.~we do not know
+\\[0.2cm]
+\hspace*{1.3cm}
+$P(\mathtt{spam}\,|\,\mathtt{"viagra"}\in m)$.
+\\[0.2cm]
+However, the later probability $P(\mathtt{spam}\,|\,\mathtt{"viagra"}\in m)$ is really what we are interested in.
+Bayes' theorem show us how to compute $P(\mathtt{spam}\,|\,\mathtt{"viagra"}\in m)$ from $P(\mathtt{"viagra"} \in m\,|\,\mathtt{spam})$
+In the context of machine learning, the evidence $E$ is often not just a single feature but is 
 given as a list of features $f_1$, $\cdots$, $f_m$ that we are able to observe or compute.  In this case we
 have to rewrite Bayes' theorem as follows:
 \\[0.2cm]
@@ -1521,17 +1539,17 @@ This equation can be generalized to the so called \href{https://en.wikipedia.org
 \\[0.2cm]
 \hspace*{1.2cm}
 $
-\begin{array}[t]{lcl}
-       P(A_1 \wedge \cdots \wedge A_m \;|\;C) 
- & = & P(A_1 \wedge  \cdots \wedge A_{m-1}\;|\;A_{m} \wedge C) \cdot P(A_{m}\;|\;C) \\[0.2cm]
- & = & P(A_1 \wedge  \cdots \wedge A_{m-2}\;|\;A_{m-1} \wedge A_{m} \wedge C) \cdot P(A_{m-1} \;|\;A_m \wedge C)\cdot P(A_{m}\;|\;C) \\
- & = & \cdots \\
- & = &  P(A_1 \;|\; A_2 \wedge  \cdots \wedge A_{m} \wedge C) \cdot \,\dots\, \cdot P(A_{m-1} \;|\;A_m \wedge C)\cdot P(A_{m}\;|\;C) \\[0.2cm]
- & = & \prod\limits_{i=1}^m P(A_i \;|\; A_{i+1} \wedge  \cdots \wedge A_{m} \wedge C) 
+\begin{array}[t]{cl}
+    &   P(A_1 \wedge \cdots \wedge A_m \;|\;C) \\[0.2cm]
+  = & P(A_1 \wedge  \cdots \wedge A_{m-1}\;|\;A_{m} \wedge C) \cdot P(A_{m}\;|\;C) \\[0.2cm]
+  = & P(A_1 \wedge  \cdots \wedge A_{m-2}\;|\;A_{m-1} \wedge A_{m} \wedge C) \cdot P(A_{m-1} \;|\;A_m \wedge C)\cdot P(A_{m}\;|\;C) \\
+  = & \cdots \\
+  = &  P(A_1 \;|\; A_2 \wedge  \cdots \wedge A_{m} \wedge C) \cdot \,\dots\, \cdot P(A_{m-1} \;|\;A_m \wedge C)\cdot P(A_{m}\;|\;C) \\[0.2cm]
+  = & \prod\limits_{i=1}^m P(A_i \;|\; A_{i+1} \wedge  \cdots \wedge A_{m} \wedge C) 
 \end{array}
 $
 \\[0.2cm]
-Two events $A$ and $B$ are defined to be \href{https://en.wikipedia.org/wiki/Conditional_independence}{conditional independent}
+Two events $A$ and $B$ are defined to be \href{https://en.wikipedia.org/wiki/Conditional_independence}{conditionally independent}
 given an event $C$ if and only if we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1564,24 +1582,24 @@ Assume we have a set of $n$ classes $\mathcal{C} = \{ C_1, \cdots, C_n \}$ from 
 class of an object $o$ given the features  $f_1$, $\cdots$, $f_m$.  We assume that $o$ has class $C_k$ if
 and only if the probability $P(C_k\;|\; f_1 \wedge \cdots \wedge f_m)$ is maximal with respect to all classes
 of $\mathcal{C}$.  In order to be able to specify this in a more formal
-way, we define the \blue{$\arg\max$} function: Given a set $S$ and a function $f:S \rightarrow \mathbb{R}$ that has
+way, we define the \blue{$\arg\max$} function: Given a set $S$ and a function $g:S \rightarrow \mathbb{R}$ that has
 exactly one maximum, we define
 \\[0.2cm]
 \hspace*{1.3cm}
-$\arg\max\limits_{x \in S} f(x) := \texttt{arb}\Bigl(\bigl\{ x \in S \mid \forall y \in S: f(y) \leq f(x)\bigr\}\Bigr)$,
+$\arg\max\limits_{x \in S} g(x) := \texttt{arb}\Bigl(\bigl\{ x \in S \mid \forall y \in S: g(y) \leq g(x)\bigr\}\Bigr)$,
 \\[0.2cm]
 where the function $\texttt{arb}(M)$ returns an arbitrary element from the set $M$. 
-Since we assume that $f$ has exactly one element on the set $S$, the expression 
-$\arg\max\limits_{x \in S} f(x)$ is well defined.  To
-put the definition of  $\arg\max\limits_{x \in S} f(x)$ differently, the idea is that
-$\arg\max\limits_{x \in S} f(x)$ computes the value of $x$ that maximizes $f$.  Given the features  $f_1$, $\cdots$,
+Since we assume that $g$ has exactly one maximum on the set $S$, the expression 
+$\arg\max\limits_{x \in S} g(x)$ is well defined.  To
+put the definition of  $\arg\max\limits_{x \in S} g(x)$ differently, the idea is that
+$\arg\max\limits_{x \in S} g(x)$ computes the value of $x \in S$ that maximizes $g$.  Given the features  $f_1$, $\cdots$,
 $f_m$, the naive Bayes classifier computes the most probable class as follows:
-\\[0.2cm]
+\\[0.3cm]
 \hspace*{1.3cm}
 $\ds \texttt{NaiveBayes}(f_1,\cdots,f_m) :=
   \arg\max\limits_{C \in \mathcal{C}}  \frac{\prod\limits_{i=1}^m P(f_i \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) 
 $
-\\[0.2cm]
+\\[0.3cm]
 It is important to observe that the denominator $P(f_1 \wedge \cdots \wedge f_m)$ does not depend on the class
 $C$.  As we only need to determine the class with the maximal probability, not the exact probability of the
 class, we can simplify the definition by dropping this denominator.  Therefore the definition of the naive
@@ -1623,9 +1641,9 @@ the feature $f$.
 classification.  We will see in this subsection that naive Bayes classifiers work well for spam detection.
 The directory
 \\[0.2cm]
-\hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/EmailData}{
-https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/EmailData}
+\hspace*{-0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/6%20Classification/EmailData}{
+https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/6\ Classification/Python/EmailData}
 \\[0.2cm]
 contains 960 emails that are partitioned into four subdirectories:
 \begin{enumerate}
@@ -1638,9 +1656,9 @@ This data has been collected by Ion Androutsopoulos.  Figure \ref{fig:Spam-Detec
 \pageref{fig:Spam-Detection.ipynb-1} and \ref{fig:Spam-Detection.ipynb-2} on page
 \pageref{fig:Spam-Detection.ipynb-2} show parts of the notebook 
 \\[0.2cm]
-\hspace*{0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Spam-Detection.ipynb}{
-https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Spam-Detection.ipynb}.
+\hspace*{-0.3cm}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/6 Classification/Spam-Detection.ipynb}{
+https://github.com/karlstroetmann/Artificial-Intelligence/../Python/6 Classification/Spam-Detection.ipynb}.
 \\[0.2cm]
 This notebook implements a naive Bayes classifier for spam detection.  We proceed to discuss the details of its
 implementation.
