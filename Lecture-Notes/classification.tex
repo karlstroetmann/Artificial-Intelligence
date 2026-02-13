@@ -1,7 +1,8 @@
-\chapter{Classification \label{chapter:classification}}
+hapter{Classification \label{chapter:classification}}
 One of the earliest application of artificial intelligence is 
 \href{https://en.wikipedia.org/wiki/Statistical_classification}{classification}.  A good
-example of classification is \href{https://en.wikipedia.org/wiki/Anti-spam_techniques#Detecting_spam}{spam detection}.
+example of classification is
+\href{https://en.wikipedia.org/wiki/Anti-spam_techniques#Detecting_spam}{spam detection}.
 A system for spam detection classifies an email as either spam or not spam, where ``not spam'' is often
 abbreviated as ``ham''.  To do so, it first
 computes various \blue{features} \index{feature} of the email and then uses these features to determine whether
@@ -174,7 +175,7 @@ are numbered
 from $1$ to $n$, while the features are numbered from $1$ to $d$.  Then we define
 \begin{enumerate}
 \item $\textbf{x}_i := \langle\mathtt{feature}(o_i, 1), \cdots, \mathtt{feature}(o_i, d)\rangle^\top$ \quad for all $i \in \{1, \cdots, n\}$.
-  
+
       i.e.~$\mathbf{x}_i$ is a $D$-dimensional column vector that collects the features of the $i$-th training object.
 \item $x_{i,j} := \mathtt{feature}(o_i, j)$ \quad for all $i \in \{1, \cdots, n\}$ and $j \in \{1, \cdots, d\}$.
 
@@ -470,8 +471,8 @@ define this function and state some of its properties.
 $\ds S(t) = \frac{1}{1 + \exp(-t)}$.  
 \\[0.2cm]
 Figure \ref{fig:sigmoid.eps} on page \pageref{fig:sigmoid.eps} shows the sigmoid function.
-The sigmoid function is also known as the \href{https://en.wikipedia.org/wiki/Logistic_function}{logistic
-  function}. \index{logistic function} 
+The sigmoid function is also known as the
+\href{https://en.wikipedia.org/wiki/Logistic_function}{logistic function}. \index{logistic function} 
 \eox
 \end{Definition}
 
@@ -827,25 +828,25 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
                 escapeinside  = ||
               ]{python3}
     import numpy as np
-    
+  
     # compute |$\displaystyle \frac{1}{1+\exp(-t)}$|
     def sigmoid(t):
         return 1.0 / (1.0 + np.exp(-t))
-    
+  
     # compute |$\displaystyle \ln\left(\frac{1}{1+\exp(-t)}\right)$| and avoid overflow
     def logSigmoid(t):
         if t > -100:
             return -np.log(1.0 + np.exp(-t))
         else:
             return t
-    
+  
     def ll(X, y, w):
         """
         given the matrix X and the observations y,
         return the log likelihood for the weight vector w
         """
         return np.sum([logSigmoid(y[i] * (X[i] @ w)) for i in range(len(X))])
-    
+  
     def gradLL(X, y, w):
         """
         Compute the gradient of the log-likelihood with respect to w 
@@ -897,7 +898,7 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       $1.0 \oplus 2.6881171418161356 \cdot 10^{43} = 2.6881171418161356 \cdot 10^{43}$.
       \\[0.2cm]
       Here, $\oplus$ denotes machine addition.
-      
+    
       The argument that $\ln\bigl(1 + \exp(1000)\bigr) \approx 1000$ works as follows:
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1123,7 +1124,7 @@ correctly.
     import numpy                as np
     import pandas               as pd
     import sklearn.linear\_model as lm
-    
+  
     ExamDF = pd.read\_csv('exam-iq.csv')
     X      = np.array(ExamDF[['Hours','IQ']])
     Y      = np.array(ExamDF['Pass'], dtype=float)
@@ -1298,13 +1299,13 @@ performs linear regression.
     import pandas as pd
     import sklearn.linear_model as lm
     from sklearn.model_selection import train_test_split
-    
+  
     DF = pd.read_csv('fake-data.csv')
     X  = np.array(DF[['x','y']])
     Y  = np.array(DF['class'])
-    
+  
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=1)
-    
+  
     def logistic_regression(X_train, Y_train, X_test, Y_test, reg=10000):
         model    = lm.LogisticRegression(C=reg, tol=1e-6, solver='newton-cg')
         M        = model.fit(X_train, Y_train)
@@ -1312,13 +1313,13 @@ performs linear regression.
         yPredict = M.predict(X_test)
         accuracy = np.sum(yPredict == Y_test) / len(Y_test)
         return M, score, accuracy
-    
+  
     def extend(X):
         n  = len(X)
         fx = np.reshape(X[:,0], (n, 1))
         fy = np.reshape(X[:,1], (n, 1))
         return np.hstack([fx, fy, fx*fx, fy*fy, fx*fy])
-    
+  
     X_train_quadratic, X_test_quadratic = extend(X_train), extend(X_test)
     logistic_regression(X_train_quadratic, Y_train, X_test_quadratic, Y_test)
 \end{minted}
@@ -1419,7 +1420,7 @@ of higher degree.  This script is a continuation of the script shown in Figure \
       Figure \ref{fig:fake-data-quartic.pdf} on page \pageref{fig:fake-data-quartic.pdf} shows the data with
       the resulting decision boundary.
 \end{enumerate}
- 
+
 \begin{figure}[!th]
 \epsfig{file=Figures/fake-data-quartic.pdf, scale=0.8}
 \caption{Fake data with a decision boundary of fourth order.}
@@ -1570,7 +1571,7 @@ object $o$ with features $f_1$, $\cdots$, $f_m$ to be of class $C$ is given as
 $
 \begin{array}[t]{lcll}
       P(C\;|\; f_1 \wedge \cdots \wedge f_m) 
-& = & \ds \frac{P(f_1 \wedge \cdots \wedge f_m \;|\; C) \cdot P(C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
+& = & \ds \frac{P(f_1 \wedge \cdots \wedge f_m \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.2cm]
 & = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; f_{i+1} \wedge \cdots \wedge f_m \wedge C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) \\[0.4cm]
 & = & \ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) 
 \end{array}
@@ -1637,39 +1638,27 @@ Here, for an object $t$ and a feature $f$ the expression $\texttt{has}(t, f)$ is
 the feature $f$.
 
 \subsection{Example: Spam Detection}
-\href{https://en.wikipedia.org/wiki/Naive_Bayes_spam_filtering}{Spam detection} is an important application of
-classification.  We will see in this subsection that naive Bayes classifiers work well for spam detection.
+\href{https://en.wikipedia.org/wiki/Naive_Bayes_spam_filtering}{Spam detection} is an important application of classification.
+We will see in this subsection that naive Bayes classifiers work well for spam detection.
 The directory
 \\[0.2cm]
 \hspace*{-0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/6%20Classification/EmailData}{
-https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/6\ Classification/Python/EmailData}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/6\%20Classification/EmailData}{ https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/6\ Classification/Python/EmailData}
 \\[0.2cm]
 contains 960 emails that are partitioned into four subdirectories:
 \begin{enumerate}
 \item \texttt{spam-train} contains 350 spam emails for training,
-\item \texttt{ham-train}  contains 350 non-spam emails for training,
-\item \texttt{spam-test}  contains 130 spam emails for testing,
-\item \texttt{ham-test}   contains 130 non-spam emails for testing.
+\item \texttt{ham-train} contains 350 non-spam emails for training,
+\item \texttt{spam-test} contains 130 spam emails for testing,
+\item \texttt{ham-test} contains 130 non-spam emails for testing.
 \end{enumerate}
-This data has been collected by Ion Androutsopoulos.  Figure \ref{fig:Spam-Detection.ipynb-1} on page
-\pageref{fig:Spam-Detection.ipynb-1} and \ref{fig:Spam-Detection.ipynb-2} on page
-\pageref{fig:Spam-Detection.ipynb-2} show parts of the notebook 
-\\[0.2cm]
-\hspace*{-0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/6 Classification/Spam-Detection.ipynb}{
-https://github.com/karlstroetmann/Artificial-Intelligence/../Python/6 Classification/Spam-Detection.ipynb}.
-\\[0.2cm]
-This notebook implements a naive Bayes classifier for spam detection.  We proceed to discuss the details of its
-implementation.
-
-
+This data has been collected by Ion Androutsopoulos.
+Figure \ref{fig:Spam-Detection.ipynb-1} on page \pageref{fig:Spam-Detection.ipynb-1} shows the first part of the notebook that implements a naive Bayes classifier.
 
 \begin{figure}[!ht]
 \centering
-
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
+\begin{minted}[ frame         = lines,
+                framesep      = 0.3cm,
                 firstnumber   = 1,
                 numbers       = left,
                 numbersep     = -0.2cm,
@@ -1678,11 +1667,9 @@ implementation.
               ]{python3}
     import os
     import re
-    import numpy as np
     import math
-
     from collections import Counter
-
+    
     spam_dir_train = 'EmailData/spam-train/'
     ham__dir_train = 'EmailData/ham-train/'
     spam_dir_test  = 'EmailData/spam-test/'
@@ -1693,272 +1680,225 @@ implementation.
     no_ham     = len(os.listdir(ham__dir_train))
     spam_prior = no_spam / (no_spam + no_ham)
     ham__prior = no_ham  / (no_spam + no_ham)
-
-    def get_words(fn):
-        file = open(fn)
-        text = file.read()
-        text = text.lower()
-        return set(re.findall(r"[\w']+", text))
-
-    def read_all_files(Directories):
-        Words = Counter()
+    
+    def get_words(fn: str) -> set[str]:
+        with open(fn, 'r') as file:
+            text: str = file.read().lower()
+            return set(re.findall(r"[\w']+", text))
+    
+    def read_all_files(Directories: list[str]) -> Counter:
+        Words: Counter = Counter()
         for directory in Directories:
             for file_name in os.listdir(directory):
                 Words.update(get_words(directory + file_name))
         return Words
     
     Word_Counter = read_all_files(Directories)
-    Common_Words = { w for w, _ in Word_Counter.most_common(2500) }
 
-    def get_common_words(fn):
-        return get_words(fn) & Common_Words
-
-    def count_commmon_words(directory):
-        Words = Counter()
-        for file_name in os.listdir(directory):
-            Words.update(get_common_words(directory + file_name))
-        return Words
+    Common_Words = { w for w in Word_Counter if Word_Counter[w] >= 10 }
 \end{minted}
-
 \caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{I}}
 \label{fig:Spam-Detection.ipynb-1}
 \end{figure}
 
+The code performs the following steps:
 \begin{enumerate}
-\item Initially we load a number of modules.  In addition to \texttt{numpy} and \texttt{math} these are
-      \begin{enumerate}
-      \item \texttt{os} to list the files in a directory.
-      \item \texttt{re} for regular expressions.
-      \end{enumerate}
-\item We import the module
-      \href{https://docs.python.org/2/library/collections.html#counter-objects}{\texttt{Counter}} from the package
-      \texttt{collections}.  
-      A \texttt{Counter} is a special type of dictionary that is well suited for counting objects.
-\item We set some variables that would need to be adapted if this notebook would be used with a different set of
-      Emails.
-\item Using the function \texttt{listdir} from the module \texttt{os} we count the number of spam emails and
-      the number of ham emails in the corresponding directories.  These numbers are than used to compute the
-      prior probabilities for spam and ham.  In our example, the number of spam emails and the number of ham
-      emails are both 350.  Therefore, the prior probability of an email to be spam is $\frac{1}{2}$ and the
-      prior probability for ham is also $\frac{1}{2}$.
-\item The function $\texttt{get\_words}(\texttt{fn})$ takes a filename $\texttt{fn}$ as its argument.  
-      \begin{enumerate}
-      \item It reads the specified file as a string of text.  
-      \item This string of text is then converted to lower case.
-
-            In our case the conversion to lower case would not be necessary as the emails that we use
-            have been preprocessed and are already converted to lower case.
-      \item The text string is split into a list of words using the function \texttt{findall}
-            from the module \texttt{re}.  The regular expression
-            \\[0.2cm]
-            \hspace*{1.3cm}
-            \texttt{r"[\symbol{92}w']+"}
-            \\[0.2cm]
-            specifies all strings that are made up of Unicode word characters and single quote characters.
-            The list of words returned by \texttt{findall} is then converted to a set and returned.
-      \end{enumerate}
-\item The function \texttt{read\_all\_files} reads all files contained in the directories that are stored in
-      the list \texttt{Directories}.  It returns a \texttt{Counter}.  For every word $w$ this counter contains the number of
-      those files that contain $w$.  
-      
-      Given a counter $C$ and a set $S$, the function $C.\texttt{update}(S)$ increments the count of every
-      element $x$ in $C$ that occurs in the set $S$.  For example, if
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $C = \mathtt{Counter}(\{\mathtt{a}\colon 1, \mathtt{b}\colon 2, \mathtt{c}\colon 3\})$, 
-      \\[0.2cm]
-      then the call $C.\mathtt{update}(\{\mathtt{a}, \mathtt{d}\})$ changes the counter $C$ such that afterwards
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $C = \mathtt{Counter}(\{\mathtt{a}\colon 2, \mathtt{b}\colon 2, \mathtt{c}\colon 3, \mathtt{d}\colon 1\})$.
-\item \texttt{Word\_Counter} is a \texttt{Counter} object that contains the counts of all words that occur in
-      any email.
-\item \texttt{Common\_Words} is list of the 2500 most common words occurring in all emails.
-\item The function $\texttt{get\_common\_words}(\texttt{fn})$ takes a filename $\texttt{fn}$ 
-      as its argument.  It reads the specified file and returns set of all words in \texttt{Common\_Words} that
-      are found in the specified file.  
-\item The function \texttt{count\_common\_words} takes a \texttt{directory} as its argument.  It returns a 
-      \texttt{Counter} that counts how often the words in \texttt{Common\_Words} occur in any of the files in
-      \texttt{directory}.
-\item We use this function to count how often the most common words occur in spam and ham emails.
-      These counts are stored in the dictionaries \texttt{Spam\_Counter} and \texttt{Ham\_\_Counter}.
+\item It imports the necessary modules. \texttt{os} is used to read directories, \texttt{re} for regular
+  expressions, \texttt{math} for the logarithmic function, and \texttt{Counter} for counting word occurrences.
+\item It defines the directories containing the data and computes the prior probabilities \texttt{spam\_prior} and \texttt{ham\_\_prior}.
+\item The function \texttt{get\_words} reads a file, converts the text to lower case, and extracts all words using a regular expression. It returns a set of words, ensuring each word is counted only once per email.
+\item \texttt{read\_all\_files} reads all emails and creates a global counter \texttt{Word\_Counter} of all words found.
+\item Finally, \texttt{Common\_Words} is defined as the set of words that appear in at least 10 emails. This helps in feature selection by ignoring rare words.
 \end{enumerate}
-The second part of our spam classifier is shown in Figure \ref{fig:Spam-Detection.ipynb-2} on page
-\pageref{fig:Spam-Detection.ipynb-2} and is discussed below.
 
+Figure \ref{fig:Spam-Detection.ipynb-2} on page \pageref{fig:Spam-Detection.ipynb-2} shows the second part of the implementation.
 
 \begin{figure}[!ht]
 \centering
-
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
+\begin{minted}[ frame         = lines,
+                framesep      = 0.3cm,
                 firstnumber   = last,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
               ]{python3}
-    spam_counter = count_commmon_words(spam_dir_train)
-    ham__counter = count_commmon_words(ham__dir_train)
-                
+    def get_common_words(fn: str) -> set[str]:
+        return get_words(fn) & Common_Words
+    
+    def count_commmon_words(directory: str) -> Counter:
+        Words: Counter = Counter()
+        for file_name in os.listdir(directory):
+            Words.update(get_common_words(directory + file_name))
+        return Words
+    
+    Spam_Counter = count_commmon_words(spam_dir_train)
+    Ham__Counter = count_commmon_words(ham__dir_train)
+    
     Spam_Probability = {}
     Ham__Probability = {}
     for w in Common_Words:
-        Spam_Probability[w] = (Spam_Counter[w] + 1) / (no_spam + 1) 
-        Ham__Probability[w] = (Ham__Counter[w] + 1) / (no_ham  + 1) 
-
-    def spam_probability(fn):
-        log_p_spam = 0.0
-        log_p_ham  = 0.0
-        words = get_common_words(fn)
-        for w in Common_Words:
-            if w in words:
-                log_p_spam += math.log(Spam_Probability[w])
-                log_p_ham  += math.log(Ham__Probability[w])
-            else:
-                log_p_spam += math.log(1.0 - Spam_Probability[w])
-                log_p_ham  += math.log(1.0 - Ham__Probability[w])
-        alpha = abs(min(log_p_spam, log_p_ham))
-        if alpha > 400: # avoid overflow
-            if log_p_spam < log_p_ham:
-                return 0
-            else:
-                return 1
-        p_spam = math.exp(log_p_spam + alpha) * spam_prior
-        p_ham  = math.exp(log_p_ham  + alpha) * ham__prior
-        return p_spam / (p_spam + p_ham)
+        Spam_Probability[w] = (Spam_Counter[w] + 1) / (no_spam + 1)
+        Ham__Probability[w] = (Ham__Counter[w] + 1) / (no_ham  + 1)
 \end{minted}
-    
 \caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{II}}
 \label{fig:Spam-Detection.ipynb-2}
 \end{figure}
 
+\begin{enumerate}
+\item \texttt{get\_common\_words} extracts only the common words from a given file.
+\item \texttt{count\_common\_words} counts the occurrences of common words in all files within a directory.
+\item \texttt{Spam\_Counter} and \texttt{Ham\_\_Counter} store the counts of each common word in spam and ham emails, respectively.
+\item We then compute the conditional probabilities $P(w | \texttt{spam})$ and $P(w | \texttt{ham})$ for each common word. Laplace smoothing is applied by adding 1 to the counts and the denominators to avoid zero probabilities.
+\end{enumerate}
+
+The final part of the classifier implements the classification logic and evaluates the model.
+In order to compute whether a mail is spam or ham we have to compute
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \arg\max\limits_{C \in \{\mathtt{Spam},\, \mathtt{Ham}\}}  \left(\prod\limits_{i=1}^m P(f_i \;|\; C)\right) \cdot P(C) $
+\\[0.2cm]
+Therefore, we have to check, whether
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \left(\prod\limits_{i=1}^m P(f_i \;|\; \mathtt{Spam})\right) \cdot P(\mathtt{Spam}) > \left(\prod\limits_{i=1}^m P(f_i \;|\; \mathtt{Ham})\right) \cdot P(\mathtt{Ham}) $
+\\[0.2cm]
+holds. When implementing the formula
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \arg\max\limits_{C \in \mathcal{C}}  \left(\prod\limits_{i=1}^m P(f_i \;|\; C)\right) \cdot P(C) $
+\\[0.2cm]
+we have to be careful, because a naive implementation will evaluate the product
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \prod\limits_{i=1}^m P(f_i \;|\; C)$
+\\[0.2cm]
+as the number $0$ due to numerical underflow.  The trick to compute this product is to remember that
+\\[0.2cm]
+\hspace*{1.3cm}
+$ \ln(a \cdot b) = \ln(a) + \ln(b) $
+\\[0.2cm]
+and to transform the product into a sum of logarithms.  As the logarithm is a monotone function, we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$ \begin{array}{llcl}
+  & \ds \left(\prod\limits_{i=1}^m P(f_i \;|\; \mathtt{Spam})\right) \cdot P(\mathtt{Spam}) & > & \ds \left(\prod\limits_{i=1}^m P(f_i \;|\; \mathtt{Ham})\right) \cdot P(\mathtt{Ham}) \\[0.5cm]
+  \Leftrightarrow \qquad &
+  \ds \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; \mathtt{Spam})\bigr) + \ln\bigl(P(\mathtt{Spam})\bigr) & > & \ds \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; \mathtt{Ham})\bigr) + \ln\bigl(P(\mathtt{Ham}) \bigr)
+  \end{array}
+$
+\\[0.2cm]
+The function \texttt{log\_probabilities(fn)} takes a filename \texttt{fn} as its first argument and returns the pair
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \left(\sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; \mathtt{Ham})\bigr) + \ln\bigl(P(\mathtt{Ham}) \bigr),\quad
+         \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; \mathtt{Spam})\bigr) + \ln\bigl(P(\mathtt{Spam})\bigr) \right)$
+\\[0.2cm]
+as its result.  It should be noted that these numbers are not really the logarithms of probabilities.  The reason is that
+the formula for the probability of a class $C$ is
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \frac{\prod\limits_{i=1}^m P(f_i \;|\; C)}{P(f_1 \wedge \cdots \wedge f_m)} \cdot P(C) $
+\\[0.2cm]
+and we are not computing the denominator $P(f_1 \wedge \cdots \wedge f_m)$.  However, this denominator is the same for spam and ham and hence we don't need it when comparing the respective probabilities.  Therefore, what the function \texttt{log\_probabilities} is really computing are pairs of \blue{relative logarithmic probabilities}.
+
 \begin{figure}[!ht]
 \centering
-
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
+\begin{minted}[ frame         = lines,
+                framesep      = 0.3cm,
                 firstnumber   = last,
                 numbers       = left,
                 numbersep     = -0.2cm,
                 xleftmargin   = 0.8cm,
                 xrightmargin  = 0.8cm,
+                escapeinside  = ||
               ]{python3}
-    def precission_recall(spam_dir, ham_dir):
-        TN = 0 # true negatives
-        FP = 0 # false positives
-        for email in os.listdir(spam_dir):
-            if spam_probability(spam_dir + email) > 0.5:
-                TN += 1
-            else:
-                FP += 1
-        FN = 0 # false negatives
-        TP = 0 # true positives
-        for email in os.listdir(ham_dir):
-            if spam_probability(ham_dir + email) > 0.5:
-                FN += 1
-            else:
-                TP += 1
-        precision = TP / (TP + FP)
-        recall    = TP / (TP + FN)
-        accuracy  = (TN + TP) / (TN + TP + FN + FP)
-        return precision, recall, accuracy
+    def log_probabilities(fn: str) -> tuple[float, float]:
+        log_p_spam: float = math.log(spam_prior)
+        log_p_ham:  float = math.log(ham__prior)
+        words: set[str] = get_common_words(fn)
+        for w in Common_Words:
+            if w in words:
+                log_p_spam += math.log(Spam_Probability[w])
+                log_p_ham  += math.log(Ham__Probability[w])
+        return (log_p_ham, log_p_spam)
 \end{minted}
-    
 \caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{III}}
 \label{fig:Spam-Detection.ipynb-3}
 \end{figure}
 
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines,
+                framesep      = 0.3cm,
+                firstnumber   = last,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+                escapeinside  = ||
+              ]{python3}
+    def precission_recall(spam_dir: str,
+                          ham_dir:  str,
+                          |$\vartheta$|: float) -> tuple[float, float, float]:
+        TN: int = 0 # true negatives
+        FP: int = 0 # false positives
+        for email in os.listdir(spam_dir):
+            log_p_ham, log_p_spam = log_probabilities(spam_dir + email)
+            if log_p_spam > |$\vartheta$| * log_p_ham:
+                TN += 1
+            else:
+                FP += 1
+        FN: int = 0 # false negatives
+        TP: int = 0 # true positives
+        for email in os.listdir(ham_dir):
+            log_p_ham, log_p_spam = log_probabilities(ham_dir + email)
+            if log_p_spam > |$\vartheta$| * log_p_ham:
+                FN += 1
+            else:
+                TP += 1
+        precision: float = TP / (TP + FP)
+        recall:    float = TP / (TP + FN)
+        accuracy:  float = (TN + TP) / (TN + TP + FN + FP)
+        return precision, recall, accuracy
+\end{minted}
+\caption{A Naive Bayes Classifier for Spam Detection: Part \texttt{III}}
+\label{fig:Spam-Detection.ipynb-4}
+\end{figure}
 
-\begin{enumerate}
-\item Given the dictionaries \texttt{Spam\_Counter} and \texttt{Ham\_\_Counter}, we proceed to compute 
-      the conditional probabilities that one of the most common word occurs in a spam or ham email.
-      To this end we define the dictionaries \texttt{Spam\_Probability} and  \texttt{Ham\_\_Probability}.
-      For every word $w \in \mathtt{Common\_Words}$, we will have that
-      $\texttt{Spam\_Probability}[w]$ is the conditional probability that the word $w$ occurs in a spam email,
-      i.e.~we have
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{Spam\_Probability}[w] = P(w \mid C = \mathtt{spam})$.
-      \\[0.2cm]
-      A first attempt to estimate this probability is to approximate it as the fraction of all spam mails
-      containing $w$.  This would lead to the formula
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\ds P(w \mid C = \mathtt{spam}) = \frac{\mathtt{Spam\_Counter}[w]}{N}$, \quad where $N$ is the number of
-      all spam training mails.
-      \\[0.2cm]
-      However, this would imply that if $\mathtt{Spam\_Counter}[w] = 0$ because the training set has no spam
-      mail that contains the word $w$, then the probability $P(w \mid C = \mathtt{spam})$ would be estimated as
-      $0$.  Clearly, this cannot be right:  Even if there is a word $w$ that has so far never occurred in a
-      spam mail, this does not mean that any mail containing this word is necessarily ham.
 
-      To get this right we use \href{https://en.wikipedia.org/wiki/Additive_smoothing}{Laplace smoothing}:
-      We assume that there is one additional spam email that contains every word $w$ from
-      \texttt{Common\_Words}.
-      With this assumption, the formula for the conditional probability $P(w \mid C = \mathtt{spam})$ is
-      changed as follows:
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\ds P(w \mid C = \mathtt{spam}) = \frac{\mathtt{Spam\_Counter}[w]+1}{N+1}$, 
-      \quad where $N$ is the number of all spam training mails.
-\item The function $\mathtt{spam\_probability}$ takes a filename and computes the probability that the email
-      contained in the given file is spam.
 
-      When implementing the formula 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\arg\max\limits_{C \in \mathcal{C}}  \left(\prod\limits_{i=1}^m P(f_i \;|\; C)\right) \cdot P(C) $
-      \\[0.2cm]
-      we have to be careful, because a naive implementation will evaluate the product
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\prod\limits_{i=1}^m P(f_i \;|\; C)$
-      \\[0.2cm]
-      as the number $0$ due to numerical underflow.  The trick to compute this product is to remember that
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $ \ln(a \cdot b) = \ln(a) + \ln(b) $
-      \\[0.2cm]
-      and therefore transform the product into a sum of logarithms:
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $ \prod\limits_{i=1}^m P(f_i \;|\; C) = \exp\left(\alpha + \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; C)\bigr) \right) \cdot \exp(-\alpha)$
-      \\[0.2cm]
-      Here, the constant $\alpha$ has to chosen such that the application of the exponential function to the value
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $ \alpha + \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; C)\bigr) $
-      \\[0.2cm]
-      does not lead to an underflow error.
-\item In order to evaluate the performance of this algorithm, we need to define two new concepts: \blue{precision} and 
-      \blue{recall}.  Let us call the ham emails the \blue{positives}, while the spam emails are called the
-      \blue{negatives}.  Then we define
-      \begin{enumerate}
-      \item \blue{true positives}: ham emails that are classified as ham,
-      \item \blue{false positives}: spam emails that are classified as ham,
-      \item \blue{true negatives}: spam emails that are classified as spam,
-      \item \blue{false negatives}: ham emails that are classified as spam.
-      \end{enumerate}
-      The \blue{precision} of the spam classifier is then defined as
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $ \texttt{precision} = \frac{\mbox{number of true positives}}{\mbox{number of true positives} + \mbox{number of false positives}} $
-      \\[0.2cm]
-      Therefore, the \blue{precision} measures the percentage of the ham emails in the set of all emails that are classified as ham.
-      The \blue{recall} of the spam classifier is defined as
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $ \texttt{recall} = \frac{\mbox{number of true positives}}{\mbox{number of true positives} + \mbox{number of false negatives}} $
-      \\[0.2cm]
-      Therefore, the \blue{recall} measures the percentage of those ham emails that are indeed classified as ham.  
-
-      Usually, it is very important that the recall is high as we don't want to miss a ham email because our classifier has incorrectly classified it as a spam email.  
-      On the other hand, having a high precision is not that important.  After all, if $10\%$ of the emails
-      offered to us as ham are, in fact, spam, we might tolerate this.  However, we
-      would certainly not tolerate missing $10\%$ of our ham emails because they are
-      incorrectly specified as spam.       
-\end{enumerate}
+The function \texttt{precission\_recall} takes two directories as arguments: \texttt{spam\_dir} is supposed to contain spam emails, while \texttt{ham\_dir} contains ham emails.  It computes the \blue{precision} and the \blue{recall} of our spam classifier with respect to these test data.
+Since it would be quite bad when we misclassify a valid email as spam but we can tolerate an occasional spam email that gets through our filter, we add a third parameter $\vartheta$.  We will only classify an email as spam if
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; \mathtt{Spam})\bigr) + \ln\bigl(P(\mathtt{Spam})\bigr) \; > \;
+\vartheta \cdot \left( \sum\limits_{i=1}^m \ln\bigl(P(f_i \;|\; \mathtt{Ham})\bigr) + \ln\bigl(P(\mathtt{Ham}) \bigr) \right)
+$
+\\[0.2cm]
+The third parameter $\vartheta$ is the logarithmic threshold. Later, we will use a logarithmic threshold of $0.8$.
+To make things concrete, assume that
+\begin{itemize}
+\item The relative logarithmic probability $p_1$ of a mail being ham is $p_1 = -250$, while
+\item the relative logarithmic probability $p_2$ of this mail being spam is $p_2 = -200$.
+\end{itemize}
+As we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$p_1 = -250 < -200 = p_2$
+\\[0.2cm]
+we would classify this mail as spam if we would just compare the relative logarithmic probabilities.
+However, if we use the logarithmic threshold of $0.8$ we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vartheta \cdot p_1 = 0.8 \cdot (-250) = -200 = p_2 $
+\\[0.2cm]
+and hence the inequality
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vartheta \cdot p_1 < p_2$
+\\[0.2cm]
+would not be valid.  Therefore, we would conservatively classify the email as ham.
 
 \subsection{Naive Bayes Classifier with Numerical Features}
 We can build a naive Bayes classifier even if some of our features are numerical.  Assume we have a feature $f$
@@ -1992,7 +1932,7 @@ example, the string ``Bianca'' is a female first name, while the string ``Michae
 A crude first attempt to distinguish female names from male ones is to look at the last character.  Hence, our
 first classifier to solve this problem will use just a single feature.  This feature can have one of 26
 different values.
- 
+
 \begin{figure}[!ht]
 \centering
 \begin{minted}[ frame         = lines, 
@@ -2009,23 +1949,23 @@ different values.
             for name in file:
                 Result.append(name[:-1]) # discard newline
         return Result
-    
+  
     FemaleNames = read_names('names-female.txt')
     MaleNames   = read_names('names-male.txt'  )
     pFemale     = len(FemaleNames) / (len(FemaleNames) + len(MaleNames))
     pMale       = len(MaleNames)   / (len(FemaleNames) + len(MaleNames))
-    
+  
     def conditional_prop(c, g):
         if g == 'f':
             return len([n for n in FemaleNames if n[-1] == c]) / len(FemaleNames)
         else:
             return len([n for n in MaleNames   if n[-1] == c]) / len(MaleNames)
-    
+  
     Conditional_Probability = {}
     for c in 'abcdefghijklmnopqrstuvwxyz':
         for g in ['f', 'm']:
             Conditional_Probability[(c, g)] = conditional_prop(c, g)
-    
+  
     def classify(name):
         last   = name[-1]
         female = Conditional_Probability[(last, 'f')] / pFemale
@@ -2034,7 +1974,7 @@ different values.
             return 'f'
         else:
             return 'm'
-        
+      
     total, correct = 0, 0
     for n in FemaleNames:
         if classify(n) == 'f':
