@@ -1,4 +1,4 @@
-hapter{Classification \label{chapter:classification}}
+\chapter{Classification \label{chapter:classification}}
 One of the earliest application of artificial intelligence is 
 \href{https://en.wikipedia.org/wiki/Statistical_classification}{classification}.  A good
 example of classification is
@@ -222,6 +222,7 @@ diagnosed more accurately by a computer than by a specialist.  One such example 
 \item credit card fraud detection,
 \item credit approval.
 \end{enumerate}
+
 
 \section{Digression: The Method of Gradient Ascent \label{section:gradient-ascent}}
 \index{gradient ascent}
@@ -1917,126 +1918,12 @@ $\ds P(f = x \mid C) = \frac{1}{\sqrt{2\cdot\pi\;} \cdot \sigma_{f,C}} \cdot \ex
 where $\mu_{f,C}$ is the \blue{mean value} of the feature $f$ for those objects that have class $C$, while
 $\sigma_{f,C}^2$ is the \blue{variance} of the feature $f$ for objects of class $C$.
 
-
 \exercise
 We have already investigated the file
 \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/iris.csv}{iris.csv}
 in a previous exercise.   This time, your task is to implement a \blue{naive Bayes classifier} that is able to
 classify iris flowers.  You can achieve an accuracy that exceeds $95\%$.
 \eox
-
-\subsection{Example: Gender Estimation}
-In order to clarify the theory of naive Bayes classifiers, this section presents an example that shows how a
-naive Bayes classifier can be used.  In this example, our goal is to estimate the gender of a first name.  For
-example, the string ``Bianca'' is a female first name, while the string ``Michael'' is a male first name.
-A crude first attempt to distinguish female names from male ones is to look at the last character.  Hence, our
-first classifier to solve this problem will use just a single feature.  This feature can have one of 26
-different values.
-
-\begin{figure}[!ht]
-\centering
-\begin{minted}[ frame         = lines, 
-                framesep      = 0.3cm, 
-                firstnumber   = 1,
-                numbers       = left,
-                numbersep     = -0.2cm,
-                xleftmargin   = 0.8cm,
-                xrightmargin  = 0.8cm,
-              ]{python3}
-    def read_names(file_name):
-        Result = []
-        with open(file_name, 'r') as file:
-            for name in file:
-                Result.append(name[:-1]) # discard newline
-        return Result
-  
-    FemaleNames = read_names('names-female.txt')
-    MaleNames   = read_names('names-male.txt'  )
-    pFemale     = len(FemaleNames) / (len(FemaleNames) + len(MaleNames))
-    pMale       = len(MaleNames)   / (len(FemaleNames) + len(MaleNames))
-  
-    def conditional_prop(c, g):
-        if g == 'f':
-            return len([n for n in FemaleNames if n[-1] == c]) / len(FemaleNames)
-        else:
-            return len([n for n in MaleNames   if n[-1] == c]) / len(MaleNames)
-  
-    Conditional_Probability = {}
-    for c in 'abcdefghijklmnopqrstuvwxyz':
-        for g in ['f', 'm']:
-            Conditional_Probability[(c, g)] = conditional_prop(c, g)
-  
-    def classify(name):
-        last   = name[-1]
-        female = Conditional_Probability[(last, 'f')] / pFemale
-        male   = Conditional_Probability[(last, 'm')] / pMale
-        if female >= male:
-            return 'f'
-        else:
-            return 'm'
-      
-    total, correct = 0, 0
-    for n in FemaleNames:
-        if classify(n) == 'f':
-            correct += 1
-        total += 1
-    for n in MaleNames:
-        if classify(n) == 'm':
-            correct += 1
-        total += 1
-    accuracy = correct / total
-    print(f'The accuracy of our estimator is {accuracy}.')
-\end{minted}
-
-\caption{A naive Bayes classifier for predicting the gender of a name.}
-\label{fig:gender_prediction.py}
-\end{figure}
-
-Figure \ref{fig:gender_prediction.py} on page \pageref{fig:gender_prediction.py} shows a \textsl{Python} script
-that implements a naive Bayes classifier for gender prediction.   In order to train our classifier, we need a
-training set of names that are marked as being either male. We happen to have two text files, ``\texttt{names-female.txt}''
-and ``\texttt{names-male.txt}'' containing female and male first names.
-\begin{enumerate}
-\item We start by defining the function \texttt{read\_names}. This
-      function takes a file name as its argument and reads the specified file one line at a time.  It returns a
-      list of all the names given in the file. Care is taken that the newline character at the end of each line
-      is discarded. 
-\item We use this function to read both the female names and the male names and store these names in the lists
-      \texttt{FemaleNames} and \texttt{MaleNames}.
-\item Next, we compute the \blue{prior probabilities} $P(\texttt{Female})$ and $P(\texttt{Male})$ for the classes
-      $\texttt{Female}$ and $\texttt{Male}$.  Previously, we have shown that the prior probability of a class $C$
-      in a training set $T$ is given as: 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\ds P(C) \approx  \frac{\texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \}\bigr)}{\texttt{card}(T)}$.
-      \\[0.2cm]
-      Therefore, these prior probability that a name is female is the fraction of the number of female names in
-      the set of all names.  Similarly, the prior probability that a name is male is the fraction of the number
-      of male names in  the set of all names.  These probabilities are stored as \texttt{pFemale} and \texttt{pMale}.
-\item The formula to compute the conditional probability of a feature $f$ given a class $C$ is as follows:
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\ds P(f\;|\;C) \approx 
-         \frac{\texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \wedge \texttt{has}(t, f) \}\bigr)}{
-         \texttt{card}\bigl(\{t \in T \;|\; \texttt{class}(t) = C \}\bigr)} 
-      $
-      \\[0.2cm]
-      The function $\texttt{conditional\_prop}(c,g)$ takes a character $c$ and a gender $g$ and determines the conditional
-      probability of seeing $c$ as a last character of a name that has the gender $g$. 
-\item Next, we define the dictionary \texttt{Conditional\_Probability}.  For every character $c$ and every
-      gender $g \in \{\texttt{'f'}, \texttt{'m'}\}$, the entry $\texttt{Conditional\_Probability}[(c,g)]$ is the
-      conditional probability of observing the last character $c$ if the gender of the name is known to be $g$. 
-\item The dictionary \texttt{Conditional\_Probability} can now be used to define the function
-      $\texttt{classify}(\texttt{name})$ that takes a $\texttt{name}$ as its input and outputs the estimated
-      gender.
-\item Finally, we check the accuracy of this classifier on the training set.  When we run the program, we see
-      that the accuracy attained is about $76\%$.  Since we are using only a single feature here, this is a
-      reasonable result.
-\end{enumerate}
-The file
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/NLTK-Introduction.ipynb}{NLTK-Introduction.ipynb}
-contains a \blue{Jupyter notebook} that uses the \href{https://www.nltk.org}{Natural Language Toolkit}
-(\textsc{Nltk}) to implement a more sophisticated classifier for gender estimation.
 
 \section{Support Vector Machines}
 \blue{Support Vector Machines} (abbreviated as \textsc{SVM}s) had been in invented in 1963 by Vladimir
@@ -2082,6 +1969,185 @@ first blue point.  Hence it is counter-intuitive that the addition of these poin
 \caption{Points separated by logistic regression.}
 \label{fig:largest-margin-more.pdf}
 \end{figure}
+
+
+\FloatBarrier
+
+\vspace*{\fill}
+\pagebreak
+
+
+\section{Digression: The Method of Lagrange Multipliers}
+\label{section:lagrange-multipliers}
+\index{Lagrange multipliers}
+
+In machine learning, we often need to find the maximum or minimum of a function $f(\mathbf{x})$ where the variable $\mathbf{x}$ is not allowed to vary freely but is constrained to a specific set of values. This is known as a \blue{constrained optimization problem}.
+
+The \href{https://en.wikipedia.org/wiki/Lagrange_multiplier}{method of Lagrange multipliers} is a strategy for finding the local maxima and minima of a function subject to equality constraints.
+
+\subsection{Geometric Intuition}
+To understand the method, let us look at a concrete example in 2D space.
+We want to maximize the function:
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(x, y) = x \cdot y$
+\\[0.2cm]
+subject to the constraint that the point $(x, y)$ must lie on a circle of radius $\sqrt{2}$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$g(x, y) = x^2 + y^2 - 2 = 0$.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[scale=2.2]
+        % Draw grid and axes
+        \draw[step=0.5, lightgray, very thin] (-1.8,-1.8) grid (1.8,1.8);
+        \draw[->] (-2,0) -- (2,0) node[right] {$x$};
+        \draw[->] (0,-2) -- (0,2) node[above] {$y$};
+
+        % Draw the constraint g(x,y) = x^2 + y^2 = 2 (Circle radius sqrt(2) approx 1.414)
+        \draw[blue, thick] (0,0) circle (1.414cm);
+        \node[blue, fill=white, inner sep=1pt] at (1.2, -1.4) {$g(x,y)=0$};
+
+        % --- POINT B (Optimal) in 1st Quadrant ---
+        % Tangency at (1,1) where f(x,y) = 1
+        % Level Curve f=1
+        \draw[green!60!black, thick, domain=0.4:1.8] plot (\x, {1/\x});
+        \node[green!60!black, right] at (1.8, 0.55) {$f=1$};
+        
+        \coordinate (B) at (1, 1);
+        \fill[black] (B) circle (1.5pt) node[above right] {$B$};
+        
+        % Gradients at B (Parallel)
+        % grad f = (1, 1)
+        \draw[->, red, thick] (B) -- ++(0.5, 0.5) node[right] {$\nabla f$};
+        % grad g = (2, 2) -> scaled to (0.4, 0.4) for visual
+        \draw[->, blue, thick] (B) -- ++(0.35, 0.35) node[left, yshift=5pt] {$\nabla g$};
+
+
+        % --- POINT A (Non-optimal) in 3rd Quadrant ---
+        % Point on circle: x approx -0.5, y approx -1.32. (xy approx 0.66)
+        % Level Curve f=0.66
+        \draw[magenta!60!black, thick,  domain=-1.8:-0.35] plot (\x, {0.66/\x});
+        \node[magenta!60!black, left] at (-1.8, -0.36) {$f \approx 0.66$};
+
+        \draw[green!60!black, thick,  domain=-1.8:-0.47] plot (\x, {1/\x});
+        \node[green!60!black, left] at (-1.8, -0.58) {$f = 1$};
+
+        \coordinate (A) at (-0.5, -1.32);
+        \fill[black] (A) circle (1.5pt) node[below left] {$A$};
+        
+        % Gradient of f at A: (y, x) -> (-1.32, -0.5). Scaled by 0.5 -> (-0.66, -0.25)
+        \draw[->, red, thick] (A) -- ++(-0.66, -0.25) node[left] {$\nabla f$};
+        
+        % Gradient of g at A: (2x, 2y) -> (-1, -2.64). Scaled by 0.2 -> (-0.2, -0.53)
+        \draw[->, blue, thick] (A) -- ++(-0.2, -0.53) node[below] {$\nabla g$};
+
+    \end{tikzpicture}
+    \caption{Maximizing $f(x,y)=xy$ subject to $x^2+y^2=2$. At point $A$ (3rd quadrant), the level curve cuts through the constraint; the gradients are not parallel. At point $B$ (1st quadrant), the level curve is tangent to the constraint; the gradients are parallel.}
+    \label{fig:lagrange_concrete}
+\end{figure}
+
+
+\noindent
+Figure \ref{fig:lagrange_concrete} on page \pageref{fig:lagrange_concrete} illustrates this problem.
+\begin{enumerate}
+    \item The \blue{blue circle} represents our constraint $g(x, y) = 0$.  We have to stay on this line.
+    \item The \green{green lines} (hyperbolas) represent the \blue{level curves} of $f(x,y)$. Every point on a
+          green curve has the same value for $x \cdot y$.  For the green curve in the first quadrant $f(x,y) = 1$,
+          while on the green curve in the third quadrant this value is approximately $0.66$.          
+\end{enumerate}
+
+Consider the point $A$ in the third quadrant. At this point, the value of our function is approximately $f=0.66$.
+Notice that the circle \blue{crosses} the dashed level curve.
+\begin{itemize}
+    \item The red arrow ($\nabla f$) points in the direction where $f$ increases most rapidly.
+    \item The blue arrow ($\nabla g$) points in the direction perpendicular to the circle (the constraint).
+\end{itemize}
+At point $A$, these vectors point in different directions. This geometry implies that if we move along the blue
+circle, we can still find a path that increases the value of $f$. Therefore, the point $A$ cannot be the
+maximum of the function $f$.
+
+
+Now consider point $B$ at $(1,1)$. Here, the value of the function is $f=1.0$.
+Notice that the circle is \blue{tangent} to the green level curve.
+At this optimal point, the direction of greatest increase for $f$ is exactly parallel to the normal vector of the circle. We cannot move along the constraint without decreasing $f$.
+
+Mathematically, this condition of parallel gradients is written as:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\nabla f(x, y) = \lambda \cdot \nabla g(x, y)$.
+\\[0.2cm]
+Here, $\lambda$ is a real number called the \blue{Lagrange multiplier}.
+We can rewrite this as finding the stationary points of a new function, the \blue{Lagrangian}:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{L}(x, y, \lambda) := f(x, y) - \lambda \cdot g(x, y)$.
+
+\subsection{Solving the Example}
+Let us solve the specific example from Figure \ref{fig:lagrange_concrete} mathematically.
+\begin{itemize}
+    \item We want to maximize the function $f(x, y) = x \cdot y$
+    \item subject to the constraint: $g(x, y) = x^2 + y^2 - 2 = 0$.
+\end{itemize}
+The \blue{Lagrangian} is:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathcal{L}(x, y, \lambda) = x \cdot y - \lambda \cdot (x^2 + y^2 - 2)$.
+\\[0.2cm]
+We compute the partial derivatives of the Lagrangian $\mathcal{L}$ and set them to zero:
+\begin{enumerate}
+    \item $\ds \frac{\partial \mathcal{L}}{\partial x} = y - 2\cdot\lambda\cdot x = 0 \quad \Rightarrow \quad y = 2\cdot\lambda\cdot x$
+    \item $\ds \frac{\partial \mathcal{L}}{\partial y} = x - 2\cdot\lambda\cdot y = 0 \quad \Rightarrow \quad x = 2\cdot\lambda\cdot y$
+    \item $\ds \frac{\partial \mathcal{L}}{\partial \lambda} = -(x^2 + y^2 - 2) = 0 \quad \Rightarrow \quad x^2 + y^2 = 2$
+\end{enumerate}
+Substituting the first equation ($y=2\cdot\lambda\cdot x$) into the second equation gives:
+\\[0.2cm]
+\hspace*{1.3cm}
+$x = 2\cdot\lambda\cdot(2\cdot\lambda\cdot x) = 4\cdot\lambda^2\cdot x$.
+\\[0.2cm]
+This implies $x\cdot(1 - 4\cdot\lambda^2) = 0$. Since $x=0$ would imply $y=0$ (which violates the constraint), we must have:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds1 - 4\cdot\lambda^2 = 0 \quad \Rightarrow \quad \lambda^2 = \frac{1}{4} \quad \Rightarrow \quad \lambda = \pm \frac{1}{2}$.
+\\[0.2cm]
+If $\lambda = 1/2$, then $y = x$. Substituting into the constraint $x^2 + y^2 = 2$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$2\cdot x^2 = 2 \quad \Rightarrow \quad x = \pm 1$.
+\\[0.2cm]
+This gives us the maxima at $(1,1)$ and $(-1,-1)$, where $f(x,y)=1$.
+This matches point $B$ in our figure.
+
+If $\lambda = -1/2$, then $y = -x$. Substituting into the constraint $x^2 + y^2 = 2$ yields:
+\\[0.2cm]
+\hspace*{1.3cm}
+$2\cdot x^2 = 2 \quad \Rightarrow \quad x = \pm 1$.
+\\[0.2cm]
+This gives us the minima at $(1,-1)$ and $(-1,1)$, where $f(x,y)=-1$.
+
+\exercise
+Assume that $\mathbf{w}\in \mathbb{R}^n$ is a vector of Euclidean length $1$, that is the equation
+$\mathbf{w} \cdot \mathbf{w} = 1$ holds.  Furthermore, assume $b \in \mathbb{R}$.  Let us define the hyperplane $P$ as the set
+\\[0.2cm]
+\hspace*{1.3cm}
+$P := \bigl\{\, \mathbf{x} \in \mathbb{R}^n \mid \mathbf{w}\cdot \mathbf{x} + b = 0 \,\bigr\}$.
+\\[0.2cm]
+What is the distance between the hyperplane $P$ and the origin, i.e.~the point $\mathbf{0}$?
+\vspace*{0.1cm}
+
+\noindent
+\textbf{Hint}: Solve this problem using the method of Lagrangian multipliers.  For any vector
+$\mathbf{x} \in \mathbb{R}$, the Euclidean length of $\mathbf{x}$ is defined as $\sqrt{\mathbf{x} \cdot\mathbf{x}}$.
+If we want to find the distance of the plane to the origin, we have to find a vector $\mathbf{x} \in P$
+such that the length of $\mathbf{x}$ is minimal.  The constraint is that the vector $\mathbf{x}$
+has to be a member of the hyperplane and therefore we must have $\mathbf{w}\cdot\mathbf{x} + b = 0$.
+
+Furthermore, we can simplify the calculation if we minimize the function $\mathbf{x} \cdot\mathbf{x}$
+instead of the function $\sqrt{\mathbf{x} \cdot\mathbf{x}}$.  This is possible because the function
+$x \mapsto \sqrt{x}$ is a monotonous function.
+\eox
+
 
 \subsection{The Mathematical Theory of Support Vector Machines}
 The main idea of support vector machines is to have a decision boundary that is \blue{as simple as possible} and that
@@ -2192,7 +2258,8 @@ the constraint
 \hspace*{1.3cm}
 $y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 = 0$.
 \\[0.2cm]
-This is not a problem because for those $i \in \{1,\cdots,\}$ where we only have the inequality
+This is not a problem because for those $i \in \{1,\cdots,n\}$
+where we only have the inequality
 \\[0.2cm]
 \hspace*{1.3cm}
 $y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 \geq 0$
@@ -2218,11 +2285,11 @@ and this implies
   \mathbf{w} = \sum\limits_{i=1}^n \alpha_i \cdot y_i \cdot \mathbf{x}^{(i)}
 \end{equation}
 Therefore the vector $\mathbf{w}$ is a linear combination of the \blue{support vectors}, where a vector
-$\mathbf{x}^{(i)}$ is a support vector iff  $\alpha_i \not= 0$.  Hence a support vector $\mathbf{x}^{(i)}$ 
+$\mathbf{x}^{(i)}$ is a \blue{support vector} \index{support vector} iff  $\alpha_i \not= 0$.  Hence a support vector $\mathbf{x}^{(i)}$ 
 must satisfy the equality
 \\[0.2cm]
 \hspace*{1.3cm}
-$y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 = 0$.
+$y_i \cdot(\mathbf{w} \cdot \mathbf{x}^{(i)} + b) - 1 = 0$.
 \\[0.2cm]
 Next, let us compute the partial derivative of $\mathcal{L}$ with respect to $b$. We have
 \\[0.2cm]
@@ -2236,7 +2303,7 @@ which implies that
 \end{equation}
 Let us rewrite the Lagrangian by substituting $\mathbf{w}$ with the right hand side of equation \ref{eq:svm-9}:
 \\[0.2cm]
-\hspace*{0.3cm}
+\hspace*{-0.5cm}
 $
 \begin{array}[t]{lcl}
   \mathcal{L} & = &
@@ -2259,16 +2326,18 @@ $
 Now, the \blue{crucial observation} is the following:  The Lagrangian $\mathcal{L}$ only depends on the dot
 products $\mathbf{x}^{(i)} \cdot \mathbf{x}^{(j)}$.  Why is this a big deal?  Often, a set of data point is not
 linearly separable in the given space.  However, it might be possible to transform the feature vectors
-$\mathbf{x} \in \mathbb{R}^d$ into some higher dimensional space $\mathbb{R}^h$ where $h > d$ and the tow
+$\mathbf{x} \in \mathbb{R}^d$ into some higher dimensional space $\mathbb{R}^h$ where $h > d$ and in this
+higher dimensional space the two
 classes are separable.  Concretely, it is sometimes possible to define a transformation function
 \\[0.2cm]
 \hspace*{1.3cm}
 $\Phi: \mathbb{R}^d \rightarrow \mathbb{R}^h$
 \\[0.2cm]
 such that the set of transformed data points
-$\bigl\{\Phi(\mathbf{x}^{(1)}), \cdots, \Phi(\mathbf{x}^{(n)})\bigr\}$ is linearly separable.
+$\bigl\{\langle\Phi(\mathbf{x}^{(1)}),y_1 \rangle, \cdots, \langle\Phi(\mathbf{x}^{(n)}), y_n\rangle\bigr\}$ is linearly separable.
 The question then is to find such a transformation $\Phi$.  Here is the punch line:  As the Lagrangian does
-only depend on dot products, it is sufficient to define the transformed dot products
+only depend on the dot products $\Phi(x^{(i)}) \cdot \Phi(x^{(j)})$, it is sufficient to define the transformed
+dot products
 \\[0.2cm]
 \hspace*{1.3cm}
 $\Phi\bigl(\mathbf{x}\bigr) \cdot \Phi\bigl(\mathbf{y}\bigr) $.
@@ -2279,7 +2348,8 @@ $\Phi\bigl(\mathbf{x}\bigr) \cdot \Phi\bigl(\mathbf{y}\bigr)$ as
 \hspace*{1.3cm}
 $\Phi\bigl(\mathbf{x}\bigr) \cdot \Phi\bigl(\mathbf{y}\bigr) := k(\mathbf{x}, \mathbf{y})$
 \\[0.2cm]
-where $k$ is called a \blue{kernel function}.  There are two kernel functions that are quite popular:
+where $k$ is called a \blue{kernel function}\index{kernel function}.  There are two kernel functions that are
+quite popular:
 \begin{enumerate}
 \item \blue{Polynomial kernels} have the form
       \\[0.2cm]
@@ -2295,20 +2365,383 @@ where $k$ is called a \blue{kernel function}.  There are two kernel functions th
       \\[0.2cm]
       Here, $\sigma$ is a hyperparameter.  
 \end{enumerate}
-Using a kernel function to simulate a parameter transformation is known as the \blue{kernel trick}.    
+Using a kernel function to simulate a parameter transformation is known as the
+\blue{kernel trick}.\index{kernel trick}    
 Experience has shown that the kernel functions given above often enable us to transform a data set into a space where the
 data set is linearly separable.  Figure \ref{fig:strange-data.pdf} on page \pageref{fig:strange-data.pdf} shows
 a set of point that is separable using a support vector machine with a Gaussian kernel.
+
+
+If you want to know more about support vector machines, the free book
+\href{https://www.syncfusion.com/ebooks/support_vector_machines_succinctly}{Support Vector Machines Succinctly}
+by Alexandre Kowalczyk \cite{kowalczyk:2017} is a good place to start.
 
 \begin{figure}[!th]
 \epsfig{file=Figures/strange-data.pdf, scale=0.6}
 \caption{Points separated by a support vector machine.}
 \label{fig:strange-data.pdf}
 \end{figure}
+\pagebreak
 
-If you want to know more about support vector machines, the free book
-\href{https://www.syncfusion.com/ebooks/support_vector_machines_succinctly}{Support Vector Machines Succinctly}
-by Alexandre Kowalczyk \cite{kowalczyk:2017} is a good place to start.
+\section{Support Vector Machines on Medical Data}
+
+In this section, we apply our implementation of Support Vector Machines to a real-world medical dataset: the \href{https://archive.ics.uci.edu/ml/datasets/breast+cancer+wisconsin+(diagnostic)}{Breast Cancer Wisconsin (Diagnostic) Dataset}.
+This problem involves classifying breast mass samples as either \blue{Malignant} (harmful) or \blue{Benign} (non-harmful) based on features computed from digitized images of a fine needle aspirate (FNA) of a breast mass.
+
+\subsection{Data Preprocessing: Standardization}
+Real-world data often presents a challenge: features have vastly different scales. For example, the mean area of a cell nucleus might range from $200$ to $2500$, while the smoothness might range from $0.05$ to $0.16$.
+This is problematic for the \blue{Gaussian Kernel} (RBF), which relies on the Euclidean distance $||\mathbf{x} - \mathbf{y}||^2$.
+If we do not normalize the data, features with large numerical values (like Area) will dominate the distance calculation, effectively rendering features with small values (like Smoothness) irrelevant.
+To fix this, we apply \blue{standardization} (also known as Z-score normalization) to scale the data such that each feature has a mean of $0$ and a standard deviation of $1$.
+
+\subsection{From Hard Margin to Soft Margin}
+The SVM theory derived in Section \ref{chapter:classification} assumed that the data is \blue{linearly separable} (potentially after a kernel transformation). This is known as the \blue{Hard Margin SVM}. The constraints derived were:
+\\[0.2cm]
+\hspace*{1.3cm}
+$y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) \geq 1$.
+\\[0.2cm]
+In medical diagnosis, data often overlaps significantly. A Hard Margin SVM would fail to find a solution
+because no hyperplane can perfectly separate the classes. To handle this, we introduce \blue{slack variables}
+\index{slack variables} $\xi_i \geq 0$ which allow individual data points to violate the margin constraint: 
+\\[0.2cm]
+\hspace*{1.3cm}
+$y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) \geq 1 - \xi_i$.
+\\[0.2cm]
+Our goal is still to maximize the margin (minimize $||\mathbf{w}||^2$), but we must now also penalize the slack variables. The new \blue{primal objective} becomes:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \text{Minimize } \frac{1}{2}||\mathbf{w}||^2 + C \cdot \sum_{i=1}^n \xi_i$.
+\\[0.2cm]
+Here, $C$ is a \blue{regularization parameter}.  If $C$ is large, we penalize mistakes heavily.
+On the other hand, if $C$ is small, we allow more margin violations to obtain a simpler boundary.
+Remarkably, when we solve the Lagrangian for this new problem, the Lagrangian remains
+exactly the same as derived previously: 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathcal{L}(\alpha) =
+\sum_{i=1}^n \alpha_i - \frac{1}{2} \sum_{i=1}^n \sum_{j=1}^n \alpha_i \cdot\alpha_j\cdot y_i\cdot y_j\cdot
+K(\mathbf{x}_i, \mathbf{x}_j)$.
+\\[0.2cm]
+Here, $K(\mathbf{x}_i, \mathbf{x}_j)$ is the kernel function discussed earlier.
+However, the constraints on the Lagrange multipliers $\alpha_i$ change. Instead of just $\alpha_i \geq 0$, we
+obtain the \blue{box constraints}: 
+\\[0.2cm]
+\hspace*{1.3cm}
+$0 \leq \alpha_i \leq C$.
+\\[0.2cm]
+This result allows us to implement a so called \blue{soft margin SVM} \index{soft margin SVM}
+by simply adding an upper bound to our Lagrange multipliers $\alpha_i$.
+
+\subsection*{Derivation of the Soft Margin Lagrangian}
+\label{subsec:soft-margin-derivation}
+
+In this subsection, we formally derive the \blue{Dual Optimization Problem} for the Soft Margin SVM. This derivation explains why the objective function remains unchanged compared to the Hard Margin case, while the constraints on $\alpha_i$ change to $0 \leq \alpha_i \leq C$.
+
+\subsubsection{The Primal Problem}
+Recall that for the Soft Margin SVM, we introduce \blue{slack variables} $\xi_i \geq 0$ to allow misclassifications. We want to maximize the margin (minimize $||\mathbf{w}||^2$) while penalizing the sum of the slack variables.
+The \blue{Primal Optimization Problem} is defined as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \text{Minimize } \quad \frac{1}{2} ||\mathbf{w}||^2 + C \cdot\sum_{i=1}^n \xi_i$
+\\[0.2cm]
+Subject to the constraints:
+\begin{enumerate}
+    \item $y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) \geq 1 - \xi_i$ \quad for all $i=1, \dots, n$
+    \item $\xi_i \geq 0$ \quad for all $i=1, \dots, n$
+\end{enumerate}
+
+\subsubsection{Constructing the Lagrangian}
+To solve this constrained optimization problem, we use the method of \blue{Lagrange multipliers}. We need to introduce a multiplier for every constraint:
+\begin{itemize}
+    \item We associate a multiplier $\alpha_i \geq 0$ with the margin constraint:
+    \\[0.2cm]
+    \hspace*{1.3cm}
+    $y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 + \xi_i \geq 0$.
+    \item We associate a multiplier $\beta_i \geq 0$ with the non-negativity constraint of the slack variable:
+    \\[0.2cm]
+    \hspace*{1.3cm}
+    $\xi_i \geq 0$.
+\end{itemize}
+The \blue{Lagrangian} $\mathcal{L}(\mathbf{w}, b, \boldsymbol{\xi}, \boldsymbol{\alpha}, \boldsymbol{\beta})$ is constructed by subtracting the weighted sum of constraints from the objective function:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \mathcal{L} = \underbrace{\frac{1}{2} \cdot||\mathbf{w}||^2 + C \cdot\sum_{i=1}^n \xi_i}_{\text{Objective}} - \sum_{i=1}^n \alpha_i \bigl[ y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 + \xi_i \bigr] - \sum_{i=1}^n \beta_i \cdot\xi_i$
+
+\subsubsection{Minimizing with respect to Primal Variables}
+We must minimize $\mathcal{L}$ with respect to the primal variables $\mathbf{w}$, $b$, and $\xi_i$. To do this, we compute the partial derivatives and set them to zero.
+\begin{enumerate}
+\item Derivative with respect to $\mathbf{w}$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \frac{\partial \mathcal{L}}{\partial \mathbf{w}} = \mathbf{w} - \sum_{i=1}^n \alpha_i \cdot y_i\cdot
+      \mathbf{x}_i = 0 \quad \Rightarrow \quad \mathbf{w} = \sum_{i=1}^n \alpha_i \cdot y_i \cdot\mathbf{x}_i$
+      \\[0.2cm]
+      This result is identical to the hard margin case.
+\item Derivative with respect to $b$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \frac{\partial \mathcal{L}}{\partial b} = - \sum_{i=1}^n \alpha_i \cdot y_i = 0 \quad
+         \Rightarrow \quad \sum_{i=1}^n \alpha_i \cdot y_i = 0$
+      \\[0.2cm]
+      This is also identical to the hard margin case.
+\item Derivative with respect to $\xi_i$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\ds \frac{\partial \mathcal{L}}{\partial \xi_i} = C - \alpha_i - \beta_i = 0 \quad
+         \Rightarrow \quad \alpha_i + \beta_i = C$
+      \\[0.2cm]
+      This equation is the key to the Soft Margin formulation. It relates the \blue{regularization parameter} $C$ to
+      our Lagrange multipliers $\alpha_i$ and $\beta_i$. 
+\end{enumerate}
+
+\subsubsection{Deriving the Box Constraints}
+We now show how the constraints $0 \leq \alpha_i \leq C$ for $i=1,\cdots,n$ are derived.
+From the definition of the Lagrangian, we know that all Lagrangian multipliers must be non-negative, i.e.~we
+have 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\alpha_i \geq 0 \quad \text{and} \quad \beta_i \geq 0$ \quad for all $i=1,\cdots,n$.
+\\[0.2cm]
+The derivative with respect to $\xi_i$ gave us the relation $\alpha_i + \beta_i = 0$.  Therefor we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\beta_i = C - \alpha_i$ \quad for all $i=1,\cdots,n$.
+\\[0.2cm]
+Substituting this into the inequality $\beta_i \geq 0$, we get:
+\\[0.2cm]
+\hspace*{1.3cm}
+$C - \alpha_i \geq 0 \quad \Rightarrow \quad \alpha_i \leq C$.
+\\[0.2cm]
+Combining this with $\alpha_i \geq 0$, we obtain the \blue{box constraints}
+\\[0.2cm]
+\hspace*{1.3cm}
+\colorbox{red}{\framebox{\colorbox{orange}{$0 \leq \alpha_i \leq C$}}} \quad for all $i=1,\cdots,n$.
+\\[0.2cm]
+Finally, we substitute the relations back into the Lagrangian to eliminate the variables
+$\mathbf{w} = (w_1,\cdots, w_d)^\top$.
+Let us collect the terms involving the slack variables $\xi_i$:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \sum_{i=1}^n \xi_i \cdot (C - \alpha_i - \beta_i)$.
+\\[0.2cm]
+Since $\alpha_i + \beta_i = C$, the term inside the parenthesis is zero.  Therefore all terms involving $\xi_i$ vanish
+and we are left with the exact same terms as previously when we had not introduced slack variables!
+Therefore, the \blue{optimization problem} is again
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \text{Maximize } \quad \sum_{i=1}^n \alpha_i - \frac{1}{2}
+ \cdot\sum_{i=1}^n \sum_{j=1}^n \alpha_i \cdot\alpha_j\cdot y_i\cdot y_j \cdot (\mathbf{x}_i \cdot \mathbf{x}_j)$
+\\[0.2cm]
+subject to the constraints
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds \sum_{i=1}^n \alpha_i \cdot y_i = 0 \quad \text{and} \quad 0 \leq \alpha_i \leq C$.
+\\[0.2cm]
+Of course, the constraints have changed now, as we have added the constraints $\alpha_i \leq C$.
+
+\subsection{Implementation}
+Finally, we are ready to present the implementation of the class \texttt{SVM}. This class implements soft
+margin support vector machines.
+We have split the code into several figures to make it easier to digest. 
+
+\subsubsection{Initialization}
+Figure \ref{fig:svm_init} shows the initialization of the class. The class accepts a \blue{kernel} function and
+the regularization parameter \texttt{C}. 
+If \texttt{C} is set to \texttt{None}, we assume a hard margin.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                bgcolor       = sepia,
+                mathescape,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+                fontsize      = \small
+              ]{python3}
+    class SVM:
+        def __init__(self, kernel=gaussian_kernel, C=1.0):
+            self.kernel = kernel
+            self.C      = C  # Regularization parameter
+            self.alpha  = None
+            self.support_vectors       = None
+            self.support_vector_labels = None
+            self.b = 0
+\end{minted}
+\caption{SVM Initialization.}
+\label{fig:svm_init}
+\end{figure}
+
+\subsubsection{Optimization (The fit Method)}
+The core training logic is implemented in the \texttt{fit} method, shown in Figure \ref{fig:svm_fit}.
+The optimization process involves the following mathematical details:
+
+\begin{enumerate}
+\item Lines 11--14 compute the matrix $K$ where $K_{i,j} = K(\mathbf{x}_i, \mathbf{x}_j)$.
+      In the literature $K$ is called the \blue{Gram matrix}\index{Gram matrix}.
+      Pre-computing $K$ is essential for performance, as these values are used $n^2$ times in every step of the
+      optimization. 
+\item Lines 17--18 define the function to minimize.
+      The mathematical goal is to \blue{maximize} $\mathcal{L}(\alpha)$.
+      However, standard numerical solvers like \texttt{minimize}` are designed to find the \blue{minimum}. Therefore, we minimize the \blue{negative} of the dual objective:
+    \\[0.2cm]
+    \hspace*{1.3cm}
+    $\ds \text{minimize } J(\alpha) = \frac{1}{2} \cdot \sum_{i,j} \alpha_i \cdot\alpha_j \cdot y_i \cdot y_j \cdot K_{ij} - \sum_i \alpha_i$.
+    
+    \item \textbf{Box Constraints}: Lines 21--22 implement the Soft Margin constraints derived earlier.
+    \begin{itemize}
+        \item The equality constraint \texttt{np.dot(alpha, y)} corresponds to $\sum \alpha_i \cdot y_i = 0$.
+        \item The bounds \texttt{(0, self.C)} correspond to $0 \leq \alpha_i \leq C$.
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                bgcolor       = sepia,
+                mathescape,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+                fontsize      = \small,
+                firstnumber   = 9
+              ]{python3}
+    def fit(self, X, y):
+        n_samples, n_features = X.shape
+        K = np.zeros((n_samples, n_samples))
+        for i in range(n_samples):
+            for j in range(n_samples):
+                K[i, j] = self.kernel(X[i], X[j])
+        def objective(alpha):
+            return 0.5 * np.sum((np.outer(alpha, alpha) * \
+                   np.outer(y, y)) * K) - np.sum(alpha)
+        constraints = ({'type': 'eq', 'fun': lambda alpha: np.dot(alpha, y)})
+        bounds      = [(0, self.C) for _ in range(n_samples)]
+        initial_alpha = np.zeros(n_samples)
+        result = minimize(objective, initial_alpha, method='SLSQP', 
+                          bounds=bounds, constraints=constraints)
+        self.alpha = result.x
+        sv_indices = self.alpha > 1e-4
+        self.support_vectors = X[sv_indices]
+        self.support_vector_labels = y[sv_indices]
+        self.alpha = self.alpha[sv_indices]
+        self.compute_bias()
+\end{minted}
+\caption{The training method \texttt{fit}.}
+\label{fig:svm_fit}
+\end{figure}
+
+\subsubsection{Computing the Bias}
+Calculating the bias $b$ in a Soft Margin SVM requires careful consideration of the
+\blue{Karush-Kuhn-Tucker (KKT) conditions}.
+The KKT conditions for the primal problem imply the following complementarity conditions for the optimal solution:
+\begin{align*}
+    \alpha_i \cdot (y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 + \xi_i) &= 0 \\
+    (C - \alpha_i) \cdot \xi_i &= 0
+\end{align*}
+These conditions divide our support vectors into two types:
+\begin{enumerate}
+\item \blue{Bound Support Vectors} ($\alpha_i = C$):
+       Here $\xi_i > 0$, meaning the point violates the margin. We cannot use these to calculate $b$ precisely
+       because the exact value of $\xi_i$ is unknown. 
+ \item \blue{Free Support Vectors} ($0 < \alpha_i < C$):
+       Here $C - \alpha_i > 0$, which implies $\xi_i = 0$. These points lie \underline{exactly} on the margin.
+\end{enumerate}
+For any free support vector $\mathbf{x}_k$, we have:
+\\[0.2cm]
+\hspace*{1.3cm}
+$y_k \cdot (\mathbf{w} \cdot \mathbf{x}_k + b) = 1$.
+\\[0.2cm]
+Multiplying by $y_k$ (and noting $y_k^2=1$) gives:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathbf{w} \cdot \mathbf{x}_k + b = y_k \quad \Rightarrow \quad b = y_k - \mathbf{w} \cdot \mathbf{x}_k$.
+\\[0.2cm]
+Substituting the dual form $\mathbf{w} = \sum \alpha_j \cdot y_j \cdot \mathbf{x}_j$,
+we get the formula implemented in Figure \ref{fig:svm_bias}:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds b = y_k - \sum_{j \in SV} \alpha_j \cdot y_j \cdot K(\mathbf{x}_j, \mathbf{x}_k)$.
+\\[0.2cm]
+We compute this value for all free support vectors and take the average to ensure numerical stability.
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                bgcolor       = sepia,
+                mathescape,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+                fontsize      = \small,
+                firstnumber   = 29
+              ]{python3}
+    def compute_bias(self):
+        free_sv_indices = (self.alpha < self.C - 1e-4)
+        if np.any(free_sv_indices):
+            b_values = []
+            free_alphas = self.alpha[free_sv_indices]
+            free_vecs   = self.support_vectors[free_sv_indices]
+            free_labels = self.support_vector_labels[free_sv_indices]
+            for i in range(len(free_alphas)):
+                sum_term = 0
+                for j in range(len(self.alpha)):
+                    sum_term += self.alpha[j] * self.support_vector_labels[j] * \
+                                self.kernel(self.support_vectors[j], free_vecs[i])
+                b_values.append(free_labels[i] - sum_term)
+            self.b = np.mean(b_values)
+        else:
+            self.b = 0
+\end{minted}
+\caption{Computing the bias $b$.}
+\label{fig:svm_bias}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{Prediction}
+Finally, Figure \ref{fig:svm_predict} shows the prediction logic. The decision boundary is determined by the
+sign of the hyperplane equation: 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\ds f(\mathbf{x}) = \text{sign}\left( \sum_{i \in SV} \alpha_i \cdot y_i \cdot K(\mathbf{x}_i, \mathbf{x}) + b \right)$.
+\\[0.2cm]
+If the result is positive, we classify the tumour as $+1$, i.e.~benign, otherwise we classify it as $-1$,
+i.e.~malignant. 
+
+\begin{figure}[!ht]
+\centering
+\begin{minted}[ frame         = lines, 
+                framesep      = 0.3cm, 
+                bgcolor       = sepia,
+                mathescape,
+                numbers       = left,
+                numbersep     = -0.2cm,
+                xleftmargin   = 0.8cm,
+                xrightmargin  = 0.8cm,
+                fontsize      = \small,
+                firstnumber   = 46
+              ]{python3}
+    def predict(self, X):
+        y_pred = []
+        for x in X:
+            prediction = 0
+            for i in range(len(self.alpha)):
+                prediction += self.alpha[i] * self.support_vector_labels[i] * \
+                              self.kernel(self.support_vectors[i], x)
+            y_pred.append(prediction + self.b)
+        return np.sign(y_pred)
+\end{minted}
+\caption{The  method \texttt{predict}.}
+\label{fig:svm_predict}
+\end{figure}
+\FloatBarrier
+
 
 
 %%% Local Variables:
