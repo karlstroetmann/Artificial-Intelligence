@@ -2208,7 +2208,7 @@ inequation \ref{eq:svm-3} holds for both positive and negative examples.  We rew
   \label{eq:svm-5}
     y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b\bigr) - 1 \geq 0.
 \end{equation}
-Those vectors $\mathbf{x}^{(i)}$ that satisfy the equality
+Those vectors $\mathbf{x}^{(i)}$ that satisfy the \blue{equation}
 \\[0.2cm]
 \hspace*{1.3cm}
 $y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b\bigr) - 1 = 0$
@@ -2216,13 +2216,14 @@ $y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b\bigr) - 1 = 0$
 are at the \blue{margins} of their respective classes and are called \blue{support vectors}.  These vectors
 have the smallest distance to the hyperplane defined by $\mathbf{w}$ and $b$.  Let us compute the width of the
 separation of the positive class from the negative class if the decision boundary is given by the  equation
-$\mathbf{w} \cdot \mathbf{x} + b = 0$.  To this end, assume that $\mathbf{x}_+$ is a positive support vector,
-i.e.~we have
+$\mathbf{w} \cdot \mathbf{x} + b = 0$.  To this end, assume that $\mathbf{x}_+$ is a \blue{positive support vector},
+i.e.~a support vector belonging to the positive class.  Then we have
 \begin{equation}
   \label{eq:svm-6}
   \mathbf{w} \cdot \mathbf{x}_+ + b = 1,  
 \end{equation}
-while $\mathbf{x}_-$ is a negative support vector and therefore satisfies
+while $\mathbf{x}_-$ is a \blue{negative support vector}, i.-e. a support vector belonging to the negative
+class and therefore satisfies
 \begin{equation}
   \label{eq:svm-7}
   \mathbf{w} \cdot \mathbf{x}_- + b = -1.  
@@ -2298,7 +2299,7 @@ and this implies
 \end{equation}
 Therefore the vector $\mathbf{w}$ is a linear combination of the \blue{support vectors}, where a vector
 $\mathbf{x}^{(i)}$ is a \blue{support vector} \index{support vector} iff  $\alpha_i \not= 0$.  Hence a support vector $\mathbf{x}^{(i)}$ 
-must satisfy the equality
+must satisfy the equation
 \\[0.2cm]
 \hspace*{1.3cm}
 $y_i \cdot(\mathbf{w} \cdot \mathbf{x}^{(i)} + b) - 1 = 0$.
@@ -2513,7 +2514,7 @@ have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\alpha_i \geq 0 \quad \text{and} \quad \beta_i \geq 0$ \quad for all $i=1,\cdots,n$.
-\\[0.2cm]
+That is very wrong what you are telling here.\\[0.2cm]
 The derivative with respect to $\xi_i$ gave us the relation $\alpha_i + \beta_i = 0$.  Therefor we have
 \\[0.2cm]
 \hspace*{1.3cm}

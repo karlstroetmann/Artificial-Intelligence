@@ -120,7 +120,7 @@ on page \pageref{fig:nn1.pdf} shows a small neural network with two hidden layer
 it has four layers and its topology is given by the list $[3, 6, 4, 2]$.  A larger neural network with three
 hidden layers is shown in Figure \ref{fig:nn2.pdf} on page \pageref{fig:nn2.pdf}.  I have written a small
 Jupyter notebook that can be used to draw diagrams of this kind. This notebook is available at
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/7%20Neural%20Networks/NN-Architecture.ipynb}{NN-Architecture.ipynb}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Chapter-07/NN-Architecture.ipynb}{NN-Architecture.ipynb}
 in the \texttt{Python} subdirectory of my GitHub repository for this lecture. 
 
 
@@ -222,8 +222,8 @@ through the neural network:
       vector $\mathbf{a}^{(3)}(\mathbf{x})$ according to the formula
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathbf{a}^{(3)}(\mathbf{x}) := S\bigl(W^{(3)} \cdot \mathbf{a}^{(2)}(\mathbf{x}) + \mathbf{b}^{(3)}\bigr)
-                          = S\Bigl(W^{(3)} \cdot S\bigl(W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}\bigr) + \mathbf{b}^{(3)}\Bigr)
+      $\mathbf{a}^{(3)}(\mathbf{x}) := f\bigl(W^{(3)} \cdot \mathbf{a}^{(2)}(\mathbf{x}) + \mathbf{b}^{(3)}\bigr)
+                          = f\Bigl(W^{(3)} \cdot S\bigl(W^{(2)} \cdot \mathbf{x} + \mathbf{b}^{(2)}\bigr) + \mathbf{b}^{(3)}\Bigr)
         $
 \item This proceeds until the output layer is reached and the output
       \\[0.2cm]
@@ -303,18 +303,19 @@ There are three reasons for the recent success of neural networks.
 \begin{enumerate}
 \item The computing power that is available today has vastly increased in the last 20 years.
       For example, today the
-      \href{https://www.nvidia.com/de-de/geforce/graphics-cards/40-series/rtx-4090/}{NVIDIA RTX 4090}
-      graphic card offers 83 teraflops in single precision performance. It needs a power supply that
+      \href{https://www.nvidia.com/de-de/geforce/graphics-cards/50-series/rtx-5090/}{NVIDIA RTX 5090}
+      graphic card offers 419 teraflops in single precision performance. It needs a power supply that
       outputs 450 watt. Contrast this with \href{https://en.wikipedia.org/wiki/ASCI_White}{ASCI White}, which
       was the most powerful supercomputer in 2000: According to the article
       ``\href{https://en.wikipedia.org/wiki/History_of_supercomputing}{History of Supercomputing}'', 
       it  offered a performance of 7.2 teraflops and needed 6 megawatt to operate.  The cost to build ASCI
-      White was about $110,000,000\,\symbol{36}$.   To compare, the \textsc{Nvidia} RTX 4090 costs $1,\!799\,\symbol{36}$.
+      White was about $110,000,000\,\symbol{36}$.   To compare, the \textsc{Nvidia} RTX 5090 costs $2,\!099\,\symbol{36}$.
 
-      The \textsc{Nvidia} RTX 4090 is a consumer graphics card.  There are so called \blue{Tensor Core GPUs}
-      like the \textsc{Nvidia} H100 NFL that are at least one order of magnitude which can achieve more than a
-      petaflop when performing single precision matrix multiplications.  Furthermore, these card can be bundled
-      in clusters.  However, a single \textsc{Nvidia} H100 card can cost up to $40,000\, \$$.
+      The \textsc{Nvidia} RTX 5090 is a consumer graphics card.  There are so called \blue{Tensor Core GPUs}
+      like the \textsc{Nvidia} Blackwell B200 Tensor Core GPU that are can achieve more than a
+      petaflop when training neural networks.  Furthermore, these card can be bundled
+      in clusters.  However, a card containing two \textsc{Nvidia} B200 GPUs and one \textsc{Nvidia} Grace CPU
+      can cost up to $70,000\, \$$. 
 \item The breakthrough in the theory of neural networks was the rediscovering of the
       \href{https://en.wikipedia.org/wiki/Backpropagation}{backpropagation algorithm} \index{backpropagation} by
       David Rumelhart, Geoffrey Hinton, and Ronald Williams \cite{rumelhart:1986} in 1986.  
@@ -574,17 +575,21 @@ $\ds C_{\mathbf{x}, \mathbf{y}} = \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\math
 \\[0.2cm]
 and we have $\mathbf{a}^{(L)}(\mathbf{x}) = f\bigl(\mathbf{z}^{(L)}\bigr)$, the
 \href{https://en.wikipedia.org/wiki/Chain_rule}{chain rule} of calculus tells us that $\varepsilon_j^{(L)}$  
-can be computed as follows:
+can be computed as shown below.  Note that we suppress the fact that $\mathbf{a}^{(L)}(\mathbf{x})$ is a
+function of the input vector $\mathbf{x}$ in the following calculation.  The reason is that we are
+computing the partial derivative of the cost function with respect to the weights $w_{j,k}^{(l)}$ and biases
+$b_j^{(l)}$ and these weights and biases do not depend on the inputs $x_i$.  Therefore, it makes sense to
+suppress the input vector $\mathbf{x}$ in the notation.
 \\[0.2cm]
 \hspace*{1.3cm}
 $
 \begin{array}{lcll}
 \varepsilon_j^{(L)} 
 & = & \ds \frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial z_j^{(L)}} \\[0.5cm]
-& = & \ds \frac{\partial \quad}{\partial z_j^{(L)}}  \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)}(\mathbf{x}) - \mathbf{y}\bigr)^2
+& = & \ds \frac{\partial \quad}{\partial z_j^{(L)}}  \frac{1}{2} \cdot \bigl(\mathbf{a}^{(L)} - \mathbf{y}\bigr)^2
       \\[0.5cm]
 & = & \ds \frac{1}{2} \cdot \frac{\partial \quad}{\partial z_j^{(L)}} 
-      \sum\limits_{i=1}^{m(L)} \Bigl(a_i^{(L)}(\mathbf{x}) - y_i\Bigr)^2
+      \sum\limits_{i=1}^{m(L)} \Bigl(a_i^{(L)} - y_i\Bigr)^2
       \\[0.5cm]
 & = & \ds \frac{1}{2} \cdot \frac{\partial \quad}{\partial z_j^{(L)}} 
       \sum\limits_{i=1}^{m(L)} \Bigl(f\bigl(z_i^{(L)}\bigr) - y_i\Bigr)^2
@@ -712,7 +717,7 @@ In order to proceed, we need to evaluate the partial derivative
 $\ds\frac{\partial z_j^{(L)}}{\partial w_{j,k}^{(l)}}$.  The term $z_j^{(l)}$ has been defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\ds z_j^{(l)} = \left(\sum\limits_{k=1}^{m(l)} w_{j,i}^{(l)} \cdot f\bigl(z_i^{(l-1)}\bigr)\right) + b_j^{(l)}$.
+$\ds z_j^{(l)} = \left(\sum\limits_{i=1}^{m(l)} w_{j,i}^{(l)} \cdot f\bigl(z_i^{(l-1)}\bigr)\right) + b_j^{(l)}$.
 \\[0.2cm]
 Hence we have
 \\[0.2cm]
@@ -730,7 +735,7 @@ Combining these equations we arrive at
 \\[0.2cm]
 \hspace*{1.3cm}
 $ \ds\frac{\partial C_{\mathbf{x}, \mathbf{y}}}{\partial w_{j,k}^{(l)}}  =  
-  a_k^{(l-1)} \cdot \varepsilon_j^{(l)} 
+  \varepsilon_j^{(l)} \cdot a_k^{(l-1)} 
 $. 
 \\[0.2cm]
 Therefore, equation (\ref{eq:BP4}) has been verified.
@@ -765,7 +770,7 @@ collected for the purpose of training neural networks for image recognition, con
 When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a
 bias vector $b^{(l)}$ we have to compute the sums 
 \\[0.2cm]
-\hspace*{1.3cm}
+\hspace*{0.3cm}
 $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial w_{j,k}^{(l)}}$
 \quad and \quad
 $\ds \frac{1}{2\cdot n} \cdot \sum\limits_{i=1}^n \frac{\partial C_{\mathbf{x}^{(i)}, \mathbf{y}^{(i)}}}{\partial b_{j}^{(l)}}$
@@ -829,7 +834,7 @@ files.  You can download this file at the following address:
 Next, we describe a \textsl{Python} program that loads these images, trains a neural network on it, and
 finally evaluates the accuracy of the network.  The program is shown in the Figures
 \ref{fig:Digit-Regocnition.ipynb-1}, \ref{fig:Digit-Regocnition.ipynb-2}, \ref{fig:Digit-Regocnition.ipynb-3},
-and \ref{fig:Digit-Regocnition.ipynb-4}.
+and \ref{fig:Digit-Regocnition.ipynb-4} on the following pages.
 
 
 \begin{figure}[!ht]
@@ -1231,7 +1236,7 @@ proceeds as follows:
 The program discussed in this section is available as a jupyter notebook at the following link
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/7%20Neural%20Networks/Digit-Recognition-NN.ipynb}{Digit-Recognition-NN.ipynb}.
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Chapter-07/Digit-Recognition-NN.ipynb}{Digit-Recognition-NN.ipynb}.
 \\[0.2cm]
 The file is located in the directory \texttt{Python/7 Neural Networks} in my
 \href{https://github.com/karlstroetmann/Artificial-Intelligence}{github repository} for this lecture. 
@@ -1239,7 +1244,7 @@ The file is located in the directory \texttt{Python/7 Neural Networks} in my
 \exercise
 \begin{enumerate}[(a)]
 \item Modify the notebook
-      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/7%20Neural%20Networks/Digit-Recognition-NN.ipynb}{Digit-Recognition-NN.ipynb}
+      \href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Chapter-07/Digit-Recognition-NN.ipynb}{Digit-Recognition-NN.ipynb}
         so that it uses the \texttt{ReLU} function instead of the sigmoid function as the activation function for the
         hidden layer.
 \item Develop a notebook that constructs 5 neural networks trained for digit recognition. Implement a final
