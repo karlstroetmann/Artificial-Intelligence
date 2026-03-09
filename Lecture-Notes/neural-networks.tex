@@ -913,12 +913,12 @@ code to load the image files.  We discuss it line by line.
       
       For reasons of efficiency we will only use \blue{single precision floating point numbers}. 
 \item The function \texttt{load\_data} reads the file \texttt{mnist.pkl.gz}, uncompresses it,
-      and returns three lists:
+      and returns two lists:
       \begin{enumerate}
       \item \texttt{training\_data} stores the first $50\,000$ images.
             The images are stored as pairs $(x,y)$: $x$ is a \texttt{numpy} array of shape $(784,1)$ and $y$ is a
             \texttt{numpy} array of shape $(10, 1)$.
-      \item \texttt{test\_data} holds the remaining $10\,000$ images.
+      \item \texttt{test\_data} holds  $10\,000$ images.
             $\texttt{test\_data}$ is a list containing $10,000$  pairs of the form $(\textbf{x}, y)$,
             where $\textbf{x}$ is a 784-dimensional \texttt{numpy} array containing the input image, 
             and $y \in \{0,\cdots,9\}$ is the corresponding digit value.            
@@ -958,7 +958,7 @@ shows the implementation of three utility functions.
 \begin{enumerate}
 \item The function $\mathtt{rndMatrix}(r, c)$ creates a matrix of shape $(r, c)$ that is filled with
       random numbers.  These numbers have a Gaussian distribution with mean $0$ and variance
-      $1/r$.  This function is used to initialize the weight matrices.  It is important that not all weights
+      $1/c$.  This function is used to initialize the weight matrices.  It is important that not all weights
       are initialized to the same number, for otherwise they would stay the same and then the different neurons
       would effectively all calculate the same feature instead of different features.  It is also important
       that the weights are not too big for otherwise the associated neurons would \blue{saturate} and 
@@ -1091,7 +1091,7 @@ represents a neural network with one hidden layer.
       \item \texttt{epochs} is the number of iterations of gradient descent.      
       \item \texttt{mbs} is the size of the mini-batches that are used in stochastic gradient descent.
             I have achieved the fastest learning when I have used a mini-batch size of 10.  Using a mini-batch size
-            of 20 was slightly slower, but this parameter seems is not critical.
+            of 20 was slightly slower, but this parameter seems not to be critical.
       \item \texttt{eta} is the learning rate.
       \item \texttt{test\_data} is the list of test data.  These data are only used to check the accuracy after
             every epoch, they are not used to determine the weights or biases.
