@@ -15,8 +15,9 @@ partial derivatives), while reverse mode needs to traverse the computational gra
 values of $n$ only reverse mode automatic differentiation is a viable option.  We proceed to define the crucial
 notion of a computational graph. 
 
-\begin{Definition}[Computational Graph] 
-  A \blue{computational graph} \index{computational graph} is a list of \blue{computational nodes}.
+\begin{Definition}[Computational Graph]
+  Assume a set $\{x_1, \cdots, x_k \}$ of \blue{input variables} is given.
+  A \blue{computational graph} \index{computational graph} $G$ is a list of \blue{computational nodes}.
   \index{computational node}  There are four types of computational nodes:
   \begin{enumerate}
   \item A \blue{variable node} is tuple of length 1 of the form   
@@ -24,7 +25,7 @@ notion of a computational graph.
         \hspace*{1.3cm}
         $\langle x, \rangle$
         \\[0.2cm]
-        where $x$ is a variable from the set of variables $\{x_1,\cdots,x_k\}$.
+        where $x$ is a variable from the set $\{x_1,\cdots,x_k\}$.
         This node represents the given input variable.
   \item A \blue{constant node} is a pair of the form
         \\[0.2cm]
@@ -44,7 +45,7 @@ notion of a computational graph.
         $\langle n, f, a\rangle$
         \\[0.2cm]
         where, again, $n$ is the \blue{name} of the node that is used as an auxiliary variable. $f$ is an unary
-        function symbol from a set of unary function.  In our examples $f$ will be a mwember of the set 
+        function symbol from a set of unary function.  In our examples $f$ will be a member of the set 
         \\[0.2cm]
         \hspace*{1.3cm}
         $\{ \mathrm{sqrt}, \exp, \ln, \sin, \cos, \arctan \}$
@@ -71,9 +72,10 @@ notion of a computational graph.
         $n \;\mathtt{:=}\; a_1\; o\,\; a_2$.
         \\[0.2cm]
         As in the previous case, the name $n$ is a string that can be understood as the name of an auxiliary
-        variable. 
-        \eoxs
- \end{enumerate}
+        variable.
+\end{enumerate}
+The \blue{output variable} of G is the name of the variable that is defined in the last node.
+\eoxs
 \end{Definition}
 
 \begin{figure}[!ht]
@@ -180,9 +182,10 @@ If a computational graph is admissible, the nodes can be evaluated in the same o
 \label{fig:Reverse-Mode-AD.ipynb:eval_graph}
 \end{figure}
 
-In order to \blue{evaluate} an admissible computational graph that contains $n$ variables, we will assume that the first
-$n$ nodes are labelled with the variables $\mathtt{x}_1$, $\cdots$, $\mathtt{x}_n$ and that the last node in a computational node
-is labelled with the name \texttt{y}.  Furthermore, we need a dictionary \texttt{Values} that assigns a value to each
+In order to \blue{evaluate} an admissible computational graph $G$ that contains $n$ input variables, we will
+assume that the first $n$ nodes are labelled with the variables $\mathtt{x}_1$, $\cdots$, $\mathtt{x}_n$ and
+that the output variable of $G$ is \texttt{y}.  Furthermore, we need a dictionary \texttt{Values} that
+assigns a value to each 
 of the variables $\mathtt{x}_1$, $\cdots$, $\mathtt{x}_n$.  Then the function \texttt{eval\_graph} that is shown in Figure
 \ref{fig:Reverse-Mode-AD.ipynb:eval_graph} can be used to evaluate the nodes of the computational graph
 \texttt{CG} one by one.  The idea is that initially the dictionary \texttt{Values} maps all variables to
@@ -255,7 +258,7 @@ associating every node with its name.
 \FloatBarrier
 
 \begin{Definition}[Adjoint]
-  Assume $G$ is a computational graph such that the last node is labelled with then name \texttt{y}.
+  Assume $G$ is a computational graph such that the output variable is \texttt{y}.
   If $v$ is any node in $G$, then the \blue{adjoint} \index{adjoint} of $v$, which is written as $\bar{v}$, is defined
   as the partial derivative of the output variable \texttt{y} w.r.t.~$v$, i.e.
   \\[0.2cm]
