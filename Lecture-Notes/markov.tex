@@ -17,7 +17,7 @@
         $T(s_1,a,s_2)$
         \\[0.2cm]
         is the probability that, provided the system is in state $s_1$ and action $a$ is executed,
-        the system will be in state $s_2$ afterwords.  Formally, we have
+        the system will be in state $s_2$ afterwards.  Formally, we have
         \\[0.2cm]
         \hspace*{1.3cm}
         $T:S \times A \times S \rightarrow [0,1]$.
@@ -59,8 +59,8 @@
   agent being in state $s_2$. \eox
 \end{Definition}
 
-\section{The Bellmann Equation}
-The Bellmann equation is a fixpoint equation that determines the \emph{value of a state}, where the
+\section{The Bellman Equation}
+The Bellman equation is a fixpoint equation that determines the \emph{value of a state}, where the
 value of a state is the discounted payoff of the expected reward that is expected to be achieved
 from the given state if the agent always performs the action that maximizes his expected rewards.
 If the value of a state $s$ is denoted as $V^*(s)$, then $V^*(s)$ satisfies the equation
@@ -69,7 +69,7 @@ If the value of a state $s$ is denoted as $V^*(s)$, then $V^*(s)$ satisfies the 
 $\ds V^*(s) = \max\limits_{a \in A} \sum\limits_{s' \in S} T(s,a,s') \cdot \bigl(R(s,a,s') + \gamma \cdot V^*(s')\bigr)$,
 \\[0.2cm]
 where $\gamma$ is the discount factor satisfying $0 < \gamma \leq 1$.  If $\gamma = 1$, then there
-is no discounting of future values.  If $\gamma < 1$, the Bellmann equation can be solved by fixed
+is no discounting of future values.  If $\gamma < 1$, the Bellman equation can be solved by fixed
 point iteration.  In this case, for every state $s$ we define a sequence of values
 $\bigl(V_k(s)\bigr)_{s\in S}$ as follows:
 \begin{enumerate}
@@ -81,9 +81,9 @@ It can be shown that the sequence $\bigl(V_k(s)\bigr)_{s\in S}$ converges provid
 This process is known as \emph{value iteration}.
 
 \section{Q-Value Iteration}
-Instead finding the values $V^*(s)$ of a given state $s$ we instead try to compute the value a state
-$s$ has once an action $a$ for that state has been fixed.  These values are calles Q-values and they
-are denoted as $Q(s,a)$.  The Bellmann equation for Q-values is
+Instead of finding the values $V^*(s)$ of a given state $s$ we instead try to compute the value a state
+$s$ has once an action $a$ for that state has been fixed.  These values are called Q-values and they
+are denoted as $Q(s,a)$.  The Bellman equation for Q-values is
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds Q^*(s,a) = \sum\limits_{s' \in S} T(s,a,s') \cdot \bigl(R(s,a,s') + \gamma \cdot \max\limits_{a' \in A} Q^*(s',a')\bigr)$,

@@ -429,7 +429,7 @@ information:
 \item The West smoker is in the first room.
 \item The Mazda driver has tongue cancer and is next to the Trabant driver.
 \item The Nissan driver is next to the tongue cancer patient.
-\item Rudolf is desparately begging for euthanasia and his room is between the room of the Camel smoker and the
+\item Rudolf is desperately begging for euthanasia and his room is between the room of the Camel smoker and the
       room of the Trabant driver.
 \item Tomorrow is the last birthday of the Seat driver.
 \item The Luckies smoker is next to the patient with lung cancer.
@@ -448,7 +448,7 @@ Your task is to formulate this puzzle as a constraint satisfaction problem. \eox
 
 \subsection{Applications}
 Besides the toy problems discussed so far, there are a number of industrial applications of constraint
-satisfaction problems.  The most important application seem to be variants of
+satisfaction problems.  The most important applications seem to be variants of
 \href{https://en.wikipedia.org/wiki/Scheduling_(production_processes)}{scheduling problems}. 
 A simple example of a scheduling problem is the problem of generating a timetable for a school.  A school has
 various teachers, each of which can teach some subjects but not others.  Furthermore, there are a number of
@@ -595,7 +595,7 @@ to make a copy of the \texttt{Assignment} that is given as the first argument of
 \texttt{check\_all\_constraints}. 
 
 When I tested the program discussed above with the eight queens problem, it took about 30 seconds to
-compute a solution.  In contrast, the seven queens problem took about 1.7 second.  As we have
+compute a solution.  In contrast, the seven queens problem took about 1.7 seconds.  As we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds\frac{8^8}{7^7} \approx 20$ \quad and \quad $30 / 1.7 \approx 18$ 
@@ -606,7 +606,7 @@ search as soon as a solution is found.  If we are lucky and the given \textsc{Cs
 might happen when we have checked only a small portion of the set of all possible assignments.
 
 \section{Backtracking Search}
-For the $n$ queens problem the number of possible variable assignments growth as fast as $n^n$.
+For the $n$ queens problem the number of possible variable assignments grows as fast as $n^n$.
 This growth is super-exponential and this is what usually happens when we scale a \textsc{Csp} up. 
 The reason is that the number of all variable assignments is given as
 \\[0.2cm]
@@ -889,7 +889,7 @@ discussed in this section.
 
 
 \section{Constraint Propagation}
-\index{constraint propagation}1
+\index{constraint propagation}
 Once we have chosen a value for a variable, this choice influences the values that are still available for
 other variables. 
 For example, suppose that in order to solve the $n$ queens problem we place the queen in row one in the second
@@ -2076,7 +2076,7 @@ Solve the following text problem using \texttt{Z3}.
   \item The penguin costs 600 bucks more than the parrot.  
   \item \textbf{What is the price of the parrot?}
   \end{enumerate}}
-  You may assume that the prizes of these delicacies are integer valued. 
+  You may assume that the prices of these delicacies are integer valued.
 \eox
 
 \exercise
@@ -2173,7 +2173,7 @@ Next, we have to formulate the constraints.  In this case, there are two kinds o
                  xleftmargin   = 0.0cm,
                  xrightmargin  = 0.0cm,
                ]{python3}
-    import * from z3
+    from z3 import *
     def row(i): return f'R{i}'
     def col(i): return f'C{i}'
     

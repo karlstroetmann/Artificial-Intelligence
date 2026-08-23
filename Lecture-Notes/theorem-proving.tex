@@ -324,7 +324,7 @@ $E \models s \approx t$ has a \blue{syntactical analog} $E \vdash s \approx t$ (
 that can be implemented and that is at least \blue{semi-decidable}, i.e.~we can create a program that given 
 a set of equations $E$ and an equation $s \approx t$ will return \texttt{True} if $E \vdash s \approx t$ holds, and will
 either return \texttt{False} or run forever if $E \vdash s \approx t$ does not hold.  Even more fortunately,
-\href{https://en.wikipedia.org/wiki/G%C3%B6del%27s_completeness_theorem}{G\"{o}dels completeness theorem} 
+\href{https://en.wikipedia.org/wiki/G%C3%B6del%27s_completeness_theorem}{G\"{o}del's completeness theorem} 
 implies that the syntactical notion coincides with the semantic notion, i.e.~we have
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -781,12 +781,12 @@ $A$ has no minimal element must be wrong.
              Then we have both $a_{n+1} \in A$ and $a_{n+1} \prec a_n$ and hence we have constructed
              the sequence $(a_{n})_{n\in\mathbb{N}}$ with the properties stated above.
 \end{enumerate}
-Since the existence of this infinite decreasing sequence contradicts the well-foundednes of $\prec$, our proof
+Since the existence of this infinite decreasing sequence contradicts the well-foundedness of $\prec$, our proof
 is complete. \qed
 
 \begin{Theorem}[\href{https://en.wikipedia.org/wiki/Transfinite_induction}{Transfinite Induction}]
   \hspace*{\fill} \index{transfinite induction}\\
-  Assume the the binary relation $\prec \;\subseteq\; M \times M$ is a well-founded partial orderings and $F(x)$ is some formula.
+  Assume the binary relation $\prec \;\subseteq\; M \times M$ is a well-founded partial ordering and $F(x)$ is some formula.
   If we have that
   \\[0.2cm]
   \hspace*{1.3cm}
@@ -1025,7 +1025,7 @@ Then $\langle w, < \rangle$ is a Knuth-Bendix order. \eox
 \begin{enumerate}
 \item $w(s) < w(t)$ and $\texttt{count}(s, x) \leq \texttt{count}(t, x)$
        for all variables $x$ occurring in  $s$.
-\item $w(s) = w(t)$, $\texttt{count}(s, x) \leq \texttt{count}(t, x)$ for all variables $x$ occuring in $s$, and
+\item $w(s) = w(t)$, $\texttt{count}(s, x) \leq \texttt{count}(t, x)$ for all variables $x$ occurring in $s$, and
       one of the following subconditions holds:
       \begin{enumerate}[(a)]
       \item $t = f^n(s)$ where $n \geq 1$ and $f$ is the maximum w.r.t.~the order $<$ on function symbols,
@@ -1098,7 +1098,7 @@ Nipkow \cite{baader:1998}.
 This section introduces the notion of a \blue{most general unifier} of two terms.
 To begin, we define the composition of two $\Sigma$-substitutions.
 
-\begin{Definition}[Composition of Substitutions] \index{Composition von Substitutions}
+\begin{Definition}[Composition of Substitutions] \index{Composition of Substitutions}
     Assume that \\[0.2cm]
     \hspace*{1.3cm}
     $\sigma = \{ x_1 \mapsto s_1, \cdots, x_m \mapsto s_m \}$
@@ -1173,7 +1173,7 @@ $\sigma := \{ x_1 \mapsto x_2,\; x_3 \mapsto f(x_4) \}$.
 Then $\sigma$ solves the given syntactical equation because we have
 \\[0.2cm]
 \hspace*{1.3cm}
-$p(x_1, f(x_4))\sigma = p(x_2, f(x_4))$ \quad und \quad \\[0.2cm]
+$p(x_1, f(x_4))\sigma = p(x_2, f(x_4))$ \quad and \quad \\[0.2cm]
 \hspace*{1.3cm}
 $p(x_2, x_3)\sigma \;\quad = p(x_2, f(x_4))$.  \eox
 
@@ -1187,7 +1187,7 @@ There are two cases: A syntactical equation of the form
 $f(s_1,\cdots,s_m) \doteq g(t_1,\cdots, t_n)$ \\[0.2cm]
 is certainly unsolvable if  $f$ and $g$ are different function symbols. The reason is that for any substitution
 $\sigma$ we have that \\[0.2cm]
-\hspace*{1.0cm} $f(s_1,\cdots,s_m)\sigma = f(s_1\sigma,\cdots,s_m\sigma)$ \quad und \quad
+\hspace*{1.0cm} $f(s_1,\cdots,s_m)\sigma = f(s_1\sigma,\cdots,s_m\sigma)$ \quad and \quad
                 $g(t_1,\cdots, t_n)\sigma = g(t_1\sigma,\cdots,t_n\sigma)$. \\[0.2cm]
 If $f \not = g$, then the terms  $f(s_1,\cdots,s_m)\sigma$ and $g(t_1,\cdots, t_n)\sigma$ start with different
 function symbols and hence they can't be identical.
@@ -1441,7 +1441,7 @@ from $\widehat{R}$ are confluent.
       If this is not possible, the algorithm fails.
 \item Otherwise, call $R$ the set of oriented rewrite rules that result from orienting the equations in $E$
       into rewrite rules.
-\item Compute all critical pairs that can be build from equations in $R$.
+\item Compute all critical pairs that can be built from equations in $R$.
       \begin{enumerate}
       \item If all critical pairs are confluent, then the rewrite relation $\rightarrow^*_R$ is confluent
             and the algorithm is successful.
@@ -1530,7 +1530,7 @@ Hence we have found the new rewrite rule
 $i(i(x)) \circ 1 \rightarrow x$.
 \\[0.2cm]
 In the next step, we build a critical pair between a rule $l \rightarrow r$ and the same rule $l \rightarrow r$. 
-However, note that we hav to rename the variables in the second instand of the rule to prevent accidental name
+However, note that we have to rename the variables in the second instance of the rule to prevent accidental name
 clashes.  We take the rewrite rule $i(x) \circ (x \circ y) \rightarrow y$ and superposing the (renamed) rewrite rule $i(a) \circ (a \circ b) \rightarrow b$
 at position $[2]$ using the most general unifier
 \\[0.2cm]

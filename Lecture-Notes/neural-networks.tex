@@ -31,7 +31,7 @@ We proceed to give an overview of the content of this chapter.
 \item We start with the definition of a fully connected \blue{feed forward} neural networks and discuss their
   \blue{topology}. 
 \item We introduce \blue{forward propagation}, which is the way a neural network computes its predictions.
-\item Similarly to our treatment of logistic regression, we define a cost function that measure the quality of
+\item Similarly to our treatment of logistic regression, we define a cost function that measures the quality of
       the predictions of a neural network on a training set.  In order to minimize this cost function using
       gradient descent, we have to compute the \blue{gradient} of the cost function with respect to the weights of the
       neural network.  The algorithm which is used to compute this gradient is called \blue{backpropagation}.
@@ -61,7 +61,7 @@ $\mathbb{R}$ of the real numbers.  This function is defined as follows:
 \hspace*{1.3cm}
 $\ds \mathbf{x} \mapsto f(\mathbf{x} \cdot \mathbf{w} + b)$.
 \\[0.2cm]
-Here, $a$ is called the \blue{activation function}.  \index{activation function} In our applications, we will
+Here, $f$ is called the \blue{activation function}.  \index{activation function} In our applications, we will
 use the sigmoid function as our activation function.  This function has been defined previously in Definition
 \ref{def:sigmoid} on page \pageref{def:sigmoid} as follows:
 \\[0.2cm]
@@ -73,7 +73,7 @@ Another useful activation function is the so called
 which is defined as 
 \\[0.2cm]
 \hspace*{1.3cm}
-$f(t) := \mathtt{ReLU}(t) := \max(0, x)$.
+$f(t) := \mathtt{ReLU}(t) := \max(0, t)$.
 \\[0.2cm]
 The abbreviation ReLU is short for \blue{rectified linear unit}. \index{rectified linear unit}
 The function modelling the neuron can be written more explicitly using index notation.  If
@@ -312,8 +312,8 @@ There are three reasons for the recent success of neural networks.
       White was about $110,000,000\,\symbol{36}$.   To compare, the \textsc{Nvidia} RTX 5090 costs $2,\!099\,\symbol{36}$.
 
       The \textsc{Nvidia} RTX 5090 is a consumer graphics card.  There are so called \blue{Tensor Core GPUs}
-      like the \textsc{Nvidia} Blackwell B200 Tensor Core GPU that are can achieve more than a
-      petaflop when training neural networks.  Furthermore, these card can be bundled
+      like the \textsc{Nvidia} Blackwell B200 Tensor Core GPU that can achieve more than a
+      petaflop when training neural networks.  Furthermore, these cards can be bundled
       in clusters.  However, a card containing two \textsc{Nvidia} B200 GPUs and one \textsc{Nvidia} Grace CPU
       can cost up to $70,000\, \$$. 
 \item The breakthrough in the theory of neural networks was the rediscovering of the
@@ -766,7 +766,7 @@ In practical applications of neural networks, the number $n$ of training example
 when we later develop a neural network to classify handwritten digits, we will have $50,000$ training examples.  More
 ambitious projects that use neural networks to recognize objects in images use millions of training examples.
 For example \href{https://www.image-net.org/download.php}{ImageNet}, which is a set of labelled images
-collected for the purpose of training neural networks for image recognition, contain about 14 million images.
+collected for the purpose of training neural networks for image recognition, contains about 14 million images.
 When we compute the gradient of the quadratic error function with respect to a weight matrix $W^{(l)}$ or a
 bias vector $b^{(l)}$ we have to compute the sums 
 \\[0.2cm]
@@ -1199,7 +1199,7 @@ proceeds as follows:
 \item The activation of the neurons in the output layer \texttt{AO} is computed by applying the sigmoid
       function to the vector $\mathbf{z}^{(3)}$.
 
-      These four step constitute the forward pass of backpropagation.
+      These four steps constitute the forward pass of backpropagation.
 \item Next, the error in the output layer \texttt{epsilonO} is computed using the backpropagation equation
       (BP1v)
       \\[0.2cm]

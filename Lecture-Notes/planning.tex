@@ -48,7 +48,7 @@ problem.  The other representations are discussed in \cite{ghallab:2004}.
 
 
 \section{The Classical Representation of a Planning Problem}
-A \emph{first-order language} $\mathcal{L}$ is triple
+A \emph{first-order language} $\mathcal{L}$ is a triple
 \\[0.2cm]
 \hspace*{1.3cm}
 $\mathcal{L} = \langle P, C, V \rangle$, \quad where
@@ -60,10 +60,10 @@ $\mathcal{L} = \langle P, C, V \rangle$, \quad where
 
 In the classical representation of a planning problem, a state is a set of \emph{ground atoms} of the
 language $\mathcal{L}$.  Here, a \emph{ground atom} is an atomic formula that does not contain
-variables.  An atomic formula $p$ is true is a state $s$ iff $p \in s$.  Goals will be represented
+variables.  An atomic formula $p$ is true in a state $s$ iff $p \in s$.  Goals will be represented
 by sets of literals.  A goal $g$ is \emph{satisfied} in a state $s$ iff there is a variable
 substitution $\sigma$ such that every positive literal of $g\sigma$ is in $s$, while no negative
-literal of $g\sigma$ is in $s$.  Here, we have used the so called \emph{closed world assumption}:
+literal of $g\sigma$ is in $s$.  Here, we have used the so-called \emph{closed world assumption}:
 If $s$ is a state, i.e.~a set of ground atoms, then every ground atom that is not an element of $s$
 is assumed to be false.
 

@@ -20,7 +20,7 @@ notion of a computational graph.
   A \blue{computational graph} \index{computational graph} $G$ is a list of \blue{computational nodes}.
   \index{computational node}  There are four types of computational nodes:
   \begin{enumerate}
-  \item A \blue{variable node} is tuple of length 1 of the form   
+  \item A \blue{variable node} is a tuple of length 1 of the form
         \\[0.2cm]
         \hspace*{1.3cm}
         $\langle x, \rangle$
@@ -44,8 +44,8 @@ notion of a computational graph.
         \hspace*{1.3cm}
         $\langle n, f, a\rangle$
         \\[0.2cm]
-        where, again, $n$ is the \blue{name} of the node that is used as an auxiliary variable. $f$ is an unary
-        function symbol from a set of unary function.  In our examples $f$ will be a member of the set 
+        where, again, $n$ is the \blue{name} of the node that is used as an auxiliary variable. $f$ is a unary
+        function symbol from a set of unary functions.  In our examples $f$ will be a member of the set
         \\[0.2cm]
         \hspace*{1.3cm}
         $\{ \mathrm{sqrt}, \exp, \ln, \sin, \cos, \arctan \}$
@@ -201,7 +201,7 @@ resulting value is stored under the key $v$ in the dictionary \texttt{Values}.
 
 In the following we will assume that all computational graphs are admissible.
 The crucial definition in the theory of reverse mode automatic differentiation is the notion of an
-\blue{adjoint}, which will be given later after we have defined to notion of a \blue{parent} of a node.  
+\blue{adjoint}, which will be given later after we have defined the notion of a \blue{parent} of a node.  
 \FloatBarrier
 
 \begin{figure}[!ht]
@@ -483,7 +483,7 @@ the usage of this library.
       not all features of \texttt{numpy}.  We have to use this version because \texttt{autograd} works by creating a
       computational graph behind the scene.  If we would use the standard version of \texttt{numpy}, which is
       implemented outside of \textsl{Python} in the programming language \texttt{C}, \texttt{autograd} would not be able
-      be able to create this computational graph.
+      to create this computational graph.
 \item Next we define the function $f := x \mapsto x \cdot \exp(x)$.  According to the
       \href{https://en.wikipedia.org/wiki/Product_rule}{product rule}, the
       derivative of $f$ is given as 
@@ -536,7 +536,7 @@ for computing square roots.  The function \texttt{mySqrt} defines the sequence $
 \item $\displaystyle r_0 = \frac{ 1}{2} \cdot x$,
 \item $\displaystyle r_{n+1} = \frac{1}{2} \cdot \Bigl(r_n + \frac{x}{r_n}\Bigr)$ \quad for all $n \in \mathbb{N}$.
 \end{enumerate}
-It can be show that this sequence converges quadratically to the square root of $x$, i.e. we have:
+It can be shown that this sequence converges quadratically to the square root of $x$, i.e. we have:
 $$ \lim\limits_{n\rightarrow\infty} r_n = \sqrt{x} $$
 We can compute the derivative of the function \texttt{mySqrt} by just calling \texttt{ag.grad(mySqrt)}.
 However, when doing this we discover a limitation of \texttt{autograd}: The derivative of the square root function is

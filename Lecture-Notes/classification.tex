@@ -1,5 +1,5 @@
 \chapter{Classification \label{chapter:classification}}
-One of the earliest application of artificial intelligence is 
+One of the earliest applications of artificial intelligence is
 \href{https://en.wikipedia.org/wiki/Statistical_classification}{classification}.  A good
 example of classification is
 \href{https://en.wikipedia.org/wiki/Anti-spam_techniques#Detecting_spam}{spam detection}.
@@ -77,8 +77,8 @@ is always a natural number, in this case the first feature would be a
  \blue{discrete} feature.  However, we can be even more precise: Instead of just counting the number of occurrences of
  ``\texttt{pharmacy}'' we can compute its \blue{frequency}.  \index{frequency}
  After all, there is a difference whether the
- string ``\texttt{pharmacy}'' occurs once in an email  containing but a hundred characters or whether is occurs
- once in an email with a length of several thousand  characters.  To this end, we would then define the first feature as
+ string ``\texttt{pharmacy}'' occurs once in an email containing but a hundred characters or whether it occurs
+ once in an email with a length of several thousand characters.  To this end, we would then define the first feature as
 \\[0.2cm]
 \hspace*{1.3cm}
 $\ds \texttt{feature}(o, 1) := \frac{\mathtt{count}(\texttt{"pharmacy"}, o)}{\mathtt{len}(o)}$, 
@@ -188,7 +188,7 @@ from $1$ to $n$, while the features are numbered from $1$ to $d$.  Then we defin
       The matrix $X$ is similar to the \blue{feature matrix} that was introduced in the previous chapter.
 \item $y_i := \mathtt{classify}(o_i)$ \quad for all $i \in \{1, \cdots, n\}$
 
-      i.e.~$y_i$ is the class of the $i$-th object.  These number are collected into the $n$-dimensional column vector $\mathbf{y}$.
+      i.e.~$y_i$ is the class of the $i$-th object.  These numbers are collected into the $n$-dimensional column vector $\mathbf{y}$.
 \end{enumerate}
 
 \subsection{Applications of Classification}
@@ -363,7 +363,7 @@ Next, let us discuss the implementation of gradient ascent.
   $\mathbf{x}_{n+1}$ is a better approximation of the maximum than the vector $\mathbf{x}_n$.  
       In this case, in order to increase the speed of the convergence of our algorithm we will then increase the learning rate
       $\alpha$ by $20\%$.    
-\item The idea of our implementation is to stop the iteration when the relative difference  of 
+\item The idea of our implementation is to stop the iteration when the relative difference of
       $f(\mathbf{x}_{n+1})$ and $f(\mathbf{x}_{n})$ is less than $\varepsilon$ or, to be more precise, if
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -885,14 +885,14 @@ subtle points that might easily be overlooked otherwise, we proceed to discuss t
       The implementation is more complicated than you might expect.  The reason has to do with
       \blue{numerical overflow}.  Consider values of $x$ that are smaller than, say, $-1000$.  The problem is that
       the expression $\mathtt{exp}(1000)$ evaluates to the value \texttt{inf}, which represents the
-      mathematical concept of infinity, denoted as $\infty$.  But then $1 + \mathtt{exp}(1000))$ is also \texttt{inf} and
+      mathematical concept of infinity, denoted as $\infty$.  But then $1 + \mathtt{exp}(1000)$ is also \texttt{inf} and
       finally \texttt{log(1 + exp(1000))} is still \texttt{inf}.  However, in reality we have
       \\[0.2cm]
       \hspace*{1.3cm}
       $\ln\bigl(1 + \exp(1000)\bigr) \approx 1000$
       \\[0.2cm] 
       because $\exp(1000)$ is so big that adding $1$ to it does not make much of a difference.
-      In fact, if we use \textsl{Pythons} 64-bit double arithmetic, then even adding $1$ to $\exp(100)$
+      In fact, if we use \textsl{Python's} 64-bit double arithmetic, then even adding $1$ to $\exp(100)$
       does not make any difference at all as w.r.t.~machine arithmetic we have
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -1203,7 +1203,7 @@ logistic regression classifier with the help of the SciKit-Learn package.
       vector. It creates a prediction vector.  The $i$-th entry of this vector is $1$ if the model predicts a
       pass for the $i$-th student.  Otherwise this entry is $0$.
 \item Line 13 prints the accuracy.  As Figure \ref{fig:exam-iq-boundary.pdf} shows, 3 examples have been
-      miss-predicted.  Two of these examples where bound to be miss-predicted, but the fact that the student
+      miss-predicted.  Two of these examples were bound to be miss-predicted, but the fact that the student
       with an IQ of 120 who has studied for $2.25$ hours has also been miss-predicted is disappointing.
       The reason is that logistic regression does not maximize the accuracy but rather
       maximizes the log-likelihood.  Later, we will discuss so called 
@@ -1234,7 +1234,7 @@ have to build three different classifiers:
 \item The third classifier is able to distinguish \blue{iris versicolor} from other irises. 
 \end{itemize}
 Your task is to implement these classifiers and to evaluate their accuracy.  
-You should  divide the data randomly into a \blue{training dataset}, which is used for computing the
+You should divide the data randomly into a \blue{training dataset}, which is used for computing the
 coefficients of logistic regression and a \blue{test dataset}, which you should only use to predict the
 accuracy of your model.  To this end, the function
 \\[0.2cm]
@@ -1344,7 +1344,7 @@ performs linear regression.
 \item Line 12 defines the function \texttt{logistic\_regression}.  This function takes 5 arguments.
       \begin{enumerate}
       \item \texttt{X\_train} and \texttt{Y\_train} are the training data.
-      \item \texttt{X\_test} and \texttt{Y\_} are the test data.
+      \item \texttt{X\_test} and \texttt{Y\_test} are the test data.
       \item \texttt{reg} is a \blue{regularization} parameter.  By default this parameter is set to a high
             value.  Setting this parameter to a high value ensures that there is no regularization.
             The default is to use next to no regularization.
@@ -1644,7 +1644,7 @@ We will see in this subsection that naive Bayes classifiers work well for spam d
 The directory
 \\[0.2cm]
 \hspace*{-0.3cm}
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/Chapter-06/EmailData}{ https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Chapter-06/Python/EmailData}
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/Chapter-06/EmailData}{https://github.com/karlstroetmann/Artificial-Intelligence/tree/master/Python/Chapter-06/EmailData}
 \\[0.2cm]
 contains 960 emails that are partitioned into four subdirectories:
 \begin{enumerate}
@@ -1926,7 +1926,7 @@ classify iris flowers.  You can achieve an accuracy that exceeds $95\%$.
 \eox
 
 \section{Support Vector Machines}
-\blue{Support Vector Machines} (abbreviated as \textsc{SVM}s) had been in invented in 1963 by Vladimir
+\blue{Support Vector Machines} (abbreviated as \textsc{SVM}s) had been invented in 1963 by Vladimir
 Naumovich Vapnik and Alexey Yakovlevich Chervonenkis.   However, they only got widespread acceptance in 1995
 when Cortes and Vapnik published a paper explaining the \blue{kernel trick} \cite{cortes:1995}.  This section will introduce
 support vector machines.  In order to motivate \textsc{SVMs}, we first explain why logistic regression
@@ -2190,7 +2190,7 @@ holds.  Similarly, if $\mathbf{x}^{(i)}$ is a negative example, we want to have 
     \mathbf{w} \cdot \mathbf{x}^{(i)} + b \leq -1
 \end{equation}
 holds.  Let us define the class of a positive example to be $+1$ and the
-class of a negative example to be $-1$.  Let $y_i$ denotes the class of example $\mathbf{x}^{(i)}$.
+class of a negative example to be $-1$.  Let $y_i$ denote the class of example $\mathbf{x}^{(i)}$.
 Let us multiply equation \ref{eq:svm-1} by $y_i = 1$.  Unsurprisingly, we get
 \begin{equation}
   \label{eq:svm-3}
@@ -2215,14 +2215,14 @@ $y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b\bigr) - 1 = 0$
 \\[0.2cm]
 are at the \blue{margins} of their respective classes and are called \blue{support vectors}.  These vectors
 have the smallest distance to the hyperplane defined by $\mathbf{w}$ and $b$.  Let us compute the width of the
-separation of the positive class from the negative class if the decision boundary is given by the  equation
+separation of the positive class from the negative class if the decision boundary is given by the equation
 $\mathbf{w} \cdot \mathbf{x} + b = 0$.  To this end, assume that $\mathbf{x}_+$ is a \blue{positive support vector},
 i.e.~a support vector belonging to the positive class.  Then we have
 \begin{equation}
   \label{eq:svm-6}
   \mathbf{w} \cdot \mathbf{x}_+ + b = 1,  
 \end{equation}
-while $\mathbf{x}_-$ is a \blue{negative support vector}, i.-e. a support vector belonging to the negative
+while $\mathbf{x}_-$ is a \blue{negative support vector}, i.e. a support vector belonging to the negative
 class and therefore satisfies
 \begin{equation}
   \label{eq:svm-7}
@@ -2277,7 +2277,7 @@ where we only have the inequality
 \hspace*{1.3cm}
 $y_i \cdot(\mathbf{w} \cdot \mathbf{x}_i + b) - 1 \geq 0$
 \\[0.2cm]
-we can just assume that the corresponding Lagrange multiplier $\alpha_i$ is  equal to $0$.
+we can just assume that the corresponding Lagrange multiplier $\alpha_i$ is equal to $0$.
 A necessary condition for the values of $\mathbf{w}$, $b$ and $\alpha_i$ that minimize $\mathcal{L}$ is that
 the partial derivatives of $\mathcal{L}$ with respect to $w_k$, $b$ and $\alpha_i$ are all $0$.  Let us first compute the partial derivative of $\mathcal{L}$
 with respect to $w_k$:
@@ -2750,7 +2750,7 @@ i.e.~malignant.
             y_pred.append(prediction + self.b)
         return np.sign(y_pred)
 \end{minted}
-\caption{The  method \texttt{predict}.}
+\caption{The method \texttt{predict}.}
 \label{fig:svm_predict}
 \end{figure}
 \FloatBarrier
