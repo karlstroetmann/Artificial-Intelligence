@@ -250,7 +250,7 @@ is a solution involving just 11 crossings of the river.
 
 \exercise
 The \emph{Three Thieves Puzzle} is similar to the \emph{Missionaries and Cannibals Puzzle}.  Three greedy
-thieves have cross a river.  Each of the thieves has a bag of gold coins.
+thieves have to cross a river.  Each of the thieves has a bag of gold coins.
 \begin{enumerate}
 \item Ariel has 1,000 gold coins.
 \item Benjamin has 700 gold coins.
@@ -261,8 +261,8 @@ boat can transport two entities at a time, meaning either two thieves or one thi
 together. A problem arises if a thief, or a pair of thieves, is left with a quantity of gold greater than
 their own, since then they will take the money and run away with it. 
 
-Write a program that formulates this puzzle as a search problem.  You should do this by augenting the notebook
-\ \blue{\texttt{Three-Tieves.ipynb}} \ that can be found in the github repository 
+Write a program that formulates this puzzle as a search problem.  You should do this by augmenting the notebook
+\ \blue{\texttt{Three-Thieves.ipynb}} \ that can be found in the github repository
 \\[0.2cm]
 \hspace*{1.3cm}
 \href{https://github.com/karlstroetmann/Artificial-Intelligence}{http://github.com/karlstroetmann/Artificial-Intelligence}
@@ -1226,7 +1226,7 @@ The function \texttt{bfs\_one\_step} is shown in Figure \ref{fig:Bidirectional-B
       already been visited, we add \texttt{ns} to the set \texttt{NewFrontier} in line 6 and record its
       parent in line 7.
 \item If the state \texttt{ns} has already been reached in the search starting from \texttt{goal} and hence has
-      a parent node in \texttt{ParentB}, we have found a path from start to goal.  Hence, We combine the path that
+      a parent node in \texttt{ParentB}, we have found a path from start to goal.  Hence, we combine the path that
       leads from \texttt{start} to \texttt{ns} with the path leading from \texttt{goal} to \texttt{ns} in line 9.
 \item It is important to note that the function \texttt{bfs\_one\_step} does not only return a path, it also
       has a side effect: If no path has been found, then the set \texttt{Frontier} is updated to contain those
@@ -2181,7 +2181,7 @@ can attack by moving horizontally, vertically, or diagonally.
 \begin{enumerate}[(a)]
 \item Reformulate the \blue{eight queens puzzle} as a search problem.
 \item Compute an upper bound for the number of states.
-\item Which of the algorithms we have discusses are suitable to solve this problem?
+\item Which of the algorithms we have discussed are suitable to solve this problem?
 \item Compute all 92 solutions of the eight queens puzzle.  
 \end{enumerate}
 
@@ -2203,7 +2203,7 @@ A frame for solving this problem is available at
 
 \begin{figure}[!ht]
 \centering
-\epsfig{file=Figures/queens.pdf},
+\epsfig{file=Figures/queens.pdf}
 \caption{A solution of the eight queens puzzle.}
 \label{fig:queens.pdf}
 \end{figure}
