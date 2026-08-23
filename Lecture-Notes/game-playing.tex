@@ -64,7 +64,7 @@ where the components are interpreted as follows:
       value will be an element from the set 
       $\{-1, 0, +1\}$.  If $\textts{utility}(s) = -1$,  
       then the first player has lost the game, if $\textts{utility}(s) = 1$, then the first player has won the
-      game, and if $\textts{utility}(s) = 0$, then the game drawn.  Hence the signature of $\textts{utility}$ is
+      game, and if $\textts{utility}(s) = 0$, then the game is drawn.  Hence the signature of $\textts{utility}$ is
       \\[0.2cm]
       \hspace*{1.3cm}
       $\textts{utility}: \textts{States} \rightarrow \{ -1, 0, +1\} \cup \{ \Omega \}$.
@@ -215,7 +215,7 @@ the game is drawn.  In this section we present two different implementations of 
       from the current $\textts{State}$ by putting the mark of $\textts{player}$ in this position.  
       The resulting states are collected in the list $\textts{Result}$ and returned.
 
-      Note that we had to turn the \textts{State} into a list of list in order to manipulate it.
+      Note that we had to turn the \textts{State} into a list of lists in order to manipulate it.
       The manipulated State is then cast back into a tuple of tuples.
 \item The function $\textts{utility}$ takes a $\textts{State}$ as its argument.  If the game is 
       finished in the given $\textts{State}$, it returns the value that this $\textts{State}$ has for the
@@ -701,7 +701,7 @@ numbers, the overall result of the game would not change if both players play op
       \item As we have already seen that the value of the rightmost child of the root node can be at most 5,
             \texttt{Max} will never choose this child, but will choose his second child instead.
       \end{enumerate}
-      Therefore, the subtree whoose root is marked with a greyed out 8 does not influence the outcome of the game.
+      Therefore, the subtree whose root is marked with a greyed out 8 does not influence the outcome of the game.
 \end{enumerate}
 To implement $\alpha$-$\beta$-pruning, the basic idea is to provide two additional arguments to the functions
 $\textts{maxValue}$ and $\textts{minValue}$.  Traditionally, these arguments are called $\blue{\alpha}$ and $\blue{\beta}$.  In order to be able to
@@ -1175,7 +1175,7 @@ def minValue(State, alpha, beta):
 In practice, most games are far too complex to be evaluated completely, i.e.~the size of the set
 $\textts{States}$ is so big that even the fastest computer does not stand a chance to explore this set
 completely.  For example, it is believed\footnote{
-  For reference, compare the wikipedia article on the so-called
+  For reference, compare the Wikipedia article on the so-called
   \href{https://en.wikipedia.org/wiki/Shannon_number}{Shannon number}.
   The Shannon number estimates that there are at least $10^{120}$ different plays in chess.  However, the
   number of states is estimated to be about $(4.48\pm 0.37) \cdot 10^{44}$. 
