@@ -98,7 +98,7 @@ This equation can also be solved via a fixpoint iteration as follows:
 
 \section{Q-Learning}
 Q-value iteration can only be used if the transition probability $T(s,a,s')$ and the reward
-$R(s,a,s')$ is given.  In Q-learning, we have an unknown Markov decision process and attempt to
+$R(s,a,s')$ are given.  In Q-learning, we have an unknown Markov decision process and attempt to
 learn the optimal strategy.  In this case, we update our estimates of the Q-values via the equation 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -106,12 +106,12 @@ $Q_{k+1}(s,a) := (1-\alpha) \cdot Q_{k}(s) + \alpha \cdot \bigl(R(s,a,s') + \gam
 \\[0.2cm]
 Here, $s'$ is the state that has actually been reached the last time we executed the action $a$ in
 state $s$.  The variable $\alpha$ is the \emph{learning rate} and we have $0 < \alpha < 1$.  If
-$\alpha$ close to $1$, the learning rate is high and the past is unimportant.  Usually, $\alpha$ is
+$\alpha$ is close to $1$, the learning rate is high and the past is unimportant.  Usually, $\alpha$ is
 decreased over time because, initially, the values of $Q_k(s,a)$ are mostly wrong but as we keep
 learning these values get better.  Ideally, the learning rate should be slowly decreased over time.
 
 \section{Approximate Q-Learning}
-Compute the Q-values via a number $m$ different features in a linear way as follows:
+Compute the Q-values via a number $m$ of different features in a linear way as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $Q(s,a) = \sum\limits_{k=1}^m w_k \cdot f_k(s,a)$.

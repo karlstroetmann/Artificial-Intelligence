@@ -587,7 +587,7 @@ first search.
 
 Next, let us try to solve the $3 \times 3$ sliding puzzle.  It takes about $1.2$ seconds to solve
 this problem on my computer\footnote{
-  My computer is a Mac Studio from 2022.  This iMac is equipped with 64 Gigabytes of main memory and an
+  My computer is a Mac Studio from 2022.  This machine is equipped with 64 Gigabytes of main memory and an
   Apple M1 Max processor.
 }, while 181,439 states are touched.  
 Again, we see that breadth first search touches nearly all the states reachable from the start state.
@@ -1217,7 +1217,7 @@ The function \texttt{bfs\_one\_step} is shown in Figure \ref{fig:Bidirectional-B
             reached in one step from $s$.
       \end{enumerate}
       The function \texttt{bfs\_one\_step} either returns a path or \texttt{None}.  In the latter case, the
-      function just the set \texttt{Frontier} to contain those states that can be 
+      function just updates the set \texttt{Frontier} to contain those states that can be
       reached in one step from the previous version of the set \texttt{Frontier}.  Hence, the function
       \texttt{bfs\_one\_step} performs one iteration of breadth first search.
 \item The set \texttt{NewFrontier} is initialized as the empty set in line 2.
@@ -2197,8 +2197,7 @@ column 4, and so on.  The start state would then be the empty list and given a s
 set $\mathtt{nextState}(L)$ would be lists of the form $L + [c]$.  If $\#L = k$, then the state $l + [c]$ has
 $k+1$ queens, where the queen in row $k+1$ has been placed in column $c$.
 A frame for solving this problem is available at
-\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/1
-  Search/14-N-Queens.ipynb}{Artificial-Intelligence/blob/master/Python/Chapter-01/14-N-Queens.ipynb}.
+\href{https://github.com/karlstroetmann/Artificial-Intelligence/blob/master/Python/Chapter-01/14-Eight-Queens-Puzzle.ipynb}{Artificial-Intelligence/blob/master/Python/Chapter-01/14-Eight-Queens-Puzzle.ipynb}.
 
 
 \begin{figure}[!ht]
