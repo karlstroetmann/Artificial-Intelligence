@@ -4,6 +4,10 @@ These are the resources for my lecture on artificial intelligence.
 The directory `Lecture-Notes` contains the LaTeX files, while the directory `Python` contains
 *jupyter* notebooks that implement the algorithms discussed in my lecture.
 
+Download the lecture notes: [PDF](https://github.com/Yoorbo/Artificial-Intelligence/raw/refs/heads/dev/Lecture-Notes/artificial-intelligence.pdf)
+or [EPUB](https://github.com/Yoorbo/Artificial-Intelligence/raw/refs/heads/dev/Lecture-Notes/artificial-intelligence.epub).
+Both finished books are included in the repository; no build tools are needed to read them.
+
 ## Export the lecture notes
 
 Run the existing pipeline to build both formats from the same LaTeX source:
@@ -68,7 +72,6 @@ gates pass. An unsuccessful build keeps the previous EPUB and diagnostics in
 including when running `make -j`. `make clean` removes temporary build files.
 
 ```sh
-make -C Lecture-Notes test-epub   # Fast fixture tests; no TeX installation needed
 make -C Lecture-Notes check-epub # Recheck the exported book
 ```
 

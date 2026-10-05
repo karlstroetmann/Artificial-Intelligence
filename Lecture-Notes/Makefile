@@ -1,6 +1,6 @@
 PROJNAME=artificial-intelligence
 PYTHON ?= python3
-.PHONY: $(PROJNAME).pdf $(PROJNAME).epub all pdf epub check-epub test-epub clean
+.PHONY: $(PROJNAME).pdf $(PROJNAME).epub all pdf epub check-epub clean
 
 all: pdf epub
 
@@ -19,9 +19,6 @@ $(PROJNAME).epub: $(PROJNAME).tex
 check-epub:
 	$(PYTHON) epub/check_epub.py $(PROJNAME).epub
 	epubcheck --failonwarnings $(PROJNAME).epub
-
-test-epub:
-	$(PYTHON) -m unittest discover -s epub -p 'test_*.py'
 
 clean:
 	latexmk -c -bibtex
