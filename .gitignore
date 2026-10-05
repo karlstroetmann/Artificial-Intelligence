@@ -45,3 +45,11 @@ Python/2 Constraint Solver/Constraint-Propagation-Solver-All-Solutions.ipynb
 *.pyg
 todo.txt
 .idea/
+Lecture-Notes/.build/
+Lecture-Notes/*.epub
+Lecture-Notes/*.4ct
+Lecture-Notes/*.4tc
+Lecture-Notes/*.idv
+Lecture-Notes/*.lg
+Lecture-Notes/*.tmp
+Lecture-Notes/_minted/
