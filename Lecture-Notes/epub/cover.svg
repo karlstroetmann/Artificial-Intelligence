@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2400" viewBox="0 0 1600 2400" role="img" aria-labelledby="cover-title cover-description">
+  <title id="cover-title">An Incomplete Introduction to Artificial Intelligence</title>
+  <desc id="cover-description">Lecture notes by Prof. Dr. Karl Stroetmann. A warm ivory academic cover with dark teal typography and a diagram of interconnected nodes.</desc>
+  <rect width="1600" height="2400" fill="#f6f0e4"/>
+  <path d="M145 194H1455" stroke="#b75d3c" stroke-width="8"/>
+  <text x="145" y="151" font-family="sans-serif" font-size="31" letter-spacing="7" fill="#244a49">LECTURE NOTES</text>
+
+  <g fill="#173f3e" font-family="serif" font-weight="bold">
+    <text x="136" y="450" font-size="102">An Incomplete</text>
+    <text x="136" y="609" font-size="128">Introduction</text>
+    <text x="136" y="758" font-size="112">to Artificial</text>
+    <text x="136" y="916" font-size="128">Intelligence</text>
+  </g>
+
+  <!-- A network evokes search, inference and learned representations. -->
+  <g fill="none" stroke="#6c8b7d" stroke-width="7" stroke-linecap="round">
+    <path d="M215 1320L615 1215L1015 1330L1360 1250"/>
+    <path d="M215 1320L615 1530L1015 1330L1360 1650"/>
+    <path d="M215 1720L615 1530L1015 1750L1360 1650"/>
+    <path d="M215 1720L615 1850L1015 1750"/>
+    <path d="M615 1215L1015 1750M615 1850L1015 1330" stroke="#bdc8b6" stroke-width="5"/>
+  </g>
+  <g fill="#f6f0e4" stroke="#244a49" stroke-width="8">
+    <circle cx="215" cy="1320" r="30"/>
+    <circle cx="215" cy="1720" r="30"/>
+    <circle cx="615" cy="1215" r="30"/>
+    <circle cx="615" cy="1530" r="30"/>
+    <circle cx="615" cy="1850" r="30"/>
+    <circle cx="1015" cy="1330" r="30"/>
+    <circle cx="1015" cy="1750" r="30"/>
+    <circle cx="1360" cy="1250" r="30"/>
+    <circle cx="1360" cy="1650" r="30"/>
+  </g>
+  <circle cx="615" cy="1530" r="17" fill="#b75d3c"/>
+  <circle cx="1015" cy="1330" r="17" fill="#b75d3c"/>
+  <path d="M145 2030H1455" stroke="#b75d3c" stroke-width="3"/>
+  <text x="145" y="2152" font-family="serif" font-size="64" fill="#173f3e">Prof. Dr. Karl Stroetmann</text>
+  <text x="145" y="2250" font-family="sans-serif" font-size="31" letter-spacing="3" fill="#244a49">SEARCH · REASONING · LEARNING</text>
+</svg>
