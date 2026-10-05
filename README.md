@@ -63,9 +63,10 @@ Other nonstandard installations may need `LIBGS` set as described in the
 
 ### Validation and reading quality
 
-Every EPUB export checks all local resources and cross-reference targets, then
-runs EPUBCheck with `--failonwarnings`. Converter errors, unresolved references,
-and HTML repair also fail the export to prevent silent content corruption.
+Every EPUB export checks the book's offline resources, image descriptions,
+cover and author attribution. EPUBCheck with `--failonwarnings` validates the
+EPUB structure, local resources and cross-reference targets. Converter errors,
+unresolved references and HTML repair also fail the export to prevent silent content corruption.
 The output is replaced only after these
 gates pass. An unsuccessful build keeps the previous EPUB and diagnostics in
 `Lecture-Notes/.build/epub/export.log`; PDF and EPUB auxiliary files are isolated,
@@ -88,3 +89,5 @@ example Apple Books, Thorium, and an e-ink device) and check navigation, enlarge
 fonts, themes, wide equations/tables, code, and footnotes. Reader-specific support
 for SVG, scrolling, and styles varies. Export-specific configuration and styling
 live in `Lecture-Notes/epub/`; the LaTeX remains the content source.
+`export_epub.py` coordinates the toolchain, validation and atomic publication;
+`publication.py` owns archive contents, reading adaptations and offline policies.

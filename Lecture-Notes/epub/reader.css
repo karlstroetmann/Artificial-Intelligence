@@ -108,31 +108,6 @@ a:focus {
   outline-offset: 0.15em;
 }
 
-/* The navigation document supplies the reader's table of contents. */
-.tableofcontents {
-  margin: 1.2em 0;
-  line-height: 1.4;
-}
-
-.chapterToc,
-.likechapterToc {
-  display: block;
-  margin: 0.8em 0 0.35em;
-  font-weight: bold;
-}
-
-.sectionToc,
-.likesectionToc {
-  display: block;
-  margin: 0.35em 0 0.35em 1em;
-}
-
-.subsectionToc,
-.likesubsectionToc {
-  display: block;
-  margin: 0.3em 0 0.3em 2em;
-}
-
 ul, ol, dl {
   margin: 0.8em 0;
   padding-inline-start: 1.6em;
@@ -231,14 +206,6 @@ pre code {
   font-size: 1em;
 }
 
-/* MathML stays selectable and available to reading systems with math speech. */
-math {
-  font-size: 1em;
-  -webkit-hyphens: none;
-  hyphens: none;
-}
-
-math[display="block"],
 div.math-display,
 .equation,
 .eqnarray {
@@ -360,11 +327,6 @@ figure img:not(.math):not(.math-display) {
   border-top: 0.06em solid currentColor;
 }
 
-.footnote-mark {
-  font-size: 0.8em;
-  vertical-align: super;
-}
-
 .epub-note-return {
   margin: 0.6em 0 0;
   font-size: 0.9em;
@@ -400,10 +362,5 @@ hr {
 
   th, td {
     padding: 0.3em;
-  }
-
-  .subsectionToc,
-  .likesubsectionToc {
-    margin-inline-start: 1.5em;
   }
 }

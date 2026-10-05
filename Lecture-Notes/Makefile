@@ -17,8 +17,7 @@ $(PROJNAME).epub: $(PROJNAME).tex
 	$(PYTHON) epub/export_epub.py $<
 
 check-epub:
-	$(PYTHON) epub/check_epub.py $(PROJNAME).epub
-	epubcheck --failonwarnings $(PROJNAME).epub
+	$(PYTHON) epub/export_epub.py --check $(PROJNAME).epub
 
 clean:
 	latexmk -c -bibtex
