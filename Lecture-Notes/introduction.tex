@@ -6,8 +6,8 @@ computers to learn without explicit programming'' \cite{samuel:1959}. \index{mac
 approach has primarily fueled the recent hype in AI. 
 
 \section{Overview}
-This lecture discusses only symbolic AI, as machine learning is part of the module \blue{data mining}.  
-It emphasizes \textcolor{blue}{declarative programming}. The core principle of declarative programming
+This lecture covers both \blue{symbolic AI} and \blue{machine learning}. The first part focuses on
+symbolic AI and emphasizes \textcolor{blue}{declarative programming}. The core principle of declarative programming
 involves starting with a \textcolor{blue}{formal problem 
 specification}, a succinct description of the issue at hand. This specification is then processed by a
 \textcolor{blue}{problem solver} to produce a solution. Originally,
@@ -22,8 +22,8 @@ for two reasons:
 \item In cases where it is possible to completely define a problem using logical formulas, automatic
        theorem proving generally lacks the capability to autonomously find solutions. 
 \end{enumerate}
-Despite these limitations, declarative programming has proven valuable in several domains, which we will
-explore, demonstrating its application in solving various types of problems: 
+Despite these limitations, declarative programming has proven valuable in several domains. We begin with
+these symbolic problem-solving methods before turning to machine learning:
 \begin{enumerate}
 \item \textcolor{blue}{Search problems}, where the objective is to find a path within a graph. A classic
       instance is the \href{https://en.wikipedia.org/wiki/15_puzzle}{fifteen puzzle}. We will examine several
@@ -42,7 +42,8 @@ explore, demonstrating its application in solving various types of problems:
       \textcolor{blue}{resolution theorem proving} in our lecture on
       \href{https://github.com/karlstroetmann/Logic}{logic}, we will now turn our attention to
       \textcolor{blue}{equational theorem proving} in the final chapter of this first part. 
-\item Next, we turn to the topic of \href{https://en.wikipedia.org/wiki/Machine_learning}{machine learning}.  
+\item In the second part, we turn to the topic of
+      \href{https://en.wikipedia.org/wiki/Machine_learning}{machine learning}.
       We start by discussing \textcolor{blue}{linear regression}, since this is one of the most fundamental machine
       learning algorithms and is also the foundation for more advanced
       forms of machine learning like \href{https://en.wikipedia.org/wiki/Logistic_regression}{logistic regression} and 
