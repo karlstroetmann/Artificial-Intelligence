@@ -239,7 +239,7 @@ def polish_publication(path: Path) -> None:
 
 
 def build(source: Path) -> None:
-    tools = ("tex4ebook", "bibtex", "makeindex", "dvisvgm", "gs", "epubcheck")
+    tools = ("tex4ebook", "bibtex", "makeindex", "dvisvgm", "mutool", "gs", "epubcheck")
     missing = [tool for tool in tools if shutil.which(tool) is None]
     if missing:
         raise RuntimeError("Missing EPUB tools: " + ", ".join(missing) + ". See README.md for setup.")
@@ -283,11 +283,20 @@ def build(source: Path) -> None:
                     figure.with_name(figure.stem + "-1.svg").write_bytes(vector)
                     figure.with_name(figure.stem + "-.svg").write_bytes(vector)
                     continue
-                command = ["dvisvgm", "--pdf", "--page=1-", "--no-fonts", "--exact",
-                           f"--output={figure.with_suffix('')}-%p.svg", str(figure)]
+                vector = figure.with_name(figure.stem + "-1.svg")
+                # MuPDF preserves embedded raster artwork that dvisvgm's PDF
+                # converter can silently omit, such as the MNIST digit grid.
+                command = ["mutool", "draw", "-F", "svg", "-o", str(vector), str(figure), "1"]
                 subprocess.run(command, stdout=output, stderr=subprocess.STDOUT, env=environment, check=True)
-                shutil.copy2(figure.with_name(figure.stem + "-1.svg"),
-                             figure.with_name(figure.stem + "-.svg"))
+                # MuPDF writes PDF point dimensions as unitless SVG pixels.
+                # Keep the physical sizing used by the previous converter.
+                svg = ET.parse(vector)
+                for dimension in ("width", "height"):
+                    svg.getroot().set(dimension, svg.getroot().attrib[dimension] + "pt")
+                ET.register_namespace("", "http://www.w3.org/2000/svg")
+                ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
+                svg.write(vector, encoding="utf-8", xml_declaration=True)
+                shutil.copy2(vector, figure.with_name(figure.stem + "-.svg"))
             else:
                 subprocess.run(["dvisvgm", "--eps", "--no-fonts", "--exact",
                                 f"--output={figure.with_suffix('.svg')}", str(figure)],

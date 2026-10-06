@@ -4,8 +4,8 @@ These are the resources for my lecture on artificial intelligence.
 The directory `Lecture-Notes` contains the LaTeX files, while the directory `Python` contains
 *jupyter* notebooks that implement the algorithms discussed in my lecture.
 
-Download the lecture notes: [PDF](https://github.com/Yoorbo/Artificial-Intelligence/raw/refs/heads/dev/Lecture-Notes/artificial-intelligence.pdf)
-or [EPUB](https://github.com/Yoorbo/Artificial-Intelligence/raw/refs/heads/dev/Lecture-Notes/artificial-intelligence.epub).
+Download the lecture notes: [PDF](Lecture-Notes/artificial-intelligence.pdf?raw=true)
+or [EPUB](Lecture-Notes/artificial-intelligence.epub?raw=true).
 Both finished books are included in the repository; no build tools are needed to read them.
 
 ## Export the lecture notes
@@ -34,10 +34,10 @@ you to their targets. The PDF retains its print layout.
 Use a current TeX Live distribution with `latexmk`, `tex4ebook`, `make4ht`,
 `tex4ht`, `luaxml`, `dvisvgm`, BibTeX, makeindex, and the document's LaTeX
 packages (including `minted` and its `latexminted` executable). Also install
-Python 3.10 or later, Ghostscript, ZIP, and EPUBCheck 5.4 or
+Python 3.10 or later, Ghostscript, MuPDF's `mutool`, ZIP, and EPUBCheck 5.4 or
 later with Java. The notebook Docker image does not include the book toolchain.
-For dvisvgm builds without built-in PDF support, also install MuPDF's `mutool`;
-recent Ghostscript versions cannot supply its PDF conversion backend.
+MuPDF converts PDF figures to SVG while preserving embedded bitmap images;
+`dvisvgm` converts EPS figures and renders the book's mathematics.
 
 For a minimal TeX Live installation such as TinyTeX:
 
