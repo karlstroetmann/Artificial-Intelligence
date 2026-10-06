@@ -512,8 +512,7 @@ As the backpropagation equations \index{backpropagation equations} are at the ve
 fully connected feed-forward neural networks, we highlight the vectorized form of these equations:
 \\[0.2cm]
 \hspace*{0.3cm}
-\colorbox{red}{\framebox{\colorbox{orange}{
-\begin{minipage}[h]{0.92\linewidth}
+\EquationSummary{
 $
 \begin{array}[h]{llr}
   \ds \boldsymbol{\varepsilon}^{(L)} = (\mathbf{a}^{(L)} - \mathbf{y}) \odot f'\bigl(\mathbf{z}^{(L)}\bigr)
@@ -530,8 +529,7 @@ $
   & \mbox{(BP4v)}
 \end{array}
 $
-\end{minipage}
-}}}
+}
 \\[0.2cm]
 The equations (\ref{eq:BP3}) and (\ref{eq:BP4}) show why it was useful to introduce the
 vectors $\boldsymbol{\varepsilon}^{(l)}$: These vectors enable us to compute the partial derivatives of the cost function
@@ -600,7 +598,6 @@ $
       \\[0.5cm]
 & = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(f\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
       f'\bigl(z_i^{(L)}\bigr) \cdot \frac{\partial z_i^{(L)}}{\partial z_j^{(L)}}
-
       \\[0.5cm]
 & = & \ds \sum\limits_{i=1}^{m(L)} \Bigl(f\bigl(z_i^{(L)}\bigr) - y_i\Bigr) \cdot 
       f'\bigl(z_i^{(L)}\bigr) \cdot \delta_{i,j}
@@ -633,12 +630,11 @@ $h(\mathbf{x}) := f\bigl(g(\mathbf{x})\bigr)$ \quad for all $\mathbf{x} \in \mat
 then the partial derivative of $h$ with respect to $x_j$ satisfies
 \\[0.2cm]
 \hspace*{0.3cm}
-\colorbox{red}{\framebox{\colorbox{orange}{
-\begin{minipage}[h]{0.92\linewidth}
+\EquationSummary{
   $$ \frac{\partial h}{\partial x_j} = 
      \sum\limits_{i=1}^k \frac{\partial f}{\partial y_i} \cdot \frac{\partial g_i}{\partial x_j}
   $$
-\end{minipage}}}}
+}
 \\[0.2cm]
 
 \noindent

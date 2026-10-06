@@ -45,3 +45,6 @@ Python/2 Constraint Solver/Constraint-Propagation-Solver-All-Solutions.ipynb
 *.pyg
 todo.txt
 .idea/
+/Lecture-Notes/.build/
+/Lecture-Notes/artificial-intelligence.epub.tmp
+/Lecture-Notes/_minted/

@@ -1,0 +1,366 @@
+/* Reflowable reading styles. Keep fonts and colors under the reader's control. */
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0 0.25em;
+  font-family: inherit;
+  font-size: 1em;
+  line-height: 1.55;
+  color: inherit;
+  background: transparent;
+  text-align: start;
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+p,
+p.indent,
+p.noindent {
+  margin: 0 0 0.8em;
+  text-indent: 0;
+  orphans: 2;
+  widows: 2;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: start;
+  margin: 1.6em 0 0.65em;
+  page-break-after: avoid;
+  break-after: avoid;
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+h1,
+.titleHead {
+  font-size: 1.8em;
+}
+
+h2,
+.chapterHead,
+.likechapterHead {
+  font-size: 1.6em;
+}
+
+h3,
+.sectionHead,
+.likesectionHead {
+  font-size: 1.3em;
+}
+
+h4,
+.subsectionHead,
+.likesubsectionHead {
+  font-size: 1.15em;
+}
+
+h5, h6,
+.subsubsectionHead,
+.likesubsubsectionHead,
+.paragraphHead {
+  font-size: 1em;
+}
+
+.maketitle {
+  margin: 2em 0;
+}
+
+.maketitle .titleHead {
+  margin: 0 0 1em;
+  text-align: center;
+}
+
+.author,
+.date {
+  margin: 0.8em 0;
+  text-align: center;
+  font-size: 1em;
+}
+
+.date .minipage {
+  text-align: start;
+}
+
+.epub-emphasis {
+  font-weight: bold;
+}
+
+/* Listings retain their syntax's authored bold and italic styles. */
+pre .epub-emphasis {
+  font-weight: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  overflow-wrap: break-word;
+}
+
+a:focus {
+  outline: 0.1em solid currentColor;
+  outline-offset: 0.15em;
+}
+
+ul, ol, dl {
+  margin: 0.8em 0;
+  padding-inline-start: 1.6em;
+}
+
+li {
+  margin: 0.3em 0;
+}
+
+li p {
+  margin-bottom: 0.4em;
+}
+
+dt {
+  margin-top: 0.65em;
+  font-weight: bold;
+}
+
+dd {
+  margin-inline-start: 1.6em;
+}
+
+/* Generated lists use a grid; wide equations must not widen its text column. */
+dl.enumerate {
+  grid-template-columns: min-content minmax(0, 1fr);
+}
+
+dd.enumerate,
+.thebibliography dd {
+  min-width: 0;
+}
+
+blockquote {
+  margin: 1em 0 1em 1em;
+  padding-inline-start: 0.8em;
+  border-inline-start: 0.15em solid currentColor;
+}
+
+/* Long source lines can wrap without forcing the chapter wider than the screen. */
+pre,
+pre.fancyvrb,
+.verbatim,
+.fancyvrb,
+.lstlisting,
+.minted,
+div[class*="minted"] {
+  margin: 1em 0;
+  padding: 0.7em;
+  border: 0.06em solid currentColor;
+  font-family: monospace;
+  font-size: 0.9em;
+  line-height: 1.4;
+  text-align: start;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+  -webkit-hyphens: none;
+  hyphens: none;
+  page-break-inside: auto;
+  break-inside: auto;
+  color: inherit;
+  background: transparent;
+}
+
+/* Generated per-listing IDs otherwise force print padding and pale yellow. */
+pre.fancyvrb {
+  padding: 0.7em !important;
+  background: transparent !important;
+}
+
+.fancyvrblineno {
+  display: inline-block;
+  min-width: 2.5em;
+  padding-inline-end: 0.7em;
+  font-size: 0.85em;
+}
+
+.fancyvrblineno span {
+  font-size: inherit !important;
+  padding-right: 0 !important;
+}
+
+.fancyvrbline {
+  display: inline;
+  overflow-wrap: anywhere;
+}
+
+code, kbd, samp, tt {
+  font-family: monospace;
+  font-size: 0.95em;
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+pre code {
+  font-size: 1em;
+}
+
+div.math-display,
+.equation,
+.eqnarray {
+  display: block;
+  max-width: 100%;
+  margin: 1em 0;
+  overflow-x: auto;
+  overflow-wrap: normal;
+  text-align: start;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Do not shrink equations or tables until their symbols become unreadable. */
+.epub-table,
+.table,
+.tabular,
+.tabularx {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  line-height: 1.4;
+  font-size: 1em;
+}
+
+th, td {
+  padding: 0.35em 0.5em;
+  vertical-align: top;
+}
+
+th {
+  font-weight: bold;
+  text-align: start;
+}
+
+caption,
+figcaption,
+.caption {
+  margin: 0.7em 0;
+  line-height: 1.4;
+  font-size: 0.9em;
+  text-align: start;
+}
+
+figure,
+.figure,
+.float {
+  margin: 1.3em 0;
+  max-width: 100%;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+figure img:not(.math):not(.math-display),
+.figure img:not(.math):not(.math-display) {
+  display: block;
+  margin: 0 auto;
+}
+
+/* External SVG glyphs do not inherit a reading system's foreground color. */
+img.math,
+img.math-display {
+  display: block;
+  max-width: none;
+  background: white;
+  margin: 0;
+}
+
+.epub-math {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: -0.15em;
+}
+
+img.includegraphics,
+figure img:not(.math):not(.math-display) {
+  background: white;
+}
+
+.epub-cover {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.epub-cover img {
+  display: block;
+  width: 100%;
+  max-height: 100vh;
+  object-fit: contain;
+}
+
+@media (prefers-color-scheme: dark) {
+  img.math,
+  img.math-display {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
+
+.footnotes,
+.footnote-text {
+  font-size: 0.9em;
+  line-height: 1.45;
+}
+
+.footnotes {
+  margin-top: 1.5em;
+  padding-top: 0.7em;
+  border-top: 0.06em solid currentColor;
+}
+
+.epub-note-return {
+  margin: 0.6em 0 0;
+  font-size: 0.9em;
+}
+
+.theorem,
+.newtheorem,
+.definition,
+.proof {
+  margin: 1em 0;
+}
+
+.equation-summary {
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 1em 0;
+  padding: 0.75em;
+  border: 0.08em solid currentColor;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+hr {
+  margin: 1.5em 0;
+  border: 0;
+  border-top: 0.06em solid currentColor;
+}
+
+@media (max-width: 30em) {
+  body {
+    padding: 0;
+  }
+
+  th, td {
+    padding: 0.3em;
+  }
+}

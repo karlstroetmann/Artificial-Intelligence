@@ -1,13 +1,24 @@
 PROJNAME=artificial-intelligence
-.PHONY: $(PROJNAME).pdf all clean
+PYTHON ?= python3
+.PHONY: $(PROJNAME).pdf $(PROJNAME).epub all pdf epub check-epub clean
 
-all: $(PROJNAME).pdf
+all: pdf epub
+
+pdf: $(PROJNAME).pdf
+
+epub: $(PROJNAME).epub
 
 # MAIN LATEXMK RULE
 
-$(PROJNAME).pdf: $(PROJNAME).tex | $(build_dir)
-	latexmk -bibtex -pdf -pdflatex="pdflatex  --shell-escape %O %S -interactive=nonstopmode" -use-make $<
+$(PROJNAME).pdf: $(PROJNAME).tex
+	latexmk -bibtex -pdf -pdflatex="pdflatex --shell-escape %O %S -interaction=nonstopmode -halt-on-error" -use-make $<
+
+$(PROJNAME).epub: $(PROJNAME).tex
+	$(PYTHON) epub/export_epub.py $<
+
+check-epub:
+	$(PYTHON) epub/export_epub.py --check $(PROJNAME).epub
 
 clean:
 	latexmk -c -bibtex
-	rm -r "_minted-$(PROJNAME)"
+	$(PYTHON) -c 'import shutil; from pathlib import Path; [shutil.rmtree(path, ignore_errors=True) for path in (Path("_minted-$(PROJNAME)"), Path("_minted"), Path(".build/epub"))]'

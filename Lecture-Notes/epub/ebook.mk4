@@ -1,0 +1,25 @@
+-- Compile the same TeX, including its bibliography and linked index.
+set_settings {options = "-n --exact --embed-bitmaps -c 1.4,1.4"}
+Make:htlatex {}
+-- A second pass resolves split chapter filenames before indexing their links.
+Make:htlatex {}
+Make:bibtex {}
+Make:makeindex {options = ""}
+-- TeX4ht's index processor mistakes digits after ^ in index terms for page
+-- locators (for example R^2). Links belong to the locators, never the term.
+Make:add("index_terms", function(parameters)
+  local filename = parameters.input .. ".ind"
+  local input = assert(io.open(filename, "r"))
+  local content = input:read("*all")
+  input:close()
+  content = content:gsub("%$.-%$", function(term)
+    return term:gsub("\\Link%[[^%]]*%]%b{}%b{}(%d+)\\EndLink{}", "%1")
+  end)
+  local output = assert(io.open(filename, "w"))
+  output:write(content)
+  output:close()
+  return 0
+end)
+Make:index_terms {}
+-- Resolve bibliography/index links until auxiliary files stop changing.
+Make:autohtlatex {}

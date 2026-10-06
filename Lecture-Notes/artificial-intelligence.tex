@@ -172,8 +172,14 @@
 
 \newcounter{exercise}
 
+\newcommand{\EquationSummary}[1]{%
+  \colorbox{red}{\framebox{\colorbox{orange}{%
+    \begin{minipage}[h]{0.92\linewidth}#1\end{minipage}%
+  }}}%
+}
+\newcommand{\BookTitle}{An Incomplete Introduction to Artificial Intelligence}
 \title{\epsfig{file=Figures/dhbw-logo.eps, scale=1.5}\\[0.3cm]
-       An Incomplete Introduction to Artificial Intelligence \\[0.3cm]
+       \BookTitle \\[0.3cm]
 }
 \author{Prof.~Dr.~Karl Stroetmann}
 \date{\today \\[0.5cm]
