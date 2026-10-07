@@ -20,7 +20,7 @@ from publication import Publication
 
 
 def tool_environment() -> dict[str, str]:
-    tools = ("tex4ebook", "bibtex", "makeindex", "dvisvgm", "gs", "epubcheck")
+    tools = ("tex4ebook", "bibtex", "makeindex", "dvisvgm", "mutool", "rsvg-convert", "gs", "epubcheck")
     missing = [tool for tool in tools if shutil.which(tool) is None]
     if missing:
         raise RuntimeError("Missing EPUB tools: " + ", ".join(missing) + ". See README.md for setup.")
@@ -74,20 +74,31 @@ def convert_figures(stage: Path, log: TextIO, environment: dict[str, str]) -> No
                 for suffix in ("-1.svg", "-.svg"):
                     figure.with_name(figure.stem + suffix).write_bytes(vector)
                 continue
-            options = ["--pdf", "--page=1-", f"--output={figure.with_suffix('')}-%p.svg"]
+            vector = figure.with_name(figure.stem + "-1.svg")
+            # Preserve embedded raster artwork, including the MNIST digit grid.
+            subprocess.run(["mutool", "draw", "-F", "svg", "-o", str(vector), str(figure), "1"],
+                           stdout=log, stderr=subprocess.STDOUT, env=environment, check=True)
+            # MuPDF writes PDF point dimensions as unitless SVG pixels.
+            svg = ET.parse(vector)
+            for dimension in ("width", "height"):
+                svg.getroot().set(dimension, svg.getroot().attrib[dimension] + "pt")
+            ET.register_namespace("", "http://www.w3.org/2000/svg")
+            ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
+            svg.write(vector, encoding="utf-8", xml_declaration=True)
+            shutil.copy2(vector, figure.with_name(figure.stem + "-.svg"))
         else:
-            options = ["--eps", f"--output={figure.with_suffix('.svg')}"]
-        subprocess.run(["dvisvgm", "--no-fonts", "--exact", *options, str(figure)],
-                       stdout=log, stderr=subprocess.STDOUT, env=environment, check=True)
-        if extension == ".pdf":
-            shutil.copy2(figure.with_name(figure.stem + "-1.svg"),
-                         figure.with_name(figure.stem + "-.svg"))
+            subprocess.run(["dvisvgm", "--no-fonts", "--exact", "--eps",
+                            f"--output={figure.with_suffix('.svg')}", str(figure)],
+                           stdout=log, stderr=subprocess.STDOUT, env=environment, check=True)
 
 
 def convert_source(source: Path, stage: Path, environment: dict[str, str]) -> Path:
     log = stage / "export.log"
     print(f"Building native EPUB in {stage}; log: {log}", flush=True)
     with log.open("w", encoding="utf-8") as output:
+        # Keep the editable artwork; embed a raster cover for reader compatibility.
+        subprocess.run(["rsvg-convert", "--output", str(stage / "cover.png"), str(stage / "cover.svg")],
+                       stdout=output, stderr=subprocess.STDOUT, env=environment, check=True)
         convert_figures(stage, output, environment)
         subprocess.run(["tex4ebook", "-f", "epub3+dvisvgm_hashes", "-s", "-c", "ebook.cfg",
                         "-e", "ebook.mk4", source.name], cwd=stage, stdout=output,

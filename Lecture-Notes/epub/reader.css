@@ -273,6 +273,13 @@ figure img:not(.math):not(.math-display),
   margin: 0 auto;
 }
 
+/* Shrink-to-fit print tables collapse their images in Apple Books. */
+.figure div.fbox {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 /* External SVG glyphs do not inherit a reading system's foreground color. */
 img.math,
 img.math-display {
@@ -303,9 +310,11 @@ figure img:not(.math):not(.math-display) {
 
 .epub-cover img {
   display: block;
-  width: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
   max-height: 100vh;
-  object-fit: contain;
+  margin: 0 auto;
 }
 
 @media (prefers-color-scheme: dark) {

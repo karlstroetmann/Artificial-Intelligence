@@ -280,7 +280,8 @@ def add_front_matter(book: Publication) -> None:
     image = cover.find(f".//{xhtml('img')}")
     assert image is not None
     image.set("src", cover_item.attrib["href"])
-    image.set("alt", "Cover: " + book.metadata("title"))
+    image.set("role", "doc-cover")
+    image.set("alt", f"Cover: {book.metadata('title')}, by {book.metadata('creator')}")
     book.documents[book.resource_path("cover.xhtml")] = cover
     manifest, spine = book.package.find("opf:manifest", NS), book.package.find("opf:spine", NS)
     if manifest is None or spine is None:

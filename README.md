@@ -18,14 +18,15 @@ then install full [MacTeX](https://formulae.brew.sh/cask/mactex-no-gui) and the 
 ```sh
 xcode-select --install                 # if Command Line Tools are missing
 brew install --cask mactex-no-gui       # skip if current full MacTeX is installed
-brew install python ghostscript mupdf-tools epubcheck
+brew install python ghostscript mupdf-tools librsvg epubcheck
 export PATH="/Library/TeX/texbin:$(brew --prefix)/bin:$PATH"
 ```
 
 Use Python 3.10+ and EPUBCheck 5.4+; Homebrew's
 [EPUBCheck package](https://formulae.brew.sh/formula/epubcheck) includes Java.
-On other systems, use full TeX Live plus Python, Ghostscript, MuPDF (`mutool`), ZIP
-and EPUBCheck with Java. All tools must be on `PATH`; no Python packages are required.
+On other systems, use full TeX Live plus Python, Ghostscript, MuPDF (`mutool`),
+librsvg (`rsvg-convert`), ZIP and EPUBCheck with Java. All tools must be on `PATH`;
+no Python packages are required.
 
 ### Build
 
@@ -50,3 +51,5 @@ linked figures/equations, bibliography, footnotes and index. Mathematics and dia
 use SVG with text alternatives; the PDF retains its print layout. EPUBCheck must pass
 without warnings before publication. SVG is not structured MathML, and reader support
 varies; check the book in the intended reading applications before release.
+PDF figures are converted with MuPDF to retain embedded bitmap artwork. The cover
+is a PNG rendered from `Lecture-Notes/epub/cover.svg` for reader compatibility.
