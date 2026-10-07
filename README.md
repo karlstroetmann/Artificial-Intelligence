@@ -8,87 +8,48 @@ Download the lecture notes: [PDF](Lecture-Notes/artificial-intelligence.pdf?raw=
 or [EPUB](Lecture-Notes/artificial-intelligence.epub?raw=true).
 Both finished books are included in the repository; no build tools are needed to read them.
 
-## Export the lecture notes
+## Export PDF and EPUB
 
-Run the existing pipeline to build both formats from the same LaTeX source:
+### macOS setup
+
+Set up [Homebrew](https://docs.brew.sh/Installation), including its shell instructions,
+then install full [MacTeX](https://formulae.brew.sh/cask/mactex-no-gui) and the export tools:
+
+```sh
+xcode-select --install                 # if Command Line Tools are missing
+brew install --cask mactex-no-gui       # skip if current full MacTeX is installed
+brew install python ghostscript mupdf-tools librsvg epubcheck
+export PATH="/Library/TeX/texbin:$(brew --prefix)/bin:$PATH"
+```
+
+Use Python 3.10+ and EPUBCheck 5.4+; Homebrew's
+[EPUBCheck package](https://formulae.brew.sh/formula/epubcheck) includes Java.
+On other systems, use full TeX Live plus Python, Ghostscript, MuPDF (`mutool`),
+librsvg (`rsvg-convert`), ZIP and EPUBCheck with Java. All tools must be on `PATH`;
+no Python packages are required.
+
+### Build
+
+From the repository root:
 
 ```sh
 make -C Lecture-Notes
 ```
 
-The outputs are `Lecture-Notes/artificial-intelligence.pdf` and
-`Lecture-Notes/artificial-intelligence.epub`. Use `make -C Lecture-Notes pdf`
-or `make -C Lecture-Notes epub` to build one format independently.
+This builds `Lecture-Notes/artificial-intelligence.pdf` and
+`Lecture-Notes/artificial-intelligence.epub` from the same LaTeX source.
+Append `pdf` or `epub` to build one format, `check-epub` to validate an existing EPUB,
+or `clean` to remove temporary files.
 
-The EPUB is a native, reflowable EPUB 3 book: searchable text, a cover,
-chapter/section navigation, numbered theorems and exercises, code listings,
-tables, linked figures, citations, bibliography, footnotes, and a linked index.
-Mathematics, TikZ diagrams, and PDF/EPS figures are rendered locally as SVG;
-formula dimensions follow the reading application's font size. The cover is
-embedded as a PNG rendered from `Lecture-Notes/epub/cover.svg` for reader
-compatibility. The book embeds its assets and styles and needs neither network
-access nor JavaScript to read.
-Print page references are omitted in the EPUB; figure/equation links still take
-you to their targets. The PDF retains its print layout.
+If a command is missing, check the installations and `PATH` above.
+EPUB build diagnostics are in `Lecture-Notes/.build/epub/export.log`;
+a failed export preserves the previous EPUB. Nonstandard Ghostscript installations
+may need [`LIBGS`](https://dvisvgm.de/Manpage/).
 
-### Dependencies
-
-Use a current TeX Live distribution with `latexmk`, `tex4ebook`, `make4ht`,
-`tex4ht`, `luaxml`, `dvisvgm`, BibTeX, makeindex, and the document's LaTeX
-packages (including `minted` and its `latexminted` executable). Also install
-Python 3.10 or later, Ghostscript, MuPDF's `mutool`, librsvg's `rsvg-convert`, ZIP,
-and EPUBCheck 5.4 or later with Java. The notebook Docker image does not include
-the book toolchain.
-MuPDF converts PDF figures to SVG while preserving embedded bitmap images;
-`dvisvgm` converts EPS figures and renders the book's mathematics. `rsvg-convert`
-renders the cover's SVG artwork to PNG.
-
-For a minimal TeX Live installation such as TinyTeX:
-
-```sh
-tlmgr update --self
-tlmgr install tex4ebook make4ht tex4ht luaxml dvisvgm latexmk \
-  collection-latexrecommended collection-fontsrecommended \
-  a4wide minted stmaryrd xfrac yfonts yfonts-t1 gothic placeins tocbibind lastpage
-```
-
-On macOS, install the remaining tools with Homebrew:
-
-```sh
-brew install ghostscript mupdf-tools librsvg epubcheck
-```
-
-On Debian/Ubuntu, the corresponding packages include `ghostscript`,
-`mupdf-tools`, `librsvg2-bin`, `zip`, and `epubcheck`. Verify the packaged EPUBCheck
-version; older distributions may require the [official release](https://github.com/w3c/epubcheck/releases).
-For macOS Homebrew Ghostscript, the exporter locates the library automatically.
-Other nonstandard installations may need `LIBGS` set as described in the
-[dvisvgm manual](https://dvisvgm.de/Manpage/).
-
-### Validation and reading quality
-
-Every EPUB export checks all local resources and cross-reference targets, then
-runs EPUBCheck with `--failonwarnings`. Converter errors, unresolved references,
-and HTML repair also fail the export to prevent silent content corruption.
-The output is replaced only after these
-gates pass. An unsuccessful build keeps the previous EPUB and diagnostics in
-`Lecture-Notes/.build/epub/export.log`; PDF and EPUB auxiliary files are isolated,
-including when running `make -j`. `make clean` removes temporary build files.
-
-```sh
-make -C Lecture-Notes check-epub # Recheck the exported book
-```
-
-Reading styles use relative sizes, preserve code indentation, and accommodate
-wide tables and equations without shrinking their text. Reader-selected fonts
-and themes take precedence. SVG mathematics favors visual compatibility with
-reading systems that do not implement MathML. Formula text alternatives are
-included, but they are not structured MathML; diagrams use their figure captions
-as alternatives. This is not a claim of full screen-reader accessibility.
-
-EPUBCheck establishes standards conformance, not identical behavior in every
-reading application. Before release, open the EPUB in the target readers (for
-example Apple Books, Thorium, and an e-ink device) and check navigation, enlarged
-fonts, themes, wide equations/tables, code, and footnotes. Reader-specific support
-for SVG, scrolling, and styles varies. Export-specific configuration and styling
-live in `Lecture-Notes/epub/`; the LaTeX remains the content source.
+The EPUB is reflowable and works offline, with searchable text, navigation, code,
+linked figures/equations, bibliography, footnotes and index. Mathematics and diagrams
+use SVG with text alternatives; the PDF retains its print layout. EPUBCheck must pass
+without warnings before publication. SVG is not structured MathML, and reader support
+varies; check the book in the intended reading applications before release.
+PDF figures are converted with MuPDF to retain embedded bitmap artwork. The cover
+is a PNG rendered from `Lecture-Notes/epub/cover.svg` for reader compatibility.
