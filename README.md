@@ -24,8 +24,10 @@ The EPUB is a native, reflowable EPUB 3 book: searchable text, a cover,
 chapter/section navigation, numbered theorems and exercises, code listings,
 tables, linked figures, citations, bibliography, footnotes, and a linked index.
 Mathematics, TikZ diagrams, and PDF/EPS figures are rendered locally as SVG;
-formula dimensions follow the reading application's font size. The book embeds
-its assets and styles and needs neither network access nor JavaScript to read.
+formula dimensions follow the reading application's font size. The cover is
+embedded as a PNG rendered from `Lecture-Notes/epub/cover.svg` for reader
+compatibility. The book embeds its assets and styles and needs neither network
+access nor JavaScript to read.
 Print page references are omitted in the EPUB; figure/equation links still take
 you to their targets. The PDF retains its print layout.
 
@@ -34,10 +36,12 @@ you to their targets. The PDF retains its print layout.
 Use a current TeX Live distribution with `latexmk`, `tex4ebook`, `make4ht`,
 `tex4ht`, `luaxml`, `dvisvgm`, BibTeX, makeindex, and the document's LaTeX
 packages (including `minted` and its `latexminted` executable). Also install
-Python 3.10 or later, Ghostscript, MuPDF's `mutool`, ZIP, and EPUBCheck 5.4 or
-later with Java. The notebook Docker image does not include the book toolchain.
+Python 3.10 or later, Ghostscript, MuPDF's `mutool`, librsvg's `rsvg-convert`, ZIP,
+and EPUBCheck 5.4 or later with Java. The notebook Docker image does not include
+the book toolchain.
 MuPDF converts PDF figures to SVG while preserving embedded bitmap images;
-`dvisvgm` converts EPS figures and renders the book's mathematics.
+`dvisvgm` converts EPS figures and renders the book's mathematics. `rsvg-convert`
+renders the cover's SVG artwork to PNG.
 
 For a minimal TeX Live installation such as TinyTeX:
 
@@ -51,12 +55,12 @@ tlmgr install tex4ebook make4ht tex4ht luaxml dvisvgm latexmk \
 On macOS, install the remaining tools with Homebrew:
 
 ```sh
-brew install ghostscript mupdf-tools epubcheck
+brew install ghostscript mupdf-tools librsvg epubcheck
 ```
 
 On Debian/Ubuntu, the corresponding packages include `ghostscript`,
-`mupdf-tools`, `zip`, and `epubcheck`. Verify the packaged EPUBCheck version;
-older distributions may require the [official release](https://github.com/w3c/epubcheck/releases).
+`mupdf-tools`, `librsvg2-bin`, `zip`, and `epubcheck`. Verify the packaged EPUBCheck
+version; older distributions may require the [official release](https://github.com/w3c/epubcheck/releases).
 For macOS Homebrew Ghostscript, the exporter locates the library automatically.
 Other nonstandard installations may need `LIBGS` set as described in the
 [dvisvgm manual](https://dvisvgm.de/Manpage/).

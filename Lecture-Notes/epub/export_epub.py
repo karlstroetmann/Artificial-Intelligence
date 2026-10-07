@@ -204,7 +204,9 @@ def polish_publication(path: Path) -> None:
     body = ET.SubElement(cover, xhtml("body"), {"class": "epub-cover"})
     section = ET.SubElement(body, xhtml("section"), {f"{{{EPUB_NS}}}type": "cover"})
     title = package.find("{*}metadata/{*}title")
-    ET.SubElement(section, xhtml("img"), {"src": cover_href, "alt": "Cover: " + (title.text or "")})
+    creator = package.find("{*}metadata/{*}creator")
+    ET.SubElement(section, xhtml("img"), {"src": cover_href, "role": "doc-cover",
+                                         "alt": f"Cover: {title.text or ''}, by {creator.text or ''}"})
     documents[posixpath.join(directory, "cover.xhtml")] = cover
     ET.SubElement(manifest, f"{{{OPF_NS}}}item", {"id": "ebook-cover", "href": "cover.xhtml",
                                                 "media-type": "application/xhtml+xml"})
@@ -239,7 +241,7 @@ def polish_publication(path: Path) -> None:
 
 
 def build(source: Path) -> None:
-    tools = ("tex4ebook", "bibtex", "makeindex", "dvisvgm", "mutool", "gs", "epubcheck")
+    tools = ("tex4ebook", "bibtex", "makeindex", "dvisvgm", "mutool", "rsvg-convert", "gs", "epubcheck")
     missing = [tool for tool in tools if shutil.which(tool) is None]
     if missing:
         raise RuntimeError("Missing EPUB tools: " + ", ".join(missing) + ". See README.md for setup.")
@@ -266,11 +268,15 @@ def build(source: Path) -> None:
                 content = re.sub(r"\s+on\s+page\s+\\pageref\{[^}]+\}", "", content)
                 (stage / file.name).write_text(content)
     shutil.copytree(source.parent / "Figures", stage / "Figures")
-    for name in ("reader.css", "cover.svg", "ebook.cfg", "ebook.mk4"):
+    for name in ("reader.css", "ebook.cfg", "ebook.mk4"):
         shutil.copy2(settings / name, stage / name)
     log = stage / "export.log"
     print(f"Building native EPUB in {stage}; log: {log}", flush=True)
     with log.open("w") as output:
+        # Raster covers work across more reader thumbnail systems. Render the
+        # editable SVG locally, preserving its typography and intrinsic size.
+        subprocess.run(["rsvg-convert", "--output", str(stage / "cover.png"), str(settings / "cover.svg")],
+                       stdout=output, stderr=subprocess.STDOUT, env=environment, check=True)
         # The batched math renderer skips TeX4ht's external graphics converter.
         # Convert figures first, with the exact names requested by TeX4ht.
         for figure in sorted((stage / "Figures").rglob("*")):
