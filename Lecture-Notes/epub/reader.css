@@ -306,6 +306,13 @@ figure img:not(.math):not(.math-display),
   margin: 0 auto;
 }
 
+/* Shrink-to-fit print tables collapse their images in Apple Books. */
+.figure div.fbox {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
 /* External SVG glyphs do not inherit a reading system's foreground color. */
 img.math,
 img.math-display {
