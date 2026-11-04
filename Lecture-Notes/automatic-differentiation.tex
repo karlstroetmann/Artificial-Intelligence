@@ -384,7 +384,7 @@ these values are not numerical approximations but are, instead, exact.
             case n, 'exp', a:
                 return math.exp(Values[a])
             case n, 'log', a:
-                return math.log(Values[a])
+                return 1 / Values[a]
             case n, 'sin', a:
                 return math.cos(Values[a])
             case n, 'cos', a:

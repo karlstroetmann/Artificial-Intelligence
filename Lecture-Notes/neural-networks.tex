@@ -1185,10 +1185,10 @@ proceeds as follows:
       $\mathbf{b}^{(2)}$ is the bias vector of the hidden layer.  This vector is stored in \texttt{mBiasesH}.
 \item The activation of the neurons in the hidden layer \texttt{AH} is computed by applying the sigmoid
       function to the vector $\mathbf{z}^{(2)}$.
-\item Next, the vector \texttt{ZH} is computed according to the formula
+\item Next, the vector \texttt{ZO} is computed according to the formula
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\mathbf{z}^{(3)} = W^{(3)} \cdot \mathbf{x} + \mathbf{b}^{(3)}$.
+      $\mathbf{z}^{(3)} = W^{(3)} \cdot \mathbf{a}^{(2)} + \mathbf{b}^{(3)}$.
       \\[0.2cm]
       Here, $W^{(3)}$ is the weight matrix of the output layer that is stored in \texttt{mWeightsO}, while
       $\mathbf{b}^{(3)}$ is the bias vector of the output layer.  This vector is stored in \texttt{mBiasesO}.

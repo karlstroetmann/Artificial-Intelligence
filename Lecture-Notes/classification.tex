@@ -2196,7 +2196,7 @@ Let us multiply equation \ref{eq:svm-1} by $y_i = 1$.  Unsurprisingly, we get
   \label{eq:svm-3}
   y_i \cdot \bigl(\mathbf{w} \cdot \mathbf{x}^{(i)} + b) \geq 1.
 \end{equation}
-Similarly, let us multiply equation \ref{eq:svm-1} by $y_i = -1$.  This time, things get more interesting
+Similarly, let us multiply equation \ref{eq:svm-2} by $y_i = -1$.  This time, things get more interesting
 as the direction of the inequality is flipped:
 \begin{equation}
   \label{eq:svm-4}
@@ -2374,7 +2374,7 @@ quite popular:
 \item \blue{Gaussian kernels} have the form
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\ds k(\mathbf{x}, \mathbf{y}) = \exp\left( \frac{||\mathbf{x}-\mathbf{y}||^2}{2 \cdot \sigma^2}\right)$.
+      $\ds k(\mathbf{x}, \mathbf{y}) = \exp\left(- \frac{||\mathbf{x}-\mathbf{y}||^2}{2 \cdot \sigma^2}\right)$.
       \\[0.2cm]
       Here, $\sigma$ is a hyperparameter.  
 \end{enumerate}
@@ -2514,8 +2514,8 @@ have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\alpha_i \geq 0 \quad \text{and} \quad \beta_i \geq 0$ \quad for all $i=1,\cdots,n$.
-That is very wrong what you are telling here.\\[0.2cm]
-The derivative with respect to $\xi_i$ gave us the relation $\alpha_i + \beta_i = 0$.  Therefor we have
+\\[0.2cm]
+The derivative with respect to $\xi_i$ gave us the relation $\alpha_i + \beta_i = C$.  Therefore we have
 \\[0.2cm]
 \hspace*{1.3cm}
 $\beta_i = C - \alpha_i$ \quad for all $i=1,\cdots,n$.
